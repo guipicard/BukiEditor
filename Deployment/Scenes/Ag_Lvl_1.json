@@ -1,0 +1,2188 @@
+{
+    "camera": {
+        "height": 1080,
+        "width": 1920,
+        "x": 0.0,
+        "y": 0.0
+    },
+    "entities": {
+        "Background": {
+            "components": {
+                "Atlas": {
+                    "color": {
+                        "a": 255,
+                        "b": 255,
+                        "g": 255,
+                        "r": 255
+                    },
+                    "destinations": {
+                        "0": {
+                            "0": {
+                                "h": 1024,
+                                "w": 1024,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "1": {
+                                "h": 1024,
+                                "w": 1024,
+                                "x": 0,
+                                "y": 0
+                            }
+                        }
+                    },
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "path": "assets/Kenney/Physics Assets/PNG/Backgrounds/colored_desert.png",
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 21.600000381469727,
+                        "y": 21.600000381469727
+                    },
+                    "sources": {
+                        "bg": {
+                            "h": 1024,
+                            "w": 1024,
+                            "x": 0,
+                            "y": 0
+                        }
+                    },
+                    "tileHeight": 1,
+                    "tileWidth": 2
+                },
+                "Spawner": null
+            },
+            "enable": true,
+            "layer": "",
+            "physics": false,
+            "position": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 43.20000076293945,
+                "y": 21.600000381469727
+            },
+            "z": 0
+        },
+        "ECEntity": {
+            "components": {
+                "EditorController": null,
+                "Text": {
+                    "Background": true,
+                    "BackgroundColor": [
+                        0,
+                        0,
+                        0,
+                        100
+                    ],
+                    "Text": "FPS",
+                    "TextSize": [
+                        1.1399999856948853,
+                        0.6800000071525574
+                    ],
+                    "backgroundOffset": {
+                        "x": 20.0,
+                        "y": 10.0
+                    },
+                    "color": {
+                        "a": 255,
+                        "b": 255,
+                        "g": 255,
+                        "r": 255
+                    },
+                    "fixed": true,
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "fontSize": 30,
+                    "path": "./fonts/Kenney/Kenney Future Square.ttf",
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 1.0,
+                        "y": 1.0
+                    }
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": false,
+            "position": {
+                "x": 18.229999542236328,
+                "y": -10.160000801086426
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 1.0,
+                "y": 1.0
+            },
+            "z": 50
+        },
+        "GlassSlim1": {
+            "components": {
+                "Box": {
+                    "BoxCollider": {
+                        "CanDraw": false,
+                        "density": 1.0,
+                        "friction": 0.10000000149011612,
+                        "restitution": 0.30000001192092896,
+                        "size": {
+                            "x": 0.375,
+                            "y": 1.125
+                        }
+                    },
+                    "Sensor": false,
+                    "debugColor": {
+                        "a": 255,
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "fillDraw": false,
+                    "filter": 1,
+                    "shapeColor": {
+                        "a": 255,
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "shapeDraw": false,
+                    "type": "Box"
+                },
+                "BricksBehaviour": {
+                    "BreakSounds": [
+                        "./audio/AngryBird/Sfx - Jewel Break 01.mp3",
+                        "./audio/AngryBird/Sfx - Jewel Break 02.mp3",
+                        "./audio/AngryBird/Sfx - Jewel Break 03.mp3"
+                    ],
+                    "DamageSounds": [
+                        "./audio/AngryBird/Sfx - Jewel Break 01b.mp3",
+                        "./audio/AngryBird/Sfx - Jewel Break 02b.mp3",
+                        "./audio/AngryBird/Sfx - Jewel Break 03b.mp3"
+                    ],
+                    "collisionSounds": [
+                        "./audio/AngryBird/Sfx - Ice Light Collision A1.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A2.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A3.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A4.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A5.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A6.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A7.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A8.mp3"
+                    ],
+                    "health": 50.0,
+                    "maxHealth": 50.0,
+                    "stageImages": [
+                        "./assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass021.png",
+                        "./assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass026.png",
+                        "./assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass053.png"
+                    ]
+                },
+                "RigidBody": {
+                    "FixedRotation": false,
+                    "Type": 2
+                },
+                "Sprite": {
+                    "color": {
+                        "a": 255,
+                        "b": 255,
+                        "g": 255,
+                        "r": 255
+                    },
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "path": "./assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass021.png",
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 0.75,
+                        "y": 2.25
+                    }
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": true,
+            "position": {
+                "x": 13.200000762939453,
+                "y": 8.675000190734863
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 0.75,
+                "y": 2.25
+            },
+            "z": 0
+        },
+        "GlassSlim2": {
+            "components": {
+                "Box": {
+                    "BoxCollider": {
+                        "CanDraw": false,
+                        "density": 1.0,
+                        "friction": 0.10000000149011612,
+                        "restitution": 0.30000001192092896,
+                        "size": {
+                            "x": 0.375,
+                            "y": 1.125
+                        }
+                    },
+                    "Sensor": false,
+                    "debugColor": {
+                        "a": 255,
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "fillDraw": false,
+                    "filter": 1,
+                    "shapeColor": {
+                        "a": 255,
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "shapeDraw": false,
+                    "type": "Box"
+                },
+                "BricksBehaviour": {
+                    "BreakSounds": [
+                        "./audio/AngryBird/Sfx - Jewel Break 01.mp3",
+                        "./audio/AngryBird/Sfx - Jewel Break 02.mp3",
+                        "./audio/AngryBird/Sfx - Jewel Break 03.mp3"
+                    ],
+                    "DamageSounds": [
+                        "./audio/AngryBird/Sfx - Jewel Break 01b.mp3",
+                        "./audio/AngryBird/Sfx - Jewel Break 02b.mp3",
+                        "./audio/AngryBird/Sfx - Jewel Break 03b.mp3"
+                    ],
+                    "collisionSounds": [
+                        "./audio/AngryBird/Sfx - Ice Light Collision A1.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A2.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A3.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A4.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A5.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A6.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A7.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A8.mp3"
+                    ],
+                    "health": 50.0,
+                    "maxHealth": 50.0,
+                    "stageImages": [
+                        "./assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass021.png",
+                        "./assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass026.png",
+                        "./assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass053.png"
+                    ]
+                },
+                "RigidBody": {
+                    "FixedRotation": false,
+                    "Type": 2
+                },
+                "Sprite": {
+                    "color": {
+                        "a": 255,
+                        "b": 255,
+                        "g": 255,
+                        "r": 255
+                    },
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "path": "./assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass021.png",
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 0.75,
+                        "y": 2.25
+                    }
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": true,
+            "position": {
+                "x": 15.450000762939453,
+                "y": 8.675000190734863
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 0.75,
+                "y": 2.25
+            },
+            "z": 0
+        },
+        "GlassSlim3": {
+            "components": {
+                "Box": {
+                    "BoxCollider": {
+                        "CanDraw": false,
+                        "density": 1.0,
+                        "friction": 0.10000000149011612,
+                        "restitution": 0.30000001192092896,
+                        "size": {
+                            "x": 0.375,
+                            "y": 1.125
+                        }
+                    },
+                    "Sensor": false,
+                    "debugColor": {
+                        "a": 255,
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "fillDraw": false,
+                    "filter": 1,
+                    "shapeColor": {
+                        "a": 255,
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "shapeDraw": false,
+                    "type": "Box"
+                },
+                "BricksBehaviour": {
+                    "BreakSounds": [
+                        "./audio/AngryBird/Sfx - Jewel Break 01.mp3",
+                        "./audio/AngryBird/Sfx - Jewel Break 02.mp3",
+                        "./audio/AngryBird/Sfx - Jewel Break 03.mp3"
+                    ],
+                    "DamageSounds": [
+                        "./audio/AngryBird/Sfx - Jewel Break 01b.mp3",
+                        "./audio/AngryBird/Sfx - Jewel Break 02b.mp3",
+                        "./audio/AngryBird/Sfx - Jewel Break 03b.mp3"
+                    ],
+                    "collisionSounds": [
+                        "./audio/AngryBird/Sfx - Ice Light Collision A1.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A2.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A3.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A4.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A5.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A6.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A7.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A8.mp3"
+                    ],
+                    "health": 50.0,
+                    "maxHealth": 50.0,
+                    "stageImages": [
+                        "./assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass021.png",
+                        "./assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass026.png",
+                        "./assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass053.png"
+                    ]
+                },
+                "RigidBody": {
+                    "FixedRotation": false,
+                    "Type": 2
+                },
+                "Sprite": {
+                    "color": {
+                        "a": 255,
+                        "b": 255,
+                        "g": 255,
+                        "r": 255
+                    },
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "path": "./assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass021.png",
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 0.75,
+                        "y": 2.25
+                    }
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": true,
+            "position": {
+                "x": 17.700000762939453,
+                "y": 8.675000190734863
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 0.75,
+                "y": 2.25
+            },
+            "z": 0
+        },
+        "GlassSlim4": {
+            "components": {
+                "Box": {
+                    "BoxCollider": {
+                        "CanDraw": false,
+                        "density": 1.0,
+                        "friction": 0.10000000149011612,
+                        "restitution": 0.30000001192092896,
+                        "size": {
+                            "x": 0.375,
+                            "y": 1.125
+                        }
+                    },
+                    "Sensor": false,
+                    "debugColor": {
+                        "a": 255,
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "fillDraw": false,
+                    "filter": 1,
+                    "shapeColor": {
+                        "a": 255,
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "shapeDraw": false,
+                    "type": "Box"
+                },
+                "BricksBehaviour": {
+                    "BreakSounds": [
+                        "./audio/AngryBird/Sfx - Jewel Break 01.mp3",
+                        "./audio/AngryBird/Sfx - Jewel Break 02.mp3",
+                        "./audio/AngryBird/Sfx - Jewel Break 03.mp3"
+                    ],
+                    "DamageSounds": [
+                        "./audio/AngryBird/Sfx - Jewel Break 01b.mp3",
+                        "./audio/AngryBird/Sfx - Jewel Break 02b.mp3",
+                        "./audio/AngryBird/Sfx - Jewel Break 03b.mp3"
+                    ],
+                    "collisionSounds": [
+                        "./audio/AngryBird/Sfx - Ice Light Collision A1.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A2.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A3.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A4.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A5.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A6.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A7.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A8.mp3"
+                    ],
+                    "health": 50.0,
+                    "maxHealth": 50.0,
+                    "stageImages": [
+                        "./assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass021.png",
+                        "./assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass026.png",
+                        "./assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass053.png"
+                    ]
+                },
+                "RigidBody": {
+                    "FixedRotation": false,
+                    "Type": 2
+                },
+                "Sprite": {
+                    "color": {
+                        "a": 255,
+                        "b": 255,
+                        "g": 255,
+                        "r": 255
+                    },
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "path": "./assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass021.png",
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 0.75,
+                        "y": 2.25
+                    }
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": true,
+            "position": {
+                "x": 16.575000762939453,
+                "y": 7.175000190734863
+            },
+            "rotation": 1.5707963705062866,
+            "size": {
+                "x": 0.75,
+                "y": 2.25
+            },
+            "z": 0
+        },
+        "GlassSlim5": {
+            "components": {
+                "Box": {
+                    "BoxCollider": {
+                        "CanDraw": false,
+                        "density": 1.0,
+                        "friction": 0.10000000149011612,
+                        "restitution": 0.30000001192092896,
+                        "size": {
+                            "x": 0.375,
+                            "y": 1.125
+                        }
+                    },
+                    "Sensor": false,
+                    "debugColor": {
+                        "a": 255,
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "fillDraw": false,
+                    "filter": 1,
+                    "shapeColor": {
+                        "a": 255,
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "shapeDraw": false,
+                    "type": "Box"
+                },
+                "BricksBehaviour": {
+                    "BreakSounds": [
+                        "./audio/AngryBird/Sfx - Jewel Break 01.mp3",
+                        "./audio/AngryBird/Sfx - Jewel Break 02.mp3",
+                        "./audio/AngryBird/Sfx - Jewel Break 03.mp3"
+                    ],
+                    "DamageSounds": [
+                        "./audio/AngryBird/Sfx - Jewel Break 01b.mp3",
+                        "./audio/AngryBird/Sfx - Jewel Break 02b.mp3",
+                        "./audio/AngryBird/Sfx - Jewel Break 03b.mp3"
+                    ],
+                    "collisionSounds": [
+                        "./audio/AngryBird/Sfx - Ice Light Collision A1.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A2.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A3.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A4.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A5.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A6.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A7.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A8.mp3"
+                    ],
+                    "health": 50.0,
+                    "maxHealth": 50.0,
+                    "stageImages": [
+                        "./assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass021.png",
+                        "./assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass026.png",
+                        "./assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass053.png"
+                    ]
+                },
+                "RigidBody": {
+                    "FixedRotation": false,
+                    "Type": 2
+                },
+                "Sprite": {
+                    "color": {
+                        "a": 255,
+                        "b": 255,
+                        "g": 255,
+                        "r": 255
+                    },
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "path": "./assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass021.png",
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 0.75,
+                        "y": 2.25
+                    }
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": true,
+            "position": {
+                "x": 14.325000762939453,
+                "y": 7.175000190734863
+            },
+            "rotation": 1.5707963705062866,
+            "size": {
+                "x": 0.75,
+                "y": 2.25
+            },
+            "z": 0
+        },
+        "GlassSlim6": {
+            "components": {
+                "Box": {
+                    "BoxCollider": {
+                        "CanDraw": false,
+                        "density": 1.0,
+                        "friction": 0.10000000149011612,
+                        "restitution": 0.30000001192092896,
+                        "size": {
+                            "x": 0.375,
+                            "y": 1.125
+                        }
+                    },
+                    "Sensor": false,
+                    "debugColor": {
+                        "a": 255,
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "fillDraw": false,
+                    "filter": 1,
+                    "shapeColor": {
+                        "a": 255,
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "shapeDraw": false,
+                    "type": "Box"
+                },
+                "BricksBehaviour": {
+                    "BreakSounds": [
+                        "./audio/AngryBird/Sfx - Jewel Break 01.mp3",
+                        "./audio/AngryBird/Sfx - Jewel Break 02.mp3",
+                        "./audio/AngryBird/Sfx - Jewel Break 03.mp3"
+                    ],
+                    "DamageSounds": [
+                        "./audio/AngryBird/Sfx - Jewel Break 01b.mp3",
+                        "./audio/AngryBird/Sfx - Jewel Break 02b.mp3",
+                        "./audio/AngryBird/Sfx - Jewel Break 03b.mp3"
+                    ],
+                    "collisionSounds": [
+                        "./audio/AngryBird/Sfx - Ice Light Collision A1.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A2.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A3.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A4.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A5.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A6.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A7.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A8.mp3"
+                    ],
+                    "health": 50.0,
+                    "maxHealth": 50.0,
+                    "stageImages": [
+                        "./assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass021.png",
+                        "./assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass026.png",
+                        "./assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass053.png"
+                    ]
+                },
+                "RigidBody": {
+                    "FixedRotation": false,
+                    "Type": 2
+                },
+                "Sprite": {
+                    "color": {
+                        "a": 255,
+                        "b": 255,
+                        "g": 255,
+                        "r": 255
+                    },
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "path": "./assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass021.png",
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 0.75,
+                        "y": 2.25
+                    }
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": true,
+            "position": {
+                "x": 16.575000762939453,
+                "y": 5.675000190734863
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 0.75,
+                "y": 2.25
+            },
+            "z": 0
+        },
+        "GlassSlim7": {
+            "components": {
+                "Box": {
+                    "BoxCollider": {
+                        "CanDraw": false,
+                        "density": 1.0,
+                        "friction": 0.10000000149011612,
+                        "restitution": 0.30000001192092896,
+                        "size": {
+                            "x": 0.375,
+                            "y": 1.125
+                        }
+                    },
+                    "Sensor": false,
+                    "debugColor": {
+                        "a": 255,
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "fillDraw": false,
+                    "filter": 1,
+                    "shapeColor": {
+                        "a": 255,
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "shapeDraw": false,
+                    "type": "Box"
+                },
+                "BricksBehaviour": {
+                    "BreakSounds": [
+                        "./audio/AngryBird/Sfx - Jewel Break 01.mp3",
+                        "./audio/AngryBird/Sfx - Jewel Break 02.mp3",
+                        "./audio/AngryBird/Sfx - Jewel Break 03.mp3"
+                    ],
+                    "DamageSounds": [
+                        "./audio/AngryBird/Sfx - Jewel Break 01b.mp3",
+                        "./audio/AngryBird/Sfx - Jewel Break 02b.mp3",
+                        "./audio/AngryBird/Sfx - Jewel Break 03b.mp3"
+                    ],
+                    "collisionSounds": [
+                        "./audio/AngryBird/Sfx - Ice Light Collision A1.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A2.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A3.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A4.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A5.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A6.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A7.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A8.mp3"
+                    ],
+                    "health": 50.0,
+                    "maxHealth": 50.0,
+                    "stageImages": [
+                        "./assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass021.png",
+                        "./assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass026.png",
+                        "./assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass053.png"
+                    ]
+                },
+                "RigidBody": {
+                    "FixedRotation": false,
+                    "Type": 2
+                },
+                "Sprite": {
+                    "color": {
+                        "a": 255,
+                        "b": 255,
+                        "g": 255,
+                        "r": 255
+                    },
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "path": "./assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass021.png",
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 0.75,
+                        "y": 2.25
+                    }
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": true,
+            "position": {
+                "x": 14.325000762939453,
+                "y": 5.675000190734863
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 0.75,
+                "y": 2.25
+            },
+            "z": 0
+        },
+        "GlassSlim8": {
+            "components": {
+                "Box": {
+                    "BoxCollider": {
+                        "CanDraw": false,
+                        "density": 1.0,
+                        "friction": 0.10000000149011612,
+                        "restitution": 0.30000001192092896,
+                        "size": {
+                            "x": 0.375,
+                            "y": 1.125
+                        }
+                    },
+                    "Sensor": false,
+                    "debugColor": {
+                        "a": 255,
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "fillDraw": false,
+                    "filter": 1,
+                    "shapeColor": {
+                        "a": 255,
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "shapeDraw": false,
+                    "type": "Box"
+                },
+                "BricksBehaviour": {
+                    "BreakSounds": [
+                        "./audio/AngryBird/Sfx - Jewel Break 01.mp3",
+                        "./audio/AngryBird/Sfx - Jewel Break 02.mp3",
+                        "./audio/AngryBird/Sfx - Jewel Break 03.mp3"
+                    ],
+                    "DamageSounds": [
+                        "./audio/AngryBird/Sfx - Jewel Break 01b.mp3",
+                        "./audio/AngryBird/Sfx - Jewel Break 02b.mp3",
+                        "./audio/AngryBird/Sfx - Jewel Break 03b.mp3"
+                    ],
+                    "collisionSounds": [
+                        "./audio/AngryBird/Sfx - Ice Light Collision A1.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A2.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A3.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A4.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A5.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A6.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A7.mp3",
+                        "./audio/AngryBird/Sfx - Ice Light Collision A8.mp3"
+                    ],
+                    "health": 50.0,
+                    "maxHealth": 50.0,
+                    "stageImages": [
+                        "./assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass021.png",
+                        "./assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass026.png",
+                        "./assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass053.png"
+                    ]
+                },
+                "RigidBody": {
+                    "FixedRotation": false,
+                    "Type": 2
+                },
+                "Sprite": {
+                    "color": {
+                        "a": 255,
+                        "b": 255,
+                        "g": 255,
+                        "r": 255
+                    },
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "path": "./assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass021.png",
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 0.75,
+                        "y": 2.25
+                    }
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": true,
+            "position": {
+                "x": 15.450000762939453,
+                "y": 4.175000190734863
+            },
+            "rotation": 1.5707963705062866,
+            "size": {
+                "x": 0.75,
+                "y": 2.25
+            },
+            "z": 0
+        },
+        "Ground": {
+            "components": {
+                "Atlas": {
+                    "color": {
+                        "a": 255,
+                        "b": 255,
+                        "g": 255,
+                        "r": 255
+                    },
+                    "destinations": {
+                        "0": {
+                            "0": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "1": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "10": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "11": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "12": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "13": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "14": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "15": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "16": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "17": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "18": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "19": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "2": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "20": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "21": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "22": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "23": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "24": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "25": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "26": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "27": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "28": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "29": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "3": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "30": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "31": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "32": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "33": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "34": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "35": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "36": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "37": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "38": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "39": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "4": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "40": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "41": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "42": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "43": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "44": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "45": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "46": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "47": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "48": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "49": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "5": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "50": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "51": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "52": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "53": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "54": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "55": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "56": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "57": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "58": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "59": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "6": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "60": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "61": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "62": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "63": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "64": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "65": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "66": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "67": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "68": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "69": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "7": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "70": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "71": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "72": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "73": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "74": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "75": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "8": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            },
+                            "9": {
+                                "h": 128,
+                                "w": 128,
+                                "x": 0,
+                                "y": 0
+                            }
+                        }
+                    },
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "path": "assets/Kenney/Physics Assets/PNG/Other/grass.png",
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 1.0,
+                        "y": 1.0
+                    },
+                    "sources": {
+                        "ground": {
+                            "h": 128,
+                            "w": 128,
+                            "x": 0,
+                            "y": 0
+                        }
+                    },
+                    "tileHeight": 1,
+                    "tileWidth": 76
+                },
+                "Box": {
+                    "BoxCollider": {
+                        "CanDraw": false,
+                        "density": 1.0,
+                        "friction": 0.30000001192092896,
+                        "restitution": 0.5,
+                        "size": {
+                            "x": 38.0,
+                            "y": 0.5
+                        }
+                    },
+                    "Sensor": false,
+                    "debugColor": {
+                        "a": 255,
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "fillDraw": false,
+                    "filter": 1,
+                    "shapeColor": {
+                        "a": 255,
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "shapeDraw": false,
+                    "type": "Box"
+                },
+                "RigidBody": {
+                    "FixedRotation": true,
+                    "Type": 0
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": true,
+            "position": {
+                "x": 0.0,
+                "y": 10.300000190734863
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 76.0,
+                "y": 1.0
+            },
+            "z": 0
+        },
+        "SaveButton": {
+            "components": {
+                "Box": {
+                    "BoxCollider": {
+                        "CanDraw": false,
+                        "density": 1.0,
+                        "friction": 0.30000001192092896,
+                        "restitution": 0.5,
+                        "size": {
+                            "x": 0.9700000286102295,
+                            "y": 0.6100000143051147
+                        }
+                    },
+                    "Sensor": true,
+                    "debugColor": {
+                        "a": 255,
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "fillDraw": false,
+                    "filter": 8,
+                    "shapeColor": {
+                        "a": 255,
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "shapeDraw": false,
+                    "type": "Box"
+                },
+                "Button": {
+                    "Sprite": {
+                        "color": {
+                            "a": 255,
+                            "b": 255,
+                            "g": 255,
+                            "r": 255
+                        },
+                        "flip": {
+                            "h": false,
+                            "v": false
+                        },
+                        "path": "",
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "size": {
+                            "x": 1.0,
+                            "y": 1.0
+                        }
+                    },
+                    "Text": {
+                        "Background": false,
+                        "BackgroundColor": [
+                            0,
+                            0,
+                            0,
+                            255
+                        ],
+                        "Text": "save",
+                        "TextSize": [
+                            1.440000057220459,
+                            0.7200000286102295
+                        ],
+                        "backgroundOffset": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "color": {
+                            "a": 255,
+                            "b": 0,
+                            "g": 0,
+                            "r": 0
+                        },
+                        "fixed": false,
+                        "flip": {
+                            "h": false,
+                            "v": false
+                        },
+                        "fontSize": 24,
+                        "path": "./fonts/Kenney/Kenney Blocks.ttf",
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "size": {
+                            "x": 1.0,
+                            "y": 1.0
+                        }
+                    },
+                    "background": true,
+                    "buttonText": "save",
+                    "draw": false,
+                    "message": "save",
+                    "outlineColor": {
+                        "a": 255,
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "sizeFitToText": true,
+                    "textFont": "./fonts/Kenney/Kenney Blocks.ttf",
+                    "textSize": 24
+                },
+                "RigidBody": {
+                    "FixedRotation": false,
+                    "Type": 0
+                },
+                "Sprite": {
+                    "color": {
+                        "a": 255,
+                        "b": 255,
+                        "g": 255,
+                        "r": 255
+                    },
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "path": "",
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 1.0,
+                        "y": 1.0
+                    }
+                },
+                "Text": {
+                    "Background": false,
+                    "BackgroundColor": [
+                        0,
+                        0,
+                        0,
+                        255
+                    ],
+                    "Text": "save",
+                    "TextSize": [
+                        1.440000057220459,
+                        0.7200000286102295
+                    ],
+                    "backgroundOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "color": {
+                        "a": 255,
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "fixed": false,
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "fontSize": 24,
+                    "path": "./fonts/Kenney/Kenney Blocks.ttf",
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 1.0,
+                        "y": 1.0
+                    }
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": true,
+            "position": {
+                "x": 0.0,
+                "y": -8.800000190734863
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "z": 10
+        },
+        "abMenuButton": {
+            "components": {
+                "Box": {
+                    "BoxCollider": {
+                        "CanDraw": false,
+                        "density": 1.0,
+                        "friction": 0.30000001192092896,
+                        "restitution": 0.5,
+                        "size": {
+                            "x": 1.0299999713897705,
+                            "y": 0.6100000143051147
+                        }
+                    },
+                    "Sensor": true,
+                    "debugColor": {
+                        "a": 255,
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "fillDraw": false,
+                    "filter": 8,
+                    "shapeColor": {
+                        "a": 255,
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "shapeDraw": false,
+                    "type": "Box"
+                },
+                "Button": {
+                    "Sprite": {
+                        "color": {
+                            "a": 255,
+                            "b": 255,
+                            "g": 255,
+                            "r": 255
+                        },
+                        "flip": {
+                            "h": false,
+                            "v": false
+                        },
+                        "path": "",
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "size": {
+                            "x": 1.0,
+                            "y": 1.0
+                        }
+                    },
+                    "Text": {
+                        "Background": false,
+                        "BackgroundColor": [
+                            0,
+                            0,
+                            0,
+                            255
+                        ],
+                        "Text": "menu",
+                        "TextSize": [
+                            1.559999942779541,
+                            0.7200000286102295
+                        ],
+                        "backgroundOffset": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "color": {
+                            "a": 255,
+                            "b": 0,
+                            "g": 0,
+                            "r": 0
+                        },
+                        "fixed": false,
+                        "flip": {
+                            "h": false,
+                            "v": false
+                        },
+                        "fontSize": 24,
+                        "path": "./fonts/Kenney/Kenney Blocks.ttf",
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "size": {
+                            "x": 1.0,
+                            "y": 1.0
+                        }
+                    },
+                    "background": true,
+                    "buttonText": "menu",
+                    "draw": false,
+                    "message": "menu",
+                    "outlineColor": {
+                        "a": 255,
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "sizeFitToText": true,
+                    "textFont": "./fonts/Kenney/Kenney Blocks.ttf",
+                    "textSize": 24
+                },
+                "RigidBody": {
+                    "FixedRotation": false,
+                    "Type": 0
+                },
+                "Sprite": {
+                    "color": {
+                        "a": 255,
+                        "b": 255,
+                        "g": 255,
+                        "r": 255
+                    },
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "path": "",
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 1.0,
+                        "y": 1.0
+                    }
+                },
+                "Text": {
+                    "Background": false,
+                    "BackgroundColor": [
+                        0,
+                        0,
+                        0,
+                        255
+                    ],
+                    "Text": "menu",
+                    "TextSize": [
+                        1.559999942779541,
+                        0.7200000286102295
+                    ],
+                    "backgroundOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "color": {
+                        "a": 255,
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "fixed": false,
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "fontSize": 24,
+                    "path": "./fonts/Kenney/Kenney Blocks.ttf",
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 1.0,
+                        "y": 1.0
+                    }
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": true,
+            "position": {
+                "x": 1.5,
+                "y": -9.800000190734863
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "z": 10
+        },
+        "anchor": {
+            "enable": true,
+            "layer": "",
+            "physics": false,
+            "position": {
+                "x": -11.819999694824219,
+                "y": 6.300000190734863
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 1.0,
+                "y": 1.0
+            },
+            "z": 0
+        },
+        "bird1": {
+            "components": {
+                "AngryBirdController": null,
+                "Circle": {
+                    "Collider": {
+                        "CanDraw": false,
+                        "Density": 3.0,
+                        "Friction": 0.30000001192092896,
+                        "PositionOffset": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "Radius": 0.5,
+                        "Restitution": 0.5
+                    },
+                    "Sensor": false,
+                    "debugColor": {
+                        "a": 255,
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "fillDraw": false,
+                    "filter": 1,
+                    "shapeColor": {
+                        "a": 255,
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "shapeDraw": false
+                },
+                "Sprite": {
+                    "color": {
+                        "a": 255,
+                        "b": 255,
+                        "g": 255,
+                        "r": 255
+                    },
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "path": "./assets/Kenney/Physics Assets/PNG/Aliens/alienGreen_round.png",
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 1.0,
+                        "y": 1.0
+                    }
+                }
+            },
+            "enable": true,
+            "layer": "Projectile",
+            "physics": false,
+            "position": {
+                "x": -11.819999694824219,
+                "y": 6.300000190734863
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 1.0,
+                "y": 1.0
+            },
+            "z": 1
+        },
+        "resetButton": {
+            "components": {
+                "Box": {
+                    "BoxCollider": {
+                        "CanDraw": false,
+                        "density": 1.0,
+                        "friction": 0.30000001192092896,
+                        "restitution": 0.5,
+                        "size": {
+                            "x": 1.149999976158142,
+                            "y": 0.6100000143051147
+                        }
+                    },
+                    "Sensor": true,
+                    "debugColor": {
+                        "a": 255,
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "fillDraw": false,
+                    "filter": 8,
+                    "shapeColor": {
+                        "a": 255,
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "shapeDraw": false,
+                    "type": "Box"
+                },
+                "Button": {
+                    "Sprite": {
+                        "color": {
+                            "a": 255,
+                            "b": 255,
+                            "g": 255,
+                            "r": 255
+                        },
+                        "flip": {
+                            "h": false,
+                            "v": false
+                        },
+                        "path": "",
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "size": {
+                            "x": 1.0,
+                            "y": 1.0
+                        }
+                    },
+                    "Text": {
+                        "Background": false,
+                        "BackgroundColor": [
+                            0,
+                            0,
+                            0,
+                            255
+                        ],
+                        "Text": "reset",
+                        "TextSize": [
+                            1.7999999523162842,
+                            0.7200000286102295
+                        ],
+                        "backgroundOffset": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "color": {
+                            "a": 255,
+                            "b": 0,
+                            "g": 0,
+                            "r": 0
+                        },
+                        "fixed": false,
+                        "flip": {
+                            "h": false,
+                            "v": false
+                        },
+                        "fontSize": 24,
+                        "path": "./fonts/Kenney/Kenney Blocks.ttf",
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "size": {
+                            "x": 1.0,
+                            "y": 1.0
+                        }
+                    },
+                    "background": true,
+                    "buttonText": "reset",
+                    "draw": false,
+                    "message": "reset",
+                    "outlineColor": {
+                        "a": 255,
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "sizeFitToText": true,
+                    "textFont": "./fonts/Kenney/Kenney Blocks.ttf",
+                    "textSize": 24
+                },
+                "RigidBody": {
+                    "FixedRotation": false,
+                    "Type": 0
+                },
+                "Sprite": {
+                    "color": {
+                        "a": 255,
+                        "b": 255,
+                        "g": 255,
+                        "r": 255
+                    },
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "path": "",
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 1.0,
+                        "y": 1.0
+                    }
+                },
+                "Text": {
+                    "Background": false,
+                    "BackgroundColor": [
+                        0,
+                        0,
+                        0,
+                        255
+                    ],
+                    "Text": "reset",
+                    "TextSize": [
+                        1.7999999523162842,
+                        0.7200000286102295
+                    ],
+                    "backgroundOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "color": {
+                        "a": 255,
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "fixed": false,
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "fontSize": 24,
+                    "path": "./fonts/Kenney/Kenney Blocks.ttf",
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 1.0,
+                        "y": 1.0
+                    }
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": true,
+            "position": {
+                "x": -1.5,
+                "y": -9.800000190734863
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "z": 10
+        },
+        "slignshot1": {
+            "components": {
+                "Sprite": {
+                    "color": {
+                        "a": 255,
+                        "b": 255,
+                        "g": 255,
+                        "r": 255
+                    },
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "path": "assets/slignshot1.png",
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 2.0,
+                        "y": 4.0
+                    }
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": false,
+            "position": {
+                "x": -12.0,
+                "y": 7.800000190734863
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 2.0,
+                "y": 4.0
+            },
+            "z": 0
+        },
+        "slignshot2": {
+            "components": {
+                "Sprite": {
+                    "color": {
+                        "a": 255,
+                        "b": 255,
+                        "g": 255,
+                        "r": 255
+                    },
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "path": "assets/slignshot2.png",
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 2.0,
+                        "y": 4.0
+                    }
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": false,
+            "position": {
+                "x": -12.0,
+                "y": 7.800000190734863
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 2.0,
+                "y": 4.0
+            },
+            "z": 2
+        }
+    },
+    "sceneName": "Ag_Lvl_1"
+}

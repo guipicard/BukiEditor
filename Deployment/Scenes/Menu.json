@@ -1,0 +1,807 @@
+{
+    "camera": {
+        "height": 1080,
+        "width": 1920,
+        "x": 0.0,
+        "y": 0.0
+    },
+    "entities": {
+        "AbPlayButton": {
+            "components": {
+                "Box": {
+                    "BoxCollider": {
+                        "CanDraw": false,
+                        "density": 1.0,
+                        "friction": 0.30000001192092896,
+                        "restitution": 0.5,
+                        "size": {
+                            "x": 4.319999694824219,
+                            "y": 1.0399999618530273
+                        }
+                    },
+                    "Sensor": true,
+                    "debugColor": {
+                        "a": 255,
+                        "b": 255,
+                        "g": 255,
+                        "r": 255
+                    },
+                    "fillDraw": false,
+                    "filter": 8,
+                    "shapeColor": {
+                        "a": 255,
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "shapeDraw": false,
+                    "type": "Box"
+                },
+                "Button": {
+                    "Sprite": {
+                        "color": {
+                            "a": 255,
+                            "b": 255,
+                            "g": 255,
+                            "r": 255
+                        },
+                        "flip": {
+                            "h": false,
+                            "v": false
+                        },
+                        "path": "",
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "size": {
+                            "x": 1.0,
+                            "y": 1.0
+                        }
+                    },
+                    "Text": {
+                        "Background": false,
+                        "BackgroundColor": [
+                            0,
+                            0,
+                            0,
+                            255
+                        ],
+                        "Text": "Angry Bird Demo",
+                        "TextSize": [
+                            7.639999866485596,
+                            1.0800000429153442
+                        ],
+                        "backgroundOffset": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "color": {
+                            "a": 255,
+                            "b": 255,
+                            "g": 255,
+                            "r": 255
+                        },
+                        "fixed": false,
+                        "flip": {
+                            "h": false,
+                            "v": false
+                        },
+                        "fontSize": 36,
+                        "path": "./fonts/Kenney/Kenney Blocks.ttf",
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "size": {
+                            "x": 1.0,
+                            "y": 1.0
+                        }
+                    },
+                    "background": true,
+                    "buttonText": "Angry Bird Demo",
+                    "draw": false,
+                    "message": "AngryBird",
+                    "outlineColor": {
+                        "a": 255,
+                        "b": 255,
+                        "g": 255,
+                        "r": 255
+                    },
+                    "sizeFitToText": true,
+                    "textFont": "./fonts/Kenney/Kenney Blocks.ttf",
+                    "textSize": 36
+                },
+                "RigidBody": {
+                    "FixedRotation": false,
+                    "Type": 0
+                },
+                "Sprite": {
+                    "color": {
+                        "a": 255,
+                        "b": 255,
+                        "g": 255,
+                        "r": 255
+                    },
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "path": "",
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 1.0,
+                        "y": 1.0
+                    }
+                },
+                "Text": {
+                    "Background": false,
+                    "BackgroundColor": [
+                        0,
+                        0,
+                        0,
+                        255
+                    ],
+                    "Text": "Angry Bird Demo",
+                    "TextSize": [
+                        7.639999866485596,
+                        1.0800000429153442
+                    ],
+                    "backgroundOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "color": {
+                        "a": 255,
+                        "b": 255,
+                        "g": 255,
+                        "r": 255
+                    },
+                    "fixed": false,
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "fontSize": 36,
+                    "path": "./fonts/Kenney/Kenney Blocks.ttf",
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 1.0,
+                        "y": 1.0
+                    }
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": true,
+            "position": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 1.0,
+                "y": 1.0
+            },
+            "z": 10
+        },
+        "PlatformerPlayButton": {
+            "components": {
+                "Box": {
+                    "BoxCollider": {
+                        "CanDraw": false,
+                        "density": 1.0,
+                        "friction": 0.30000001192092896,
+                        "restitution": 0.5,
+                        "size": {
+                            "x": 3.2899999618530273,
+                            "y": 1.0399999618530273
+                        }
+                    },
+                    "Sensor": true,
+                    "debugColor": {
+                        "a": 255,
+                        "b": 255,
+                        "g": 255,
+                        "r": 255
+                    },
+                    "fillDraw": false,
+                    "filter": 8,
+                    "shapeColor": {
+                        "a": 255,
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "shapeDraw": false,
+                    "type": "Box"
+                },
+                "Button": {
+                    "Sprite": {
+                        "color": {
+                            "a": 255,
+                            "b": 255,
+                            "g": 255,
+                            "r": 255
+                        },
+                        "flip": {
+                            "h": false,
+                            "v": false
+                        },
+                        "path": "",
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "size": {
+                            "x": 1.0,
+                            "y": 1.0
+                        }
+                    },
+                    "Text": {
+                        "Background": false,
+                        "BackgroundColor": [
+                            0,
+                            0,
+                            0,
+                            255
+                        ],
+                        "Text": "Platformer",
+                        "TextSize": [
+                            5.579999923706055,
+                            1.0800000429153442
+                        ],
+                        "backgroundOffset": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "color": {
+                            "a": 255,
+                            "b": 255,
+                            "g": 255,
+                            "r": 255
+                        },
+                        "fixed": false,
+                        "flip": {
+                            "h": false,
+                            "v": false
+                        },
+                        "fontSize": 36,
+                        "path": "./fonts/Kenney/Kenney Blocks.ttf",
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "size": {
+                            "x": 1.0,
+                            "y": 1.0
+                        }
+                    },
+                    "background": true,
+                    "buttonText": "Platformer",
+                    "draw": false,
+                    "message": "Platformer",
+                    "outlineColor": {
+                        "a": 255,
+                        "b": 255,
+                        "g": 255,
+                        "r": 255
+                    },
+                    "sizeFitToText": true,
+                    "textFont": "./fonts/Kenney/Kenney Blocks.ttf",
+                    "textSize": 36
+                },
+                "RigidBody": {
+                    "FixedRotation": false,
+                    "Type": 0
+                },
+                "Sprite": {
+                    "color": {
+                        "a": 255,
+                        "b": 255,
+                        "g": 255,
+                        "r": 255
+                    },
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "path": "",
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 1.0,
+                        "y": 1.0
+                    }
+                },
+                "Text": {
+                    "Background": false,
+                    "BackgroundColor": [
+                        0,
+                        0,
+                        0,
+                        255
+                    ],
+                    "Text": "Platformer",
+                    "TextSize": [
+                        5.579999923706055,
+                        1.0800000429153442
+                    ],
+                    "backgroundOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "color": {
+                        "a": 255,
+                        "b": 255,
+                        "g": 255,
+                        "r": 255
+                    },
+                    "fixed": false,
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "fontSize": 36,
+                    "path": "./fonts/Kenney/Kenney Blocks.ttf",
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 1.0,
+                        "y": 1.0
+                    }
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": true,
+            "position": {
+                "x": 0.0,
+                "y": 4.320000171661377
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 1.0,
+                "y": 1.0
+            },
+            "z": 10
+        },
+        "QuitButton": {
+            "components": {
+                "Box": {
+                    "BoxCollider": {
+                        "CanDraw": false,
+                        "density": 1.0,
+                        "friction": 0.30000001192092896,
+                        "restitution": 0.5,
+                        "size": {
+                            "x": 1.5800000429153442,
+                            "y": 1.0399999618530273
+                        }
+                    },
+                    "Sensor": true,
+                    "debugColor": {
+                        "a": 255,
+                        "b": 255,
+                        "g": 255,
+                        "r": 255
+                    },
+                    "fillDraw": false,
+                    "filter": 8,
+                    "shapeColor": {
+                        "a": 255,
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "shapeDraw": false,
+                    "type": "Box"
+                },
+                "Button": {
+                    "Sprite": {
+                        "color": {
+                            "a": 255,
+                            "b": 255,
+                            "g": 255,
+                            "r": 255
+                        },
+                        "flip": {
+                            "h": false,
+                            "v": false
+                        },
+                        "path": "",
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "size": {
+                            "x": 1.0,
+                            "y": 1.0
+                        }
+                    },
+                    "Text": {
+                        "Background": false,
+                        "BackgroundColor": [
+                            0,
+                            0,
+                            0,
+                            255
+                        ],
+                        "Text": "Quit",
+                        "TextSize": [
+                            2.1600000858306885,
+                            1.0800000429153442
+                        ],
+                        "backgroundOffset": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "color": {
+                            "a": 255,
+                            "b": 255,
+                            "g": 255,
+                            "r": 255
+                        },
+                        "fixed": false,
+                        "flip": {
+                            "h": false,
+                            "v": false
+                        },
+                        "fontSize": 36,
+                        "path": "./fonts/Kenney/Kenney Blocks.ttf",
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "size": {
+                            "x": 1.0,
+                            "y": 1.0
+                        }
+                    },
+                    "background": true,
+                    "buttonText": "Quit",
+                    "draw": false,
+                    "message": "Quit",
+                    "outlineColor": {
+                        "a": 255,
+                        "b": 255,
+                        "g": 255,
+                        "r": 255
+                    },
+                    "sizeFitToText": true,
+                    "textFont": "./fonts/Kenney/Kenney Blocks.ttf",
+                    "textSize": 36
+                },
+                "RigidBody": {
+                    "FixedRotation": false,
+                    "Type": 0
+                },
+                "Sprite": {
+                    "color": {
+                        "a": 255,
+                        "b": 255,
+                        "g": 255,
+                        "r": 255
+                    },
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "path": "",
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 1.0,
+                        "y": 1.0
+                    }
+                },
+                "Text": {
+                    "Background": false,
+                    "BackgroundColor": [
+                        0,
+                        0,
+                        0,
+                        255
+                    ],
+                    "Text": "Quit",
+                    "TextSize": [
+                        2.1600000858306885,
+                        1.0800000429153442
+                    ],
+                    "backgroundOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "color": {
+                        "a": 255,
+                        "b": 255,
+                        "g": 255,
+                        "r": 255
+                    },
+                    "fixed": false,
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "fontSize": 36,
+                    "path": "./fonts/Kenney/Kenney Blocks.ttf",
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 1.0,
+                        "y": 1.0
+                    }
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": true,
+            "position": {
+                "x": 0.0,
+                "y": 8.640000343322754
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 1.0,
+                "y": 1.0
+            },
+            "z": 10
+        },
+        "ShapesPlayButton": {
+            "components": {
+                "Box": {
+                    "BoxCollider": {
+                        "CanDraw": false,
+                        "density": 1.0,
+                        "friction": 0.30000001192092896,
+                        "restitution": 0.5,
+                        "size": {
+                            "x": 3.4000000953674316,
+                            "y": 1.0399999618530273
+                        }
+                    },
+                    "Sensor": true,
+                    "debugColor": {
+                        "a": 255,
+                        "b": 255,
+                        "g": 255,
+                        "r": 255
+                    },
+                    "fillDraw": false,
+                    "filter": 8,
+                    "shapeColor": {
+                        "a": 255,
+                        "b": 0,
+                        "g": 0,
+                        "r": 0
+                    },
+                    "shapeDraw": false,
+                    "type": "Box"
+                },
+                "Button": {
+                    "Sprite": {
+                        "color": {
+                            "a": 255,
+                            "b": 255,
+                            "g": 255,
+                            "r": 255
+                        },
+                        "flip": {
+                            "h": false,
+                            "v": false
+                        },
+                        "path": "",
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "size": {
+                            "x": 1.0,
+                            "y": 1.0
+                        }
+                    },
+                    "Text": {
+                        "Background": false,
+                        "BackgroundColor": [
+                            0,
+                            0,
+                            0,
+                            255
+                        ],
+                        "Text": "Shapes Demo",
+                        "TextSize": [
+                            5.800000190734863,
+                            1.0800000429153442
+                        ],
+                        "backgroundOffset": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "color": {
+                            "a": 255,
+                            "b": 255,
+                            "g": 255,
+                            "r": 255
+                        },
+                        "fixed": false,
+                        "flip": {
+                            "h": false,
+                            "v": false
+                        },
+                        "fontSize": 36,
+                        "path": "./fonts/Kenney/Kenney Blocks.ttf",
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "size": {
+                            "x": 1.0,
+                            "y": 1.0
+                        }
+                    },
+                    "background": true,
+                    "buttonText": "Shapes Demo",
+                    "draw": false,
+                    "message": "Shapes",
+                    "outlineColor": {
+                        "a": 255,
+                        "b": 255,
+                        "g": 255,
+                        "r": 255
+                    },
+                    "sizeFitToText": true,
+                    "textFont": "./fonts/Kenney/Kenney Blocks.ttf",
+                    "textSize": 36
+                },
+                "RigidBody": {
+                    "FixedRotation": false,
+                    "Type": 0
+                },
+                "Sprite": {
+                    "color": {
+                        "a": 255,
+                        "b": 255,
+                        "g": 255,
+                        "r": 255
+                    },
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "path": "",
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 1.0,
+                        "y": 1.0
+                    }
+                },
+                "Text": {
+                    "Background": false,
+                    "BackgroundColor": [
+                        0,
+                        0,
+                        0,
+                        255
+                    ],
+                    "Text": "Shapes Demo",
+                    "TextSize": [
+                        5.800000190734863,
+                        1.0800000429153442
+                    ],
+                    "backgroundOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "color": {
+                        "a": 255,
+                        "b": 255,
+                        "g": 255,
+                        "r": 255
+                    },
+                    "fixed": false,
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "fontSize": 36,
+                    "path": "./fonts/Kenney/Kenney Blocks.ttf",
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 1.0,
+                        "y": 1.0
+                    }
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": true,
+            "position": {
+                "x": 0.0,
+                "y": -4.320000171661377
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 1.0,
+                "y": 1.0
+            },
+            "z": 10
+        },
+        "Title": {
+            "components": {
+                "Text": {
+                    "Background": false,
+                    "BackgroundColor": [
+                        0,
+                        0,
+                        0,
+                        255
+                    ],
+                    "Text": "Press Enter To Switch Scenes",
+                    "TextSize": [
+                        18.719999313354492,
+                        1.440000057220459
+                    ],
+                    "backgroundOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "color": {
+                        "a": 255,
+                        "b": 255,
+                        "g": 255,
+                        "r": 255
+                    },
+                    "fixed": false,
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "fontSize": 48,
+                    "path": "./fonts/Kenney/Kenney Blocks.ttf",
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 1.0,
+                        "y": 1.0
+                    }
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": false,
+            "position": {
+                "x": 0.0,
+                "y": -8.640000343322754
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 1.0,
+                "y": 1.0
+            },
+            "z": 0
+        }
+    },
+    "sceneName": "Menu"
+}

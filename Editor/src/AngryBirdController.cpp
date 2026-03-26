@@ -1,0 +1,236 @@
+#pragma once
+#include "AngryBirdController.h"
+#include "Engine.h"
+#include "RigidBody.h"
+#include "Circle.h"
+#include "Prefabs.h"
+#include "Spawner.h"
+#include "ComponentRegistration.h"
+#include "Camera.h"
+
+REGISTER_COMPONENT(AngryBirdController, "AngryBirdController");
+
+buki::AngryBirdController::AngryBirdController(Entity* _entity)
+	: MonoBehaviour(_entity)
+{
+	Awake();
+}
+
+void buki::AngryBirdController::Awake()
+{
+}
+
+void buki::AngryBirdController::Start()
+{
+	Spawner* spawner = m_Entity->GetComponent<Spawner>();
+	if (spawner == nullptr)
+	{
+		spawner = m_Entity->AddComponent<Spawner>();
+	}
+	spawner->AddPrototype("StoneSlim", new StoneSlim());
+	//Spawner* spawner = World().Find("Spawner")->GetComponent<Spawner>();
+	anchor = World().Find("anchor");
+	anchorPos = anchor->GetTransform()->GetPosition();
+	clickPos = Vector2::ZERO;
+	forceMultiplier = 12.0f;
+	shotLength = 4.0f;
+	aimingSound = Audio().LoadSound("./Audio/AngryBird/Sfx - Slingshot Streched.mp3");
+	launchingSound = Audio().LoadSound("./Audio/AngryBird/Sfx - Globe Bird Launch 3.mp3");
+	AddCollisionSound("./Audio/AngryBird/Sfx - Globe Bird Hit 1.mp3");
+	AddCollisionSound("./Audio/AngryBird/Sfx - Globe Bird Hit 2.mp3");
+	AddCollisionSound("./Audio/AngryBird/Sfx - Globe Bird Hit 3.mp3");
+}
+
+void buki::AngryBirdController::Destroy()
+{
+}
+
+void buki::AngryBirdController::FixedUpdate(const float dt)
+{
+	debugUpdateCounter++;
+}
+
+void buki::AngryBirdController::Update(const float dt)
+{
+	if (Input().IsButtonDown(2))
+	{
+		Entity* groundEntity = World().Find("Ground");
+		Vector2 groundPos = groundEntity->GetTransform()->GetPosition();
+		Vector2 groundSize = groundEntity->GetTransform()->GetSize();
+		Spawner* spawner = m_Entity->GetComponent<Spawner>();
+		const Vector2 size = Vector2(0.75f, 2.25f);
+		Vector2 rectpos = { 0.0f, groundPos.y - (groundSize.y / 2.0f) - (size.x / 2.0f) };
+		//spawner->Spawn("StoneSlim", rectpos, size, 1.57079633f);
+		//spawner->Spawn("StoneSlim", rectpos, size, 1.57079633f);
+		rectpos.y = 0.0f;
+		rectpos.x -= size.x;
+		spawner->Spawn("StoneSlim", rectpos, size, 0.0f);
+		spawner->Spawn("StoneSlim", rectpos, size, 0.0f);
+		//rectpos.x += size.x*2;
+		//spawner->Spawn("StoneSlim", rectpos, size, 0.0f);
+	}
+
+	if (Engine::GetInstance().GetTimeScale() == 0.0f) return;
+	float x, y;
+	Input().GetMousePosition(&x, &y);
+	Vector2 mousePos = Vector2(x, y);
+	Vector2 birdPos = m_Entity->GetTransform()->GetPosition();
+	float birdRadius = m_Entity->GetTransform()->GetSize().x;
+	std::vector<Entity*> entities;
+	bool onUI = Physics().QueryPoint(mousePos, entities, 1 << 8);
+	if (Input().IsButtonDown(0) && !onUI)
+	{
+		if (!thrown)
+		{
+			aiming = true;
+			thrown = true;
+			clickPos = mousePos;
+			Audio().PlaySFX(aimingSound);
+		}
+		else
+		{
+			Reset();
+			thrown = false;
+		}
+	}
+	if (aiming)
+	{
+		if (Input().IsButtonUp(0))
+		{
+			if (aiming)
+			{
+				aiming = false;
+				clickPos = Vector2::ZERO;
+				Throw(anchorPos - m_Entity->GetTransform()->GetPosition());
+			}
+		}
+		else
+		{
+			Vector2 offset = clickPos - mousePos;
+			if (offset.Length() > shotLength) offset = offset.GetNormalized() * shotLength;
+			Vector2 slignPos = anchorPos - offset;
+			m_Entity->GetTransform()->SetPosition(slignPos);
+		}
+	}
+}
+
+void buki::AngryBirdController::OnCollisionEnter(Entity* other)
+{
+	if (other == nullptr) return;
+	RigidBody* rbA = other->GetComponent<RigidBody>();
+	RigidBody* rbB = m_Entity->GetComponent<RigidBody>();
+	if (rbA)
+	{
+		Vector2 velA = rbA->GetVelocity();
+		Vector2 velB = rbB->GetVelocity();
+		float massA = rbA->GetMass();
+		float massB = rbB->GetMass();
+		Vector2 vel = velA - velB;
+		float mass = massA + massB;
+		float dmg = (vel.Length() * mass);
+		if (dmg > soundDamageThreshold)
+		{
+			PlayCollisionSound();
+		}
+	}
+}
+
+void buki::AngryBirdController::OnCollisionExit(Entity* other)
+{
+}
+
+void buki::AngryBirdController::OnCollisionHit(Entity* other)
+{
+	Log().LogMessage("Collision HIT with: " + other->GetName());
+}
+
+json buki::AngryBirdController::Serialize()
+{
+	json doc;
+	return doc;
+}
+
+void buki::AngryBirdController::Deserialize(json _doc)
+{
+}
+
+void buki::AngryBirdController::Set()
+{
+}
+
+void buki::AngryBirdController::Throw(const Vector2 _v)
+{
+	m_Entity->ActivatePhysics();
+	Physics().LinearImpulse(m_Entity, _v * forceMultiplier, true);
+	Audio().PlaySFX(launchingSound);
+}
+
+void buki::AngryBirdController::Reset()
+{
+	m_Entity->DeactivatePhysics();
+	m_Entity->GetTransform()->SetPosition(anchorPos);
+	m_Entity->GetTransform()->SetRotation(0.0f);
+}
+
+void buki::AngryBirdController::EditorController()
+{
+	int scroll;
+	bool movingScreen = false;
+	if (Input().GetMouseScrollUp(&scroll))
+	{
+		float scale = (float)scroll;
+		Graphics().AddScale(scale);
+	}
+	else if (Input().GetMouseScrollDown(&scroll))
+	{
+		float scale = (float)scroll;
+		Graphics().SubScale(scale);
+	}
+	if (Input().IsButtonPressed(1))
+	{
+		movingScreen = true;
+	}
+	if (Input().IsButtonDown(1))
+	{
+		Input().GetMousePosition(&firstMousePos.x, &firstMousePos.y);
+	}
+	if (Input().IsButtonUp(1))
+	{
+		movingScreen = false;
+	}
+	if (movingScreen)
+	{
+		Vector2 cameraPos = Graphics().GetCamera()->GetPosition();
+		Vector2 mousePos;
+		Input().GetMousePosition(&mousePos.x, &mousePos.y);
+		Vector2 mouseDelta = mousePos - firstMousePos;
+		Graphics().GetCamera()->SetPosition(cameraPos - mouseDelta);
+		Input().GetMousePosition(&firstMousePos.x, &firstMousePos.y);
+	}
+	if (Input().IsKeyDown(EKey::EKEY_H))
+	{
+		float scale;
+		Graphics().SetScale(METRES_TO_PIXELS);
+		Graphics().GetScale(&scale);
+		Graphics().GetCamera()->SetPosition(Vector2(0.0f, 0.0f));
+	}
+	float timeScale = Engine::GetInstance().GetTimeScale();
+	if (Input().IsKeyDown(EKey::EKEY_SPACE))
+	{
+		Engine::GetInstance().SetTimeScale(timeScale == 1.0f ? 0.0f : 1.0f);
+	}
+}
+
+void buki::AngryBirdController::AddCollisionSound(const std::string& sound)
+{
+	size_t id = buki::Engine::GetInstance().Audio().LoadSound(sound);
+	collisionSounds.push_back(id);
+}
+
+void buki::AngryBirdController::PlayCollisionSound()
+{
+	if (collisionSounds.empty()) return;
+
+	int index = rand() % collisionSounds.size();
+	Audio().PlaySFX(collisionSounds[index]);
+}
