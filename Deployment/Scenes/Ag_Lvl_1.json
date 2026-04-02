@@ -41,8 +41,8 @@
                         "y": 0.0
                     },
                     "size": {
-                        "x": 21.600000381469727,
-                        "y": 21.600000381469727
+                        "x": 16.0,
+                        "y": 16.0
                     },
                     "sources": {
                         "bg": {
@@ -66,8 +66,8 @@
             },
             "rotation": 0.0,
             "size": {
-                "x": 43.20000076293945,
-                "y": 21.600000381469727
+                "x": 32.0,
+                "y": 16.0
             },
             "z": 0
         },
@@ -189,8 +189,12 @@
                     ]
                 },
                 "RigidBody": {
-                    "FixedRotation": false,
-                    "Type": 2
+                    "Type": 2,
+                    "motionLocks": [
+                        false,
+                        false,
+                        false
+                    ]
                 },
                 "Sprite": {
                     "color": {
@@ -218,8 +222,8 @@
             "layer": "",
             "physics": true,
             "position": {
-                "x": 13.200000762939453,
-                "y": 8.675000190734863
+                "x": 6.800000190734863,
+                "y": 5.875
             },
             "rotation": 0.0,
             "size": {
@@ -289,8 +293,12 @@
                     ]
                 },
                 "RigidBody": {
-                    "FixedRotation": false,
-                    "Type": 2
+                    "Type": 2,
+                    "motionLocks": [
+                        false,
+                        false,
+                        false
+                    ]
                 },
                 "Sprite": {
                     "color": {
@@ -318,8 +326,8 @@
             "layer": "",
             "physics": true,
             "position": {
-                "x": 15.450000762939453,
-                "y": 8.675000190734863
+                "x": 9.050000190734863,
+                "y": 5.875
             },
             "rotation": 0.0,
             "size": {
@@ -389,8 +397,12 @@
                     ]
                 },
                 "RigidBody": {
-                    "FixedRotation": false,
-                    "Type": 2
+                    "Type": 2,
+                    "motionLocks": [
+                        false,
+                        false,
+                        false
+                    ]
                 },
                 "Sprite": {
                     "color": {
@@ -418,8 +430,8 @@
             "layer": "",
             "physics": true,
             "position": {
-                "x": 17.700000762939453,
-                "y": 8.675000190734863
+                "x": 11.300000190734863,
+                "y": 5.875
             },
             "rotation": 0.0,
             "size": {
@@ -489,8 +501,12 @@
                     ]
                 },
                 "RigidBody": {
-                    "FixedRotation": false,
-                    "Type": 2
+                    "Type": 2,
+                    "motionLocks": [
+                        false,
+                        false,
+                        false
+                    ]
                 },
                 "Sprite": {
                     "color": {
@@ -518,8 +534,8 @@
             "layer": "",
             "physics": true,
             "position": {
-                "x": 16.575000762939453,
-                "y": 7.175000190734863
+                "x": 10.175000190734863,
+                "y": 4.375
             },
             "rotation": 1.5707963705062866,
             "size": {
@@ -589,8 +605,12 @@
                     ]
                 },
                 "RigidBody": {
-                    "FixedRotation": false,
-                    "Type": 2
+                    "Type": 2,
+                    "motionLocks": [
+                        false,
+                        false,
+                        false
+                    ]
                 },
                 "Sprite": {
                     "color": {
@@ -618,8 +638,8 @@
             "layer": "",
             "physics": true,
             "position": {
-                "x": 14.325000762939453,
-                "y": 7.175000190734863
+                "x": 7.925000190734863,
+                "y": 4.375
             },
             "rotation": 1.5707963705062866,
             "size": {
@@ -689,8 +709,12 @@
                     ]
                 },
                 "RigidBody": {
-                    "FixedRotation": false,
-                    "Type": 2
+                    "Type": 2,
+                    "motionLocks": [
+                        false,
+                        false,
+                        false
+                    ]
                 },
                 "Sprite": {
                     "color": {
@@ -718,8 +742,8 @@
             "layer": "",
             "physics": true,
             "position": {
-                "x": 16.575000762939453,
-                "y": 5.675000190734863
+                "x": 10.175000190734863,
+                "y": 2.875
             },
             "rotation": 0.0,
             "size": {
@@ -789,8 +813,12 @@
                     ]
                 },
                 "RigidBody": {
-                    "FixedRotation": false,
-                    "Type": 2
+                    "Type": 2,
+                    "motionLocks": [
+                        false,
+                        false,
+                        false
+                    ]
                 },
                 "Sprite": {
                     "color": {
@@ -818,8 +846,8 @@
             "layer": "",
             "physics": true,
             "position": {
-                "x": 14.325000762939453,
-                "y": 5.675000190734863
+                "x": 7.925000190734863,
+                "y": 2.875
             },
             "rotation": 0.0,
             "size": {
@@ -889,8 +917,12 @@
                     ]
                 },
                 "RigidBody": {
-                    "FixedRotation": false,
-                    "Type": 2
+                    "Type": 2,
+                    "motionLocks": [
+                        false,
+                        false,
+                        false
+                    ]
                 },
                 "Sprite": {
                     "color": {
@@ -918,8 +950,8 @@
             "layer": "",
             "physics": true,
             "position": {
-                "x": 15.450000762939453,
-                "y": 4.175000190734863
+                "x": 9.050000190734863,
+                "y": 1.375
             },
             "rotation": 1.5707963705062866,
             "size": {
@@ -1215,169 +1247,13 @@
                                 "x": 0,
                                 "y": 0
                             },
-                            "50": {
-                                "h": 128,
-                                "w": 128,
-                                "x": 0,
-                                "y": 0
-                            },
-                            "51": {
-                                "h": 128,
-                                "w": 128,
-                                "x": 0,
-                                "y": 0
-                            },
-                            "52": {
-                                "h": 128,
-                                "w": 128,
-                                "x": 0,
-                                "y": 0
-                            },
-                            "53": {
-                                "h": 128,
-                                "w": 128,
-                                "x": 0,
-                                "y": 0
-                            },
-                            "54": {
-                                "h": 128,
-                                "w": 128,
-                                "x": 0,
-                                "y": 0
-                            },
-                            "55": {
-                                "h": 128,
-                                "w": 128,
-                                "x": 0,
-                                "y": 0
-                            },
-                            "56": {
-                                "h": 128,
-                                "w": 128,
-                                "x": 0,
-                                "y": 0
-                            },
-                            "57": {
-                                "h": 128,
-                                "w": 128,
-                                "x": 0,
-                                "y": 0
-                            },
-                            "58": {
-                                "h": 128,
-                                "w": 128,
-                                "x": 0,
-                                "y": 0
-                            },
-                            "59": {
-                                "h": 128,
-                                "w": 128,
-                                "x": 0,
-                                "y": 0
-                            },
                             "6": {
                                 "h": 128,
                                 "w": 128,
                                 "x": 0,
                                 "y": 0
                             },
-                            "60": {
-                                "h": 128,
-                                "w": 128,
-                                "x": 0,
-                                "y": 0
-                            },
-                            "61": {
-                                "h": 128,
-                                "w": 128,
-                                "x": 0,
-                                "y": 0
-                            },
-                            "62": {
-                                "h": 128,
-                                "w": 128,
-                                "x": 0,
-                                "y": 0
-                            },
-                            "63": {
-                                "h": 128,
-                                "w": 128,
-                                "x": 0,
-                                "y": 0
-                            },
-                            "64": {
-                                "h": 128,
-                                "w": 128,
-                                "x": 0,
-                                "y": 0
-                            },
-                            "65": {
-                                "h": 128,
-                                "w": 128,
-                                "x": 0,
-                                "y": 0
-                            },
-                            "66": {
-                                "h": 128,
-                                "w": 128,
-                                "x": 0,
-                                "y": 0
-                            },
-                            "67": {
-                                "h": 128,
-                                "w": 128,
-                                "x": 0,
-                                "y": 0
-                            },
-                            "68": {
-                                "h": 128,
-                                "w": 128,
-                                "x": 0,
-                                "y": 0
-                            },
-                            "69": {
-                                "h": 128,
-                                "w": 128,
-                                "x": 0,
-                                "y": 0
-                            },
                             "7": {
-                                "h": 128,
-                                "w": 128,
-                                "x": 0,
-                                "y": 0
-                            },
-                            "70": {
-                                "h": 128,
-                                "w": 128,
-                                "x": 0,
-                                "y": 0
-                            },
-                            "71": {
-                                "h": 128,
-                                "w": 128,
-                                "x": 0,
-                                "y": 0
-                            },
-                            "72": {
-                                "h": 128,
-                                "w": 128,
-                                "x": 0,
-                                "y": 0
-                            },
-                            "73": {
-                                "h": 128,
-                                "w": 128,
-                                "x": 0,
-                                "y": 0
-                            },
-                            "74": {
-                                "h": 128,
-                                "w": 128,
-                                "x": 0,
-                                "y": 0
-                            },
-                            "75": {
                                 "h": 128,
                                 "w": 128,
                                 "x": 0,
@@ -1419,7 +1295,7 @@
                         }
                     },
                     "tileHeight": 1,
-                    "tileWidth": 76
+                    "tileWidth": 50
                 },
                 "Box": {
                     "BoxCollider": {
@@ -1428,7 +1304,7 @@
                         "friction": 0.30000001192092896,
                         "restitution": 0.5,
                         "size": {
-                            "x": 38.0,
+                            "x": 25.0,
                             "y": 0.5
                         }
                     },
@@ -1451,8 +1327,12 @@
                     "type": "Box"
                 },
                 "RigidBody": {
-                    "FixedRotation": true,
-                    "Type": 0
+                    "Type": 0,
+                    "motionLocks": [
+                        true,
+                        true,
+                        true
+                    ]
                 }
             },
             "enable": true,
@@ -1460,11 +1340,11 @@
             "physics": true,
             "position": {
                 "x": 0.0,
-                "y": 10.300000190734863
+                "y": 7.5
             },
             "rotation": 0.0,
             "size": {
-                "x": 76.0,
+                "x": 50.0,
                 "y": 1.0
             },
             "z": 0
@@ -1576,8 +1456,12 @@
                     "textSize": 24
                 },
                 "RigidBody": {
-                    "FixedRotation": false,
-                    "Type": 0
+                    "Type": 0,
+                    "motionLocks": [
+                        false,
+                        false,
+                        false
+                    ]
                 },
                 "Sprite": {
                     "color": {
@@ -1645,7 +1529,7 @@
             "physics": true,
             "position": {
                 "x": 0.0,
-                "y": -8.800000190734863
+                "y": -6.0
             },
             "rotation": 0.0,
             "size": {
@@ -1761,8 +1645,12 @@
                     "textSize": 24
                 },
                 "RigidBody": {
-                    "FixedRotation": false,
-                    "Type": 0
+                    "Type": 0,
+                    "motionLocks": [
+                        false,
+                        false,
+                        false
+                    ]
                 },
                 "Sprite": {
                     "color": {
@@ -1830,7 +1718,7 @@
             "physics": true,
             "position": {
                 "x": 1.5,
-                "y": -9.800000190734863
+                "y": -7.0
             },
             "rotation": 0.0,
             "size": {
@@ -1845,7 +1733,7 @@
             "physics": false,
             "position": {
                 "x": -11.819999694824219,
-                "y": 6.300000190734863
+                "y": 3.5
             },
             "rotation": 0.0,
             "size": {
@@ -1913,7 +1801,7 @@
             "physics": false,
             "position": {
                 "x": -11.819999694824219,
-                "y": 6.300000190734863
+                "y": 3.5
             },
             "rotation": 0.0,
             "size": {
@@ -2029,8 +1917,12 @@
                     "textSize": 24
                 },
                 "RigidBody": {
-                    "FixedRotation": false,
-                    "Type": 0
+                    "Type": 0,
+                    "motionLocks": [
+                        false,
+                        false,
+                        false
+                    ]
                 },
                 "Sprite": {
                     "color": {
@@ -2098,7 +1990,7 @@
             "physics": true,
             "position": {
                 "x": -1.5,
-                "y": -9.800000190734863
+                "y": -7.0
             },
             "rotation": 0.0,
             "size": {
@@ -2136,7 +2028,7 @@
             "physics": false,
             "position": {
                 "x": -12.0,
-                "y": 7.800000190734863
+                "y": 5.0
             },
             "rotation": 0.0,
             "size": {
@@ -2174,7 +2066,7 @@
             "physics": false,
             "position": {
                 "x": -12.0,
-                "y": 7.800000190734863
+                "y": 5.0
             },
             "rotation": 0.0,
             "size": {

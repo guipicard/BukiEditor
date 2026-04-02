@@ -4,7 +4,6 @@
 #include "draw.h"
 #include "random.h"
 #include "sample.h"
-#include "settings.h"
 
 #include "box2d/box2d.h"
 #include "box2d/math_functions.h"
@@ -16,13 +15,13 @@
 class SingleBox : public Sample
 {
 public:
-	explicit SingleBox( Settings& settings )
-		: Sample( settings )
+	explicit SingleBox( SampleContext* context )
+		: Sample( context )
 	{
-		if ( settings.restart == false )
+		if ( m_context->restart == false )
 		{
-			g_camera.m_center = { 0.0f, 2.5f };
-			g_camera.m_zoom = 3.5f;
+			m_context->camera.center = { 0.0f, 2.5f };
+			m_context->camera.zoom = 3.5f;
 		}
 
 		float extent = 1.0f;
@@ -32,29 +31,35 @@ public:
 
 		float groundWidth = 66.0f * extent;
 		b2ShapeDef shapeDef = b2DefaultShapeDef();
-		shapeDef.friction = 0.5f;
+		// shapeDef.friction = 0.5f;
 
 		b2Segment segment = { { -0.5f * 2.0f * groundWidth, 0.0f }, { 0.5f * 2.0f * groundWidth, 0.0f } };
 		b2CreateSegmentShape( groundId, &shapeDef, &segment );
 		bodyDef.type = b2_dynamicBody;
 
 		b2Polygon box = b2MakeBox( extent, extent );
-		bodyDef.position = { 0.0f, 4.0f };
-		b2BodyId bodyId = b2CreateBody( m_worldId, &bodyDef );
-		b2CreatePolygonShape( bodyId, &shapeDef, &box );
+		bodyDef.position = { 0.0f, 1.0f };
+		bodyDef.linearVelocity = { 5.0f, 0.0f };
+		m_bodyId = b2CreateBody( m_worldId, &bodyDef );
+		b2CreatePolygonShape( m_bodyId, &shapeDef, &box );
 	}
 
-	void Step( Settings& settings ) override
+	void Step() override
 	{
-		Sample::Step( settings );
+		Sample::Step();
 
-		// g_draw.DrawCircle({0.0f, 2.0f}, 1.0f, b2_colorWhite);
+		// DrawCircle({0.0f, 2.0f}, 1.0f, b2_colorWhite);
+
+		b2Vec2 position = b2Body_GetPosition( m_bodyId );
+		DrawTextLine( "(x, y) = (%.2g, %.2g)", position.x, position.y );
 	}
 
-	static Sample* Create( Settings& settings )
+	static Sample* Create( SampleContext* context )
 	{
-		return new SingleBox( settings );
+		return new SingleBox( context );
 	}
+
+	b2BodyId m_bodyId;
 };
 
 static int sampleSingleBox = RegisterSample( "Stacking", "Single Box", SingleBox::Create );
@@ -62,19 +67,13 @@ static int sampleSingleBox = RegisterSample( "Stacking", "Single Box", SingleBox
 class TiltedStack : public Sample
 {
 public:
-	enum
+	explicit TiltedStack( SampleContext* context )
+		: Sample( context )
 	{
-		e_columns = 10,
-		e_rows = 10,
-	};
-
-	explicit TiltedStack( Settings& settings )
-		: Sample( settings )
-	{
-		if ( settings.restart == false )
+		if ( m_context->restart == false )
 		{
-			g_camera.m_center = { 7.5f, 7.5f };
-			g_camera.m_zoom = 20.0f;
+			m_context->camera.center = { 7.5f, 7.5f };
+			m_context->camera.zoom = 20.0f;
 		}
 
 		{
@@ -87,7 +86,7 @@ public:
 			b2CreatePolygonShape( groundId, &shapeDef, &box );
 		}
 
-		for ( int i = 0; i < e_rows * e_columns; ++i )
+		for ( int i = 0; i < m_rows * m_columns; ++i )
 		{
 			m_bodies[i] = b2_nullBodyId;
 		}
@@ -96,22 +95,22 @@ public:
 
 		b2ShapeDef shapeDef = b2DefaultShapeDef();
 		shapeDef.density = 1.0f;
-		shapeDef.friction = 0.3f;
+		shapeDef.material.friction = 0.3f;
 
 		float offset = 0.2f;
 		float dx = 5.0f;
-		float xroot = -0.5f * dx * ( e_columns - 1.0f );
+		float xroot = -0.5f * dx * ( m_columns - 1.0f );
 
-		for ( int j = 0; j < e_columns; ++j )
+		for ( int j = 0; j < m_columns; ++j )
 		{
 			float x = xroot + j * dx;
 
-			for ( int i = 0; i < e_rows; ++i )
+			for ( int i = 0; i < m_rows; ++i )
 			{
 				b2BodyDef bodyDef = b2DefaultBodyDef();
 				bodyDef.type = b2_dynamicBody;
 
-				int n = j * e_rows + i;
+				int n = j * m_rows + i;
 
 				bodyDef.position = { x + offset * i, 0.5f + 1.0f * i };
 				b2BodyId bodyId = b2CreateBody( m_worldId, &bodyDef );
@@ -123,23 +122,31 @@ public:
 		}
 	}
 
-	static Sample* Create( Settings& settings )
+	static Sample* Create( SampleContext* context )
 	{
-		return new TiltedStack( settings );
+		return new TiltedStack( context );
 	}
 
-	b2BodyId m_bodies[e_rows * e_columns];
+	static constexpr int m_columns = 10;
+	static constexpr int m_rows = 10;
+
+	b2BodyId m_bodies[m_rows * m_columns];
 };
 
 static int sampleTiltedStack = RegisterSample( "Stacking", "Tilted Stack", TiltedStack::Create );
 
+// This sample shows some aspects of Box2D continuous collision:
+// - bullet dynamic bodies which support continuous collision with non-bullet dynamic bodies
+// - prevention of chain reaction tunneling
+// Try disabling continuous collision and firing a bullet. You might see a bullet push a
+// a through the static wall.
 class VerticalStack : public Sample
 {
 public:
 	enum
 	{
 		e_maxColumns = 10,
-		e_maxRows = 15,
+		e_maxRows = 80,
 		e_maxBullets = 8
 	};
 
@@ -149,25 +156,26 @@ public:
 		e_boxShape
 	};
 
-	explicit VerticalStack( Settings& settings )
-		: Sample( settings )
+	explicit VerticalStack( SampleContext* context )
+		: Sample( context )
 	{
-		if ( settings.restart == false )
+		if ( m_context->restart == false )
 		{
-			g_camera.m_center = { -7.0f, 9.0f };
-			g_camera.m_zoom = 14.0f;
+			m_context->camera.center = { -7.0f, 9.0f };
+			m_context->camera.zoom = 14.0f;
 		}
 
 		{
 			b2BodyDef bodyDef = b2DefaultBodyDef();
-			bodyDef.position = { 0.0f, -1.0f };
+			bodyDef.position = { 0.0f, 0.0f };
 			b2BodyId groundId = b2CreateBody( m_worldId, &bodyDef );
 
-			b2Polygon box = b2MakeBox( 100.0f, 1.0f );
 			b2ShapeDef shapeDef = b2DefaultShapeDef();
-			b2CreatePolygonShape( groundId, &shapeDef, &box );
 
-			b2Segment segment = { { 10.0f, 1.0f }, { 10.0f, 21.0f } };
+			b2Segment segment = { { 10.0f, 0.0f }, { 10.0f, 20.0f } };
+			b2CreateSegmentShape( groundId, &shapeDef, &segment );
+
+			segment = { { -30.0f, 0.0f }, { 30.0f, 0.0f } };
 			b2CreateSegmentShape( groundId, &shapeDef, &segment );
 		}
 
@@ -182,8 +190,8 @@ public:
 		}
 
 		m_shapeType = e_boxShape;
-		m_rowCount = e_maxRows;
-		m_columnCount = 5;
+		m_rowCount = 12;
+		m_columnCount = 1;
 		m_bulletCount = 1;
 		m_bulletType = e_circleShape;
 
@@ -201,15 +209,14 @@ public:
 			}
 		}
 
-		b2Circle circle = { 0 };
+		b2Circle circle = {};
 		circle.radius = 0.5f;
 
-		b2Polygon box = b2MakeBox( 0.5f, 0.5f );
-		// b2Polygon box = b2MakeRoundedBox(0.45f, 0.45f, 0.05f);
+		b2Polygon box = b2MakeRoundedBox( 0.45f, 0.45f, 0.05f );
 
 		b2ShapeDef shapeDef = b2DefaultShapeDef();
 		shapeDef.density = 1.0f;
-		shapeDef.friction = 0.3f;
+		shapeDef.material.friction = 0.3f;
 
 		float offset;
 
@@ -299,7 +306,7 @@ public:
 		{
 			b2BodyDef bodyDef = b2DefaultBodyDef();
 			bodyDef.type = b2_dynamicBody;
-			bodyDef.position = { -25.0f - i, 6.0f };
+			bodyDef.position = { -26.7f - i, 6.0f };
 			float speed = RandomFloatRange( 200.0f, 300.0f );
 			bodyDef.linearVelocity = { speed, 0.0f };
 			bodyDef.isBullet = true;
@@ -319,15 +326,37 @@ public:
 		}
 	}
 
-	void UpdateUI() override
+	void Keyboard( int key ) override
 	{
-		float height = 230.0f;
-		ImGui::SetNextWindowPos( ImVec2( 10.0f, g_camera.m_height - height - 50.0f ), ImGuiCond_Once );
-		ImGui::SetNextWindowSize( ImVec2( 240.0f, height ) );
+		bool consumed = false;
+
+		switch ( key )
+		{
+			case 'B':
+				FireBullets();
+				consumed = true;
+				break;
+
+			default:
+				break;
+		}
+
+		if ( consumed == false )
+		{
+			Sample::Keyboard( key );
+		}
+	}
+
+	void UpdateGui() override
+	{
+		float fontSize = ImGui::GetFontSize();
+		float height = 16.0f * fontSize;
+		ImGui::SetNextWindowPos( ImVec2( 0.5f * fontSize, m_camera->height - height - 2.0f * fontSize ), ImGuiCond_Once );
+		ImGui::SetNextWindowSize( ImVec2( 20.0f * fontSize, height ) );
 
 		ImGui::Begin( "Vertical Stack", nullptr, ImGuiWindowFlags_NoResize );
 
-		ImGui::PushItemWidth( 120.0f );
+		ImGui::PushItemWidth( 13.0f * fontSize );
 
 		bool changed = false;
 		const char* shapeTypes[] = { "Circle", "Box" };
@@ -347,7 +376,7 @@ public:
 
 		ImGui::PopItemWidth();
 
-		if ( ImGui::Button( "Fire Bullets" ) || glfwGetKey( g_mainWindow, GLFW_KEY_B ) == GLFW_PRESS )
+		if ( ImGui::Button( "Fire Bullets" ) )
 		{
 			DestroyBullets();
 			FireBullets();
@@ -369,9 +398,9 @@ public:
 		ImGui::End();
 	}
 
-	static Sample* Create( Settings& settings )
+	static Sample* Create( SampleContext* context )
 	{
-		return new VerticalStack( settings );
+		return new VerticalStack( context );
 	}
 
 	b2BodyId m_bullets[e_maxBullets];
@@ -394,13 +423,13 @@ public:
 		int indexA, indexB;
 	};
 
-	explicit CircleStack( Settings& settings )
-		: Sample( settings )
+	explicit CircleStack( SampleContext* context )
+		: Sample( context )
 	{
-		if ( settings.restart == false )
+		if ( m_context->restart == false )
 		{
-			g_camera.m_center = { 0.0f, 5.0f };
-			g_camera.m_zoom = 6.0f;
+			m_context->camera.center = { 0.0f, 5.0f };
+			m_context->camera.zoom = 6.0f;
 		}
 
 		int shapeIndex = 0;
@@ -420,34 +449,38 @@ public:
 		b2World_SetGravity( m_worldId, { 0.0f, -20.0f } );
 		b2World_SetContactTuning( m_worldId, 0.25f * 360.0f, 10.0f, 3.0f );
 
-		b2Circle circle = {};
-		circle.radius = 0.25f;
-
-		b2ShapeDef shapeDef = b2DefaultShapeDef();
-		shapeDef.enableHitEvents = true;
-
 		b2BodyDef bodyDef = b2DefaultBodyDef();
 		bodyDef.type = b2_dynamicBody;
 
-		float y = 0.5f;
+		b2Circle circle = {};
+		circle.radius = 0.5f;
 
-		for ( int i = 0; i < 8; ++i )
+		b2ShapeDef shapeDef = b2DefaultShapeDef();
+		shapeDef.enableHitEvents = true;
+		// shapeDef.rollingResistance = 0.2f;
+		shapeDef.material.friction = 0.0f;
+		shapeDef.material.restitution = 0.8f;
+
+		float y = 0.75f;
+
+		for ( int i = 0; i < 4; ++i )
 		{
 			bodyDef.position.y = y;
 
 			b2BodyId bodyId = b2CreateBody( m_worldId, &bodyDef );
 
 			shapeDef.userData = reinterpret_cast<void*>( intptr_t( shapeIndex ) );
+			shapeDef.density = 1.0f + 4.0f * i;
 			shapeIndex += 1;
 			b2CreateCircleShape( bodyId, &shapeDef, &circle );
 
-			y += 2.0f;
+			y += 1.25f;
 		}
 	}
 
-	void Step( Settings& settings ) override
+	void Step() override
 	{
-		Sample::Step( settings );
+		Sample::Step();
 
 		b2ContactEvents events = b2World_GetContactEvents( m_worldId );
 		for ( int i = 0; i < events.hitCount; ++i )
@@ -459,7 +492,7 @@ public:
 			int indexA = static_cast<int>( reinterpret_cast<intptr_t>( userDataA ) );
 			int indexB = static_cast<int>( reinterpret_cast<intptr_t>( userDataB ) );
 
-			g_draw.DrawPoint( event->point, 10.0f, b2_colorWhite );
+			DrawPoint( m_draw, event->point, 10.0f, b2_colorWhite );
 
 			m_events.push_back( { indexA, indexB } );
 		}
@@ -467,14 +500,13 @@ public:
 		int eventCount = (int)m_events.size();
 		for ( int i = 0; i < eventCount; ++i )
 		{
-			g_draw.DrawString( 5, m_textLine, "%d, %d", m_events[i].indexA, m_events[i].indexB );
-			m_textLine += m_textIncrement;
+			DrawTextLine( "%d, %d", m_events[i].indexA, m_events[i].indexB );
 		}
 	}
 
-	static Sample* Create( Settings& settings )
+	static Sample* Create( SampleContext* context )
 	{
-		return new CircleStack( settings );
+		return new CircleStack( context );
 	}
 
 	std::vector<Event> m_events;
@@ -482,16 +514,77 @@ public:
 
 static int sampleCircleStack = RegisterSample( "Stacking", "Circle Stack", CircleStack::Create );
 
+class CapsuleStack : public Sample
+{
+public:
+	struct Event
+	{
+		int indexA, indexB;
+	};
+
+	explicit CapsuleStack( SampleContext* context )
+		: Sample( context )
+	{
+		if ( m_context->restart == false )
+		{
+			m_context->camera.center = { 0.0f, 5.0f };
+			m_context->camera.zoom = 6.0f;
+		}
+
+		{
+			b2BodyDef bodyDef = b2DefaultBodyDef();
+			bodyDef.position = { 0.0f, -1.0f };
+			b2BodyId groundId = b2CreateBody( m_worldId, &bodyDef );
+
+			b2ShapeDef shapeDef = b2DefaultShapeDef();
+			b2Polygon polygon = b2MakeBox( 10.0f, 1.0f );
+			b2CreatePolygonShape( groundId, &shapeDef, &polygon );
+		}
+
+		b2BodyDef bodyDef = b2DefaultBodyDef();
+		bodyDef.type = b2_dynamicBody;
+
+		float a = 0.25f;
+		b2Capsule capsule = { { -4.0f * a, 0.0f }, { 4.0f * a, 0.0f }, a };
+
+		b2ShapeDef shapeDef = b2DefaultShapeDef();
+
+		// rolling resistance increases stacking stability
+		// shapeDef.rollingResistance = 0.2f;
+
+		float y = 2.0f * a;
+
+		for ( int i = 0; i < 20; ++i )
+		{
+			bodyDef.position.y = y;
+			// bodyDef.position.x += ( i & 1 ) == 1 ? -0.5f * a : 0.5f * a;
+			// bodyDef.linearVelocity = { 0.0f, -10.0f };
+			b2BodyId bodyId = b2CreateBody( m_worldId, &bodyDef );
+
+			b2CreateCapsuleShape( bodyId, &shapeDef, &capsule );
+
+			y += 3.0f * a;
+		}
+	}
+
+	static Sample* Create( SampleContext* context )
+	{
+		return new CapsuleStack( context );
+	}
+};
+
+static int sampleCapsuleStack = RegisterSample( "Stacking", "Capsule Stack", CapsuleStack::Create );
+
 class Cliff : public Sample
 {
 public:
-	explicit Cliff( Settings& settings )
-		: Sample( settings )
+	explicit Cliff( SampleContext* context )
+		: Sample( context )
 	{
-		if ( settings.restart == false )
+		if ( m_context->restart == false )
 		{
-			g_camera.m_zoom = 25.0f * 0.5f;
-			g_camera.m_center = { 0.0f, 5.0f };
+			m_context->camera.zoom = 25.0f * 0.5f;
+			m_context->camera.center = { 0.0f, 5.0f };
 		}
 
 		{
@@ -545,7 +638,7 @@ public:
 
 		{
 			b2ShapeDef shapeDef = b2DefaultShapeDef();
-			shapeDef.friction = 0.01f;
+			shapeDef.material.friction = 0.01f;
 			bodyDef.linearVelocity = { 2.0f * sign, 0.0f };
 
 			float offset = m_flip ? -4.0f : 0.0f;
@@ -565,7 +658,7 @@ public:
 
 		{
 			b2ShapeDef shapeDef = b2DefaultShapeDef();
-			shapeDef.friction = 0.01f;
+			shapeDef.material.friction = 0.01f;
 			bodyDef.linearVelocity = { 2.5f * sign, 0.0f };
 
 			bodyDef.position = { -11.0f, 4.5f };
@@ -583,7 +676,7 @@ public:
 
 		{
 			b2ShapeDef shapeDef = b2DefaultShapeDef();
-			shapeDef.friction = 0.2f;
+			shapeDef.material.friction = 0.2f;
 			bodyDef.linearVelocity = { 1.5f * sign, 0.0f };
 
 			float offset = m_flip ? 4.0f : 0.0f;
@@ -602,10 +695,11 @@ public:
 		}
 	}
 
-	void UpdateUI() override
+	void UpdateGui() override
 	{
+		float fontSize = ImGui::GetFontSize();
 		float height = 60.0f;
-		ImGui::SetNextWindowPos( ImVec2( 10.0f, g_camera.m_height - height - 50.0f ), ImGuiCond_Once );
+		ImGui::SetNextWindowPos( ImVec2( 0.5f * fontSize, m_camera->height - height - 2.0f * fontSize ), ImGuiCond_Once );
 		ImGui::SetNextWindowSize( ImVec2( 160.0f, height ) );
 
 		ImGui::Begin( "Cliff", nullptr, ImGuiWindowFlags_NoResize );
@@ -619,9 +713,9 @@ public:
 		ImGui::End();
 	}
 
-	static Sample* Create( Settings& settings )
+	static Sample* Create( SampleContext* context )
 	{
-		return new Cliff( settings );
+		return new Cliff( context );
 	}
 
 	b2BodyId m_bodyIds[9];
@@ -633,13 +727,13 @@ static int sampleCliff = RegisterSample( "Stacking", "Cliff", Cliff::Create );
 class Arch : public Sample
 {
 public:
-	explicit Arch( Settings& settings )
-		: Sample( settings )
+	explicit Arch( SampleContext* context )
+		: Sample( context )
 	{
-		if ( settings.restart == false )
+		if ( m_context->restart == false )
 		{
-			g_camera.m_center = { 0.0f, 8.0f };
-			g_camera.m_zoom = 25.0f * 0.35f;
+			m_context->camera.center = { 0.0f, 8.0f };
+			m_context->camera.zoom = 25.0f * 0.35f;
 		}
 
 		b2Vec2 ps1[9] = { { 16.0f, 0.0f },
@@ -670,7 +764,7 @@ public:
 		}
 
 		b2ShapeDef shapeDef = b2DefaultShapeDef();
-		shapeDef.friction = 0.6f;
+		shapeDef.material.friction = 0.6f;
 
 		{
 			b2BodyDef bodyDef = b2DefaultBodyDef();
@@ -720,9 +814,9 @@ public:
 		}
 	}
 
-	static Sample* Create( Settings& settings )
+	static Sample* Create( SampleContext* context )
 	{
-		return new Arch( settings );
+		return new Arch( context );
 	}
 };
 
@@ -731,13 +825,13 @@ static int sampleArch = RegisterSample( "Stacking", "Arch", Arch::Create );
 class DoubleDomino : public Sample
 {
 public:
-	explicit DoubleDomino( Settings& settings )
-		: Sample( settings )
+	explicit DoubleDomino( SampleContext* context )
+		: Sample( context )
 	{
-		if ( settings.restart == false )
+		if ( m_context->restart == false )
 		{
-			g_camera.m_center = { 0.0f, 4.0f };
-			g_camera.m_zoom = 25.0f * 0.25f;
+			m_context->camera.center = { 0.0f, 4.0f };
+			m_context->camera.zoom = 25.0f * 0.25f;
 		}
 
 		{
@@ -753,7 +847,7 @@ public:
 		b2Polygon box = b2MakeBox( 0.125f, 0.5f );
 
 		b2ShapeDef shapeDef = b2DefaultShapeDef();
-		shapeDef.friction = 0.6f;
+		shapeDef.material.friction = 0.6f;
 		b2BodyDef bodyDef = b2DefaultBodyDef();
 		bodyDef.type = b2_dynamicBody;
 
@@ -773,9 +867,9 @@ public:
 		}
 	}
 
-	static Sample* Create( Settings& settings )
+	static Sample* Create( SampleContext* context )
 	{
-		return new DoubleDomino( settings );
+		return new DoubleDomino( context );
 	}
 };
 
@@ -784,19 +878,13 @@ static int sampleDoubleDomino = RegisterSample( "Stacking", "Double Domino", Dou
 class Confined : public Sample
 {
 public:
-	enum
+	explicit Confined( SampleContext* context )
+		: Sample( context )
 	{
-		e_gridCount = 25,
-		e_maxCount = e_gridCount * e_gridCount
-	};
-
-	explicit Confined( Settings& settings )
-		: Sample( settings )
-	{
-		if ( settings.restart == false )
+		if ( m_context->restart == false )
 		{
-			g_camera.m_center = { 0.0f, 10.0f };
-			g_camera.m_zoom = 25.0f * 0.5f;
+			m_context->camera.center = { 0.0f, 10.0f };
+			m_context->camera.zoom = 25.0f * 0.5f;
 		}
 
 		{
@@ -826,13 +914,13 @@ public:
 		b2ShapeDef shapeDef = b2DefaultShapeDef();
 		b2Circle circle = { { 0.0f, 0.0f }, 0.5f };
 
-		while ( m_count < e_maxCount )
+		while ( m_count < m_maxCount )
 		{
 			m_row = 0;
-			for ( int i = 0; i < e_gridCount; ++i )
+			for ( int i = 0; i < m_gridCount; ++i )
 			{
-				float x = -8.75f + m_column * 18.0f / e_gridCount;
-				float y = 1.5f + m_row * 18.0f / e_gridCount;
+				float x = -8.75f + m_column * 18.0f / m_gridCount;
+				float y = 1.5f + m_row * 18.0f / m_gridCount;
 
 				bodyDef.position = { x, y };
 				b2BodyId bodyId = b2CreateBody( m_worldId, &bodyDef );
@@ -845,11 +933,13 @@ public:
 		}
 	}
 
-	static Sample* Create( Settings& settings )
+	static Sample* Create( SampleContext* context )
 	{
-		return new Confined( settings );
+		return new Confined( context );
 	}
 
+	static constexpr int m_gridCount = 25;
+	static constexpr int m_maxCount = m_gridCount * m_gridCount;
 	int m_row;
 	int m_column;
 	int m_count;
@@ -861,13 +951,13 @@ static int sampleConfined = RegisterSample( "Stacking", "Confined", Confined::Cr
 class CardHouse : public Sample
 {
 public:
-	explicit CardHouse( Settings& settings )
-		: Sample( settings )
+	explicit CardHouse( SampleContext* context )
+		: Sample( context )
 	{
-		if ( settings.restart == false )
+		if ( m_context->restart == false )
 		{
-			g_camera.m_center = { 0.75f, 0.9f };
-			g_camera.m_zoom = 25.0f * 0.05f;
+			m_context->camera.center = { 0.75f, 0.9f };
+			m_context->camera.zoom = 25.0f * 0.05f;
 		}
 
 		b2BodyDef bodyDef = b2DefaultBodyDef();
@@ -875,7 +965,7 @@ public:
 		b2BodyId groundId = b2CreateBody( m_worldId, &bodyDef );
 
 		b2ShapeDef shapeDef = b2DefaultShapeDef();
-		shapeDef.friction = 0.7f;
+		shapeDef.material.friction = 0.7f;
 
 		b2Polygon groundBox = b2MakeBox( 40.0f, 2.0f );
 		b2CreatePolygonShape( groundId, &shapeDef, &groundBox );
@@ -926,9 +1016,9 @@ public:
 		}
 	}
 
-	static Sample* Create( Settings& settings )
+	static Sample* Create( SampleContext* context )
 	{
-		return new CardHouse( settings );
+		return new CardHouse( context );
 	}
 };
 

@@ -16,6 +16,9 @@ project.addFiles('*.cpp');
 project.addIncludeDir('./vendor/imgui-docking/backends/')
 project.addIncludeDir('./vendor/imgui-docking/')
 
+project.addFile('backends/imgui.cpp')
+project.addFile('backends/imgui.h')
+
 project.addFile('backends/imgui_impl_sdl2.cpp')
 project.addFile('backends/imgui_impl_sdl2.h')
 
@@ -24,7 +27,6 @@ project.addFile('backends/imgui_impl_opengl3.h')
 
 project.addFile('backends/imgui_impl_opengl3_loader.h')
 
-project.addFile('backends/imgui_impl_sdlrenderer2.cpp')
-project.addFile('backends/imgui_impl_sdlrenderer2.h')
-
 resolve(project);
+
+//

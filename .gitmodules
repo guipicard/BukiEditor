@@ -1,0 +1,3 @@
+[submodule "tools/KincTools_windows_x64"]
+	path = tools/KincTools_windows_x64
+	url = https://github.com/Kode/KincTools_windows_x64.git

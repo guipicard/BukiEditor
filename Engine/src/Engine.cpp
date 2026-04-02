@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine.h"
+#include "Editor.h"
 #include "SDLInput.h"
 #include "LogConsole.h"
 #include "LogFile.h"
@@ -30,19 +31,25 @@ bool Engine::Init(const std::string& name, int w, int h)
 	m_Console = new LogFile();
 #endif
 	m_Console->LogSuccess("SDL initialised");
-
 	m_Graphics = new SDL_Graphics();
 	if (!m_Graphics)
 	{
 		m_Console->LogSdlError();
 		return false;
 	}
+	m_Graphics->InitBackend();
+#if BUKI_EDITOR
+	m_Editor = new Editor();
+	m_Editor->Init();
+#else
+	m_Editor = nullptr;
+#endif
+
 	if (!m_Graphics->Initialize(name, w, h))
 	{
 		return false;
 	}
 	m_Console->LogSuccess("Graphics initialised");
-
 	m_Input = new SdlInput();
 	m_World = new WorldService();
 	m_Audio = new SDL_Audio();
@@ -97,7 +104,19 @@ void Engine::Start(void) {
 		//float alpha = static_cast<float>(lag / MS_PER_FRAME);
 		alpha = alpha < 0.0f ? 0.0f : alpha > 1.0f ? 1.0f : alpha;
 		alpha = 1.0f;
-		Render(alpha);
+		if (m_Editor != nullptr)
+		{
+			m_Editor->EditorClear();
+			m_Editor->Render();
+			m_Editor->EditorPresent();
+			Render(alpha);
+		}
+		else
+		{
+			Render(alpha);
+		}
+
+
 
 		frameCount++;
 		if (currentTime - fpsLastTime >= 1000) {
@@ -141,15 +160,18 @@ void Engine::Update(float dt)
 void Engine::Render(float alpha)
 {
 	m_Graphics->Clear();
-
 	m_World->Render(alpha);
-	m_Graphics->DrawImGui();
 	m_Graphics->Present();
 
 }
 
 void Engine::Shutdown(void)
 {
+	if (m_Editor != nullptr)
+	{
+		m_Editor->Shutdown();
+		delete m_Editor;
+	}
 	if (m_Input != nullptr)
 	{
 		delete m_Input;

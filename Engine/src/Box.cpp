@@ -38,9 +38,9 @@ void buki::Box::SetPhysics()
 		return;
 	}
 	b2ShapeDef def = b2DefaultShapeDef();
-	def.density = Collider.Density;
-	def.friction = Collider.Friction;
-	def.restitution = Collider.Restitution;
+	def.density = Collider.density;
+	def.material.friction = Collider.material.friction;
+	def.material.restitution = Collider.material.restitution;
 
 	def.enableContactEvents = true;
 	def.userData = m_Entity; // Set user data to the entity pointer
@@ -49,10 +49,10 @@ void buki::Box::SetPhysics()
 
 	Vector2 size = Collider.Size;
 	BodyId bId = rb->GetBodyId();
-	b2BodyId b2Id = b2BodyId{ bId.index1, bId.world0, bId.revision };
+	b2BodyId b2Id = b2BodyId{ bId.index1, bId.world0, bId.generation };
 	b2Polygon box = b2MakeBox(size.x, size.y);
 	b2ShapeId s2Id = b2CreatePolygonShape(b2Id, &def, &box);
-	ShapeId sId = { s2Id.index1, s2Id.world0, s2Id.revision };
+	ShapeId sId = { s2Id.index1, s2Id.world0, s2Id.generation };
 	SetShapeId(sId);
 	Physics().AddShape(sId.index1,m_Entity);
 
@@ -66,27 +66,20 @@ json buki::Box::Serialize()
 	doc["BoxCollider"]["size"]["x"] = Collider.Size.x;
 	doc["BoxCollider"]["size"]["y"] = Collider.Size.y;
 	doc["BoxCollider"]["CanDraw"] = Collider.m_CanDraw;
-	doc["BoxCollider"]["density"] = Collider.Density;
-	doc["BoxCollider"]["friction"] = Collider.Friction;
-	doc["BoxCollider"]["restitution"] = Collider.Restitution;
+	doc["BoxCollider"]["density"] = Collider.density;
+	doc["BoxCollider"]["friction"] = Collider.material.friction;
+	doc["BoxCollider"]["restitution"] = Collider.material.restitution;
 	return doc;
 }
 
 void buki::Box::Deserialize(json _doc)
 {
 	Shapes::Deserialize(_doc);
-	json j = _doc["BoxCollider"];
-	//Collider.Size.x = _doc["BoxCollider"]["size"]["x"].get<float>();
-	//Collider.Size.y = _doc["BoxCollider"]["size"]["y"].get<float>();
-	//Collider.Density = _doc["BoxCollider"]["density"].get<float>();
-	//Collider.Friction = _doc["BoxCollider"]["friction"].get<float>();
-	//Collider.Restitution = _doc["BoxCollider"]["restitution"].get<float>();
-	json sizeJson = j["size"];
-	Collider.Size.x = sizeJson.value<float>("x", Collider.Size.x);
-	Collider.Size.y = sizeJson.value<float>("y", Collider.Size.y);
-	Collider.Density = j.value<float>("density", Collider.Density);
-	Collider.Friction = j.value<float>("friction", Collider.Friction);
-	Collider.Restitution = j.value<float>("restitution", Collider.Restitution);
+	Collider.Size.x = _doc["BoxCollider"]["size"]["x"].get<float>();
+	Collider.Size.y = _doc["BoxCollider"]["size"]["y"].get<float>();
+	Collider.density = _doc["BoxCollider"]["density"].get<float>();
+	Collider.material.friction = _doc["BoxCollider"]["friction"].get<float>();
+	Collider.material.restitution = _doc["BoxCollider"]["restitution"].get<float>();
 }
 
 void buki::Box::Set()

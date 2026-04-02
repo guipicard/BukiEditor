@@ -14,6 +14,7 @@ namespace buki {
 	struct SDL_Graphics : public IGraphics
 	{
 		SDL_Graphics();
+		virtual bool InitBackend() override;
 		virtual bool Initialize(const std::string& title, int w, int h) override;
 		virtual void Shutdown() override;
 		virtual void SetColor(const Color& color) override;
@@ -62,11 +63,6 @@ namespace buki {
 		virtual void SetScale(float _scale) override;
 		virtual void ResetScale() override;
 
-		virtual void InitializeImGui() override;
-		virtual bool SetImGui() override;
-		virtual void DrawImGui() override;
-
-
 	private:
 		SDL_Window* m_Window;
 		int m_WindowWidth;
@@ -79,10 +75,6 @@ namespace buki {
 		float scale;
 		const float scaleFixed;
 
-		float main_scale = 0;
-		bool show_demo_window = true;
-		bool show_another_window = false;
-		float imguiColor[4] = { 0.45f, 0.55f, 0.60f, 1.00f };
 	};
 
 	

@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "box2d/math_functions.h"
+#include "box2d/base.h"
 
 // clang-format off
 
@@ -16,12 +16,6 @@
 	#define B2_DEBUG 0
 #else
 	#define B2_DEBUG 1
-#endif
-
-#if defined( BOX2D_VALIDATE ) && !defined( NDEBUG )
-	#define B2_VALIDATE 1
-#else
-	#define B2_VALIDATE 0
 #endif
 
 // Define platform
@@ -56,7 +50,11 @@
 #endif
 
 // Define SIMD
-#if defined( BOX2D_ENABLE_SIMD )
+#if defined( BOX2D_DISABLE_SIMD )
+	#define B2_SIMD_NONE
+	// note: I tried width of 1 and got no performance change
+	#define B2_SIMD_WIDTH 4
+#else
 	#if defined( B2_CPU_X86_X64 )
 		#if defined( BOX2D_AVX2 )
 			#define B2_SIMD_AVX2
@@ -76,9 +74,6 @@
 		#define B2_SIMD_NONE
 		#define B2_SIMD_WIDTH 4
 	#endif
-#else
-	#define B2_SIMD_NONE
-	#define B2_SIMD_WIDTH 4
 #endif
 
 // Define compiler
@@ -97,25 +92,80 @@
 	#define b2TracyCZoneC( ctx, color, active ) TracyCZoneC( ctx, color, active )
 	#define b2TracyCZoneNC( ctx, name, color, active ) TracyCZoneNC( ctx, name, color, active )
 	#define b2TracyCZoneEnd( ctx ) TracyCZoneEnd( ctx )
+	#define b2TracyCFrame TracyCFrameMark
 #else
 	#define b2TracyCZoneC( ctx, color, active )
 	#define b2TracyCZoneNC( ctx, name, color, active )
 	#define b2TracyCZoneEnd( ctx )
+	#define b2TracyCFrame
 #endif
 
 // clang-format on
 
 // Returns the number of elements of an array
-#define B2_ARRAY_COUNT( A ) (int)( sizeof( A ) / sizeof( A[0] ) )
+#define B2_ARRAY_COUNT( A ) ((int)( sizeof( A ) / sizeof( *A ) ))
 
 // Used to prevent the compiler from warning about unused variables
-#define B2_MAYBE_UNUSED( x ) ( (void)( x ) )
+#define B2_UNUSED( ... ) (void)sizeof( ( __VA_ARGS__, 0 ) )
 
 // Use to validate definitions. Do not take my cookie.
 #define B2_SECRET_COOKIE 1152023
 
-#define b2CheckDef( DEF ) B2_ASSERT( DEF->internalValue == B2_SECRET_COOKIE )
+// Snoop counters. These should be disabled in optimized builds because they are expensive.
+#if defined( box2d_EXPORTS )
+#define B2_SNOOP_TABLE_COUNTERS B2_DEBUG
+#define B2_SNOOP_PAIR_COUNTERS B2_DEBUG
+#define B2_SNOOP_TOI_COUNTERS B2_DEBUG
+#else
+#define B2_SNOOP_TABLE_COUNTERS 0
+#define B2_SNOOP_PAIR_COUNTERS 0
+#define B2_SNOOP_TOI_COUNTERS 0
+#endif
+
+#ifdef __cplusplus
+#define B2_TYPE_OF( A ) decltype( A )
+#else
+#define B2_TYPE_OF( A ) __typeof__( A )
+#endif
+
+#define B2_SWAP( x, y )                                                                                                          \
+	do                                                                                                                           \
+	{                                                                                                                            \
+		B2_TYPE_OF( x ) B2_SWAP_TEMP = x;                                                                                        \
+		x = y;                                                                                                                   \
+		y = B2_SWAP_TEMP;                                                                                                        \
+	}                                                                                                                            \
+	while ( 0 )
+
+#define B2_CHECK_DEF( DEF ) B2_ASSERT( DEF->internalValue == B2_SECRET_COOKIE )
+
+typedef struct b2AtomicInt
+{
+	int value;
+} b2AtomicInt;
+
+typedef struct b2AtomicU32
+{
+	uint32_t value;
+} b2AtomicU32;
 
 void* b2Alloc( int size );
+void* b2AllocZeroInit( int size );
+#define B2_ALLOC_STRUCT( type ) b2Alloc(sizeof(type))
+#define B2_ALLOC_ARRAY( count, type ) b2Alloc(count * sizeof(type))
+
 void b2Free( void* mem, int size );
+#define B2_FREE_STRUCT( mem, type ) b2Free( mem, sizeof(type));
+#define B2_FREE_ARRAY( mem, count, type ) b2Free(mem, count * sizeof(type))
+
 void* b2GrowAlloc( void* oldMem, int oldSize, int newSize );
+void* b2GrowAllocZeroInit( void* oldMem, int oldSize, int newSize );
+
+void b2Log( const char* format, ... );
+
+typedef struct b2Mutex b2Mutex;
+
+b2Mutex* b2CreateMutex( void );
+void b2DestroyMutex( b2Mutex* m );
+void b2LockMutex( b2Mutex* m );
+void b2UnlockMutex( b2Mutex* m );

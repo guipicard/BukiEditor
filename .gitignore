@@ -1,0 +1,14 @@
+/.vs
+build/
+# Deployment/**
+# Deployment/assets
+# !Deployment/assets/**
+# Deployment/fonts
+# !Deployment/fonts/**
+# Deployment/audio
+# !Deployment/audio/**
+# !Deployment/levels
+# !Deployment/levels/**
+# !Deployment/Box2D
+# !Deployment/Box2D/**
+# !Deployment/keepme

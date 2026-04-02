@@ -42,20 +42,20 @@ void buki::Circle::SetPhysics()
 		m_Entity->ActivatePhysics();
 	}
 	b2ShapeDef def = b2DefaultShapeDef();
-	def.density = Collider.Density;
-	def.friction = Collider.Friction;
-	def.restitution = Collider.Restitution;
+	def.density = Collider.density;
+	def.material.friction = Collider.material.friction;
+	def.material.restitution = Collider.material.restitution;
 
 	def.enableContactEvents = true;
 	def.userData = m_Entity; // Set user data to the entity pointer
 
 	BodyId bId = m_Entity->GetComponent<RigidBody>()->GetBodyId();
-	b2BodyId b2Id = b2BodyId{ bId.index1, bId.world0, bId.revision };
+	b2BodyId b2Id = b2BodyId{ bId.index1, bId.world0, bId.generation };
 	b2Circle circle;
 	circle.center = { Collider.PositionOffset.x, Collider.PositionOffset.y };
 	circle.radius = Collider.Radius;
 	b2ShapeId s2Id = b2CreateCircleShape(b2Id, &def, &circle);
-	ShapeId sId = { s2Id.index1, s2Id.world0, s2Id.revision };
+	ShapeId sId = { s2Id.index1, s2Id.world0, s2Id.generation };
 	m_Entity->GetComponentOfType<Shapes>()->SetShapeId(sId);
 
 	Physics().AddShape(sId.index1, m_Entity);
@@ -66,9 +66,9 @@ json buki::Circle::Serialize()
 	json doc = Shapes::Serialize();
 	doc["Collider"]["Radius"] = Collider.Radius;
 	doc["Collider"]["CanDraw"] = Collider.m_CanDraw;
-	doc["Collider"]["Density"] = Collider.Density;
-	doc["Collider"]["Friction"] = Collider.Friction;
-	doc["Collider"]["Restitution"] = Collider.Restitution;
+	doc["Collider"]["Density"] = Collider.density;
+	doc["Collider"]["Friction"] = Collider.material.friction;
+	doc["Collider"]["Restitution"] = Collider.material.restitution;
 	doc["Collider"]["PositionOffset"]["x"] = Collider.PositionOffset.x;
 	doc["Collider"]["PositionOffset"]["y"] = Collider.PositionOffset.y;
 	return doc;
@@ -79,9 +79,9 @@ void buki::Circle::Deserialize(json _doc)
 	Shapes::Deserialize(_doc);
 	Collider.Radius = _doc["Collider"]["Radius"].get<float>();
 	Collider.m_CanDraw = _doc["Collider"]["CanDraw"].get<bool>();
-	Collider.Density = _doc["Collider"]["Density"].get<float>();
-	Collider.Friction = _doc["Collider"]["Friction"].get<float>();
-	Collider.Restitution = _doc["Collider"]["Restitution"].get<float>();
+	Collider.density = _doc["Collider"]["Density"].get<float>();
+	Collider.material.friction = _doc["Collider"]["Friction"].get<float>();
+	Collider.material.restitution = _doc["Collider"]["Restitution"].get<float>();
 	Collider.PositionOffset.x = _doc["Collider"]["PositionOffset"]["x"].get<float>();
 	Collider.PositionOffset.y = _doc["Collider"]["PositionOffset"]["y"].get<float>();
 }

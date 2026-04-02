@@ -9,7 +9,9 @@
 #include "Sprite.h"
 #include "Text.h"
 #include "ComponentRegistration.h"
+#include "nlohmann/json.hpp"
 
+using json = nlohmann::json;
 buki::Entity::Entity()
 	: Entity("new Entity")
 {

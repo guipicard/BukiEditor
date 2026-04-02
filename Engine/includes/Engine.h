@@ -8,6 +8,7 @@
 
 namespace buki {
 	typedef uint32_t Uint32;
+	struct Editor;
 	class Engine final {
 	public:
 		static Engine& GetInstance()
@@ -30,6 +31,8 @@ namespace buki {
 		inline IAudio& Audio() const { return *m_Audio; }
 		inline IWorld& World() const { return *m_World; }
 		inline PhysicsService& Physics() const { return *m_Physics; }
+
+		inline Editor* TheEditor() const { return m_Editor; }
 
 	private:
 		Engine() = default;
@@ -58,5 +61,7 @@ namespace buki {
 		IWorld* m_World = nullptr;
 		IAudio* m_Audio = nullptr;
 		PhysicsService* m_Physics = nullptr;
+
+		Editor* m_Editor = nullptr;
 	};
 }

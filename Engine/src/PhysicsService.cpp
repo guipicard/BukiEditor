@@ -21,18 +21,18 @@ buki::PhysicsService::PhysicsService()
 void buki::PhysicsService::LinearImpulse(Entity* _entity, const Vector2 _impulse, const bool _wake)
 {
 	BodyId bId = _entity->GetComponent<RigidBody>()->GetBodyId();
-	b2BodyId b2Id = { bId.index1, bId.world0, bId.revision };
+	b2BodyId b2Id = { bId.index1, bId.world0, bId.generation };
 	b2Body_ApplyLinearImpulse(b2Id, b2Vec2{ _impulse.x, _impulse.y }, b2Body_GetPosition(b2Id), _wake);
 }
 
 void buki::PhysicsService::SetAwake(const BodyId _id, const bool _state)
 {
-	b2Body_SetAwake({ _id.index1, _id.world0, _id.revision }, _state);
+	b2Body_SetAwake({ _id.index1, _id.world0, _id.generation }, _state);
 }
 
 bool buki::PhysicsService::IsAwake(const BodyId _id) const
 {
-	return b2Body_IsAwake({ _id.index1, _id.world0, _id.revision });
+	return b2Body_IsAwake({ _id.index1, _id.world0, _id.generation });
 }
 
 void buki::PhysicsService::Step(float dt)
@@ -80,7 +80,7 @@ void buki::PhysicsService::Step(float dt)
 
 b2BodyId buki::PhysicsService::Getb2BodyId(const BodyId _id) const
 {
-	return { _id.index1, _id.world0, _id.revision };
+	return { _id.index1, _id.world0, _id.generation };
 }
 
 b2ShapeId buki::PhysicsService::Getb2ShapeId(const ShapeId _id) const
@@ -93,7 +93,7 @@ buki::BodyId buki::PhysicsService::CreatePhysicsBody(Entity* _entity)
 	RigidBody* rb = _entity->GetComponent<RigidBody>();
 	b2BodyDef bodyDef = b2DefaultBodyDef();
 	bodyDef.type = (b2BodyType)rb->Type;
-	bodyDef.fixedRotation = rb->FixedRotation;
+	bodyDef.motionLocks = { rb->motionLocks.linearX, rb->motionLocks.linearX, rb->motionLocks.linearX };
 	Vector2 pos = _entity->GetTransform()->GetPosition();
 	bodyDef.position = { pos.x, pos.y };
 	Rot rot = _entity->GetTransform()->GetRotation();
@@ -106,18 +106,18 @@ buki::BodyId buki::PhysicsService::CreatePhysicsBody(Entity* _entity)
 	b2Body_EnableContactEvents(bodyId, true);
 	b2Body_EnableHitEvents(bodyId, true);
 	shapeIdToEntityMap.emplace(bodyId.index1, _entity);
-	return { bodyId.index1, bodyId.world0, bodyId.revision };
+	return { bodyId.index1, bodyId.world0, bodyId.generation };
 }
 
 void buki::PhysicsService::DestroyPhysicsBody(BodyId _id)
 {
-	b2BodyId b2id = b2BodyId{ _id.index1, _id.world0, _id.revision };
+	b2BodyId b2id = b2BodyId{ _id.index1, _id.world0, _id.generation };
 	b2Body_GetWorld(b2id);
 	b2ShapeId s2IdDef = { 0,0,0 };
 	b2ShapeId s2IdArray[1] = { s2IdDef };
 	b2Body_GetShapes(b2id, s2IdArray, 1);
 	b2ShapeId s2Id = s2IdArray[0];
-	ShapeId sId = { s2Id.index1, s2Id.world0, s2Id.revision };
+	ShapeId sId = { s2Id.index1, s2Id.world0, s2Id.generation };
 	shapeIdToEntityMap.erase(sId.index1);
 	b2DestroyBody(b2id);
 }
@@ -136,7 +136,7 @@ buki::WorldId buki::PhysicsService::CreateWorld()
 	//worldDef.userData = this; // Set user data to nullptr, can be used for custom data
 	b2WorldId wId = b2CreateWorld(&worldDef);
 	worldId.index = wId.index1;
-	worldId.revision = wId.revision;
+	worldId.revision = wId.generation;
 	contactEvents = new ContactEvents();
 	return worldId;
 }
@@ -144,19 +144,19 @@ buki::WorldId buki::PhysicsService::CreateWorld()
 void buki::PhysicsService::SetForce(Entity* _entity, Vector2 _force, bool _wake)
 {
 	BodyId bId = _entity->GetComponent<RigidBody>()->GetBodyId();
-	b2Body_ApplyForceToCenter({ bId.index1, bId.world0, bId.revision }, { _force.x, _force.y }, _wake);
+	b2Body_ApplyForceToCenter({ bId.index1, bId.world0, bId.generation }, { _force.x, _force.y }, _wake);
 }
 
 float buki::PhysicsService::GetMass(BodyId _id)
 {
-	b2BodyId b2id = { _id.index1, _id.world0, _id.revision };
+	b2BodyId b2id = { _id.index1, _id.world0, _id.generation };
 	return b2Body_GetMass(b2id);
 }
 
 buki::Vector2 buki::PhysicsService::GetVelocity(Entity* _entity)
 {
 	BodyId bId = _entity->GetComponent<RigidBody>()->GetBodyId();
-	b2Vec2 b2Id = b2Body_GetLinearVelocity({ bId.index1, bId.world0, bId.revision });
+	b2Vec2 b2Id = b2Body_GetLinearVelocity({ bId.index1, bId.world0, bId.generation });
 	return { b2Id.x, b2Id.y };
 }
 
@@ -169,15 +169,15 @@ void buki::PhysicsService::Listen(Entity* _entity)
 {
 	BodyId bId = _entity->GetComponent<RigidBody>()->GetBodyId();
 	ShapeId sId = _entity->GetComponentOfType<Shapes>()->GetShapeId();
-	b2Body_SetUserData({ bId.index1, bId.world0, bId.revision }, _entity);
-	b2Body_EnableContactEvents({ bId.index1, bId.world0, bId.revision }, true);
+	b2Body_SetUserData({ bId.index1, bId.world0, bId.generation }, _entity);
+	b2Body_EnableContactEvents({ bId.index1, bId.world0, bId.generation }, true);
 	b2Shape_EnableContactEvents({ sId.index1, sId.world0, sId.revision }, true);
 
 }
 
 void* buki::PhysicsService::GetUserData(BodyId b)
 {
-	return b2Body_GetUserData({ b.index1, b.world0, b.revision });
+	return b2Body_GetUserData({ b.index1, b.world0, b.generation });
 }
 
 bool buki::PhysicsService::CastRayClosest(Vector2 _origin, Vector2 _direction, float _maxDistance, std::vector<Entity*>& _hitEntities)
@@ -202,7 +202,7 @@ bool buki::PhysicsService::CastRayClosest(Vector2 _origin, Vector2 _direction, f
 	b2ShapeId b2SId = out.shapeId;
 	b2BodyId b2BId = b2Shape_GetBody(b2SId);
 	b2ShapeId nullId = b2_nullShapeId;
-	if (b2SId.index1 == nullId.index1 && b2SId.revision == nullId.revision && b2SId.world0 == nullId.world0) return false;
+	if (b2SId.index1 == nullId.index1 && b2SId.generation == nullId.generation && b2SId.world0 == nullId.world0) return false;
 
 	void* userData = b2Body_GetUserData(b2BId);
 	if (!userData) return false;

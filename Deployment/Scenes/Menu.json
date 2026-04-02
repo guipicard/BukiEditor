@@ -113,8 +113,12 @@
                     "textSize": 36
                 },
                 "RigidBody": {
-                    "FixedRotation": false,
-                    "Type": 0
+                    "Type": 0,
+                    "motionLocks": [
+                        false,
+                        false,
+                        false
+                    ]
                 },
                 "Sprite": {
                     "color": {
@@ -298,8 +302,12 @@
                     "textSize": 36
                 },
                 "RigidBody": {
-                    "FixedRotation": false,
-                    "Type": 0
+                    "Type": 0,
+                    "motionLocks": [
+                        false,
+                        false,
+                        false
+                    ]
                 },
                 "Sprite": {
                     "color": {
@@ -483,8 +491,12 @@
                     "textSize": 36
                 },
                 "RigidBody": {
-                    "FixedRotation": false,
-                    "Type": 0
+                    "Type": 0,
+                    "motionLocks": [
+                        false,
+                        false,
+                        false
+                    ]
                 },
                 "Sprite": {
                     "color": {
@@ -668,8 +680,12 @@
                     "textSize": 36
                 },
                 "RigidBody": {
-                    "FixedRotation": false,
-                    "Type": 0
+                    "Type": 0,
+                    "motionLocks": [
+                        false,
+                        false,
+                        false
+                    ]
                 },
                 "Sprite": {
                     "color": {

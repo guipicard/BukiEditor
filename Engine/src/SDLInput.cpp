@@ -4,8 +4,9 @@
 #include <SDL.h>
 #include "IScene.h"
 #include "Camera.h"
-#include "imgui.h"
-#include "imgui_impl_sdl2.h"
+#include "Editor.h"
+//#include "imgui.h"
+//#include "imgui_impl_sdl2.h"
 
 using namespace buki;
 
@@ -14,7 +15,7 @@ void SdlInput::Update()
 	SDL_Event _event;
 	Uint32 windowID = buki::Engine::GetInstance().Graphics().GetWindowID();
 	while (SDL_PollEvent(&_event)) {
-		ImGui_ImplSDL2_ProcessEvent(&_event);
+		Engine::GetInstance().TheEditor()->Update(_event);
 		switch (_event.type) {
 		case SDL_WINDOWEVENT: {
 			if (_event.window.windowID == windowID) {

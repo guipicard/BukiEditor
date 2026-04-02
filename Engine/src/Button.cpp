@@ -11,7 +11,9 @@
 #include "RigidBody.h"
 #include "Box.h"
 #include <string>
+#include "nlohmann/json.hpp"
 
+using json = nlohmann::json;
 buki::Button::Button(Entity* entity)
 	: Component(entity)
 {

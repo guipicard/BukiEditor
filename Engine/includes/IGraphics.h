@@ -16,6 +16,8 @@ namespace buki {
 	using DrawFunc = std::function<void(bool* b, bool* bA)>;
 	struct IGraphics
 	{
+		virtual bool InitBackend() = 0; // Permet de changer le backend graphique utilisé par l'interface.
+
 		virtual bool Initialize(const std::string& title, int w, int h) = 0; // Initialise le système graphique avec un titre de fenêtre et des dimensions spécifiées.
 
 		virtual void Shutdown() = 0; // Ferme et nettoie le système graphique.
@@ -96,10 +98,5 @@ namespace buki {
 
 		virtual void SetCameraPosition(const Vector2 _pos) = 0;
 		virtual Camera* GetCamera() = 0;
-
-		virtual void InitializeImGui() = 0;
-		virtual bool SetImGui() = 0;
-		virtual void DrawImGui() = 0;
-
 	};
 }

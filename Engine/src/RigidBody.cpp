@@ -25,14 +25,14 @@ json buki::RigidBody::Serialize()
 {
 	json doc;
 	doc["Type"] = static_cast<int>(Type);
-	doc["FixedRotation"] = FixedRotation;
+	doc["motionLocks"] = { motionLocks.linearX, motionLocks.linearY, motionLocks.angularZ };
 	return doc;
 }
 
 void buki::RigidBody::Deserialize(json _doc)
 {
 	Type = static_cast<BodyType>(_doc["Type"].get<int>());
-	FixedRotation = _doc["FixedRotation"].get<bool>();
+	motionLocks = { _doc["motionLocks"][0].get<bool>(), _doc["motionLocks"][1].get<bool>(), _doc["motionLocks"][2].get<bool>() };
 }
 
 void buki::RigidBody::Set()

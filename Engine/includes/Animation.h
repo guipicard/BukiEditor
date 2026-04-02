@@ -5,11 +5,11 @@
 #include <IUpdatable.h>
 #include <RectI.h>
 #include <RectF.h>
-#include "nlohmann/json.hpp"
+#include "nlohmann/json_fwd.hpp"
 
+using json = nlohmann::json;
 namespace buki
 {
-	using json = nlohmann::json;
 	struct Entity;
 	struct AnimationClip
 	{

@@ -10,13 +10,11 @@
 #include "Subject.h"
 #include "Transform.h"
 #include "PhysicsService.h"
-#include "nlohmann/json.hpp"
 #include "Component.h"
-
-//#include "Engine.h"
-//#include "Button.h"
+#include "nlohmann/json.hpp"
 
 using json = nlohmann::json;
+
 namespace buki
 {
 	struct Entity final

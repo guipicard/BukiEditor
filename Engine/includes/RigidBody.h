@@ -10,15 +10,25 @@
 
 namespace buki
 {
-	
-
 	struct BodyId
 	{
-		BodyId() : index1(0), world0(0), revision(0) {}
-		BodyId(int32_t i, uint16_t w, uint16_t r) : index1(i), world0(w), revision(r) {}
+		BodyId() : index1(0), world0(0), generation(0) {}
+		BodyId(int32_t i, uint16_t w, uint16_t r) : index1(i), world0(w), generation(r) {}
 		int32_t index1;
 		uint16_t world0;
-		uint16_t revision;
+		uint16_t generation;
+	};
+
+	struct MotionLocks
+	{
+		/// Prevent translation along the x-axis
+		bool linearX;
+
+		/// Prevent translation along the y-axis
+		bool linearY;
+
+		/// Prevent rotation around the z-axis
+		bool angularZ;
 	};
 
 	struct RigidBody : public Component, public IFixedUpdatable
@@ -36,7 +46,7 @@ namespace buki
 			bodyTypeCount,
 		};
 		BodyType Type = BodyType::dynamic;
-		bool FixedRotation = false;
+		MotionLocks motionLocks = {false, false, false};
 
 		RigidBody(Entity* entity) { m_Entity = entity; }
 		~RigidBody() = default;

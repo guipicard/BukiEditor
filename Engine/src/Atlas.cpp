@@ -1,6 +1,7 @@
 #pragma once
 #include "Atlas.h"
 #include "Entity.h"
+#include "nlohmann/json.hpp"
 
 using json = nlohmann::json;
 

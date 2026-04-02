@@ -7,10 +7,7 @@
 #include <math.h>
 #include <IScene.h>
 #include "RectI.h"
-#include "imgui.h"
-#include "imgui_impl_sdl2.h"
-#include "imgui_impl_opengl3.h"
-#include "imgui_impl_sdlrenderer2.h"
+#include "Editor.h"
 
 #if !SDL_VERSION_ATLEAST(2,0,17)
 #error This backend requires SDL 2.0.17+ because of SDL_RenderGeometry() function
@@ -27,56 +24,51 @@ buki::SDL_Graphics::SDL_Graphics()
 {
 }
 
-bool buki::SDL_Graphics::Initialize(const std::string& title, int w, int h)
+bool buki::SDL_Graphics::InitBackend()
 {
-	int _x SDL_WINDOWPOS_CENTERED;
-	int _y = SDL_WINDOWPOS_CENTERED;
-	Uint32 _flag = (SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);;
-	Uint32 _rendererFlag = SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED;
-	m_WindowWidth = w;
-	m_WindowHeight = h;
-
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
 		buki::Engine::GetInstance().Log().LogSdlError();
 		return false;
 	}
+	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
+	return true;
+}
 
-	InitializeImGui();
-	main_scale = ImGui_ImplSDL2_GetContentScaleForDisplay(0);
-	m_Window = SDL_CreateWindow(title.c_str(), _x, _y, (int)w * main_scale, (int)h * main_scale, _flag);
-
-	if (!m_Window)
-	{
-		buki::Engine::GetInstance().Log().LogSdlError();
-		return false;
-	}
-	buki::Engine::GetInstance().Log().LogSuccess("Window initialised");
+bool buki::SDL_Graphics::Initialize(const std::string& title, int w, int h)
+{
+	int _x SDL_WINDOWPOS_CENTERED;
+	int _y = SDL_WINDOWPOS_CENTERED;
+	Uint32 _flag = (SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+	Uint32 _rendererFlag = (SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+	m_WindowWidth = w;
+	m_WindowHeight = h;
 
 
+
+	Editor* editor = Engine::GetInstance().TheEditor();
+	
+		m_Window = SDL_CreateWindow(title.c_str(), _x, _y, (int)w, (int)h, _flag);
+		if (!m_Window)
+		{
+			buki::Engine::GetInstance().Log().LogSdlError();
+			return false;
+		}
+		buki::Engine::GetInstance().Log().LogSuccess("Window initialised");
+	
 	m_Gfx = SDL_CreateRenderer(m_Window, -1, _rendererFlag);
 	if (!m_Gfx)
 	{
 		buki::Engine::GetInstance().Log().LogSdlError();
 		return false;
 	}
-
-	if (SetImGui())
-	{
-		buki::Engine::GetInstance().Log().LogSuccess("ImGui initialised");
-	}
-	else
-	{
-		buki::Engine::GetInstance().Log().LogSdlError();
-		return false;
-	}
-
+	buki::Engine::GetInstance().Log().LogSuccess("Renderer initialised");
 	int blendmode = SDL_SetRenderDrawBlendMode(m_Gfx, SDL_BlendMode::SDL_BLENDMODE_BLEND);
 	if (blendmode != 0)
 	{
 		buki::Engine::GetInstance().Log().LogSdlError();
 		return false;
 	}
-	buki::Engine::GetInstance().Log().LogSuccess("Renderer initialised");
+	editor->SetGameWindow(m_Window);
 	TTF_Init();
 	camera->width = w;
 	camera->height = h;
@@ -128,9 +120,7 @@ void buki::SDL_Graphics::Shutdown()
 		m_Window = nullptr;
 	}
 
-	ImGui_ImplSDLRenderer2_Shutdown();
-	ImGui_ImplSDL2_Shutdown();
-	ImGui::DestroyContext();
+
 }
 
 void buki::SDL_Graphics::SetColor(const Color& color)
@@ -140,7 +130,7 @@ void buki::SDL_Graphics::SetColor(const Color& color)
 
 void buki::SDL_Graphics::Clear()
 {
-	SetColor((float*)imguiColor);
+	SetColor(Color::BLACK);
 	SDL_RenderClear(m_Gfx);
 }
 
@@ -149,7 +139,7 @@ void buki::SDL_Graphics::Present()
 	RectF fDestRect{ 0.0f,0.0f, (float)m_WindowWidth, (float)m_WindowHeight };
 
 	SDL_Rect destRect{ static_cast<int>(fDestRect.x), static_cast<int>(fDestRect.y), static_cast<int>(fDestRect.w), static_cast<int>(fDestRect.h) };
-	SDL_RenderSetLogicalSize(m_Gfx, static_cast<int>(fDestRect.w), static_cast<int>(fDestRect.h));
+	//SDL_RenderSetLogicalSize(m_Gfx, static_cast<int>(fDestRect.w), static_cast<int>(fDestRect.h));
 	SDL_RenderPresent(m_Gfx);
 }
 
@@ -804,91 +794,4 @@ void buki::SDL_Graphics::SetScale(float _scale)
 void buki::SDL_Graphics::ResetScale()
 {
 	scale = scaleFixed;
-}
-
-void buki::SDL_Graphics::InitializeImGui()
-{
-	// From 2.0.18: Enable native IME.
-#ifdef SDL_HINT_IME_SHOW_UI
-	SDL_SetHint(SDL_HINT_IME_SHOW_UI, "1");
-#endif
-}
-
-bool buki::SDL_Graphics::SetImGui()
-{
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-
-	// Setup Dear ImGui context
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
-
-	// Setup Dear ImGui style
-	ImGui::StyleColorsDark();
-	//ImGui::StyleColorsLight();
-
-	// Setup scaling
-	ImGuiStyle& style = ImGui::GetStyle();
-	style.ScaleAllSizes(main_scale);        // Bake a fixed style scale. (until we have a solution for dynamic style scaling, changing this requires resetting Style + calling this again)
-	style.FontScaleDpi = main_scale;        // Set initial font scale. (in docking branch: using io.ConfigDpiScaleFonts=true automatically overrides this for every window depending on the current monitor)
-	io.ConfigDpiScaleFonts = true;          // [Experimental] Automatically overwrite style.FontScaleDpi in Begin() when Monitor DPI changes. This will scale fonts but _NOT_ scale sizes/padding for now.
-	io.ConfigDpiScaleViewports = true;      // [Experimental] Scale Dear ImGui and Platform Windows when Monitor DPI changes.
-
-	// Setup Platform/Renderer backends
-	ImGui_ImplSDL2_InitForSDLRenderer(m_Window, m_Gfx);
-	ImGui_ImplSDLRenderer2_Init(m_Gfx);
-
-	return true;
-}
-
-void buki::SDL_Graphics::DrawImGui()
-{
-	ImGuiIO& io = ImGui::GetIO();
-	ImGui_ImplSDLRenderer2_NewFrame();
-	ImGui_ImplSDL2_NewFrame();
-	ImGui::NewFrame();
-
-	// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-	if (show_demo_window)
-		ImGui::ShowDemoWindow(&show_demo_window);
-
-	// 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
-	{
-		static float f = 0.0f;
-		static int counter = 0;
-
-		ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-
-		ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-		ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-		ImGui::Checkbox("Another Window", &show_another_window);
-
-		ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-		ImGui::ColorEdit3("clear color", (float*)imguiColor); // Edit 3 floats representing a color
-
-		if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-			counter++;
-		ImGui::SameLine();
-		ImGui::Text("counter = %d", counter);
-
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-		ImGui::End();
-	}
-
-	// 3. Show another simple window.
-	if (show_another_window)
-	{
-		ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-		ImGui::Text("Hello from another window!");
-		if (ImGui::Button("Close Me"))
-			show_another_window = false;
-		ImGui::End();
-	}
-
-	// Rendering
-	ImGui::Render();
-	SDL_RenderSetScale(m_Gfx, io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
-	ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), m_Gfx);
 }
