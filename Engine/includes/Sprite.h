@@ -3,9 +3,6 @@
 #include <IDrawable.h>
 #include <BukiContainers.h>
 #include <Color.h>
-#include <Flip.h>
-#include <RectI.h>
-#include <RectF.h>
 #include <string>
 #include <vector>
 #include "Engine.h"
@@ -41,7 +38,8 @@ namespace buki
 	protected:
 		Flip m_Flip = Flip();
 		std::string path;
-		Color m_Color = Color::WHITE;
+		Color m_Color = {0.0f};
+		//Color m_Color = Color::WHITE;
 		Vector2 positionOffset = Vector2();
 		Vector2 sizeOffset = Vector2();
 		size_t m_Id = 0;

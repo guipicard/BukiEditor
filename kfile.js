@@ -5,17 +5,27 @@ project.setCppStd('c++17')
 
 project.kore = false
 
-project.addFile("Game/**")
+// project.addFile("Game/**")
+project.addFile("Game/src/main.cpp")
+project.addFile("Game/includes/SceneTest.h")
+project.addFile("Game/src/SceneTest.cpp")
+project.addFile("Game/includes/OpenGlTest.h")
+project.addFile("Game/src/OpenGlTest.cpp")
+project.addFile("Game/includes/AnimTest.h")
+project.addFile("Game/src/AnimTest.cpp")
 
 project.setDebugDir("Deployment")
 
 project.addIncludeDir("./Engine/includes");
 
+project.addIncludeDir("./vendor/glm")
+
 project.addIncludeDir("./Game/includes");
-project.addIncludeDir("./Game/includes/Platformer/PlayerStates");
-project.addIncludeDir("./Game/includes/Angrybird");
-project.addIncludeDir("./Game/includes/Platformer");
-project.addIncludeDir("./Game/includes/Shapes");
+// project.addIncludeDir("./Game/includes/Platformer/PlayerStates");
+// project.addIncludeDir("./Game/includes/Angrybird");
+// project.addIncludeDir("./Game/includes/Platformer");
+// project.addIncludeDir("./Game/includes/Shapes");
+
 project.addIncludeDir("./vendor/json-develop/single_include");
 
 project.flatten()
@@ -27,12 +37,12 @@ const boxproj = await project.addProject("./vendor/Box2D")
 engineproj.addProvider(boxproj, true)
 const imguiproj = await project.addProject("./vendor/imgui-docking")
 engineproj.addProvider(imguiproj, false)
-const editorproj = await project.addProject("./Editor")
-engineproj.addProvider(editorproj, false)
+// const editorproj = await project.addProject("./Editor")
+// engineproj.addProvider(editorproj, false)
 
 engineproj.parent = null;
 boxproj.parent = null;
 imguiproj.parent = null;
-editorproj.parent = null;
+// editorproj.parent = null;
 
 resolve(project)

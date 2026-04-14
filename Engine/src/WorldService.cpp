@@ -2,7 +2,6 @@
 #include "WorldService.h"
 #include "Engine.h"
 #include "Entity.h"
-#include "BaseScene.h"
 #include "Collider.h"
 #include "BoxCollider.h"
 #include "RigidBody.h"
@@ -27,7 +26,7 @@ void buki::WorldService::Start()
 
 void buki::WorldService::FixedUpdate(float dt)
 {
-	Engine::GetInstance().Physics().Step(dt);
+	Engine::Get().Physics().Step(dt);
 	for (auto entity : m_EntityInWorld)
 	{
 		entity->FixedUpdate(dt);
@@ -150,7 +149,7 @@ void buki::WorldService::Unload()
 		m_EntityMap.clear();
 		m_EntityInWorld.clear();
 		m_EntityToRemove.clear();
-		Engine::GetInstance().Physics().Reset();
+		Engine::Get().Physics().Reset();
 	}
 }
 

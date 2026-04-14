@@ -1,8 +1,6 @@
 #pragma once
 #include "Button.h"
 #include "IInput.h"
-#include "ICollision.h"
-#include "Vector2.h"
 #include "Entity.h"
 #include "IWorld.h"
 #include "IGraphics.h"
@@ -34,7 +32,8 @@ buki::Button::Button(Entity* entity)
 	buttonText = "Button Text";
 	m_Draw = false;
 	clicked = false;
-	outlineColor = Color::WHITE;
+	//outlineColor = {0.0f};
+	//outlineColor = Color::WHITE;
 	m_Entity->SetZ(10);
 }
 
@@ -45,14 +44,14 @@ void buki::Button::Start()
 void buki::Button::Update(float dt)
 {
 	Vector2 mousePos;
-	Input().GetMousePosition(&mousePos.x, &mousePos.y);
+	//Input().GetMousePositionScreen(&mousePos.x, &mousePos.y);
 	ShapeId SId = m_Entity->GetComponent<Box>()->GetShapeId();
 	if (Physics().TestPoint(SId, mousePos))
 	{
 		m_Draw = true;
 		AABB aabb = Physics().GetPhysicsSize(SId);
 		Vector2 phySize = aabb.max - aabb.min;
-		if (Input().IsButtonDown(0))
+		if (Input().IsMouseButtonDown(0))
 		{
 			OnClick.Invoke(message);
 		}
@@ -87,10 +86,10 @@ json buki::Button::Serialize()
 	doc["message"] = message;
 	doc["textSize"] = textSize;
 	doc["background"] = background;
-	doc["outlineColor"]["r"] = outlineColor.r;
-	doc["outlineColor"]["g"] = outlineColor.g;
-	doc["outlineColor"]["b"] = outlineColor.b;
-	doc["outlineColor"]["a"] = outlineColor.a;
+	//doc["outlineColor"]["r"] = outlineColor.r;
+	//doc["outlineColor"]["g"] = outlineColor.g;
+	//doc["outlineColor"]["b"] = outlineColor.b;
+	//doc["outlineColor"]["a"] = outlineColor.a;
 	doc["sizeFitToText"] = sizeFitToText;
 	return doc;
 }
@@ -108,10 +107,10 @@ void buki::Button::Deserialize(json _doc)
 	message = _doc["message"].get<std::string>();
 	textSize = _doc["textSize"].get<int>();
 	background = _doc["background"].get<bool>();
-	outlineColor.r = _doc["outlineColor"]["r"].get<uint8_t>();
-	outlineColor.g = _doc["outlineColor"]["g"].get<uint8_t>();
-	outlineColor.b = _doc["outlineColor"]["b"].get<uint8_t>();
-	outlineColor.a = _doc["outlineColor"]["a"].get<uint8_t>();
+	//outlineColor.r = _doc["outlineColor"]["r"].get<uint8_t>();
+	//outlineColor.g = _doc["outlineColor"]["g"].get<uint8_t>();
+	//outlineColor.b = _doc["outlineColor"]["b"].get<uint8_t>();
+	//outlineColor.a = _doc["outlineColor"]["a"].get<uint8_t>();
 	sizeFitToText = _doc["sizeFitToText"].get<bool>();
 }
 
@@ -134,7 +133,7 @@ void buki::Button::Set()
 		rb = m_Entity->AddComponent<RigidBody>();
 	}
 	rb->Type = RigidBody::BodyType::Static;
-	box->DebugColor = outlineColor;
+	//box->DebugColor = outlineColor;
 	box->Sensor = true;
 	box->Collider.m_CanDraw = false;
 	box->Collider.Size = (GetSize() + textContainer->GetSize()) / 2;

@@ -3,7 +3,6 @@
 #include "IUpdatable.h"
 #include "IDrawable.h"
 #include "Observer.h"
-#include "BaseScene.h"
 #include "Subject.h"
 #include "Color.h"
 #include <string>
@@ -42,7 +41,7 @@ namespace buki
 		void SetButtonText(const std::string text, int size);
 		void SetMessage(std::string _message) { message = _message; }
 		void ShowBackground(bool _state) { background = _state; }
-		inline void SetOutlineColor(Color _color) { outlineColor = _color; }
+		//inline void SetOutlineColor(Color _color) { outlineColor = _color; }
 		inline void SetFitToText(bool _state) { sizeFitToText = _state; }
 		Subject<std::string> OnClick;
 	private:
@@ -53,7 +52,7 @@ namespace buki
 		int textSize;
 		bool clicked;
 		bool background = true;
-		Color outlineColor;
+		//Color outlineColor;
 		bool sizeFitToText = true;
 		Sprite* buttonSprite;
 		Text* textContainer;

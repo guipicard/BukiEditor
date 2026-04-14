@@ -40,7 +40,7 @@ void buki::PhysicsService::Step(float dt)
 	b2WorldId b2wId = { worldId.index, worldId.revision };
 	if (!b2World_IsValid(b2wId))
 	{
-		Engine::GetInstance().Log().LogError("invalid world");
+		Engine::Get().Log().LogError("invalid world");
 		return;
 	}
 	b2World_Step(b2wId, dt, 8);
@@ -51,15 +51,15 @@ void buki::PhysicsService::Step(float dt)
 		Entity* e = (Entity*)b2Body_GetUserData(bodyId);
 		if (e != shapeIdToEntityMap[bodyId.index1])
 		{
-			Engine::GetInstance().Log().LogError("entity does not match shape id in body move event");
+			Engine::Get().Log().LogError("entity does not match shape id in body move event");
 			continue;
 		}
 		if (!e) {
-			Engine::GetInstance().Log().LogError("entity is null in body move event");
+			Engine::Get().Log().LogError("entity is null in body move event");
 			continue;
 		}
 		if (!e->GetComponent<RigidBody>()) {
-			Engine::GetInstance().Log().LogError("entity does not have RigidBody component in body move event");
+			Engine::Get().Log().LogError("entity does not have RigidBody component in body move event");
 			continue;
 		}
 		b2Vec2 pos = b2Body_GetPosition(bodyId);
@@ -315,7 +315,7 @@ bool buki::PhysicsService::QueryPoint(const Vector2& _point, std::vector<Entity*
 	{
 		return false;
 	}
-	std::vector<Entity*> allEntities = Engine::GetInstance().World().GetEntitiesInWorld();
+	std::vector<Entity*> allEntities = Engine::Get().World().GetEntitiesInWorld();
 	for (int i = allEntities.size() - 1; i >= 0; i--)
 	{
 		if (std::count(_hitEntities.begin(), _hitEntities.end(), allEntities[i]) > 0)
@@ -334,7 +334,7 @@ bool buki::PhysicsService::QueryPoint(const Vector2 _point, std::vector<Entity*>
 	{
 		return false;
 	}
-	std::vector<Entity*> allEntities = Engine::GetInstance().World().GetEntitiesInWorld();
+	std::vector<Entity*> allEntities = Engine::Get().World().GetEntitiesInWorld();
 	for (int i = allEntities.size() - 1; i >= 0; i--)
 	{
 		if (std::count(_hitEntities.begin(), _hitEntities.end(), allEntities[i]) > 0)

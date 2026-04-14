@@ -12,30 +12,35 @@ buki::Component::Component(Entity* _entity) : m_Entity(_entity)
 
 buki::IInput& buki::Component::Input() const
 {
-	return Engine::GetInstance().Input();
+	return Engine::Get().Input();
 }
 
 buki::ILogger& buki::Component::Log() const
 {
-	return Engine::GetInstance().Log();
+	return Engine::Get().Log();
 }
 
 buki::IGraphics& buki::Component::Graphics() const
 {
-	return Engine::GetInstance().Graphics();
+	return Engine::Get().Graphics();
 }
 
-buki::IAudio& buki::Component::Audio() const
-{
-	return Engine::GetInstance().Audio();
-}
+//buki::IAudio& buki::Component::Audio() const
+//{
+//	return Engine::GetInstance().Audio();
+//}
 
 buki::IWorld& buki::Component::World() const
 {
-	return Engine::GetInstance().World();
+	return Engine::Get().World();
 }
 
 buki::PhysicsService& buki::Component::Physics() const
 {
-	return Engine::GetInstance().Physics();
+	return Engine::Get().Physics();
+}
+
+buki::TextureManager& buki::Component::Textures() const
+{
+	return Engine::Get().Textures();
 }

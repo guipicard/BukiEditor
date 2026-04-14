@@ -19,8 +19,8 @@ project.addIncludeDir('./vendor/imgui-docking/')
 project.addFile('backends/imgui.cpp')
 project.addFile('backends/imgui.h')
 
-project.addFile('backends/imgui_impl_sdl2.cpp')
-project.addFile('backends/imgui_impl_sdl2.h')
+project.addFile('backends/imgui_impl_sdl3.cpp')
+project.addFile('backends/imgui_impl_sdl3.h')
 
 project.addFile('backends/imgui_impl_opengl3.cpp')
 project.addFile('backends/imgui_impl_opengl3.h')

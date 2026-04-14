@@ -2,37 +2,39 @@
 #define VC_EXTRALEAN
 #include<Windows.h>
 #include "Engine.h"
-#include "ShapesDemo.h"
-#include "AngryBirdDemo.h"
-#include "MenuScene.h"
-#include "Platformer.h"
-#include "AGLevel1.h"
-#include "AGLevel2.h"
-#include "AGLevel3.h"
-#include "SceneEditor.h"
+//#include "ShapesDemo.h"
+//#include "AngryBirdDemo.h"
+//#include "MenuScene.h"
+//#include "Platformer.h"
+//#include "AGLevel1.h"
+//#include "AGLevel2.h"
+//#include "AGLevel3.h"
+//#include "SceneEditor.h"
+#include "SceneTest.h"
 #include <string>
 
 using namespace buki;
 
 void InitGameplay(void) {
-	Engine::GetInstance().World().Register("SceneEditor", new SceneEditor());
-	Engine::GetInstance().World().Register("Menu", new MenuScene());
-	Engine::GetInstance().World().Register("Shapes", new ShapesDemo());
-	Engine::GetInstance().World().Register("AngryBird", new AngryBirdDemo());
-	Engine::GetInstance().World().Register("Platformer", new Platformer());
+	Engine::Get().World().Register("SceneTest", new SceneTest());
+	//Engine::GetInstance().World().Register("SceneEditor", new SceneEditor());
+	//Engine::GetInstance().World().Register("Menu", new MenuScene());
+	//Engine::GetInstance().World().Register("Shapes", new ShapesDemo());
+	//Engine::GetInstance().World().Register("AngryBird", new AngryBirdDemo());
+	//Engine::GetInstance().World().Register("Platformer", new Platformer());
 
-	Engine::GetInstance().World().Register("Ag_Lvl_1", new AGLevel1());
-	Engine::GetInstance().World().Register("Ag_Lvl_2", new AGLevel2());
-	Engine::GetInstance().World().Register("Ag_Lvl_3", new AGLevel3());
+	//Engine::GetInstance().World().Register("Ag_Lvl_1", new AGLevel1());
+	//Engine::GetInstance().World().Register("Ag_Lvl_2", new AGLevel2());
+	//Engine::GetInstance().World().Register("Ag_Lvl_3", new AGLevel3());
 
 
-	Engine::GetInstance().World().SetLoadScene("Ag_Lvl_1");
+	Engine::Get().World().SetLoadScene("SceneTest");
 }
 
 INT WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ PSTR, _In_ INT) { {}
-if (Engine::GetInstance().Init("Buki Engine", 1080, 720)) {
+if (Engine::Get().Init("Buki Engine", 1920, 1080)) {
 	InitGameplay();
-	Engine::GetInstance().Start();
+	Engine::Get().Start();
 }
 return 0;
 }

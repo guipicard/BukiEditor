@@ -4,7 +4,6 @@
 #include "CircleCollider.h"
 #include "BoxCollider.h"
 #include "ILogger.h"
-#include "ICollision.h"
 #include "IWorld.h"
 #include <cmath>
 

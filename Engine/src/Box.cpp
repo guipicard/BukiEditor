@@ -2,23 +2,44 @@
 #include "Box.h"
 #include "box2d.h"
 #include "Entity.h"
+#include "Engine.h"
 #include "RigidBody.h"
-#include "IGraphics.h"
-#include "ILogger.h"
+#include "BukiContainers.h"
 
 void buki::Box::Draw(float alpha)
 {
+	int r = static_cast<int>(ShapeColor.r * 255);
+	int g = static_cast<int>(ShapeColor.g * 255);
+	int b = static_cast<int>(ShapeColor.b * 255);
+	int a = static_cast<int>(ShapeColor.a * 255);
+	int pix[16] = {
+		r, g, b, a,
+		r, g, b, a,
+		r, g, b, a,
+		r, g, b, a
+	};
+	Vector2 pos = m_Entity->GetTransform()->GetPosition();
+	Vector2 size = m_Entity->GetTransform()->GetSize();
+	float angle = m_Entity->GetTransform()->GetRotation().GetRadians();
 	if (fillDraw)
 	{
-		Vector2 pos = m_Entity->GetTransform()->GetPosition();
-		float angle = m_Entity->GetTransform()->GetRotation().GetRadians();
-		Graphics().FillRect(pos.x, pos.y, Collider.Size.x, Collider.Size.y, angle, ShapeColor);
+		//Graphics().FillRect(pos.x, pos.y, Collider.Size.x, Collider.Size.y, angle, ShapeColor);
+		uint32_t debugTexture = Graphics().CreateTextureRGBA8(pix, 4, 4);
+		Graphics().DrawTexturedQuad(debugTexture, 
+			pos.x, pos.y, size.x, size.y,
+			angle, 0.0f, 0.0f, 
+			0.0f, 0.0f, 1.0f, 1.0f, 
+			1.0f, 1.0f, 1.0f, 1.0f);
 	}
 	if (shapeDraw)
 	{
-		Vector2 pos = m_Entity->GetTransform()->GetPosition();
-		float angle = m_Entity->GetTransform()->GetRotation().GetRadians();
-		Graphics().DrawRect(pos.x, pos.y, Collider.Size.x, Collider.Size.y, angle, DebugColor);
+		//Graphics().DrawRect(pos.x, pos.y, Collider.Size.x, Collider.Size.y, angle, DebugColor);
+		uint32_t debugTexture = Graphics().CreateTextureRGBA8(pix, 4, 4);
+		Graphics().DrawTexturedQuad(debugTexture, 
+			pos.x, pos.y, size.x, size.y, 
+			angle, 0.0f, 0.0f, 
+			0.0f, 0.0f, 1.0f, 1.0f, 
+			1.0f, 1.0f, 1.0f, 1.0f);
 	}
 }
 
@@ -54,7 +75,7 @@ void buki::Box::SetPhysics()
 	b2ShapeId s2Id = b2CreatePolygonShape(b2Id, &def, &box);
 	ShapeId sId = { s2Id.index1, s2Id.world0, s2Id.generation };
 	SetShapeId(sId);
-	Physics().AddShape(sId.index1,m_Entity);
+	Physics().AddShape(sId.index1, m_Entity);
 
 	Physics().Listen(m_Entity); // Set user data to the entity pointer
 }

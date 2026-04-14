@@ -2,7 +2,6 @@
 #include "Engine.h"
 #include "BukiScene.h"
 #include "Entity.h"
-#include "Camera.h"
 #include "Button.h"
 #include "Observer.h"
 #include "nlohmann/json.hpp"
@@ -23,12 +22,12 @@ buki::BukiScene::~BukiScene()
 
 buki::Entity* buki::BukiScene::Instantiate(const std::string _name)
 {
-	return buki::Engine::GetInstance().World().Create(_name);
+	return buki::Engine::Get().World().Create(_name);
 }
 
 void buki::BukiScene::OnStart()
 {
-	for (auto entity : buki::Engine::GetInstance().World().GetEntitiesInWorld())
+	for (auto entity : buki::Engine::Get().World().GetEntitiesInWorld())
 	{
 		entity->Start();
 	}
@@ -45,26 +44,27 @@ void buki::BukiScene::Load()
 		//buki::Engine::GetInstance().Log().LogMessage("Scene name is empty, cannot load scene.");
 		return;
 	}
-	Engine::GetInstance().Graphics().ResetScale();
+	//Engine::GetInstance().Graphics().ResetScale();
 	std::string path = "./Scenes/" + name + ".json";
 	if (std::filesystem::exists(path))
 	{
 		//buki::Engine::GetInstance().Log().LogMessage("Scene file found, loading scene: " + name);
-		FileLoad(path);
+		//FileLoad(path);
 	}
 	else
 	{
 		//buki::Engine::GetInstance().Log().LogMessage("Scene file not found, loading scene: " + name + " with code.");
 		CodeLoad();
-		SaveScene();
+		//SaveScene();
 	}
+
 }
 
 void buki::BukiScene::Initialize()
 {
 }
 
-void buki::BukiScene::SaveScene() const 
+void buki::BukiScene::SaveScene() const
 {
 	if (name == "") return;
 	std::string path = "./Scenes/" + name + ".json";
@@ -72,16 +72,16 @@ void buki::BukiScene::SaveScene() const
 	{
 		json doc;
 		doc["sceneName"] = name;
-		Camera* camera = buki::Engine::GetInstance().Graphics().GetCamera();
-		json cameraDoc = camera->Serialize();
-		doc["camera"] = cameraDoc;
+		//Camera* camera = buki::Engine::GetInstance().Graphics().GetCamera();
+		//json cameraDoc = camera->Serialize();
+		//doc["camera"] = cameraDoc;
 
 		json entitiesJson;
-		IWorld& world = buki::Engine::GetInstance().World();
+		IWorld& world = buki::Engine::Get().World();
 		for (auto entity : world.GetEntitiesInWorld())
 		{
 			entitiesJson[entity->GetName()] = (entity->Serialize());
-			buki::Engine::GetInstance().Log().LogMessage(entity->GetName());
+			buki::Engine::Get().Log().LogMessage(entity->GetName());
 		}
 		doc["entities"] = entitiesJson;
 		std::ofstream out(path);
@@ -98,12 +98,12 @@ void buki::BukiScene::SaveScene(std::string fileName) const
 	{
 		json doc;
 		doc["sceneName"] = fileName;
-		Camera* camera = buki::Engine::GetInstance().Graphics().GetCamera();
-		json cameraDoc = camera->Serialize();
-		doc["camera"] = cameraDoc;
+		//Camera* camera = buki::Engine::GetInstance().Graphics().GetCamera();
+		//json cameraDoc = camera->Serialize();
+		//doc["camera"] = cameraDoc;
 
 		json entitiesJson;
-		IWorld& world = buki::Engine::GetInstance().World();
+		IWorld& world = buki::Engine::Get().World();
 		for (auto entity : world.GetEntitiesInWorld())
 		{
 			entitiesJson[entity->GetName()] = (entity->Serialize());
@@ -116,16 +116,16 @@ void buki::BukiScene::SaveScene(std::string fileName) const
 	}
 }
 
-void buki::BukiScene::FileLoad(std::string _path) const 
+void buki::BukiScene::FileLoad(std::string _path) const
 {
 	std::ifstream in(_path);
 	json doc;
 	in >> doc;
 	in.close();
-	Camera* camera = buki::Engine::GetInstance().Graphics().GetCamera();
-	json cameraDoc = doc["camera"];
-	camera->Deserialize(cameraDoc);
-	IWorld& world = buki::Engine::GetInstance().World();
+	//Camera* camera = buki::Engine::GetInstance().Graphics().GetCamera();
+	//json cameraDoc = doc["camera"];
+	//camera->Deserialize(cameraDoc);
+	IWorld& world = buki::Engine::Get().World();
 	json entitiesJson = doc["entities"];
 	//buki::Engine::GetInstance().Log().LogMessage("Loading from file Scene: " + name);
 	for (auto it = entitiesJson.begin(); it != entitiesJson.end(); ++it)
@@ -137,7 +137,7 @@ void buki::BukiScene::FileLoad(std::string _path) const
 		Button* eButton = entity->GetComponent<Button>();
 		if (eButton)
 		{
-			eButton->OnClick.AddListener(dynamic_cast<Observer<std::string>*>(buki::Engine::GetInstance().World().GetCurrentScene()));
+			eButton->OnClick.AddListener(dynamic_cast<Observer<std::string>*>(buki::Engine::Get().World().GetCurrentScene()));
 		}
 	}
 	//buki::Engine::GetInstance().Log().LogMessage("Scene " + name + " loaded.");

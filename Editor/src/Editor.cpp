@@ -78,23 +78,48 @@ bool buki::Editor::Init()
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1); // Here
+
 	float main_scale = ImGui_ImplSDL2_GetContentScaleForDisplay(0);
-	SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-	window = SDL_CreateWindow("Dear ImGui SDL2+OpenGL3 example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, (int)(1920 * main_scale), (int)(1080 * main_scale), window_flags);
-	if (window == nullptr)
+	int _x SDL_WINDOWPOS_CENTERED;
+	int _y = SDL_WINDOWPOS_CENTERED;
+	Uint32 _windowFlag = (SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+	Uint32 _rendererFlag = (SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+
+	gameWindow = SDL_CreateWindow("Dear ImGui SDL2+OpenGL3 example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, (int)(1920 * main_scale), (int)(1080 * main_scale), _windowFlag);
+	if (gameWindow == nullptr)
 	{
 		printf("Error: SDL_CreateWindow(): %s\n", SDL_GetError());
 		return false;
 	}
 
-	gl_context = SDL_GL_CreateContext(window);
+	gl_context = SDL_GL_CreateContext(gameWindow);
 	if (gl_context == nullptr)
 	{
 		printf("Error: SDL_GL_CreateContext(): %s\n", SDL_GetError());
 		return false;
 	}
+	gameRenderer = SDL_CreateRenderer(gameWindow, -1, _rendererFlag);
+	if (!gameRenderer)
+	{
+		buki::Engine::GetInstance().Log().LogSdlError();
+		return false;
+	}
+	buki::Engine::GetInstance().Log().LogSuccess("Renderer initialised");
+	int blendmode = SDL_SetRenderDrawBlendMode(gameRenderer, SDL_BlendMode::SDL_BLENDMODE_BLEND);
+	if (blendmode != 0)
+	{
+		buki::Engine::GetInstance().Log().LogSdlError();
+		return false;
+	}
+	SDL_Rect rect;
+	SDL_RenderGetViewport(gameRenderer, &rect);
+	gameTexture = SDL_CreateTexture(gameRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, rect.w, rect.h);
+	if (!gameTexture)
+	{
+		Engine::GetInstance().Log().LogSdlError();
+	}
 
-	SDL_GL_MakeCurrent(window, gl_context);
+	SDL_GL_MakeCurrent(gameWindow, gl_context);
 	SDL_GL_SetSwapInterval(1); // Enable vsync
 
 	// Setup Dear ImGui context
@@ -104,8 +129,10 @@ bool buki::Editor::Init()
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
+	io.ConfigFlags |= ImGuiConfigFlags_DpiEnableScaleViewports; // [Experimental] Enable DPI-aware scaling of viewports, see
+	io.ConfigFlags |= ImGuiConfigFlags_DpiEnableScaleFonts;
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
-	io.ConfigViewportsNoDecoration = true; // Disable window decoration when viewports are enabled. We can remove this when we allow user to tweak it in the style editor.
+	//io.ConfigViewportsNoDecoration = true; // Disable window decoration when viewports are enabled. We can remove this when we allow user to tweak it in the style editor.
 	//io.ConfigViewportsNoAutoMerge = true;
 	//io.ConfigViewportsNoTaskBarIcon = true;
 
@@ -126,10 +153,8 @@ bool buki::Editor::Init()
 		style.WindowRounding = 0.0f;
 		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 	}
-	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
-	SDL_SetRenderDrawBlendMode(renderer, SDL_BlendMode::SDL_BLENDMODE_BLEND);
 	// Setup Platform/Renderer backends
-	ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
+	ImGui_ImplSDL2_InitForOpenGL(gameWindow, gl_context);
 	ImGui_ImplOpenGL3_Init(glsl_version);
 
 #ifdef __EMSCRIPTEN__
@@ -149,21 +174,29 @@ void buki::Editor::Update(SDL_Event _event)
 
 void buki::Editor::EditorClear()
 {
+	ImGuiIO& io = ImGui::GetIO();
+	glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
+	glClearColor(imguiColor[0] * imguiColor[3], imguiColor[1] * imguiColor[3], imguiColor[2] * imguiColor[3], imguiColor[3]);
+	glClear(GL_COLOR_BUFFER_BIT);
 }
 
 
 void buki::Editor::Render()
 {
-	SDL_GL_MakeCurrent(window, gl_context);
 	ImGuiIO& io = ImGui::GetIO();
-	glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
-	glClearColor(imguiColor[0] * imguiColor[3], imguiColor[1] * imguiColor[3], imguiColor[2] * imguiColor[3], imguiColor[3]);
-	glClear(GL_COLOR_BUFFER_BIT);
 
 	// Start the Dear ImGui frame
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame();
 	ImGui::NewFrame();
+
+	ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
+	ImGuiDockNode* central_node = ImGui::DockBuilderGetCentralNode(0);
+	if (central_node)
+	{
+		SDL_Rect rect{ central_node->Pos.x,central_node->Pos.y, central_node->Size.x, central_node->Size.y };
+		SDL_RenderSetViewport(gameRenderer, &rect);
+	}
 
 	// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
 	if (show_demo_window)
@@ -201,10 +234,9 @@ void buki::Editor::Render()
 			show_another_window = false;
 		ImGui::End();
 	}
-
+	Engine::GetInstance().World().Render(1.0f);
 	ImGui::Render();
-	glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 	{
 		SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
@@ -213,12 +245,12 @@ void buki::Editor::Render()
 		ImGui::RenderPlatformWindowsDefault();
 		SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
 	}
-
-	SDL_GL_SwapWindow(window);
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 void buki::Editor::EditorPresent()
 {
+	SDL_GL_SwapWindow(gameWindow);
 }
 
 void buki::Editor::Shutdown()
@@ -232,6 +264,23 @@ void buki::Editor::Shutdown()
 	ImGui::DestroyContext();
 
 	SDL_GL_DeleteContext(gl_context);
-	SDL_DestroyWindow(window);
+	SDL_DestroyWindow(gameWindow);
+	SDL_DestroyRenderer(gameRenderer);
+	SDL_DestroyTexture(gameTexture);
 	SDL_Quit();
+}
+
+SDL_Window* buki::Editor::GetGameWindow()
+{
+	return gameWindow;
+}
+
+SDL_Renderer* buki::Editor::GetGameRenderer()
+{
+	return gameRenderer;
+}
+
+SDL_Texture* buki::Editor::GetGameTexture()
+{
+	return gameTexture;
 }

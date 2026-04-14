@@ -2,9 +2,6 @@
 #include "Component.h"
 #include "IUpdatable.h"
 #include "IFixedUpdatable.h"
-#include "Vector2.h"
-#include "Material.h"
-#include "MassData.h"
 #include "Entity.h"
 #include "stdint.h"
 

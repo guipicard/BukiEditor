@@ -97,7 +97,7 @@ void buki::Entity::ActivatePhysics()
 	{
 		rb = AddComponent<RigidBody>();
 	}
-	rb->SetBodyId(Engine::GetInstance().Physics().CreatePhysicsBody(this));
+	rb->SetBodyId(Engine::Get().Physics().CreatePhysicsBody(this));
 	m_Physics = true;
 
 	Shapes* shape = GetComponentOfType<Shapes>();
@@ -113,7 +113,7 @@ void buki::Entity::DeactivatePhysics()
 	RigidBody* rb = this->GetComponent<RigidBody>();
 	if (rb)
 	{
-		Engine::GetInstance().Physics().DestroyPhysicsBody(rb->GetBodyId());
+		Engine::Get().Physics().DestroyPhysicsBody(rb->GetBodyId());
 		m_Physics = false;
 	}
 }
@@ -135,10 +135,10 @@ json buki::Entity::Serialize() const
 		Component* component = cmp.second;
 		if (component->IsSerialized()) continue;
 		std::string typeName = ComponentFactory::GetTypeName(*typeInfo);
-		Engine::GetInstance().Log().LogMessage("Serializing component: " + typeName);
+		Engine::Get().Log().LogMessage("Serializing component: " + typeName);
 		if (typeName.empty())
 		{
-			Engine::GetInstance().Log().LogMessage("no string for this cmp type");
+			Engine::Get().Log().LogMessage("no string for this cmp type");
 		}
 		doc["components"][typeName] = cmp.second->Serialize();
 		component->SetSerialized(true);

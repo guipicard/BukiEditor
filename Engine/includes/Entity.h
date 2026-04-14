@@ -5,10 +5,7 @@
 #include <IFixedUpdatable.h>
 #include <IUpdatable.h>
 #include <IDrawable.h>
-#include <RectF.h>
-#include <Vector2.h>
 #include "Subject.h"
-#include "Transform.h"
 #include "PhysicsService.h"
 #include "Component.h"
 #include "nlohmann/json.hpp"

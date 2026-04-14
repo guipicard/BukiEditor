@@ -1,203 +1,230 @@
-#pragma once
 #include "Engine.h"
-#include "Editor.h"
-#include "SDLInput.h"
-#include "LogConsole.h"
-#include "LogFile.h"
-#include "SDL_Graphics.h"
-#include "WorldService.h"
-#include "BaseScene.h"
-#include "SDL_Audio.h"
-#include "SDL_timer.h"
+
+#include "Platform/SDLPlatform.h"
+#include "Graphics/OpenGLGraphics.h"
+#include "Core/LogConsole.h"
+#include "Core/LogFile.h"
+#include "Core/WorldService.h"
+#include "Core/SDLInput.h"
 #include "PhysicsService.h"
-#include "box2d.h"
-#include <algorithm>
-#include <cstdint>
-//#include <vld.h>
+#include "Animation.h"
+#include "Entity.h"
+
+#include "Graphics/IGraphics.h"
+
+#include <array>
+
+//#include "SDL_Audio.h"
+
+//#include "vld.h"
 
 using namespace buki;
 
-const Vector2& Vector2::ZERO = Vector2(0.0f, 0.0f);
-const Vector2& Vector2::RIGHT = Vector2(1.0f, 0.0f);
-const Vector2& Vector2::UP = Vector2(0.0f, -1.0f);
-const Vector2& Vector2::LEFT = Vector2(-1.0f, 0.0f);
-const Vector2& Vector2::DOWN = Vector2(0.0f, 1.0f);
-
-bool Engine::Init(const std::string& name, int w, int h)
+bool Engine::Init(const std::string& title, int w, int h)
 {
 #if _DEBUG
 	m_Console = new LogConsole();
 #else
-	m_Console = new LogFile();
+	m_Console = new LogFile("./assets/LogFile.txt");
 #endif
-	m_Console->LogSuccess("SDL initialised");
-	m_Graphics = new SDL_Graphics();
-	if (!m_Graphics)
+
+	m_Console->LogSuccess("Logger initialized");
+
+	m_Platform = new SDLPlatform();
+	if (!m_Platform->Initialize({ title, w, h }))
 	{
 		m_Console->LogSdlError();
 		return false;
 	}
-	m_Graphics->InitBackend();
-#if BUKI_EDITOR
-	m_Editor = new Editor();
-	m_Editor->Init();
-#else
-	m_Editor = nullptr;
-#endif
 
-	if (!m_Graphics->Initialize(name, w, h))
+	m_Graphics = new OpenGLGraphics();
+	if (!m_Graphics->Initialize(*m_Platform))
 	{
+		m_Console->LogError("Graphics initialization failed");
 		return false;
 	}
-	m_Console->LogSuccess("Graphics initialised");
-	m_Input = new SdlInput();
+	m_TextureManager = MakeScope<TextureManager>(*m_Graphics);
+
+	m_Input = new SDLInput();
+	m_Platform->SetInput(m_Input);
 	m_World = new WorldService();
-	m_Audio = new SDL_Audio();
+	//m_Audio = new SDL_Audio();
 	m_Physics = new PhysicsService();
 
 	m_IsInit = true;
-	return m_IsInit;
+	return true;
 }
 
-void Engine::Start(void) {
-	if (!m_IsInit) {
-		if (!Init("Buki Engine", 1920, 1080)) {
+void Engine::Start()
+{
+	if (!m_IsInit)
+	{
+		if (!Init("Buki Engine", 1920, 1080))
+		{
 			return;
 		}
 	}
+
 	m_Console->LogSuccess("Buki initialized");
-	Input().m_IsRunning = true;
 
-	Uint32 lastTime = SDL_GetTicks();
-	Uint32 lag = 0;
-	Uint32 fixedLag = 0;
+	Uint64 lastTime = SDL_GetTicks();
+	Uint64 accumulator = 0;
+	Uint64 fixedAccumulator = 0;
 
-	// Optional: For FPS calculation
 	Uint32 frameCount = 0;
 	Uint32 physicsCount = 0;
-	Uint32 fpsLastTime = lastTime;
-
-	while (Input().m_IsRunning) {
-		Uint32 currentTime = SDL_GetTicks();
-		Uint32 elapsed = currentTime - lastTime;
+	Uint64 fpsLastTime = lastTime;
+	while (Platform().IsRunning())
+	{
+		const Uint64 currentTime = SDL_GetTicks();
+		const Uint64 elapsed = currentTime - lastTime;
 		lastTime = currentTime;
 
-		float dt = (float)(elapsed) * 0.001f;
-		lag += elapsed;
-		fixedLag += elapsed;
-
+		accumulator += elapsed;
+		fixedAccumulator += elapsed;
 
 		ProcessInput();
-		while (lag >= MS_PER_FRAME) {
-			Update(dt * timeScale);
-			Input().ResetLateInputs();
-			lag -= MS_PER_FRAME;
-		}
+		bool consumedTransientInputs = false;
 
-		while (fixedLag >= FIXED_TIMESTEP) {
-			FixedUpdate(FIXED_TIMESTEP * 0.001f * timeScale);
-			fixedLag -= FIXED_TIMESTEP;
-			physicsCount++;
-		}
-
-		float alpha = (float)(fixedLag / FIXED_TIMESTEP);
-		//float alpha = static_cast<float>(lag / MS_PER_FRAME);
-		alpha = alpha < 0.0f ? 0.0f : alpha > 1.0f ? 1.0f : alpha;
-		alpha = 1.0f;
-		if (m_Editor != nullptr)
+		while (accumulator >= MS_PER_FRAME)
 		{
-			m_Editor->EditorClear();
-			m_Editor->Render();
-			m_Editor->EditorPresent();
-			Render(alpha);
+			Update(static_cast<float>(MS_PER_FRAME) * 0.001f * m_TimeScale);
+
+			if (!consumedTransientInputs)
+			{
+				Input().ConsumeTransientInputs();
+				consumedTransientInputs = true;
+			}
+
+			accumulator -= MS_PER_FRAME;
 		}
-		else
+
+		while (fixedAccumulator >= FIXED_TIMESTEP)
 		{
-			Render(alpha);
+			FixedUpdate(static_cast<float>(FIXED_TIMESTEP) * 0.001f * m_TimeScale);
+			fixedAccumulator -= FIXED_TIMESTEP;
+			++physicsCount;
 		}
 
+		const float alpha = static_cast<float>(accumulator) / static_cast<float>(MS_PER_FRAME);
+		//Render(alpha < 0.0f ? 0.0f : alpha > 1.0f ? 1.0f : alpha);
+		Render(alpha);
 
+		++frameCount;
 
-		frameCount++;
-		if (currentTime - fpsLastTime >= 1000) {
-			m_CurrentFPS = frameCount;
+		if (currentTime - fpsLastTime >= 1000)
+		{
+			m_CurrentFPS = static_cast<int>(frameCount);
+			m_CurrentPPS = static_cast<int>(physicsCount);
 			frameCount = 0;
-			fpsLastTime = currentTime;
-
-			m_CurrentPPS = physicsCount;
 			physicsCount = 0;
+			fpsLastTime = currentTime;
 		}
 
-		Uint32 frameTime = SDL_GetTicks() - currentTime;
-		if (MS_PER_FRAME > frameTime) {
-			SDL_Delay(MS_PER_FRAME - frameTime);
+		const Uint64 frameTime = SDL_GetTicks() - currentTime;
+		if (frameTime < MS_PER_FRAME)
+		{
+			SDL_Delay(static_cast<Uint32>(MS_PER_FRAME - frameTime));
 		}
 	}
 
 	Shutdown();
 }
 
-void buki::Engine::SetTimeScale(const float scale)
+void Engine::SetTimeScale(float scale)
 {
-	timeScale = scale;
+	m_TimeScale = scale;
 }
 
-void Engine::ProcessInput(void) const
+void Engine::ProcessInput()
 {
-	Input().Update();
+	Input().BeginFrame();
+	Platform().PumpEvents();
+	Input().EndFrame();
+
+	if (m_Graphics != nullptr)
+	{
+		m_Graphics->Resize(Platform().GetDrawableWidth(), Platform().GetDrawableHeight());
+	}
 }
 
-void buki::Engine::FixedUpdate(float dt)
+
+void Engine::FixedUpdate(float dt)
 {
-	m_World->FixedUpdate(dt);
+	if (m_World != nullptr)
+	{
+		m_World->FixedUpdate(dt);
+	}
 }
 
 void Engine::Update(float dt)
 {
-	m_World->Update(dt);
+	if (m_World != nullptr)
+	{
+		m_World->Update(dt);
+	}
 }
 
 void Engine::Render(float alpha)
 {
-	m_Graphics->Clear();
+	m_Graphics->BeginFrame();
 	m_World->Render(alpha);
-	m_Graphics->Present();
-
+	m_Graphics->EndFrame();
 }
 
-void Engine::Shutdown(void)
+
+void Engine::Shutdown()
 {
-	if (m_Editor != nullptr)
+	if (m_TextureManager)
 	{
-		m_Editor->Shutdown();
-		delete m_Editor;
-	}
-	if (m_Input != nullptr)
-	{
-		delete m_Input;
-	}
-	if (m_Console != nullptr)
-	{
-		delete m_Console;
-	}
-	if (m_Graphics != nullptr)
-	{
-		m_Graphics->Shutdown();
-		delete m_Graphics;
-	}
-	if (m_Audio != nullptr)
-	{
-		m_Audio->Destroy();
-		delete m_Audio;
+		m_TextureManager->Clear();
+		m_TextureManager.reset();
 	}
 	if (m_World != nullptr)
 	{
 		m_World->Destroy();
 		delete m_World;
+		m_World = nullptr;
 	}
+
 	if (m_Physics != nullptr)
 	{
 		m_Physics->Destroy();
 		delete m_Physics;
+		m_Physics = nullptr;
 	}
+	//if (m_Audio != nullptr)
+	//{
+	//    m_Audio->Destroy();
+	//    delete m_Audio;
+	//    m_Audio = nullptr;
+	//}
+
+	if (m_Input != nullptr)
+	{
+		delete m_Input;
+		m_Input = nullptr;
+	}
+
+	if (m_Graphics != nullptr)
+	{
+		m_Graphics->Shutdown();
+		delete m_Graphics;
+		m_Graphics = nullptr;
+	}
+
+	if (m_Platform != nullptr)
+	{
+		m_Platform->Shutdown();
+		delete m_Platform;
+		m_Platform = nullptr;
+	}
+
+	if (m_Console != nullptr)
+	{
+		delete m_Console;
+		m_Console = nullptr;
+	}
+
+	m_IsInit = false;
 }

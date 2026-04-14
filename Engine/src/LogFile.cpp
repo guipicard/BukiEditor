@@ -1,63 +1,68 @@
 #include "LogFile.h"
-//#include <ctime>
-#include <time.h>
-#include <SDL_error.h>
-#include <SDL.h>
 
+#include <SDL3/SDL_error.h>
+#include <chrono>
+#include <ctime>
+#include <iomanip>
 
-buki::LogFile::LogFile()
+namespace buki
 {
-	 MyFile.open("./assets/LogFile.txt", std::ios_base::app);
-	 __time64_t longTime = time(NULL);
-	 struct tm newTime;
+    LogFile::LogFile(const std::string& path)
+    {
+        m_File.open(path, std::ios::out | std::ios::app);
 
+        if (!m_File.is_open())
+        {
+            return;
+        }
 
-	 errno_t err = _localtime64_s(&newTime, &longTime);
+        const auto now = std::chrono::system_clock::now();
+        const std::time_t nowTime = std::chrono::system_clock::to_time_t(now);
 
-	 if (err)
-	 {
-		 LogError("Invalid argument to _localtime64_s.");
-		 SDL_Event quitEvent;
-		 quitEvent.type = SDL_QUIT;
-		 SDL_PushEvent(&quitEvent);
-	 }
+        std::tm localTime{};
+#ifdef _WIN32
+        localtime_s(&localTime, &nowTime);
+#else
+        localtime_r(&nowTime, &localTime);
+#endif
 
-	 int year = 1900 + newTime.tm_year;
-	 int mounth = 1 + newTime.tm_mon;
-	 int day = newTime.tm_mday;
-	 int hour = 5 + newTime.tm_hour;
-	 int min = 30 + newTime.tm_min;
-	 int sec = newTime.tm_sec;
-	 MyFile << year << ":" << mounth << ":" << day << ":" << hour << "h" << min << "m" << sec << "s" << "\n" << std::endl;
-}
+        m_File << "\n========== Log Session: "
+            << std::put_time(&localTime, "%Y-%m-%d %H:%M:%S")
+            << " ==========\n";
+    }
 
-buki::LogFile::~LogFile()
-{
-	MyFile << "\n" << "\n";
-	MyFile.close();
-}
+    LogFile::~LogFile()
+    {
+        if (m_File.is_open())
+        {
+            m_File << "========== End Session ==========\n";
+            m_File.close();
+        }
+    }
 
-void buki::LogFile::LogError(std::string _text)
-{
-	MyFile << "ERROR: " << _text << std::endl;
-}
+    void LogFile::Log(LogLevel level, std::string_view text)
+    {
+        if (!m_File.is_open())
+        {
+            return;
+        }
 
-void buki::LogFile::LogSdlError()
-{
-	MyFile << SDL_GetError() << std::endl;
-}
+        switch (level)
+        {
+        case LogLevel::Success: m_File << "[Success] "; break;
+        case LogLevel::Warning: m_File << "[Warning] "; break;
+        case LogLevel::Error:   m_File << "[Error] ";   break;
+        case LogLevel::Message:
+        default:                break;
+        }
 
-void buki::LogFile::LogWarning(std::string _text)
-{
-	MyFile << "Warning: " << _text << std::endl;
-}
+        m_File << text << '\n';
+        m_File.flush();
+    }
 
-void buki::LogFile::LogSuccess(std::string _text)
-{
-	MyFile << "Success: " << _text << std::endl;
-}
-
-void buki::LogFile::LogMessage(std::string _text)
-{
-	MyFile << _text << std::endl;
+    void LogFile::LogMessage(std::string_view text) { Log(LogLevel::Message, text); }
+    void LogFile::LogSuccess(std::string_view text) { Log(LogLevel::Success, text); }
+    void LogFile::LogWarning(std::string_view text) { Log(LogLevel::Warning, text); }
+    void LogFile::LogError(std::string_view text) { Log(LogLevel::Error, text); }
+    void LogFile::LogSdlError() { LogError(SDL_GetError()); }
 }

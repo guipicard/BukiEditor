@@ -1,108 +1,251 @@
 #include "Animation.h"
 
-using json = nlohmann::json;	
+#include "Engine.h"
+#include "Entity.h"
+#include "nlohmann/json.hpp"
 
-buki::Animation::Animation(Entity* _entity)
-	: Sprite(_entity)
+namespace buki
 {
-}
-
-void buki::Animation::Update(float dt)
-{
-	if (m_Playing)
+	SpriteAnimator::SpriteAnimator()
 	{
-		m_Elapsed += dt;
-		if (m_Elapsed >= m_Clips[m_CurrentClip].delay)
-		{
-			m_Elapsed = 0.0f;
+	}
 
-			m_CurrentFrame++;
-			AnimationClip _playingClip = m_Clips[m_CurrentClip];
-			if (m_CurrentFrame == m_LastFrame) 
+	SpriteAnimator::~SpriteAnimator()
+	{
+	}
+
+	void SpriteAnimator::Play(const std::string& clipName)
+	{
+		auto it = m_Clips.find(clipName);
+		if (it == m_Clips.end())
+		{
+			return;
+		}
+
+		m_CurrentClip = &it->second;
+		m_FrameIndex = 0;
+		m_TimeRemaining = m_CurrentClip->frames.front().duration;
+		m_Playing = true;
+		m_CurrentClipName = clipName;
+	}
+
+	void SpriteAnimator::Play(const AnimationClip& clip)
+	{
+		m_CurrentClip = &clip;
+		m_FrameIndex = 0;
+		m_TimeRemaining = m_CurrentClip->frames.front().duration;
+		m_Playing = true;
+		m_CurrentClipName = clip.name;
+	}
+
+	void SpriteAnimator::Stop()
+	{
+		m_Playing = false;
+		m_FrameIndex = 0;
+		m_TimeRemaining = 0.0f;
+		m_CurrentClipName.clear();
+	}
+
+	void SpriteAnimator::Draw(float alpha)
+	{
+		if (!m_Playing || m_CurrentClip == nullptr)
+		{
+			return;
+		}
+
+
+	}
+
+	void SpriteAnimator::Update(float dt)
+	{
+		if (!m_Playing || m_CurrentClip == nullptr)
+		{
+			return;
+		}
+
+		AdvanceFrame(dt);
+	}
+
+	void SpriteAnimator::AdvanceFrame(float dt)
+	{
+		m_TimeRemaining -= dt;
+
+		while (m_TimeRemaining <= 0.0f)
+		{
+			m_FrameIndex++;
+
+			if (m_FrameIndex >= m_CurrentClip->frames.size())
 			{
-				if (!m_Loop)
+				if (m_CurrentClip->loop)
 				{
-					Stop();
+					m_FrameIndex = 0;
 				}
 				else
 				{
-					m_CurrentFrame = m_FirstFrame;
+					Stop();
+					return;
 				}
 			}
-			UpdateFrame();
+
+			const SpriteFrame& frame = m_CurrentClip->frames[m_FrameIndex];
+			m_TimeRemaining += frame.duration;
 		}
 	}
-}
 
-json buki::Animation::Serialize()
-{
-	json doc;
-	return doc;
-}
-
-void buki::Animation::Deserialize(json _doc)
-{
-}
-
-void buki::Animation::Set()
-{
-}
-
-void buki::Animation::Init(int start, int frameWidth, int frameHeight)
-{
-	m_FrameWidth = frameWidth;
-	m_FrameHeight = frameHeight;
-
-	m_CurrentFrame = start;
-
-	m_Src.x = start * m_FrameWidth;
-	m_Src.y = 0;
-	m_Src.w = m_FrameWidth;
-	m_Src.h = m_FrameHeight;
-
-	m_CurrentClip.clear();
-}
-
-void buki::Animation::AddClip(const std::string& name, int startX, int startY, int count, float delay, std::string sprite)
-{
-	m_Clips.emplace(name, AnimationClip{ startX, startY, count, delay, sprite });
-	m_Src.x = startX * m_FrameWidth;
-	m_Src.y = startY * m_FrameHeight;
-}
-
-void buki::Animation::Stop()
-{
-	m_Playing = false;
-	m_Loop = false;
-}
-
-void buki::Animation::Play(const std::string& name, bool loop)
-{
-	if (name != m_CurrentClip)
+	const SpriteFrame* SpriteAnimator::GetCurrentFrame() const
 	{
-		m_CurrentClip = name;
-		const AnimationClip _clip = m_Clips[name];
-		Load(_clip.sprite);
-		m_CurrentFrame = _clip.startX;
-		m_FirstFrame = _clip.startX;
-		m_LastFrame = _clip.count - _clip.startX - 1;
-		//m_LastFrame = _clip.startX + _clip.count - 1;
-		m_Delay = _clip.delay;
-		m_Loop = loop;
-		m_Playing = true;
-		UpdateFrame();
+		if (!m_Playing || m_CurrentClip == nullptr || m_FrameIndex >= m_CurrentClip->frames.size())
+		{
+			return nullptr;
+		}
+
+		return &m_CurrentClip->frames[m_FrameIndex];
 	}
-}
 
-void buki::Animation::UpdateFrame()
-{
-	const int _row = m_Clips[m_CurrentClip].startY;
-	const int _col = m_CurrentFrame;
-	const int _x = m_FrameWidth * _col;
-	const int _y = m_FrameHeight * _row;
+	json SpriteAnimator::Serialize() const
+	{
+		json doc;
 
-	m_Src.x = _x;
-	m_Src.y = _y;
-	m_Src.w = m_FrameWidth;
-	m_Src.h = m_FrameHeight;
+		// Serialize clips
+		json clips;
+		for (const auto& [name, clip] : m_Clips)
+		{
+			json clipDoc;
+			clipDoc["name"] = clip.name;
+			clipDoc["loop"] = clip.loop;
+
+			json frames;
+			for (const auto& frame : clip.frames)
+			{
+				json frameDoc;
+				frameDoc["texturePath"] = ""; // Would need to track original path
+				frameDoc["sourceRect"] = {
+					{"x", frame.sourceRect.x},
+					{"y", frame.sourceRect.y},
+					{"w", frame.sourceRect.w},
+					{"h", frame.sourceRect.h}
+				};
+				frameDoc["originX"] = frame.originX;
+				frameDoc["originY"] = frame.originY;
+				frameDoc["duration"] = frame.duration;
+				frames.push_back(frameDoc);
+			}
+			clipDoc["frames"] = frames;
+			clips[name] = clipDoc;
+		}
+		doc["clips"] = clips;
+
+		// Serialize state
+		doc["playing"] = m_Playing;
+		doc["currentClip"] = m_CurrentClipName;
+		doc["frameIndex"] = m_FrameIndex;
+
+		return doc;
+	}
+
+	void SpriteAnimator::Deserialize(const json& doc)
+	{
+		m_Clips.clear();
+
+		// Deserialize clips
+		if (doc.contains("clips"))
+		{
+			for (auto& [name, clipDoc] : doc["clips"].items())
+			{
+				AnimationClip clip;
+				clip.name = clipDoc.value("name", name);
+				clip.loop = clipDoc.value("loop", true);
+
+				if (clipDoc.contains("frames"))
+				{
+					for (const auto& frameDoc : clipDoc["frames"])
+					{
+						SpriteFrame frame;
+						// texturePath would need to be resolved via TextureManager
+						frame.sourceRect.x = frameDoc["sourceRect"]["x"];
+						frame.sourceRect.y = frameDoc["sourceRect"]["y"];
+						frame.sourceRect.w = frameDoc["sourceRect"]["w"];
+						frame.sourceRect.h = frameDoc["sourceRect"]["h"];
+						frame.originX = frameDoc.value("originX", 0.0f);
+						frame.originY = frameDoc.value("originY", 0.0f);
+						frame.duration = frameDoc.value("duration", 0.1f);
+						clip.frames.push_back(frame);
+					}
+				}
+
+				m_Clips[name] = clip;
+			}
+		}
+
+		// Restore state
+		m_Playing = doc.value("playing", false);
+		m_CurrentClipName = doc.value("currentClip", "");
+		m_FrameIndex = doc.value("frameIndex", 0);
+	}
+
+	Animation::Animation(Entity* _entity)
+		: Component(_entity)
+		, m_StateMachine(AnimationStateMachine(&m_Animator))
+	{
+	}
+
+	void Animation::Start()
+	{
+	}
+
+	void Animation::Destroy()
+	{
+		m_StateMachine.ChangeState(""); // clear state
+		m_Animator.Stop();
+		m_ClipLibrary.Clear();
+	}
+
+	void Animation::Draw(float alpha)
+	{
+		const SpriteFrame* frame = GetCurrentFrame();
+		if (!frame || !frame->texture)
+		{
+			return;
+		}
+		Transform* transform = m_Entity->GetTransform();
+		Engine::Get().Graphics().DrawSprite(
+			*frame->texture,
+			transform->position.x, transform->position.y,
+			transform->GetSize().x, transform->GetSize().y,
+			frame->sourceRect,
+			transform->GetRotation().GetRadians(),
+			frame->originX, frame->originY,
+			1.0f, 1.0f, 1.0f, 1.0f,
+			frame->flipX, frame->flipY);
+	}
+
+	void Animation::Update(float dt)
+	{
+		m_StateMachine.Update();
+		m_Animator.Update(dt);
+	}
+
+
+	// Animation component serialization
+	json Animation::Serialize()
+	{
+		json doc;
+		doc["currentState"] = m_StateMachine.GetCurrentState();
+		doc["playing"] = m_Animator.IsPlaying();
+		doc["clipName"] = m_Animator.GetCurrentClipName();
+		return doc;
+	}
+
+	void Animation::Deserialize(json doc)
+	{
+		//m_Animator.Deserialize(doc);
+		// Restore state machine
+		std::string stateName = doc.value("currentState", "idle");
+		m_StateMachine.ChangeState(stateName);
+	}
+
+	void Animation::Set()
+	{
+		Start();
+	}
 }

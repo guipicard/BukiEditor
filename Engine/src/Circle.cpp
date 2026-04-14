@@ -12,13 +12,13 @@ void buki::Circle::Draw(float alpha)
 	{
 		Vector2 pos = m_Entity->GetTransform()->GetPosition();
 		float angle = m_Entity->GetTransform()->GetRotation().GetRadians();
-		Graphics().FillCircle(pos.x, pos.y, Collider.Radius, angle, ShapeColor);
+		//Graphics().FillCircle(pos.x, pos.y, Collider.Radius, angle, ShapeColor);
 	}
 	if (shapeDraw)
 	{
 		Vector2 pos = m_Entity->GetTransform()->GetPosition();
 		float angle = m_Entity->GetTransform()->GetRotation().GetRadians();
-		Graphics().DrawCircle(pos.x, pos.y, Collider.Radius, angle, DebugColor);
+		//Graphics().DrawCircle(pos.x, pos.y, Collider.Radius, angle, DebugColor);
 	}
 }
 

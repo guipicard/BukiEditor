@@ -10,10 +10,11 @@ namespace buki
 	struct IInput;
 	struct ILogger;
 	struct IGraphics;
-	struct IAudio;
+	//struct IAudio;
 	struct ICollision;
 	struct IWorld;
 	struct PhysicsService;
+	struct TextureManager;
 
 	struct Component
 	{
@@ -41,9 +42,10 @@ namespace buki
 		IInput& Input() const;
 		ILogger& Log() const;
 		IGraphics& Graphics() const;
-		IAudio& Audio() const;
+		//IAudio& Audio() const;
 		IWorld& World() const;
 		PhysicsService& Physics() const;
+		TextureManager& Textures() const;
 
 		Entity* m_Entity = nullptr;
 		bool m_Serialized = false;

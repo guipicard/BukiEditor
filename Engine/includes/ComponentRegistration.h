@@ -24,7 +24,7 @@ struct ComponentRegistrar {
 				{
 					if (c->IsDeserialized())
 					{
-						Engine::GetInstance().Log().LogWarning("Component of type " + std::string(typeid(T).name()) + " already exists on entity " + e->GetName() + " and is marked as deserialized. Skipping deserialization.");
+						Engine::Get().Log().LogWarning("Component of type " + std::string(typeid(T).name()) + " already exists on entity " + e->GetName() + " and is marked as deserialized. Skipping deserialization.");
 						return; // THIS MAKES IT SO AN ENTITY CANT HAVE 2 COMPONENTS OF THE SAME TYPE, WHICH IS GOOD FOR NOW, BUT MAYBE NOT LATER
 					}
 				}
@@ -52,7 +52,7 @@ using namespace buki;
 //namespace buki
 
 REGISTER_COMPONENT(Animation, "Animation");
-REGISTER_COMPONENT(Atlas, "Atlas");
+//REGISTER_COMPONENT(Atlas, "Atlas");
 REGISTER_COMPONENT(Box, "Box");
 REGISTER_COMPONENT(Button, "Button");
 REGISTER_COMPONENT(Circle, "Circle");

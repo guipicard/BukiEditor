@@ -19,7 +19,9 @@ namespace buki
 		void EditorPresent();
 		void Shutdown();
 
-		inline void SetGameWindow(SDL_Window* _window) { gameWindow = _window; }
+		SDL_Window* GetGameWindow();
+		SDL_Renderer* GetGameRenderer();
+		SDL_Texture* GetGameTexture();
 	private:
 		float main_scale = 0;
 		bool show_demo_window = true;
@@ -36,9 +38,9 @@ namespace buki
 		bool show_world_editor_window = true;
 		bool show_entity_inspector_window = true;
 
-		SDL_Window* window = nullptr;
 		SDL_Window* gameWindow = nullptr;
 		void* gl_context = nullptr;
-		SDL_Renderer* renderer = nullptr;
+		//SDL_Renderer* gameRenderer = nullptr;
+		//SDL_Texture* gameTexture = nullptr;
 	};
 }

@@ -1,0 +1,24 @@
+Engine
+├─ Core
+│  ├─ Application
+│  ├─ Services
+│  └─ Logging
+├─ Platform
+│  ├─ IPlatform
+│  └─ SDLPlatform
+├─ Graphics
+│  ├─ IGraphics
+│  ├─ OpenGLGraphics
+│  ├─ Shader
+│  ├─ Texture2D
+│  ├─ Mesh / QuadBatch
+│  ├─ RenderTarget
+│  └─ Camera2D
+├─ Editor
+│  ├─ ImGuiLayer
+│  └─ SceneViewport
+└─ Runtime
+   ├─ SceneRenderer
+   └─ DebugRenderer
+<ClCompile Include="C:\Users\guill\OneDrive\Desktop\Engine\BukiEngine\vendor\glad\src\glad.c">
+		</ClCompile>

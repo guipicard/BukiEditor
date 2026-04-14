@@ -1,5 +1,5 @@
 #pragma once
-#include "IScene.h"
+#include "Core/IScene.h"
 
 namespace buki
 {
