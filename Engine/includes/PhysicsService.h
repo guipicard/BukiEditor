@@ -8,30 +8,26 @@
 
 struct b2BodyId;
 struct b2ShapeId;
+
 struct b2ContactBeginTouchEvent;
 struct b2ContactEndTouchEvent;
 struct b2ContactHitEvent;
-
+struct b2SensorBeginTouchEvent;
+struct b2SensorEndTouchEvent;
 
 namespace buki
 {
-	using CollisionEvent = std::variant<b2ContactBeginTouchEvent, b2ContactEndTouchEvent, b2ContactHitEvent>;
-	template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
-	template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
-
-	struct Entity;
-	struct WorldId;
+	class Entity;
 	struct ShapeId;
 	struct BodyId;
-	struct Vector2;
-	struct Entity;
-	struct MonoBehaviour;
+	class Vector2;
+	class MonoBehaviour;
 	struct AABB;
 
 	struct WorldId
 	{
 		uint16_t index;
-		uint16_t revision;
+		uint16_t generation;
 	};
 
 	struct ContactData
@@ -40,11 +36,16 @@ namespace buki
 		Entity* shapeB;
 	};
 
+	using CollisionEvent = std::variant<b2ContactBeginTouchEvent, b2ContactEndTouchEvent, b2ContactHitEvent>;
+	using TriggerEvent = std::variant<b2SensorBeginTouchEvent, b2SensorEndTouchEvent>;
+	template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
+	template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
+
 	struct ContactEvents
 	{
 		ContactEvents() = default;
 		template<typename T>
-		void FillCallbacks(T* instance, std::vector<std::function<void()>>& funcList);
+		void FillCollisionCallbacks(T* instance, int count, std::vector<std::function<void()>>& funcList);
 
 		void Destroy() {
 			OnCollisionEnter.clear();
@@ -54,35 +55,41 @@ namespace buki
 			delete& OnCollisionExit;
 			delete& OnCollisionHit;
 		}
-		void HandleEvent(CollisionEvent event, MonoBehaviour* mb, Entity* other);
-		void Step();
+		void HandleCollisionEvent(CollisionEvent event, MonoBehaviour* mb, Entity* other);
+		void CollisionStep();
 
-		/*std::vector<std::function<void(Entity* other)>> GetCollisionEnterCallbacks() {
-			return OnCollisionEnter;
-		}
-
-		std::vector<std::function<void(Entity* other)>> GetCollisionExitCallbacks() {
-			return OnCollisionExit;
-		}
-
-		std::vector<std::function<void(Entity* other)>> GetCollisionHitCallbacks() {
-			return OnCollisionHit;
-		}*/
-
-		//private:
 		std::vector<std::function<void()>>& OnCollisionEnter = *new std::vector<std::function<void()>>();
 		std::vector<std::function<void()>>& OnCollisionExit = *new std::vector<std::function<void()>>();
 		std::vector<std::function<void()>>& OnCollisionHit = *new std::vector<std::function<void()>>();
-
 	};
 
-	struct PhysicsService
+	struct SensorEvents
 	{
+		SensorEvents() = default;
+		template<typename T>
+		void FillSensorCallbacks(T* instance, int count, std::vector<std::function<void()>>& funcList);
+
+		void Destroy() {
+			OnSensorEnter.clear();
+			OnSensorExit.clear();
+			delete& OnSensorEnter;
+			delete& OnSensorExit;
+		}
+		void HandleSensorEvent(TriggerEvent event, MonoBehaviour* mb, Entity* other);
+		void SensorStep();
+
+		std::vector<std::function<void()>>& OnSensorEnter = *new std::vector<std::function<void()>>();
+		std::vector<std::function<void()>>& OnSensorExit = *new std::vector<std::function<void()>>();
+	};
+
+	class PhysicsService
+	{
+	public:
 		PhysicsService();
 		void LinearImpulse(Entity* _entity, const Vector2 _impulse, const bool _wake);
 		void SetAwake(const BodyId _id, const bool _state);
 		bool IsAwake(const BodyId _id) const;
-		void Step(float dt);
+		void Step(const float dt);
 		b2BodyId Getb2BodyId(const BodyId _id) const;
 		b2ShapeId Getb2ShapeId(const ShapeId _id) const;
 		WorldId GetPhysicsWorld() const;
@@ -92,7 +99,6 @@ namespace buki
 		void SetForce(Entity* _entity, Vector2 _force, bool _wake);
 		float GetMass(BodyId _id);
 		Vector2 GetVelocity(Entity* _entity);
-		void AddShape(int32_t _id, Entity* _entity);
 		void Listen(Entity* _entity);
 		void* GetUserData(BodyId b);
 		bool CastRayClosest(Vector2 origin, Vector2 direction, float maxDistance, std::vector<Entity*>& hitEntities);
@@ -102,14 +108,14 @@ namespace buki
 		bool QueryPoint(const Vector2 _point, std::vector<Entity*>& _hitEntities, const int _filter);
 		bool TestPoint(ShapeId _id, Vector2 _point);
 		void SetFilter(ShapeId _id, const int filter);
-		int GetType(BodyId _id);
-		AABB GetPhysicsSize(ShapeId _id);
+		int GetType(BodyId _id) const;
+		AABB GetPhysicsSize(ShapeId _id) const;
 		void Destroy();
 		void Reset();
 	private:
 		WorldId worldId;
-		std::map<int32_t, Entity*> shapeIdToEntityMap;
 		ContactEvents* contactEvents;
+		SensorEvents* sensorEvents;
 	};
 
 }

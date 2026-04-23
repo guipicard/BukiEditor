@@ -12,7 +12,7 @@ using json = nlohmann::json;
 namespace buki
 {
 	struct Text;
-	struct Entity;
+	class Entity;
 	struct Sprite;
 	struct Box;
 	struct RigidBody;

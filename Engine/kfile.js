@@ -32,12 +32,12 @@ project.addProvider = function(proj, isRoot=false)
             fs.copyFileSync("./vendor/SDL3-3.4.4/lib/x64/SDL3.dll", "./Deployment/SDL3.dll");
             // fs.copyFileSync("./vendor/SDL2/lib/SDL2_image.dll", "./Deployment/SDL2_image.dll")
             // fs.copyFileSync("./vendor/SDL2/lib/SDL2_ttf.dll", "./Deployment/SDL2_ttf.dll")
-            // fs.copyFileSync("./vendor/SDL2/lib/SDL2_mixer.dll", "./Deployment/SDL2_mixer.dll")
+            fs.copyFileSync("./vendor/SDL3_mixer-devel-3.2.0-VC/SDL3_mixer-3.2.0/lib/x64/SDL3_mixer.dll", "./Deployment/SDL3_mixer.dll")
             proj.addLib("./vendor/SDL3-3.4.4/lib/x64/SDL3")
+            proj.addLib("./vendor/SDL3_mixer-devel-3.2.0-VC/SDL3_mixer-3.2.0/lib/x64/SDL3_mixer")
             // proj.addLib("./vendor/SDL2/lib/SDL2main")
             // proj.addLib("./vendor/SDL2/lib/SDL2_image")
             // proj.addLib("./vendor/SDL2/lib/SDL2_ttf")
-            // proj.addLib("./vendor/SDL2/lib/SDL2_mixer")
     }
 };
 // project.addIncludeDir("./vendor/Visual Leak Detector 2019/include")

@@ -25,10 +25,10 @@ buki::IGraphics& buki::Component::Graphics() const
 	return Engine::Get().Graphics();
 }
 
-//buki::IAudio& buki::Component::Audio() const
-//{
-//	return Engine::GetInstance().Audio();
-//}
+buki::IAudio& buki::Component::Audio() const
+{
+	return Engine::Get().Audio();
+}
 
 buki::IWorld& buki::Component::World() const
 {
@@ -43,4 +43,9 @@ buki::PhysicsService& buki::Component::Physics() const
 buki::TextureManager& buki::Component::Textures() const
 {
 	return Engine::Get().Textures();
+}
+
+buki::Camera2D& buki::Component::Camera() const
+{
+	return Engine::Get().GetActiveCamera();
 }

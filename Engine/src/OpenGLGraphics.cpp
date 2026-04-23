@@ -1,12 +1,22 @@
-#pragma once
-#include "Graphics/OpenGLGraphics.h"
+#define NOMINMAX
+#include <Windows.h>
 
+#include "Graphics/OpenGLGraphics.h"
 #include "Platform/IPlatform.h"
+#include "Graphics/Texture2D.h"
+#include "Camera2DUtils.h"
+#include "Units.h"
+#include "Engine.h"
+
 #include <glad/glad.h>
-#include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "Graphics/Texture2D.h"
+
+#include <algorithm>
+#include <cmath>
+#include <cstddef>
+#include <cstdint>
+#include <string>
 
 namespace
 {
@@ -19,6 +29,29 @@ namespace
 			: nullptr;
 	}
 
+	constexpr const char* kDebugLineVertexShaderSource = R"(
+#version 330 core
+layout (location = 0) in vec2 aPos;
+
+uniform mat4 uProjection;
+
+void main()
+{
+    gl_Position = uProjection * vec4(aPos.xy, 0.0, 1.0);
+}
+)";
+
+	constexpr const char* kDebugLineFragmentShaderSource = R"(
+#version 330 core
+out vec4 FragColor;
+
+uniform vec4 uColor;
+
+void main()
+{
+    FragColor = uColor;
+}
+)";
 	constexpr const char* kVertexShaderSource = R"(
 #version 330 core
 layout (location = 0) in vec2 aPos;
@@ -32,12 +65,11 @@ out vec2 vUV;
 
 void main()
 {
-    gl_Position = uProjection * vec4(aPos, 0.0, 1.0);
-    vColor = aColor;
-    vUV = aUV;
+	gl_Position = uProjection * vec4(aPos, 0.0, 1.0);
+	vColor = aColor;
+	vUV = aUV;
 }
 )";
-
 
 	constexpr const char* kFragmentShaderSource = R"(
 #version 330 core
@@ -50,16 +82,16 @@ out vec4 FragColor;
 
 void main()
 {
-    FragColor = texture(uTexture, vUV) * vColor;
+	FragColor = texture(uTexture, vUV) * vColor;
 }
 )";
-
 
 	constexpr unsigned int kQuadIndices[6] =
 	{
 		0, 1, 2,
 		2, 3, 0
 	};
+
 }
 
 bool buki::OpenGLGraphics::Initialize(IPlatform& platform)
@@ -80,6 +112,7 @@ bool buki::OpenGLGraphics::Initialize(IPlatform& platform)
 
 	if (!CreateShaderProgram())
 	{
+		OutputDebugStringA("CreateShaderProgram failed.\n");
 		Shutdown();
 		return false;
 	}
@@ -89,13 +122,17 @@ bool buki::OpenGLGraphics::Initialize(IPlatform& platform)
 		Shutdown();
 		return false;
 	}
-
+	if (!CreateDebugLinePipeline())
+	{
+		Shutdown();
+		return false;
+	}
 	UpdateProjection();
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	m_WhiteTexture = CreateTextureRGBA8(whitePixel, 1, 1);
 
+	m_WhiteTexture = CreateTextureRGBA8(whitePixel, 1, 1);
 	if (m_WhiteTexture == 0)
 	{
 		Shutdown();
@@ -108,12 +145,14 @@ bool buki::OpenGLGraphics::Initialize(IPlatform& platform)
 void buki::OpenGLGraphics::Shutdown()
 {
 	DestroyQuadBuffers();
+	DestroyDebugLinePipeline();
 	DestroyShaderProgram();
 
 	DestroyTexture(m_WhiteTexture);
 	m_WhiteTexture = 0;
 
 	m_ProjectionLocation = -1;
+	m_TextureLocation = -1;
 	m_ViewportWidth = 0;
 	m_ViewportHeight = 0;
 	m_Platform = nullptr;
@@ -143,37 +182,41 @@ void buki::OpenGLGraphics::Resize(int width, int height)
 	UpdateProjection();
 }
 
-void buki::OpenGLGraphics::DrawQuad(float x, float y,
-	float width, float height,
+void buki::OpenGLGraphics::DrawQuad(
+	const Camera2D& camera,
+	const glm::vec2& worldPositionMeters,
+	float widthMeters,
+	float heightMeters,
 	float rotationRadians,
-	float originX, float originY,
-	float u0, float v0, float u1, float v1,
-	float r, float g, float b, float a)
+	const UVRect& uvRect,
+	const Color& color)
 {
 	DrawTexturedQuad(
 		m_WhiteTexture,
-		x, y,
-		width, height,
+		camera,
+		worldPositionMeters,
+		widthMeters,
+		heightMeters,
 		rotationRadians,
-		originX, originY,
-		u0, v0, u1, v1,
-		r, g, b, a);
+		uvRect,
+		color
+	);
 }
-
 
 std::uint32_t buki::OpenGLGraphics::CreateTextureRGBA8(const void* pixels, int width, int height)
 {
-
 	if (pixels == nullptr || width <= 0 || height <= 0)
 	{
 		return 0;
 	}
 
+	while (glGetError() != GL_NO_ERROR) {}
+
 	std::uint32_t textureId = 0;
 	glGenTextures(1, &textureId);
-
 	if (textureId == 0)
 	{
+		OutputDebugStringA("glGenTextures failed\n");
 		return 0;
 	}
 
@@ -183,7 +226,6 @@ std::uint32_t buki::OpenGLGraphics::CreateTextureRGBA8(const void* pixels, int w
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 	glTexImage2D(
@@ -197,8 +239,19 @@ std::uint32_t buki::OpenGLGraphics::CreateTextureRGBA8(const void* pixels, int w
 		GL_UNSIGNED_BYTE,
 		pixels);
 
-	glBindTexture(GL_TEXTURE_2D, 0);
+	const GLenum err = glGetError();
+	if (err != GL_NO_ERROR)
+	{
+		char buffer[128];
+		sprintf_s(buffer, "glTexImage2D failed, error = 0x%X\n", err);
+		OutputDebugStringA(buffer);
 
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glDeleteTextures(1, &textureId);
+		return 0;
+	}
+
+	glBindTexture(GL_TEXTURE_2D, 0);
 	return textureId;
 }
 
@@ -210,12 +263,15 @@ void buki::OpenGLGraphics::DestroyTexture(std::uint32_t textureId)
 	}
 }
 
-void buki::OpenGLGraphics::DrawTexturedQuad(std::uint32_t textureId, 
-	float x, float y, float width, float height, 
+void buki::OpenGLGraphics::DrawTexturedQuad(
+	std::uint32_t textureId,
+	const Camera2D& camera,
+	const glm::vec2& worldPositionMeters,
+	float widthMeters,
+	float heightMeters,
 	float rotationRadians,
-	float originX, float originY,
-	float u0, float v0, float u1, float v1, 
-	float r, float g, float b, float a)
+	const UVRect& uvRect,
+	const Color& color)
 {
 	if (textureId == 0 || m_ShaderProgram == 0 || m_VAO == 0 || m_VBO == 0 || m_EBO == 0)
 	{
@@ -223,19 +279,25 @@ void buki::OpenGLGraphics::DrawTexturedQuad(std::uint32_t textureId,
 	}
 
 	UploadQuadVertices(
-		x, y,
-		width, height,
+		worldPositionMeters,
+		widthMeters,
+		heightMeters,
 		rotationRadians,
-		originX, originY,
-		u0, v0, u1, v1,
-		r, g, b, a);
+		color,
+		uvRect,
+		camera
+	);
 
 	glUseProgram(m_ShaderProgram);
 	glUniformMatrix4fv(m_ProjectionLocation, 1, GL_FALSE, glm::value_ptr(m_Projection));
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureId);
-	glUniform1i(m_TextureLocation, 0);
+
+	if (m_TextureLocation >= 0)
+	{
+		glUniform1i(m_TextureLocation, 0);
+	}
 
 	glBindVertexArray(m_VAO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
@@ -244,6 +306,167 @@ void buki::OpenGLGraphics::DrawTexturedQuad(std::uint32_t textureId,
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glUseProgram(0);
 }
+
+void buki::OpenGLGraphics::DrawLine(const Vector2& a, const Vector2& b, const Color& color)
+{
+	std::vector<glm::vec2> points = { {a.x, a.y}, {b.x, b.y} };
+	DrawPrimitiveInternal(points, color, GL_LINES);
+}
+
+void buki::OpenGLGraphics::DrawRectOutline(const Vector2& center, const Vector2& size, float rotationRadians, const Color& color)
+{
+	const glm::vec2 screenCenter = WorldToScreen(glm::vec2{ center.x, center.y }, buki::Engine::Get().GetActiveCamera());
+	const glm::vec2 screenSize = Units::ToPixels({ size.x, size.y });
+	const Vector2 half = { screenSize.x * 0.5f, screenSize.y * 0.5f };
+
+	auto rotate = [rotationRadians](const glm::vec2& p) -> glm::vec2
+		{
+			const float c = std::cos(rotationRadians);
+			const float s = std::sin(rotationRadians);
+			return
+			{
+				p.x * c - p.y * s,
+				p.x * s + p.y * c
+			};
+		};
+
+	std::vector<glm::vec2> points;
+	points.reserve(4);
+
+	points.push_back(screenCenter + rotate({ -half.x, -half.y }));
+	points.push_back(screenCenter + rotate({ half.x, -half.y }));
+	points.push_back(screenCenter + rotate({ half.x,  half.y }));
+	points.push_back(screenCenter + rotate({ -half.x,  half.y }));
+
+	DrawPrimitiveInternal(points, color, GL_LINE_LOOP);
+}
+
+void buki::OpenGLGraphics::FillRect(const Vector2& center, const Vector2& size, float rotationRadians, const Color& color)
+{
+	const glm::vec2 screenCenter = WorldToScreen(glm::vec2{ center.x, center.y }, buki::Engine::Get().GetActiveCamera());
+	const glm::vec2 screenSize = Units::ToPixels({ size.x, size.y });
+	const glm::vec2 half = { screenSize.x * 0.5f, screenSize.y * 0.5f };
+
+	auto rotate = [rotationRadians](const glm::vec2& p) -> glm::vec2
+		{
+			const float c = std::cos(rotationRadians);
+			const float s = std::sin(rotationRadians);
+			return { p.x * c - p.y * s, p.x * s + p.y * c };
+		};
+
+	std::vector<glm::vec2> points;
+	points.reserve(6);
+
+	points.push_back(screenCenter);
+	points.push_back(screenCenter + rotate({ -half.x, -half.y }));
+	points.push_back(screenCenter + rotate({ half.x, -half.y }));
+	points.push_back(screenCenter + rotate({ half.x,  half.y }));
+	points.push_back(screenCenter + rotate({ -half.x,  half.y }));
+	points.push_back(screenCenter + rotate({ -half.x, -half.y }));
+
+	DrawPrimitiveInternal(points, color, GL_TRIANGLE_FAN);
+}
+
+void buki::OpenGLGraphics::DrawCircleOutline(const Vector2& center, float radius, const Color& color)
+{
+	const glm::vec2 screenCenter = WorldToScreen(glm::vec2{ center.x, center.y }, buki::Engine::Get().GetActiveCamera());
+
+	const float screenRadius = Units::ToPixels(radius);
+	int segments = std::clamp(static_cast<int>(screenRadius), 16, 128);
+
+	std::vector<glm::vec2> points;
+	points.reserve(static_cast<size_t>(segments));
+
+	const float step = 6.28318530718f / static_cast<float>(segments);
+	const float angleOffset = 6.28318530718f / 4;
+	for (int i = 0; i < segments; ++i)
+	{
+		const float a = (static_cast<float>(i) * step) - angleOffset;
+		points.push_back(
+			{
+				screenCenter.x + std::cos(a) * screenRadius,
+				screenCenter.y + std::sin(a) * screenRadius
+			});
+	}
+	DrawPrimitiveInternal({ points[0], screenCenter }, color, GL_LINES);
+	DrawPrimitiveInternal(points, color, GL_LINE_LOOP);
+}
+
+void buki::OpenGLGraphics::FillCircle(const Vector2& center, float radius, const Color& color)
+{
+	const glm::vec2 screenCenter = WorldToScreen(glm::vec2{ center.x, center.y }, buki::Engine::Get().GetActiveCamera());
+
+	const float screenRadius = Units::ToPixels(radius);
+	int segments = std::clamp(static_cast<int>(screenRadius), 16, 128);
+
+	std::vector<glm::vec2> points;
+	points.reserve(static_cast<size_t>(segments + 2));
+
+	points.push_back(screenCenter);
+
+	const float step = 6.28318530718f / static_cast<float>(segments);
+	const float angleOffset = 6.28318530718f / 4;
+	for (int i = 0; i <= segments; ++i)
+	{
+		const float a = (static_cast<float>(i) * step) - angleOffset;
+		points.push_back(
+			{
+				screenCenter.x + std::cos(a) * screenRadius,
+				screenCenter.y + std::sin(a) * screenRadius
+			});
+	}
+
+	DrawPrimitiveInternal(points, color, GL_TRIANGLE_FAN);
+}
+
+void buki::OpenGLGraphics::DrawPolygonOutline(const Vector2& center, float radius, float rotationRadians, const Color& color, int segments)
+{
+	if (segments < 3)
+	{
+		segments = 3;
+	}
+	const glm::vec2 screenCenter = WorldToScreen(glm::vec2{ center.x, center.y }, buki::Engine::Get().GetActiveCamera());
+	const float screenRadius = Units::ToPixels(radius);
+	std::vector<glm::vec2>& points = GetPolygonPoints(screenCenter, screenRadius, rotationRadians, segments, true);
+	points.erase(points.begin());
+	DrawPrimitiveInternal(points, color, GL_LINE_LOOP);
+}
+
+void buki::OpenGLGraphics::FillPolygon(const Vector2& center, float radius, float rotationRadians, const Color& color, int segments)
+{
+	if (segments < 3)
+	{
+		segments = 3;
+	}
+	const glm::vec2 screenCenter = WorldToScreen(glm::vec2{ center.x, center.y }, buki::Engine::Get().GetActiveCamera());
+	const float screenRadius = Units::ToPixels(radius);
+	const std::vector<glm::vec2>& points = GetPolygonPoints(screenCenter, screenRadius, rotationRadians, segments, true);
+	DrawPrimitiveInternal(points, color, GL_TRIANGLE_FAN);
+}
+
+std::vector<glm::vec2> buki::OpenGLGraphics::GetPolygonPoints(glm::vec2 center, float radius, float rotationRadians, int segments, bool renderFill)
+{
+	const int additionnalSegments = renderFill ? 2 : 0;
+	std::vector<glm::vec2> points;
+	points.reserve(static_cast<size_t>(segments + additionnalSegments));
+	if (renderFill)
+	{
+		points.push_back(center);
+	}
+	const float step = 6.28318530718f / static_cast<float>(segments);
+	const float angleOffset = (6.28318530718f / 4);
+	for (int i = 0; i < segments + (additionnalSegments - 1); ++i)
+	{
+		const float a = ((static_cast<float>(i) * step) - angleOffset) + rotationRadians;
+		points.push_back(
+			{
+				center.x + std::cos(a) * radius,
+				center.y + std::sin(a) * radius
+			});
+	}
+	return points;
+}
+
 
 void buki::OpenGLGraphics::SetCameraPosition(float x, float y)
 {
@@ -255,63 +478,109 @@ void buki::OpenGLGraphics::ResetCamera()
 	m_CameraPosition = { 0.0f, 0.0f };
 }
 
-void buki::OpenGLGraphics::DrawSprite(std::uint32_t textureId,
-	float x, float y,
-	float width, float height,
+void buki::OpenGLGraphics::DrawSprite(
+	const Texture2D& texture,
+	const Camera2D& camera,
+	const glm::vec2& worldPositionMeters,
+	float widthMeters,
+	float heightMeters,
 	const RectF& sourceRectPixels,
-	float textureWidth, float textureHeight,
 	float rotationRadians,
-	float originX, float originY,
-	float r, float g, float b, float a,
-	bool flipX, bool flipY)
+	bool flipX,
+	bool flipY,
+	const Color& color)
 {
-	if (textureWidth <= 0.0f || textureHeight <= 0.0f)
+	DrawSprite(
+		texture.id,
+		static_cast<float>(texture.width),
+		static_cast<float>(texture.height),
+		camera,
+		worldPositionMeters,
+		widthMeters,
+		heightMeters,
+		sourceRectPixels,
+		rotationRadians,
+		flipX,
+		flipY,
+		color
+	);
+}
+
+void buki::OpenGLGraphics::DrawSprite(
+	std::uint32_t textureId,
+	float textureWidthPixels,
+	float textureHeightPixels,
+	const Camera2D& camera,
+	const glm::vec2& worldPositionMeters,
+	float widthMeters,
+	float heightMeters,
+	const RectF& sourceRectPixels,
+	float rotationRadians,
+	bool flipX,
+	bool flipY,
+	const Color& color)
+{
+	if (textureId == 0 || textureWidthPixels <= 0.0f || textureHeightPixels <= 0.0f)
 	{
 		return;
 	}
 
-	const float u0 = sourceRectPixels.x / textureWidth;
-	const float v0 = sourceRectPixels.y / textureHeight;
-	const float u1 = (sourceRectPixels.x + sourceRectPixels.w) / textureWidth;
-	const float v1 = (sourceRectPixels.y + sourceRectPixels.h) / textureHeight;
+	const UVRect uvRect = BuildUVRect(
+		sourceRectPixels,
+		textureWidthPixels,
+		textureHeightPixels,
+		flipX,
+		flipY
+	);
 
 	DrawTexturedQuad(
 		textureId,
-		x, y,
-		width, height,
+		camera,
+		worldPositionMeters,
+		widthMeters,
+		heightMeters,
 		rotationRadians,
-		originX, originY,
-		u0, v0, u1, v1,
-		r, g, b, a);
+		uvRect,
+		color
+	);
 }
 
-void buki::OpenGLGraphics::DrawSprite(const Texture2D& texture,
-	float x, float y,
-	float width, float height,
+void buki::OpenGLGraphics::DrawSprite(
+	const Texture2D& texture,
+	const RectF& worldRectMeters,
 	const RectF& sourceRectPixels,
 	float rotationRadians,
-	float originX, float originY,
-	float r, float g, float b, float a, 
-	bool flipX, bool flipY)
+	bool flipX,
+	bool flipY)
 {
-	if (!texture.IsValid())
-	{
-		return;
-	}
-
 	DrawSprite(
-		texture.id,
-		x, y,
-		width, height,
+		texture,
+		buki::Engine::Get().GetActiveCamera(),
+		{ worldRectMeters.x, worldRectMeters.y },
+		worldRectMeters.w,
+		worldRectMeters.h,
 		sourceRectPixels,
-		static_cast<float>(texture.width),
-		static_cast<float>(texture.height),
 		rotationRadians,
-		originX, originY,
-		r, g, b, a, 
-		flipX, flipY);
+		flipX,
+		flipY
+	);
 }
 
+void buki::OpenGLGraphics::DrawSprite(const Texture2D& texture, const RectF& worldRectMeters, const RectF& sourceRectPixels, float rotationRadians, bool flipX, bool flipY, const Color& color)
+{
+	DrawSprite(
+		texture,
+		buki::Engine::Get().GetActiveCamera(),
+		{ worldRectMeters.x, worldRectMeters.y },
+		worldRectMeters.w,
+		worldRectMeters.h,
+		sourceRectPixels,
+		rotationRadians,
+		flipX,
+		flipY,
+		color
+	);
+}
 
 bool buki::OpenGLGraphics::InitializeLoader(IPlatform& platform)
 {
@@ -373,7 +642,7 @@ bool buki::OpenGLGraphics::CreateShaderProgram()
 	m_ProjectionLocation = glGetUniformLocation(m_ShaderProgram, "uProjection");
 	m_TextureLocation = glGetUniformLocation(m_ShaderProgram, "uTexture");
 
-	return m_ProjectionLocation >= 0 && m_TextureLocation >= 0;
+	return m_ProjectionLocation >= 0;
 }
 
 bool buki::OpenGLGraphics::CreateQuadBuffers()
@@ -449,47 +718,79 @@ void buki::OpenGLGraphics::UpdateProjection()
 		static_cast<float>(m_ViewportHeight),
 		0.0f,
 		-1.0f,
-		1.0f);
+		1.0f
+	);
 }
 
-void buki::OpenGLGraphics::UploadQuadVertices(float x, float y, float width, float height,
-	float rotationRadians,
-	float originX, float originY,
-	float u0, float v0, float u1, float v1,
-	float r, float g, float b, float a)
+buki::UVRect buki::OpenGLGraphics::BuildUVRect(
+	const RectF& sourceRectPixels,
+	float textureWidthPixels,
+	float textureHeightPixels,
+	bool flipX,
+	bool flipY) const
 {
-	const glm::vec2 localTopLeft = { -originX,          -originY };
-	const glm::vec2 localTopRight = { -originX + width,  -originY };
-	const glm::vec2 localBottomRight = { -originX + width,  -originY + height };
-	const glm::vec2 localBottomLeft = { -originX,          -originY + height };
+	UVRect uvRect{};
+	uvRect.u0 = sourceRectPixels.x / textureWidthPixels;
+	uvRect.v0 = sourceRectPixels.y / textureHeightPixels;
+	uvRect.u1 = (sourceRectPixels.x + sourceRectPixels.w) / textureWidthPixels;
+	uvRect.v1 = (sourceRectPixels.y + sourceRectPixels.h) / textureHeightPixels;
 
-	const float c = std::cos(rotationRadians);
-	const float s = std::sin(rotationRadians);
+	if (flipX)
+	{
+		std::swap(uvRect.u0, uvRect.u1);
+	}
 
-	const auto rotate = [c, s](const glm::vec2& v) -> glm::vec2
+	if (flipY)
+	{
+		std::swap(uvRect.v0, uvRect.v1);
+	}
+
+	return uvRect;
+}
+
+void buki::OpenGLGraphics::UploadQuadVertices(
+	const glm::vec2& worldPositionMeters,
+	float widthMeters,
+	float heightMeters,
+	float rotationRadians,
+	const Color& color,
+	const UVRect& uvRect,
+	const Camera2D& camera) const
+{
+	const glm::vec2 positionPixels = WorldToScreen(worldPositionMeters, camera);
+
+	const float widthPixels = WorldToScreenSize(widthMeters, camera);
+	const float heightPixels = WorldToScreenSize(heightMeters, camera);
+
+	const float halfWidth = widthPixels * 0.5f;
+	const float halfHeight = heightPixels * 0.5f;
+
+	const glm::vec2 localTopLeft = { -halfWidth, -halfHeight };
+	const glm::vec2 localTopRight = { halfWidth, -halfHeight };
+	const glm::vec2 localBottomRight = { halfWidth,  halfHeight };
+	const glm::vec2 localBottomLeft = { -halfWidth,  halfHeight };
+
+	auto rotate = [rotationRadians](const glm::vec2& p) -> glm::vec2
 		{
+			const float c = std::cos(rotationRadians);
+			const float s = std::sin(rotationRadians);
 			return {
-				v.x * c - v.y * s,
-				v.x * s + v.y * c
+				p.x * c - p.y * s,
+				p.x * s + p.y * c
 			};
 		};
 
-	const glm::vec2 position = {
-		x + originX - m_CameraPosition.x,
-		y + originY - m_CameraPosition.y
-	};
-
-	const glm::vec2 p0 = rotate(localTopLeft) + position;
-	const glm::vec2 p1 = rotate(localTopRight) + position;
-	const glm::vec2 p2 = rotate(localBottomRight) + position;
-	const glm::vec2 p3 = rotate(localBottomLeft) + position;
+	const glm::vec2 p0 = rotate(localTopLeft) + positionPixels;
+	const glm::vec2 p1 = rotate(localTopRight) + positionPixels;
+	const glm::vec2 p2 = rotate(localBottomRight) + positionPixels;
+	const glm::vec2 p3 = rotate(localBottomLeft) + positionPixels;
 
 	const Vertex vertices[4] =
 	{
-		{ p0.x, p0.y, r, g, b, a, u0, v0 },
-		{ p1.x, p1.y, r, g, b, a, u1, v0 },
-		{ p2.x, p2.y, r, g, b, a, u1, v1 },
-		{ p3.x, p3.y, r, g, b, a, u0, v1 }
+		{ p0.x, p0.y, color.r, color.g, color.b, color.a, uvRect.u0, uvRect.v0 },
+		{ p1.x, p1.y, color.r, color.g, color.b, color.a, uvRect.u1, uvRect.v0 },
+		{ p2.x, p2.y, color.r, color.g, color.b, color.a, uvRect.u1, uvRect.v1 },
+		{ p3.x, p3.y, color.r, color.g, color.b, color.a, uvRect.u0, uvRect.v1 }
 	};
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
@@ -504,6 +805,22 @@ bool buki::OpenGLGraphics::CompileShader(std::uint32_t shader, const char* sourc
 
 	int success = 0;
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+
+	if (success != GL_TRUE)
+	{
+		int logLength = 0;
+		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);
+
+		std::string log;
+		log.resize(static_cast<std::size_t>(std::max(logLength, 1)));
+
+		glGetShaderInfoLog(shader, logLength, nullptr, log.data());
+
+		OutputDebugStringA("Shader compile failed:\n");
+		OutputDebugStringA(log.c_str());
+		OutputDebugStringA("\n");
+	}
+
 	return success == GL_TRUE;
 }
 
@@ -513,6 +830,150 @@ bool buki::OpenGLGraphics::LinkProgram(std::uint32_t program) const
 
 	int success = 0;
 	glGetProgramiv(program, GL_LINK_STATUS, &success);
+
+	if (success != GL_TRUE)
+	{
+		int logLength = 0;
+		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLength);
+
+		std::string log;
+		log.resize(static_cast<std::size_t>(std::max(logLength, 1)));
+
+		glGetProgramInfoLog(program, logLength, nullptr, log.data());
+
+		OutputDebugStringA("Program link failed:\n");
+		OutputDebugStringA(log.c_str());
+		OutputDebugStringA("\n");
+	}
+
 	return success == GL_TRUE;
 }
 
+bool buki::OpenGLGraphics::CreateDebugLinePipeline()
+{
+	const std::uint32_t vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	if (vertexShader == 0) return false;
+	if (!CompileShader(vertexShader, kDebugLineVertexShaderSource))
+	{
+		glDeleteShader(vertexShader);
+		return false;
+	}
+
+	const std::uint32_t fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	if (fragmentShader == 0)
+	{
+		glDeleteShader(vertexShader);
+		return false;
+	}
+	if (!CompileShader(fragmentShader, kDebugLineFragmentShaderSource))
+	{
+		glDeleteShader(vertexShader);
+		glDeleteShader(fragmentShader);
+		return false;
+	}
+
+	m_DebugLineProgram = glCreateProgram();
+	if (m_DebugLineProgram == 0)
+	{
+		glDeleteShader(vertexShader);
+		glDeleteShader(fragmentShader);
+		return false;
+	}
+
+	glAttachShader(m_DebugLineProgram, vertexShader);
+	glAttachShader(m_DebugLineProgram, fragmentShader);
+
+	const bool linked = LinkProgram(m_DebugLineProgram);
+
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
+
+	if (!linked)
+	{
+		glDeleteProgram(m_DebugLineProgram);
+		m_DebugLineProgram = 0;
+		return false;
+	}
+
+	m_DebugLineProjLoc = glGetUniformLocation(m_DebugLineProgram, "uProjection");
+	m_DebugLineColorLoc = glGetUniformLocation(m_DebugLineProgram, "uColor");
+
+	glGenVertexArrays(1, &m_DebugLineVAO);
+	glGenBuffers(1, &m_DebugLineVBO);
+
+	if (m_DebugLineVAO == 0 || m_DebugLineVBO == 0)
+	{
+		DestroyDebugLinePipeline();
+		return false;
+	}
+
+	glBindVertexArray(m_DebugLineVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, m_DebugLineVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 2 * 1024, nullptr, GL_DYNAMIC_DRAW);
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (void*)0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
+	return true;
+}
+
+void buki::OpenGLGraphics::DestroyDebugLinePipeline()
+{
+	if (m_DebugLineVBO != 0)
+	{
+		glDeleteBuffers(1, &m_DebugLineVBO);
+		m_DebugLineVBO = 0;
+	}
+
+	if (m_DebugLineVAO != 0)
+	{
+		glDeleteVertexArrays(1, &m_DebugLineVAO);
+		m_DebugLineVAO = 0;
+	}
+
+	if (m_DebugLineProgram != 0)
+	{
+		glDeleteProgram(m_DebugLineProgram);
+		m_DebugLineProgram = 0;
+	}
+
+	m_DebugLineProjLoc = -1;
+	m_DebugLineColorLoc = -1;
+}
+
+void buki::OpenGLGraphics::DrawPrimitiveInternal(const std::vector<glm::vec2>& points, const Color& color, GLenum mode)
+{
+	if (points.empty() || m_DebugLineProgram == 0 || m_DebugLineVAO == 0 || m_DebugLineVBO == 0)
+	{
+		return;
+	}
+
+	std::vector<float> vertices;
+	vertices.reserve(points.size() * 2);
+	for (const glm::vec2& p : points)
+	{
+		vertices.push_back(p.x);
+		vertices.push_back(p.y);
+	}
+
+	glUseProgram(m_DebugLineProgram);
+	if (m_DebugLineProjLoc >= 0)
+	{
+		glUniformMatrix4fv(m_DebugLineProjLoc, 1, GL_FALSE, glm::value_ptr(m_Projection));
+	}
+	if (m_DebugLineColorLoc >= 0)
+	{
+		glUniform4f(m_DebugLineColorLoc, color.r, color.g, color.b, color.a);
+	}
+
+	glBindVertexArray(m_DebugLineVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, m_DebugLineVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.size(), vertices.data(), GL_DYNAMIC_DRAW);
+	glDrawArrays(mode, 0, static_cast<GLsizei>(points.size()));
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+	glUseProgram(0);
+}

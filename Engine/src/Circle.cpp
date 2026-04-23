@@ -8,17 +8,16 @@
 
 void buki::Circle::Draw(float alpha)
 {
-	if (fillDraw)
+	Vector2 pos = m_Entity->T()->GetPosition();
+
+	if (def.fillDraw)
 	{
-		Vector2 pos = m_Entity->GetTransform()->GetPosition();
-		float angle = m_Entity->GetTransform()->GetRotation().GetRadians();
-		//Graphics().FillCircle(pos.x, pos.y, Collider.Radius, angle, ShapeColor);
+		Graphics().FillCircle(pos, def.radius, def.fillColor);
 	}
-	if (shapeDraw)
+
+	if (def.shapeDraw)
 	{
-		Vector2 pos = m_Entity->GetTransform()->GetPosition();
-		float angle = m_Entity->GetTransform()->GetRotation().GetRadians();
-		//Graphics().DrawCircle(pos.x, pos.y, Collider.Radius, angle, DebugColor);
+		Graphics().DrawCircleOutline(pos, def.radius, def.shapeColor);
 	}
 }
 
@@ -32,58 +31,50 @@ void buki::Circle::Destroy()
 
 void buki::Circle::SetPhysics()
 {
-	if (!m_Entity->GetComponent<RigidBody>())
+	RigidBody* rb = m_Entity->GetComponent<RigidBody>();
+	if (!rb)
 	{
-		m_Entity->AddComponent<RigidBody>();
-		m_Entity->ActivatePhysics();
+		return;
 	}
-	else if (!m_Entity->HasPhysics())
-	{
-		m_Entity->ActivatePhysics();
-	}
-	b2ShapeDef def = b2DefaultShapeDef();
-	def.density = Collider.density;
-	def.material.friction = Collider.material.friction;
-	def.material.restitution = Collider.material.restitution;
+	b2ShapeDef b2def = b2DefaultShapeDef();
+	//b2def.density = def.density;
+	b2def.material.friction = def.friction;
+	b2def.material.restitution = def.restitution;
+	b2def.enableContactEvents = true;
+	b2def.userData = m_Entity;
+	b2def.isSensor = def.isSensor;
+	//b2def.filter.categoryBits = def.filter;
 
-	def.enableContactEvents = true;
-	def.userData = m_Entity; // Set user data to the entity pointer
-
-	BodyId bId = m_Entity->GetComponent<RigidBody>()->GetBodyId();
+	BodyId bId = rb->GetBodyId();
 	b2BodyId b2Id = b2BodyId{ bId.index1, bId.world0, bId.generation };
-	b2Circle circle;
-	circle.center = { Collider.PositionOffset.x, Collider.PositionOffset.y };
-	circle.radius = Collider.Radius;
-	b2ShapeId s2Id = b2CreateCircleShape(b2Id, &def, &circle);
-	ShapeId sId = { s2Id.index1, s2Id.world0, s2Id.generation };
-	m_Entity->GetComponentOfType<Shapes>()->SetShapeId(sId);
 
-	Physics().AddShape(sId.index1, m_Entity);
+	b2Circle circle;
+	circle.center = { 0.0f,0.0f };
+	circle.radius = def.radius;
+
+	b2ShapeId s2Id = b2CreateCircleShape(b2Id, &b2def, &circle);
+	ShapeId sId = { s2Id.index1, s2Id.world0, s2Id.generation };
+
+	SetShapeId(sId);
+	Physics().Listen(m_Entity);
 }
 
 json buki::Circle::Serialize()
 {
 	json doc = Shapes::Serialize();
-	doc["Collider"]["Radius"] = Collider.Radius;
-	doc["Collider"]["CanDraw"] = Collider.m_CanDraw;
-	doc["Collider"]["Density"] = Collider.density;
-	doc["Collider"]["Friction"] = Collider.material.friction;
-	doc["Collider"]["Restitution"] = Collider.material.restitution;
-	doc["Collider"]["PositionOffset"]["x"] = Collider.PositionOffset.x;
-	doc["Collider"]["PositionOffset"]["y"] = Collider.PositionOffset.y;
+	doc["type"] = "Circle";
+	doc["circle"]["radius"] = def.radius;
 	return doc;
 }
 
 void buki::Circle::Deserialize(json _doc)
 {
 	Shapes::Deserialize(_doc);
-	Collider.Radius = _doc["Collider"]["Radius"].get<float>();
-	Collider.m_CanDraw = _doc["Collider"]["CanDraw"].get<bool>();
-	Collider.density = _doc["Collider"]["Density"].get<float>();
-	Collider.material.friction = _doc["Collider"]["Friction"].get<float>();
-	Collider.material.restitution = _doc["Collider"]["Restitution"].get<float>();
-	Collider.PositionOffset.x = _doc["Collider"]["PositionOffset"]["x"].get<float>();
-	Collider.PositionOffset.y = _doc["Collider"]["PositionOffset"]["y"].get<float>();
+
+	if (_doc.contains("circle"))
+	{
+		def.radius = _doc["circle"].value("radius", 0.5f);
+	}
 }
 
 void buki::Circle::Set()

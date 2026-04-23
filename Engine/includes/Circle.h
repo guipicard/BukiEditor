@@ -19,6 +19,6 @@ namespace buki
 		virtual void Deserialize(json _doc) override;
 		virtual void Set() override;
 
-		CircleCollider Collider;
+		CircleShapeDef def = DefaultCircleShapeDef();
 	};
 }

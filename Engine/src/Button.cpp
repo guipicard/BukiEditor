@@ -66,7 +66,7 @@ void buki::Button::Draw(float alpha)
 {
 	if (buttonSprite->GetPath() == "")
 	{
-		box->shapeDraw = m_Draw;
+		box->def.shapeDraw = m_Draw;
 	}
 }
 
@@ -132,23 +132,24 @@ void buki::Button::Set()
 	{
 		rb = m_Entity->AddComponent<RigidBody>();
 	}
-	rb->Type = RigidBody::BodyType::Static;
+	rb->def.type = RigidBody::BodyType::Static;
 	//box->DebugColor = outlineColor;
-	box->Sensor = true;
-	box->Collider.m_CanDraw = false;
-	box->Collider.Size = (GetSize() + textContainer->GetSize()) / 2;
-	box->filter = 8;
+	box->def.isSensor = true;
+	box->def.fillDraw = false;
+	box->def.shapeDraw = false;
+	box->def.size = (GetSize() + textContainer->GetSize()) / 2;
+	box->def.filter = 8;
 	m_Entity->ActivatePhysics();
 }
 
 buki::Vector2 buki::Button::GetPosition() const
 {
-	return m_Entity->GetTransform()->GetPosition();
+	return m_Entity->T()->GetPosition();
 }
 
 buki::Vector2 buki::Button::GetSize() const
 {
-	return m_Entity->GetTransform()->GetSize();
+	return m_Entity->T()->GetSize();
 }
 
 void buki::Button::SetImage(const std::string _path)

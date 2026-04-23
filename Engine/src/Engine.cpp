@@ -14,7 +14,7 @@
 
 #include <array>
 
-//#include "SDL_Audio.h"
+#include "Core/SDL_Audio.h"
 
 //#include "vld.h"
 
@@ -43,12 +43,17 @@ bool Engine::Init(const std::string& title, int w, int h)
 		m_Console->LogError("Graphics initialization failed");
 		return false;
 	}
+
+	m_Camera = Camera2D();
+	m_Camera.viewportWidth = static_cast<float>(w);
+	m_Camera.viewportHeight = static_cast<float>(h);
+
 	m_TextureManager = MakeScope<TextureManager>(*m_Graphics);
 
 	m_Input = new SDLInput();
 	m_Platform->SetInput(m_Input);
 	m_World = new WorldService();
-	//m_Audio = new SDL_Audio();
+	m_Audio = new SDL_Audio();
 	m_Physics = new PhysicsService();
 
 	m_IsInit = true;
@@ -148,8 +153,7 @@ void Engine::ProcessInput()
 	}
 }
 
-
-void Engine::FixedUpdate(float dt)
+void Engine::FixedUpdate(const float dt)
 {
 	if (m_World != nullptr)
 	{
@@ -175,6 +179,13 @@ void Engine::Render(float alpha)
 
 void Engine::Shutdown()
 {
+	if (m_Audio != nullptr)
+	{
+	    m_Audio->Destroy();
+	    delete m_Audio;
+	    m_Audio = nullptr;
+	}
+	SDL_Quit();
 	if (m_TextureManager)
 	{
 		m_TextureManager->Clear();
@@ -193,12 +204,6 @@ void Engine::Shutdown()
 		delete m_Physics;
 		m_Physics = nullptr;
 	}
-	//if (m_Audio != nullptr)
-	//{
-	//    m_Audio->Destroy();
-	//    delete m_Audio;
-	//    m_Audio = nullptr;
-	//}
 
 	if (m_Input != nullptr)
 	{

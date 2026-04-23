@@ -35,14 +35,6 @@ void buki::Entity::Start()
 void buki::Entity::Draw(float alpha)
 {
 	if (!enabled) return;
-	/*for (auto c : m_Drawable)
-	{
-		c->Draw(alpha);
-	}*/
-	/*for (size_t i = 0; i < m_Drawable.size(); i++)
-	{
-		m_Drawable[i]->Draw(alpha);
-	}*/
 	for (auto& drawable : m_Drawable) {
 		drawable->Draw(alpha);
 	}
@@ -91,31 +83,57 @@ void buki::Entity::Initialize(Vector2 position, float rotation, Vector2 size)
 
 void buki::Entity::ActivatePhysics()
 {
-	if (m_Physics) return;
+	if (m_Physics)
+	{
+		return;
+	}
+
 	RigidBody* rb = GetComponent<RigidBody>();
-	if (!rb)
+	if (rb == nullptr)
 	{
 		rb = AddComponent<RigidBody>();
 	}
-	rb->SetBodyId(Engine::Get().Physics().CreatePhysicsBody(this));
+
+	const BodyId bodyId = Engine::Get().Physics().CreatePhysicsBody(this);
+	rb->SetBodyId(bodyId);
 	m_Physics = true;
 
-	Shapes* shape = GetComponentOfType<Shapes>();
-	if (shape)
+	std::vector<Shapes*> shapes = GetAllComponentsOfType<Shapes>();
+	for (Shapes* shape : shapes)
 	{
-		shape->SetPhysics();
+		if (shape != nullptr)
+		{
+			shape->SetPhysics();
+		}
 	}
 }
 
 void buki::Entity::DeactivatePhysics()
 {
-	if (!m_Physics) return;
-	RigidBody* rb = this->GetComponent<RigidBody>();
-	if (rb)
+	if (!m_Physics)
 	{
-		Engine::Get().Physics().DestroyPhysicsBody(rb->GetBodyId());
-		m_Physics = false;
+		return;
 	}
+
+	RigidBody* rb = GetComponent<RigidBody>();
+	if (rb == nullptr)
+	{
+		m_Physics = false;
+		return;
+	}
+
+	Engine::Get().Physics().DestroyPhysicsBody(rb->GetBodyId());
+
+	const std::vector<Shapes*> shapes = GetAllComponentsOfType<Shapes>();
+	for (Shapes* shape : shapes)
+	{
+		if (shape != nullptr)
+		{
+			shape->SetShapeId({});
+		}
+	}
+
+	m_Physics = false;
 }
 
 json buki::Entity::Serialize() const 

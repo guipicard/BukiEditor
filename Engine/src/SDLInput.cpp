@@ -25,14 +25,12 @@ namespace buki
         }
 
         const SDL_Event& event = *static_cast<const SDL_Event*>(eventPtr);
-
         switch (event.type)
         {
         case SDL_EVENT_KEY_DOWN:
         {
             const SDL_Scancode scancode = event.key.scancode;
             const size_t index = static_cast<size_t>(scancode);
-
             if (index < KeyCount)
             {
                 if (!m_CurrentKeys[index])

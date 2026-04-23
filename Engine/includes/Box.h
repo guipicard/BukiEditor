@@ -1,24 +1,26 @@
 #pragma once
+
 #include "Shapes.h"
 #include "BoxCollider.h"
+#include "PhysicsDefs.h"
+#include "Graphics/Texture2D.h"
 
 namespace buki
 {
-	struct Box : public Shapes
-	{
-		Box(Entity* entity) : Shapes(entity) {}
-		~Box() = default;
+    struct Box : public Shapes
+    {
+        Box(Entity* entity) : Shapes(entity) {}
+        ~Box() = default;
 
-		virtual void Draw(float alpha) override;
-		virtual void Start() override;
-		virtual void Destroy() override;
+        void Draw(float alpha) override;
+        void Start() override;
+        void Destroy() override;
+        void SetPhysics() override;
 
-		virtual void SetPhysics() override;
+        json Serialize() override;
+        void Deserialize(json _doc) override;
+        void Set() override;
 
-		virtual json Serialize() override;
-		virtual void Deserialize(json _doc) override;
-		virtual void Set() override;
-
-		BoxCollider Collider;
-	};
+        BoxShapeDef def = DefaultBoxShapeDef();
+    };
 }

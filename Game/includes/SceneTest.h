@@ -6,7 +6,7 @@
 
 namespace buki
 {
-	struct Entity;
+	class Entity;
 	struct Sprite;
 	struct Atlas;
 	struct Spawner;

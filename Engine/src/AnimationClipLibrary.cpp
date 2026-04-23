@@ -15,95 +15,81 @@ namespace buki
     {
         m_Clips = std::map<std::string, AnimationClip>();
     }
-    bool AnimationClipLibrary::LoadFromFile(const std::string& clipJsonPath)
-    {
-        Clear();
+	bool AnimationClipLibrary::LoadFromFile(const std::string& clipJsonPath)
+	{
+		Clear();
 
-        std::ifstream file(clipJsonPath);
-        if (!file.is_open())
-        {
-            return false;
-        }
+		std::ifstream file(clipJsonPath);
+		if (!file.is_open())
+		{
+			return false;
+		}
 
-        json doc;
-        file >> doc;
+		json doc;
+		file >> doc;
 
-        const std::string texturePath = doc.value("texture", "");
-        const std::string atlasPath = doc.value("atlas", "");
+		const std::string texturePath = doc.value("texture", "");
+		const std::string atlasPath = doc.value("atlas", "");
 
-        if (texturePath.empty() || atlasPath.empty() || !doc.contains("clips"))
-        {
-            return false;
-        }
+		if (texturePath.empty() || atlasPath.empty() || !doc.contains("clips"))
+		{
+			return false;
+		}
 
-        Texture2D* texture = Engine::Get().Textures().Load(texturePath);
-        if (texture == nullptr)
-        {
-            return false;
-        }
+		Texture2D* texture = Engine::Get().Textures().Load(texturePath);
+		if (texture == nullptr)
+		{
+			return false;
+		}
 
-        AtlasMetadata atlas;
-        if (!atlas.LoadAsepriteJson(atlasPath))
-        {
-            return false;
-        }
+		AtlasMetadata atlas;
+		if (!atlas.LoadAsepriteJson(atlasPath))
+		{
+			return false;
+		}
 
-        const auto& clipsDoc = doc["clips"];
-        for (auto it = clipsDoc.begin(); it != clipsDoc.end(); ++it)
-        {
-            AnimationClip clip;
-            clip.name = it.key();
-            clip.loop = it.value().value("loop", true);
+		const auto& clipsDoc = doc["clips"];
+		for (auto it = clipsDoc.begin(); it != clipsDoc.end(); ++it)
+		{
+			AnimationClip clip;
+			clip.name = it.key();
+			clip.loop = it.value().value("loop", true);
 
-            if (!it.value().contains("frames") || !it.value()["frames"].is_array())
-            {
-                continue;
-            }
+			if (!it.value().contains("frames") || !it.value()["frames"].is_array())
+			{
+				continue;
+			}
 
-            for (const auto& frameRef : it.value()["frames"])
-            {
-                const std::string frameName = frameRef.value("frame", "");
-                if (frameName.empty())
-                {
-                    continue;
-                }
+			for (const auto& frameRef : it.value()["frames"])
+			{
+				const std::string frameName = frameRef.value("frame", "");
+				if (frameName.empty())
+				{
+					continue;
+				}
 
-                const AtlasFrame* atlasFrame = atlas.GetFrame(frameName);
-                if (atlasFrame == nullptr)
-                {
-                    continue;
-                }
+				const AtlasFrame* atlasFrame = atlas.GetFrame(frameName);
+				if (atlasFrame == nullptr)
+				{
+					continue;
+				}
 
-                SpriteFrame spriteFrame;
-                spriteFrame.texture = texture;
-                spriteFrame.sourceRect = atlasFrame->sourceRect;
-                spriteFrame.duration = frameRef.value("duration", atlasFrame->duration);
+				SpriteFrame spriteFrame;
+				spriteFrame.texture = texture;
+				spriteFrame.sourceRect = atlasFrame->sourceRect;
+				spriteFrame.duration = frameRef.value("duration", atlasFrame->duration);
 
-                const float sourceW = static_cast<float>(atlasFrame->sourceWidth);
-                const float sourceH = static_cast<float>(atlasFrame->sourceHeight);
+				clip.frames.push_back(spriteFrame);
+			}
 
-                if (atlasFrame->trimmed && sourceW > 0.0f && sourceH > 0.0f)
-                {
-                    spriteFrame.originX = atlasFrame->pivotX * sourceW - static_cast<float>(atlasFrame->spriteSourceX);
-                    spriteFrame.originY = atlasFrame->pivotY * sourceH - static_cast<float>(atlasFrame->spriteSourceY);
-                }
-                else
-                {
-                    spriteFrame.originX = atlasFrame->pivotX * atlasFrame->sourceRect.w;
-                    spriteFrame.originY = atlasFrame->pivotY * atlasFrame->sourceRect.h;
-                }
+			if (!clip.frames.empty())
+			{
+				m_Clips[clip.name] = clip;
+			}
+		}
 
-                clip.frames.push_back(spriteFrame);
-            }
-
-            if (!clip.frames.empty())
-            {
-                m_Clips[clip.name] = clip;
-            }
-        }
-
-        return !m_Clips.empty();
-    }
+		return !m_Clips.empty();
+	}
 
     void AnimationClipLibrary::AddClip(const AnimationClip& clip)
     {

@@ -14,8 +14,9 @@ using json = nlohmann::json;
 
 namespace buki
 {
-	struct Entity final
+	class Entity final
 	{
+	public:	
 		virtual ~Entity() = default;
 		Entity();
 		Entity(std::string _name);
@@ -25,7 +26,8 @@ namespace buki
 		void Update(float dt);
 		void Destroy();
 
-		Transform* GetTransform() { return transform; }
+		Transform* T() { return transform; }
+		//const Transform* T() const { return transform; }
 		void Initialize(Vector2 position, float rotation, Vector2 size);
 		std::string GetName() { return m_Name; }
 		inline void SetName(std::string name) { m_Name = name; }

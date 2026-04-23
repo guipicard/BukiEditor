@@ -2,6 +2,7 @@
 
 #include "Engine.h"
 #include "Entity.h"
+#include "Units.h"
 #include "nlohmann/json.hpp"
 
 namespace buki
@@ -125,8 +126,6 @@ namespace buki
 					{"w", frame.sourceRect.w},
 					{"h", frame.sourceRect.h}
 				};
-				frameDoc["originX"] = frame.originX;
-				frameDoc["originY"] = frame.originY;
 				frameDoc["duration"] = frame.duration;
 				frames.push_back(frameDoc);
 			}
@@ -166,8 +165,6 @@ namespace buki
 						frame.sourceRect.y = frameDoc["sourceRect"]["y"];
 						frame.sourceRect.w = frameDoc["sourceRect"]["w"];
 						frame.sourceRect.h = frameDoc["sourceRect"]["h"];
-						frame.originX = frameDoc.value("originX", 0.0f);
-						frame.originY = frameDoc.value("originY", 0.0f);
 						frame.duration = frameDoc.value("duration", 0.1f);
 						clip.frames.push_back(frame);
 					}
@@ -200,23 +197,45 @@ namespace buki
 		m_ClipLibrary.Clear();
 	}
 
-	void Animation::Draw(float alpha)
+	void buki::Animation::Draw(float alpha)
 	{
 		const SpriteFrame* frame = GetCurrentFrame();
 		if (!frame || !frame->texture)
 		{
 			return;
 		}
-		Transform* transform = m_Entity->GetTransform();
+
+		Transform* transform = m_Entity->T();
+		if (transform == nullptr)
+		{
+			return;
+		}
+
+		Color tint{};
+		tint.r = 1.0f;
+		tint.g = 1.0f;
+		tint.b = 1.0f;
+		tint.a = 1.0f;
+
+
+		bool flipX = params.Get("flipx", frame->flipX);
+		bool flipY = params.Get("flipy", frame->flipY);
+
 		Engine::Get().Graphics().DrawSprite(
 			*frame->texture,
-			transform->position.x, transform->position.y,
-			transform->GetSize().x, transform->GetSize().y,
+			Engine::Get().GetActiveCamera(),
+			{
+				transform->position.x,
+				transform->position.y
+			},
+			transform->GetSize().x,
+			transform->GetSize().y,
 			frame->sourceRect,
 			transform->GetRotation().GetRadians(),
-			frame->originX, frame->originY,
-			1.0f, 1.0f, 1.0f, 1.0f,
-			frame->flipX, frame->flipY);
+			flipX,
+			flipY,
+			tint
+		);
 	}
 
 	void Animation::Update(float dt)

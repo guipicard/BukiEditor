@@ -12,8 +12,6 @@ namespace buki
     {
         Texture2D* texture = nullptr;
         RectF sourceRect{};
-        float originX = 0.0f;
-        float originY = 0.0f;
         float duration = 0.1f;
 		bool flipX = false;
 		bool flipY = false;

@@ -4,8 +4,9 @@
 
 namespace buki
 {
-    struct IInput
+    class IInput
     {
+    public:
         virtual ~IInput() = default;
 
         virtual void BeginFrame() = 0;

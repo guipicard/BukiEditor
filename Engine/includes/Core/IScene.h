@@ -3,10 +3,11 @@
 
 namespace buki
 {
-    struct Entity;
+    class Entity;
 
-    struct IScene
+    class IScene
     {
+    public: 
         virtual ~IScene() = default; // Destructeur virtuel par défaut pour une gestion appropriée de la polymorphie.
 
         virtual void Load() = 0; // Charge les ressources et initialise la scène. Doit être implémentée pour définir le comportement spécifique au chargement de la scène.

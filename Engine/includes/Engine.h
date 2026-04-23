@@ -6,11 +6,12 @@
 #include "Core/IInput.h"
 #include "Core/ILogger.h"
 #include "Core/IWorld.h"
-//#include "IAudio.h"
+#include "Core/IAudio.h"
 #include "PhysicsService.h"
 #include <cstdint>
 #include <string>
 #include "Memory.h"
+#include "Graphics/Camera2D.h"
 
 namespace buki {
     using Uint32 = std::uint32_t;
@@ -35,15 +36,17 @@ namespace buki {
         IGraphics& Graphics() const { return *m_Graphics; }
         IInput& Input() const { return *m_Input; }
         ILogger& Log() const { return *m_Console; }
-        //IAudio& Audio() const { return *m_Audio; }
+        IAudio& Audio() const { return *m_Audio; }
         IWorld& World() const { return *m_World; }
         PhysicsService& Physics() const { return *m_Physics; }
         TextureManager& Textures() { return *m_TextureManager; }
+        Camera2D& GetActiveCamera() { return m_Camera; }
+        const Camera2D& GetActiveCamera() const { return m_Camera; }
     private:
         Engine() = default;
 
         void ProcessInput();
-        void FixedUpdate(float dt);
+        void FixedUpdate(const float dt);
         void Update(float dt);
         void Render(float alpha);
         void Shutdown();
@@ -64,7 +67,8 @@ namespace buki {
         IInput* m_Input = nullptr;
         IWorld* m_World = nullptr;
         PhysicsService* m_Physics = nullptr;
-        //IAudio* m_Audio = nullptr;
+        Camera2D m_Camera;
+        IAudio* m_Audio = nullptr;
         //Editor* m_Editor = nullptr;
 
         Scope<TextureManager> m_TextureManager;

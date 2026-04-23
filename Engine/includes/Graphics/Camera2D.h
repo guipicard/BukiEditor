@@ -1,18 +1,20 @@
 #pragma once
-#include "BukiContainers.h"
-#include <glm/glm.hpp>
+
+#include <glm/vec2.hpp>
 
 namespace buki
 {
     struct Camera2D
     {
-        Vector2 position{ 0.0f, 0.0f };
-        float rotation = 0.0f;
+        glm::vec2 position{ 0.0f, 0.0f }; // meters
         float zoom = 1.0f;
-        float viewportWidth = 1280.0f;
-        float viewportHeight = 720.0f;
 
-        glm::mat4 GetViewProjection() const;
+        float viewportWidth = 1280.0f;   // pixels
+        float viewportHeight = 720.0f;   // pixels
+
+        [[nodiscard]] glm::vec2 GetViewportCenter() const
+        {
+            return { viewportWidth * 0.5f, viewportHeight * 0.5f };
+        }
     };
-
 }

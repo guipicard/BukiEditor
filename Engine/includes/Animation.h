@@ -21,7 +21,7 @@ using json = nlohmann::json;
 
 namespace buki
 {
-    struct Entity;
+    class Entity;
 
     // Animation state machine
     class SpriteAnimator

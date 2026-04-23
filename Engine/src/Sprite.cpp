@@ -7,12 +7,12 @@
 buki::Sprite::Sprite(Entity* _entity)
 	: Component(_entity)
 {
-	sizeOffset = m_Entity->GetTransform()->GetSize();
+	sizeOffset = m_Entity->T()->GetSize();
 }
 
 void buki::Sprite::Draw(float alpha)
 {
-	Transform* state = m_Entity->GetTransform();
+	Transform* state = m_Entity->T();
 	RectF _dst{
 		(state->GetPosition().x + positionOffset.x - (sizeOffset.x * 0.5f)),
 		(state->GetPosition().y + positionOffset.y - (sizeOffset.y * 0.5f)),

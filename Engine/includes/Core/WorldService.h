@@ -6,7 +6,7 @@ namespace buki
 	{
 		WorldService();
 		virtual void Start() override;
-		virtual void FixedUpdate(float dt) override;
+		virtual void FixedUpdate(const float dt) override;
 		virtual void Update(float dt) override;
 		virtual void Render(float alpha) override;
 		virtual void Destroy() override;

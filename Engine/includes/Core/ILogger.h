@@ -12,8 +12,9 @@ namespace buki
         Error
     };
 
-    struct ILogger
+    class ILogger
     {
+    public: 
         virtual ~ILogger() = default;
 
         virtual void Log(LogLevel level, std::string_view text) = 0;

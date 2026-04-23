@@ -24,7 +24,7 @@ void buki::WorldService::Start()
 
 }
 
-void buki::WorldService::FixedUpdate(float dt)
+void buki::WorldService::FixedUpdate(const float dt)
 {
 	Engine::Get().Physics().Step(dt);
 	for (auto entity : m_EntityInWorld)

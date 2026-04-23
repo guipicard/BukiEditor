@@ -53,6 +53,12 @@ namespace buki
                 break;
             }
         }
+#if _DEBUG
+        if (m_Input->IsKeyDown(EKey::EKEY_ESCAPE))
+        {
+            m_IsRunning = false;
+        }
+#endif
     }
 
     bool SDLPlatform::Initialize(const PlatformWindowDesc& desc)

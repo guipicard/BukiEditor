@@ -6,15 +6,15 @@ using json = nlohmann::json;
 
 namespace buki
 {
-	struct Entity;
-	struct IInput;
-	struct ILogger;
-	struct IGraphics;
-	//struct IAudio;
-	struct ICollision;
-	struct IWorld;
-	struct PhysicsService;
-	struct TextureManager;
+	class Entity;
+	class IInput;
+	class ILogger;
+	class IGraphics;
+	class IAudio;
+	class IWorld;
+	class PhysicsService;
+	class TextureManager;
+	struct Camera2D;
 
 	struct Component
 	{
@@ -42,10 +42,11 @@ namespace buki
 		IInput& Input() const;
 		ILogger& Log() const;
 		IGraphics& Graphics() const;
-		//IAudio& Audio() const;
+		IAudio& Audio() const;
 		IWorld& World() const;
 		PhysicsService& Physics() const;
 		TextureManager& Textures() const;
+		Camera2D& Camera() const;
 
 		Entity* m_Entity = nullptr;
 		bool m_Serialized = false;

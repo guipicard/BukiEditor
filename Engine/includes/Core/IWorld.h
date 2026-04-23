@@ -6,13 +6,13 @@
 
 namespace buki
 {
-    struct Entity;
-    struct IScene;
-    struct Manifold;
-    struct Vector2;
+    class Entity;
+    class IScene;
+    class Vector2;
 
-    struct IWorld
+    class IWorld
     {
+    public: 
         virtual ~IWorld() = default; // Destructeur virtuel par défaut.
 
         virtual void Start() = 0; // Initialise le monde du jeu.

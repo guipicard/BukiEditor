@@ -5,7 +5,7 @@
 
 namespace buki
 {
-    struct IInput;
+    class IInput;
 
     class SDLPlatform final : public IPlatform
     {

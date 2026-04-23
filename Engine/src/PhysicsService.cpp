@@ -11,11 +11,12 @@
 #include "Shapes.h"
 #include <algorithm>
 #include <variant>
+#include <windows.h>
+#include <functional>
 
 buki::PhysicsService::PhysicsService()
 {
 	worldId = CreateWorld();
-
 }
 
 void buki::PhysicsService::LinearImpulse(Entity* _entity, const Vector2 _impulse, const bool _wake)
@@ -37,7 +38,7 @@ bool buki::PhysicsService::IsAwake(const BodyId _id) const
 
 void buki::PhysicsService::Step(float dt)
 {
-	b2WorldId b2wId = { worldId.index, worldId.revision };
+	b2WorldId b2wId = { worldId.index, worldId.generation };
 	if (!b2World_IsValid(b2wId))
 	{
 		Engine::Get().Log().LogError("invalid world");
@@ -45,37 +46,47 @@ void buki::PhysicsService::Step(float dt)
 	}
 	b2World_Step(b2wId, dt, 8);
 	b2BodyEvents bodyEvents = b2World_GetBodyEvents(b2wId);
-	for (int i = 0; i < bodyEvents.moveCount; i++)
+	for (int i = 0; i < bodyEvents.moveCount; ++i)
 	{
-		b2BodyId bodyId = bodyEvents.moveEvents[i].bodyId;
-		Entity* e = (Entity*)b2Body_GetUserData(bodyId);
-		if (e != shapeIdToEntityMap[bodyId.index1])
+		const b2BodyMoveEvent ev = bodyEvents.moveEvents[i];
+		Entity* e = static_cast<Entity*>(ev.userData);
+
+		if (!e)
 		{
-			Engine::Get().Log().LogError("entity does not match shape id in body move event");
-			continue;
-		}
-		if (!e) {
 			Engine::Get().Log().LogError("entity is null in body move event");
 			continue;
 		}
-		if (!e->GetComponent<RigidBody>()) {
+
+		if (!e->GetComponent<RigidBody>())
+		{
 			Engine::Get().Log().LogError("entity does not have RigidBody component in body move event");
 			continue;
 		}
-		b2Vec2 pos = b2Body_GetPosition(bodyId);
-		b2Rot rot = b2Body_GetRotation(bodyId);
 
-		Transform* t = e->GetTransform();
+		const b2Vec2 pos = ev.transform.p;
+		const b2Rot rot = ev.transform.q;
+
+		Transform* t = e->T();
 		t->SetPosition({ pos.x, pos.y });
 		t->SetRotation({ rot.c, rot.s });
 	}
 
-	b2ContactEvents b2Events = b2World_GetContactEvents(b2wId);
-	if (b2Events.beginCount > 0) contactEvents->FillCallbacks(b2Events.beginEvents, contactEvents->OnCollisionEnter);
-	if (b2Events.beginCount > 0) contactEvents->FillCallbacks(b2Events.beginEvents, contactEvents->OnCollisionExit);
-	if (b2Events.beginCount > 0) contactEvents->FillCallbacks(b2Events.beginEvents, contactEvents->OnCollisionHit);
-
-	contactEvents->Step();
+	b2ContactEvents b2ContactEvents = b2World_GetContactEvents(b2wId);
+	if (b2ContactEvents.beginCount > 0) contactEvents->FillCollisionCallbacks(b2ContactEvents.beginEvents, b2ContactEvents.beginCount, contactEvents->OnCollisionEnter);
+	if (b2ContactEvents.endCount > 0) contactEvents->FillCollisionCallbacks(b2ContactEvents.endEvents, b2ContactEvents.endCount, contactEvents->OnCollisionExit);
+	if (b2ContactEvents.hitCount > 0) contactEvents->FillCollisionCallbacks(b2ContactEvents.hitEvents, b2ContactEvents.hitCount, contactEvents->OnCollisionHit);
+	contactEvents->CollisionStep();
+	
+	b2SensorEvents b2SensorEvents = b2World_GetSensorEvents(b2wId);
+	if (b2SensorEvents.beginCount > 0)
+	{
+		sensorEvents->FillSensorCallbacks(b2SensorEvents.beginEvents, b2SensorEvents.beginCount, sensorEvents->OnSensorEnter);
+	}
+	if (b2SensorEvents.endCount > 0)
+	{
+		sensorEvents->FillSensorCallbacks(b2SensorEvents.endEvents, b2SensorEvents.endCount, sensorEvents->OnSensorExit);
+	}
+	sensorEvents->SensorStep();
 }
 
 b2BodyId buki::PhysicsService::Getb2BodyId(const BodyId _id) const
@@ -85,41 +96,57 @@ b2BodyId buki::PhysicsService::Getb2BodyId(const BodyId _id) const
 
 b2ShapeId buki::PhysicsService::Getb2ShapeId(const ShapeId _id) const
 {
-	return { _id.index1, _id.world0, _id.revision };
+	return { _id.index1, _id.world0, _id.generation };
 }
 
-buki::BodyId buki::PhysicsService::CreatePhysicsBody(Entity* _entity)
+buki::BodyId buki::PhysicsService::CreatePhysicsBody(Entity* entity)
 {
-	RigidBody* rb = _entity->GetComponent<RigidBody>();
+	if (entity == nullptr)
+	{
+		return {};
+	}
+
+	RigidBody* rb = entity->GetComponent<RigidBody>();
+	if (rb == nullptr)
+	{
+		return {};
+	}
+
+	const RigidBodyDef& def = rb->def;
+
 	b2BodyDef bodyDef = b2DefaultBodyDef();
-	bodyDef.type = (b2BodyType)rb->Type;
-	bodyDef.motionLocks = { rb->motionLocks.linearX, rb->motionLocks.linearX, rb->motionLocks.linearX };
-	Vector2 pos = _entity->GetTransform()->GetPosition();
+	bodyDef.type = static_cast<b2BodyType>(def.type);
+	bodyDef.motionLocks =
+	{
+		def.motionLocks.linearX,
+		def.motionLocks.linearY,
+		def.motionLocks.angularZ
+	};
+
+	const Vector2 pos = entity->T()->GetPosition();
 	bodyDef.position = { pos.x, pos.y };
-	Rot rot = _entity->GetTransform()->GetRotation();
+
+	const Rot rot = entity->T()->GetRotation();
 	bodyDef.rotation = { rot.c, rot.s };
-	b2WorldId b2wId = b2WorldId{ worldId.index, worldId.revision };
 
-	bodyDef.userData = _entity; // Set user data to the entity pointer
 
-	b2BodyId bodyId = b2CreateBody(b2wId, &bodyDef);
-	b2Body_EnableContactEvents(bodyId, true);
-	b2Body_EnableHitEvents(bodyId, true);
-	shapeIdToEntityMap.emplace(bodyId.index1, _entity);
-	return { bodyId.index1, bodyId.world0, bodyId.generation };
+	const b2WorldId b2World = { worldId.index, worldId.generation };
+	const b2BodyId b2Body = b2CreateBody(b2World, &bodyDef);
+	
+	
+
+	return { b2Body.index1, b2Body.world0, b2Body.generation };
 }
 
-void buki::PhysicsService::DestroyPhysicsBody(BodyId _id)
+void buki::PhysicsService::DestroyPhysicsBody(BodyId id)
 {
-	b2BodyId b2id = b2BodyId{ _id.index1, _id.world0, _id.generation };
-	b2Body_GetWorld(b2id);
-	b2ShapeId s2IdDef = { 0,0,0 };
-	b2ShapeId s2IdArray[1] = { s2IdDef };
-	b2Body_GetShapes(b2id, s2IdArray, 1);
-	b2ShapeId s2Id = s2IdArray[0];
-	ShapeId sId = { s2Id.index1, s2Id.world0, s2Id.generation };
-	shapeIdToEntityMap.erase(sId.index1);
-	b2DestroyBody(b2id);
+	const b2BodyId b2Id = { id.index1, id.world0, id.generation };
+	if (!b2Body_IsValid(b2Id))
+	{
+		return;
+	}
+
+	b2DestroyBody(b2Id);
 }
 
 buki::WorldId buki::PhysicsService::GetPhysicsWorld() const
@@ -135,9 +162,9 @@ buki::WorldId buki::PhysicsService::CreateWorld()
 	//worldDef.contactHertz = 60.0;
 	//worldDef.userData = this; // Set user data to nullptr, can be used for custom data
 	b2WorldId wId = b2CreateWorld(&worldDef);
-	worldId.index = wId.index1;
-	worldId.revision = wId.generation;
+	worldId = { wId.index1, wId.generation };
 	contactEvents = new ContactEvents();
+	sensorEvents = new SensorEvents();
 	return worldId;
 }
 
@@ -160,19 +187,22 @@ buki::Vector2 buki::PhysicsService::GetVelocity(Entity* _entity)
 	return { b2Id.x, b2Id.y };
 }
 
-void buki::PhysicsService::AddShape(int32_t _id, Entity* _entity)
-{
-	shapeIdToEntityMap[_id] = _entity;
-}
-
 void buki::PhysicsService::Listen(Entity* _entity)
 {
 	BodyId bId = _entity->GetComponent<RigidBody>()->GetBodyId();
 	ShapeId sId = _entity->GetComponentOfType<Shapes>()->GetShapeId();
-	b2Body_SetUserData({ bId.index1, bId.world0, bId.generation }, _entity);
-	b2Body_EnableContactEvents({ bId.index1, bId.world0, bId.generation }, true);
-	b2Shape_EnableContactEvents({ sId.index1, sId.world0, sId.revision }, true);
+	b2BodyId b2Body = { bId.index1, bId.world0, bId.generation };
+	b2ShapeId b2Shape = { sId.index1, sId.world0, sId.generation };
 
+	b2Body_SetUserData(b2Body, _entity);
+	b2Body_SetName(b2Body, _entity->GetName().c_str());
+	b2Body_EnableContactEvents(b2Body, true);
+	b2Body_EnableHitEvents(b2Body, true);
+
+	b2Shape_EnableContactEvents(b2Shape, true);
+	b2Shape_EnableSensorEvents(b2Shape, true);
+	b2Shape_EnableHitEvents(b2Shape, true);
+	b2Shape_EnablePreSolveEvents(b2Shape, true);
 }
 
 void* buki::PhysicsService::GetUserData(BodyId b)
@@ -184,7 +214,7 @@ bool buki::PhysicsService::CastRayClosest(Vector2 _origin, Vector2 _direction, f
 {
 	_hitEntities.clear();
 
-	b2WorldId b2wId = { worldId.index, worldId.revision };
+	b2WorldId b2wId = { worldId.index, worldId.generation };
 
 	b2Vec2 b2Origin{ _origin.x, _origin.y };
 
@@ -217,15 +247,16 @@ bool buki::PhysicsService::QueryPointAll(const Vector2& _point, std::vector<Enti
 {
 	_hitEntities.clear();
 
-	b2WorldId b2wId = { worldId.index, worldId.revision };
+	b2WorldId b2wId = { worldId.index, worldId.generation };
 
 	b2Vec2 p{ _point.x, _point.y };
 
 	// Tiny AABB around mouse point
 	const float epsilon = 0.001f;
-	b2AABB aabb;
-	aabb.lowerBound = { p.x - epsilon, p.y - epsilon };
-	aabb.upperBound = { p.x + epsilon, p.y + epsilon };
+	b2AABB aabb{
+	{ p.x - epsilon, p.y - epsilon },
+	{ p.x + epsilon, p.y + epsilon }
+	};
 
 	struct Context
 	{
@@ -264,15 +295,16 @@ bool buki::PhysicsService::QueryPointAll(const Vector2 _point, std::vector<Entit
 {
 	_hitEntities.clear();
 
-	b2WorldId b2wId = { worldId.index, worldId.revision };
+	b2WorldId b2wId = { worldId.index, worldId.generation };
 
 	b2Vec2 p{ _point.x, _point.y };
 
 	// Tiny AABB around mouse point
 	const float epsilon = 0.001f;
-	b2AABB aabb;
-	aabb.lowerBound = { p.x - epsilon, p.y - epsilon };
-	aabb.upperBound = { p.x + epsilon, p.y + epsilon };
+	b2AABB aabb{
+	{ p.x - epsilon, p.y - epsilon },
+	{ p.x + epsilon, p.y + epsilon }
+	};
 
 	struct Context
 	{
@@ -316,7 +348,7 @@ bool buki::PhysicsService::QueryPoint(const Vector2& _point, std::vector<Entity*
 		return false;
 	}
 	std::vector<Entity*> allEntities = Engine::Get().World().GetEntitiesInWorld();
-	for (int i = allEntities.size() - 1; i >= 0; i--)
+	for (int i = (int)allEntities.size() - 1; i >= 0; i--)
 	{
 		if (std::count(_hitEntities.begin(), _hitEntities.end(), allEntities[i]) > 0)
 		{
@@ -325,6 +357,7 @@ bool buki::PhysicsService::QueryPoint(const Vector2& _point, std::vector<Entity*
 			return true;
 		}
 	}
+	return false;
 }
 
 bool buki::PhysicsService::QueryPoint(const Vector2 _point, std::vector<Entity*>& _hitEntities, const int _filter)
@@ -335,7 +368,7 @@ bool buki::PhysicsService::QueryPoint(const Vector2 _point, std::vector<Entity*>
 		return false;
 	}
 	std::vector<Entity*> allEntities = Engine::Get().World().GetEntitiesInWorld();
-	for (int i = allEntities.size() - 1; i >= 0; i--)
+	for (int i = (int)allEntities.size() - 1; i >= 0; i--)
 	{
 		if (std::count(_hitEntities.begin(), _hitEntities.end(), allEntities[i]) > 0)
 		{
@@ -344,29 +377,30 @@ bool buki::PhysicsService::QueryPoint(const Vector2 _point, std::vector<Entity*>
 			return true;
 		}
 	}
+	return false;
 }
 
 bool buki::PhysicsService::TestPoint(ShapeId _id, Vector2 _point)
 {
-	b2ShapeId b2SId{ _id.index1, _id.world0, _id.revision };
+	b2ShapeId b2SId{ _id.index1, _id.world0, _id.generation };
 	b2Vec2 b2V2{ _point.x, _point.y };
 	return b2Shape_TestPoint(b2SId, b2V2);
 }
 
 void buki::PhysicsService::SetFilter(ShapeId _id, const int filter)
 {
-	b2ShapeId b2SId{ _id.index1, _id.world0, _id.revision };
+	b2ShapeId b2SId{ _id.index1, _id.world0, _id.generation };
 	b2Filter filterData = b2DefaultFilter();
 	filterData.maskBits = filter;
 	b2Shape_SetFilter(b2SId, filterData);
 }
 
-int buki::PhysicsService::GetType(BodyId _id)
+int buki::PhysicsService::GetType(BodyId _id)const
 {
 	return (int)b2Body_GetType(Getb2BodyId(_id));
 }
 
-buki::AABB buki::PhysicsService::GetPhysicsSize(ShapeId _id)
+buki::AABB buki::PhysicsService::GetPhysicsSize(ShapeId _id) const
 {
 	b2AABB b2rect = b2Shape_GetAABB(Getb2ShapeId(_id));
 	AABB aabb = { {b2rect.lowerBound.x, b2rect.lowerBound.y}, {b2rect.upperBound.x, b2rect.upperBound.y} };
@@ -381,9 +415,8 @@ void buki::PhysicsService::Destroy()
 		delete contactEvents;
 		contactEvents = nullptr;
 	}
-	b2DestroyWorld(b2WorldId{ worldId.index, worldId.revision });
+	b2DestroyWorld(b2WorldId{ worldId.index, worldId.generation });
 	worldId = { 0,0 };
-	shapeIdToEntityMap.clear();
 }
 
 void buki::PhysicsService::Reset()
@@ -392,12 +425,10 @@ void buki::PhysicsService::Reset()
 	CreateWorld();
 }
 
-
-
 template<typename T>
-void buki::ContactEvents::FillCallbacks(T* instance, std::vector<std::function<void()>>& funcList)
+void buki::ContactEvents::FillCollisionCallbacks(T* instance, int count, std::vector<std::function<void()>>& funcList)
 {
-	for (int i = 0; i < sizeof(*instance) / sizeof(instance[0]); i++)
+	for (int i = 0; i < count; i++)
 	{
 		b2ShapeId shapeAId = instance[i].shapeIdA;
 		b2ShapeId shapeBId = instance[i].shapeIdB;
@@ -418,7 +449,7 @@ void buki::ContactEvents::FillCallbacks(T* instance, std::vector<std::function<v
 			{
 				for (auto& mb : mbAList)
 				{
-					HandleEvent(instance[i], mb, shapeB);
+					HandleCollisionEvent(instance[i], mb, shapeB);
 				}
 			}
 		}
@@ -429,24 +460,23 @@ void buki::ContactEvents::FillCallbacks(T* instance, std::vector<std::function<v
 			{
 				for (auto& mb : mbBList)
 				{
-					HandleEvent(instance[i], mb, shapeA);
+					HandleCollisionEvent(instance[i], mb, shapeA);
 				}
 			}
 		}
 	}
 }
 
-void buki::ContactEvents::HandleEvent(CollisionEvent event, MonoBehaviour* mb, Entity* other)
+void buki::ContactEvents::HandleCollisionEvent(CollisionEvent event, MonoBehaviour* mb, Entity* other)
 {
 	std::visit(overloaded{
 		[&](b2ContactBeginTouchEvent&) { OnCollisionEnter.push_back([=]() { mb->OnCollisionEnter(other); }); },
 		[&](b2ContactEndTouchEvent&) { OnCollisionExit.push_back([=]() { mb->OnCollisionExit(other); }); },
 		[&](b2ContactHitEvent&) { OnCollisionHit.push_back([=]() { mb->OnCollisionHit(other); }); },
 		}, event);
-
 }
 
-void buki::ContactEvents::Step()
+void buki::ContactEvents::CollisionStep()
 {
 	for (std::function<void()> cb : OnCollisionEnter)
 		cb();
@@ -458,4 +488,65 @@ void buki::ContactEvents::Step()
 	OnCollisionEnter.clear();
 	OnCollisionExit.clear();
 	OnCollisionHit.clear();
+}
+
+template<typename T>
+void buki::SensorEvents::FillSensorCallbacks(T* instance, int count, std::vector<std::function<void()>>& funcList)
+{
+	for (int i = 0; i < count; i++)
+	{
+		b2ShapeId sensorShapeId = instance[i].sensorShapeId;
+		b2ShapeId visitorShapeId = instance[i].visitorShapeId;
+		Entity* sensorShape = nullptr;
+		Entity* visitorShape = nullptr;
+		if (b2Shape_IsValid(sensorShapeId))
+		{
+			sensorShape = (Entity*)b2Shape_GetUserData(sensorShapeId);
+		}
+		if (b2Shape_IsValid(visitorShapeId))
+		{
+			visitorShape = (Entity*)b2Shape_GetUserData(visitorShapeId);
+		}
+		if (sensorShape)
+		{
+			std::vector<MonoBehaviour*> mbAList = sensorShape->GetAllComponentsOfType<MonoBehaviour>();
+			if (!mbAList.empty())
+			{
+				for (auto& mb : mbAList)
+				{
+					HandleSensorEvent(instance[i], mb, visitorShape);
+				}
+			}
+		}
+		if (visitorShape)
+		{
+			std::vector<MonoBehaviour*> mbBList = visitorShape->GetAllComponentsOfType<MonoBehaviour>();
+			if (!mbBList.empty())
+			{
+				for (auto& mb : mbBList)
+				{
+					HandleSensorEvent(instance[i], mb, sensorShape);
+				}
+			}
+		}
+	}
+}
+
+void buki::SensorEvents::HandleSensorEvent(TriggerEvent event, MonoBehaviour* mb, Entity* other)
+{
+	std::visit(overloaded{
+		[&](b2SensorBeginTouchEvent&) { OnSensorEnter.push_back([=]() { mb->OnSensorEnter(other); }); },
+		[&](b2SensorEndTouchEvent&) { OnSensorExit.push_back([=]() { mb->OnSensorExit(other); }); },
+		}, event);
+}
+
+void buki::SensorEvents::SensorStep()
+{
+	for (std::function<void()> cb : OnSensorEnter)
+		cb();
+	for (std::function<void()> cb : OnSensorExit)
+		cb();
+
+	OnSensorEnter.clear();
+	OnSensorExit.clear();
 }

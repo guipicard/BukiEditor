@@ -40,6 +40,21 @@ namespace buki
 		float w = 0.0f;
 		float h = 0.0f;
 	};
+	struct UVRect
+	{
+		float u0, v0, u1, v1;
+	};
+	struct Vertex
+	{
+		float x;
+		float y;
+		float r;
+		float g;
+		float b;
+		float a;
+		float u;
+		float v;
+	};
 	struct RectI
 	{
 		RectI() : RectI(0, 0, 0, 0) {}
@@ -169,8 +184,9 @@ namespace buki
 	};
 
 
-	struct Vector2
+	class Vector2
 	{
+	public:
 		float x;
 		float y;
 

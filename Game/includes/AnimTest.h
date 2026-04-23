@@ -7,6 +7,8 @@ namespace buki
 	struct Animation;
 	class SpriteAnimator;
 	struct Box;
+	struct Circle;
+	struct Polygon;
 	struct AnimTest : public MonoBehaviour
 	{
 		AnimTest(Entity* entity);
@@ -19,6 +21,8 @@ namespace buki
 		virtual void OnCollisionEnter(Entity* other) override;
 		virtual void OnCollisionExit(Entity* other) override;
 		virtual void OnCollisionHit(Entity* other) override;
+		virtual void OnSensorEnter(Entity* other) override;
+		virtual void OnSensorExit(Entity* other) override;
 
 		virtual json Serialize() override;
 		virtual void Deserialize(json _doc) override;
@@ -29,8 +33,12 @@ namespace buki
 		Animation* GetAnimation() const { return anim; }
 	private:
 		Animation* anim = nullptr;
-		Box* collider = nullptr;
+		Box* boxCollider = nullptr;
+		Circle* circleCollider = nullptr;
+		Polygon* polygonCollider = nullptr;
 		RigidBody* rigidbody = nullptr;
+
+		size_t jumpSFX = 0;
 
 	};
 }
