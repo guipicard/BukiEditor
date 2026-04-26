@@ -22,7 +22,7 @@ namespace buki
         TextureManager& operator=(TextureManager&&) = delete;
 
     public:
-        Texture2D* Load(const std::string& path, bool flipVertically = false);
+        Texture2D* Load(const std::string& path);
         Texture2D* Get(const std::string& path);
         const Texture2D* Get(const std::string& path) const;
 

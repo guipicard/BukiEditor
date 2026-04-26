@@ -1,7 +1,10 @@
 #pragma once
 
 #include "Graphics/IGraphics.h"
+
 #include <glad/glad.h>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace buki
 {

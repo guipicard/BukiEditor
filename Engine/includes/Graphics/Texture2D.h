@@ -22,7 +22,7 @@ namespace buki
 
     namespace TextureLoader
     {
-        Texture2D LoadFromFile(IGraphics& graphics, const std::string& path, bool flipVertically = true);
+        Texture2D LoadFromFile(IGraphics& graphics, const std::string& path);
         void Destroy(IGraphics& graphics, Texture2D& texture);
     }
 }

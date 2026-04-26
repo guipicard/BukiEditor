@@ -1,3 +1,4 @@
+#pragma once
 #define NOMINMAX
 #include <Windows.h>
 
@@ -7,10 +8,6 @@
 #include "Camera2DUtils.h"
 #include "Units.h"
 #include "Engine.h"
-
-#include <glad/glad.h>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
 #include <algorithm>
 #include <cmath>
@@ -243,6 +240,7 @@ std::uint32_t buki::OpenGLGraphics::CreateTextureRGBA8(const void* pixels, int w
 	if (err != GL_NO_ERROR)
 	{
 		char buffer[128];
+
 		sprintf_s(buffer, "glTexImage2D failed, error = 0x%X\n", err);
 		OutputDebugStringA(buffer);
 

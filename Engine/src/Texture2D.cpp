@@ -9,11 +9,11 @@ namespace buki
 {
     namespace TextureLoader
     {
-        Texture2D LoadFromFile(IGraphics& graphics, const std::string& path, bool flipVertically)
+        Texture2D LoadFromFile(IGraphics& graphics, const std::string& path)
         {
             Texture2D texture{};
 
-            stbi_set_flip_vertically_on_load(flipVertically ? 1 : 0);
+            stbi_set_flip_vertically_on_load(0);
 
             int width = 0;
             int height = 0;

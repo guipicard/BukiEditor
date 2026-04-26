@@ -1,8 +1,11 @@
 #include "SDL_Audio.h"
+#include "Engine.h"
 
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_audio.h>
 #include <SDL3_mixer/SDL_mixer.h>
+
+#include <filesystem>
 
 #include <functional>
 
@@ -105,18 +108,25 @@ size_t buki::SDL_Audio::LoadMusic(const std::string& filename)
 
 size_t buki::SDL_Audio::LoadSound(const std::string& filename)
 {
+    std::string assetPath = "";
+#if _DEBUG
+    assetPath = std::filesystem::absolute("../Deployment").string();
+#else
+    assetPath = std::filesystem::absolute(".").string();
+#endif
+	const std::string path = assetPath + filename;
     if (!m_Initialized || m_Mixer == nullptr)
     {
         return INVALID_AUDIO_ID;
     }
 
-    const size_t id = MakeId(filename);
+    const size_t id = MakeId(path);
     if (m_SfxCache.find(id) != m_SfxCache.end())
     {
         return id;
     }
 
-    MIX_Audio* audio = MIX_LoadAudio(m_Mixer, filename.c_str(), false);
+    MIX_Audio* audio = MIX_LoadAudio(m_Mixer, path.c_str(), false);
     if (audio == nullptr)
     {
         return INVALID_AUDIO_ID;

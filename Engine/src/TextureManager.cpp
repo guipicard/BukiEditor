@@ -2,6 +2,9 @@
 
 #include "Graphics/IGraphics.h"
 
+#include <filesystem>
+#include "Engine.h"
+
 namespace buki
 {
     TextureManager::TextureManager(IGraphics& graphics)
@@ -14,21 +17,28 @@ namespace buki
         Clear();
     }
 
-    Texture2D* TextureManager::Load(const std::string& path, bool flipVertically)
+    Texture2D* TextureManager::Load(const std::string& path)
     {
-        auto it = m_Textures.find(path);
+        std::string assetPath = "";
+#if _DEBUG
+        assetPath = std::filesystem::absolute("../Deployment").string();
+#else
+        assetPath = std::filesystem::absolute(".").string();
+#endif
+        const std::string fullPath = assetPath + path;
+        auto it = m_Textures.find(fullPath);
         if (it != m_Textures.end())
         {
             return &it->second;
         }
 
-        Texture2D texture = TextureLoader::LoadFromFile(m_Graphics, path, flipVertically);
+        Texture2D texture = TextureLoader::LoadFromFile(m_Graphics, fullPath);
         if (!texture.IsValid())
         {
             return nullptr;
         }
 
-        auto [insertedIt, inserted] = m_Textures.emplace(path, std::move(texture));
+        auto [insertedIt, inserted] = m_Textures.emplace(fullPath, std::move(texture));
         if (!inserted)
         {
             return nullptr;

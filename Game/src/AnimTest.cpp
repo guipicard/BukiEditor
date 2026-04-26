@@ -42,11 +42,12 @@ void buki::AnimTest::Awake()
 
 void buki::AnimTest::Start()
 {
-	if (!Audio().LoadSound("./audio/AngryBird/Sfx - Wood Collision A1.mp3"))
+	if (!Audio().LoadSound("/audio/AngryBird/Sfx - Wood Collision A1.mp3"))
 	{
 		Log().LogError("Failed to load jump sound effect.");
+		Log().LogSdlError();
 	}
-	jumpSFX = Audio().LoadSound("./audio/AngryBird/Sfx - Wood Collision A1.mp3");
+	jumpSFX = Audio().LoadSound("/audio/AngryBird/Sfx - Wood Collision A1.mp3");
 	if (rigidbody)
 	{
 		rigidbody->def.type = RigidBodyDef::BodyType::Dynamic;

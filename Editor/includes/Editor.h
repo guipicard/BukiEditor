@@ -1,10 +1,8 @@
 #pragma once
-#include "SDL_events.h"
 
-struct SDL_Window;
-struct SDL_Renderer;
-struct SDL_Texture;
-struct ImTextureRef;
+#include <SDL3/SDL.h>
+
+#include "EditorLayer.h"
 
 namespace buki
 {
@@ -12,35 +10,21 @@ namespace buki
 	{
 		Editor();
 		~Editor();
+
 		bool Init();
-		void Update(SDL_Event _event);
-		void EditorClear();
+		void Update(SDL_Event const& e);
+		void BeginFrame();
 		void Render();
-		void EditorPresent();
+		void Present();
 		void Shutdown();
 
-		SDL_Window* GetGameWindow();
-		SDL_Renderer* GetGameRenderer();
-		SDL_Texture* GetGameTexture();
 	private:
-		float main_scale = 0;
-		bool show_demo_window = true;
-		bool show_another_window = false;
-		float imguiColor[4] = { 0.45f, 0.55f, 0.60f, 1.00f };
-
-		bool show_Game_Window = true;
-
-		bool show_metrics_window = true;
-		bool show_asset_browser_window = true;
-		bool show_property_window = true;
-		bool show_game_window = true;
-		bool show_console_window = true;
-		bool show_world_editor_window = true;
-		bool show_entity_inspector_window = true;
+		float main_scale = 1.0f;
+		float clearColor[4] = { 0.10f, 0.10f, 0.12f, 1.00f };
 
 		SDL_Window* gameWindow = nullptr;
-		void* gl_context = nullptr;
-		//SDL_Renderer* gameRenderer = nullptr;
-		//SDL_Texture* gameTexture = nullptr;
+		SDL_GLContext gl_context = nullptr;
+
+		EditorLayer editorLayer;
 	};
 }
