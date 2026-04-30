@@ -1,0 +1,550 @@
+{
+    "camera": {
+        "position": {
+            "x": 0.0,
+            "y": 0.0
+        },
+        "viewportHeight": 1080.0,
+        "viewportWidth": 1920.0,
+        "zoom": 1.0
+    },
+    "entities": {
+        "BoxBoth": {
+            "components": {
+                "Button": {
+                    "backgroundImagePath": "",
+                    "fontPath": "./fonts/droid_sans.ttf",
+                    "fontSize": 18,
+                    "message": "BoxBoth",
+                    "style": {
+                        "backgroundColor": {
+                            "a": 1.0,
+                            "b": 0.20000000298023224,
+                            "g": 0.20000000298023224,
+                            "r": 0.20000000298023224
+                        },
+                        "backgroundHoverColor": {
+                            "a": 1.0,
+                            "b": 0.30000001192092896,
+                            "g": 0.30000001192092896,
+                            "r": 0.30000001192092896
+                        },
+                        "centerTextX": true,
+                        "centerTextY": true,
+                        "drawOutline": false,
+                        "drawOutlineOnHoverOnly": true,
+                        "fitToText": true,
+                        "outlineColor": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 1.0,
+                            "r": 0.0
+                        },
+                        "outlineHoverColor": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "padding": {
+                            "x": 0.25,
+                            "y": 0.15000000596046448
+                        },
+                        "showBackground": true,
+                        "textColor": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "textHoverColor": {
+                            "a": 1.0,
+                            "b": 0.6000000238418579,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "textOffset": {
+                            "x": 0.0,
+                            "y": 0.0
+                        }
+                    },
+                    "text": "Box Both"
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": false,
+            "position": {
+                "x": -18.19999885559082,
+                "y": -9.800000190734863
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 1.9600000381469727,
+                "y": 0.7200000286102295
+            },
+            "z": 10
+        },
+        "BoxDraw": {
+            "components": {
+                "Button": {
+                    "backgroundImagePath": "",
+                    "fontPath": "./fonts/droid_sans.ttf",
+                    "fontSize": 18,
+                    "message": "BoxDraw",
+                    "style": {
+                        "backgroundColor": {
+                            "a": 1.0,
+                            "b": 0.20000000298023224,
+                            "g": 0.20000000298023224,
+                            "r": 0.20000000298023224
+                        },
+                        "backgroundHoverColor": {
+                            "a": 1.0,
+                            "b": 0.30000001192092896,
+                            "g": 0.30000001192092896,
+                            "r": 0.30000001192092896
+                        },
+                        "centerTextX": true,
+                        "centerTextY": true,
+                        "drawOutline": false,
+                        "drawOutlineOnHoverOnly": true,
+                        "fitToText": true,
+                        "outlineColor": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 1.0,
+                            "r": 0.0
+                        },
+                        "outlineHoverColor": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "padding": {
+                            "x": 0.25,
+                            "y": 0.15000000596046448
+                        },
+                        "showBackground": true,
+                        "textColor": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "textHoverColor": {
+                            "a": 1.0,
+                            "b": 0.6000000238418579,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "textOffset": {
+                            "x": 0.0,
+                            "y": 0.0
+                        }
+                    },
+                    "text": "Box Draw"
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": false,
+            "position": {
+                "x": -15.19999885559082,
+                "y": -9.800000190734863
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 2.0399999618530273,
+                "y": 0.7200000286102295
+            },
+            "z": 10
+        },
+        "BoxFill": {
+            "components": {
+                "Button": {
+                    "backgroundImagePath": "",
+                    "fontPath": "./fonts/droid_sans.ttf",
+                    "fontSize": 18,
+                    "message": "BoxFill",
+                    "style": {
+                        "backgroundColor": {
+                            "a": 1.0,
+                            "b": 0.20000000298023224,
+                            "g": 0.20000000298023224,
+                            "r": 0.20000000298023224
+                        },
+                        "backgroundHoverColor": {
+                            "a": 1.0,
+                            "b": 0.30000001192092896,
+                            "g": 0.30000001192092896,
+                            "r": 0.30000001192092896
+                        },
+                        "centerTextX": true,
+                        "centerTextY": true,
+                        "drawOutline": false,
+                        "drawOutlineOnHoverOnly": true,
+                        "fitToText": true,
+                        "outlineColor": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 1.0,
+                            "r": 0.0
+                        },
+                        "outlineHoverColor": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "padding": {
+                            "x": 0.25,
+                            "y": 0.15000000596046448
+                        },
+                        "showBackground": true,
+                        "textColor": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "textHoverColor": {
+                            "a": 1.0,
+                            "b": 0.6000000238418579,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "textOffset": {
+                            "x": 0.0,
+                            "y": 0.0
+                        }
+                    },
+                    "text": "Box Fill"
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": false,
+            "position": {
+                "x": -12.19999885559082,
+                "y": -9.800000190734863
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 1.6799999475479126,
+                "y": 0.7200000286102295
+            },
+            "z": 10
+        },
+        "CircleBoth": {
+            "components": {
+                "Button": {
+                    "backgroundImagePath": "",
+                    "fontPath": "./fonts/droid_sans.ttf",
+                    "fontSize": 18,
+                    "message": "CircleBoth",
+                    "style": {
+                        "backgroundColor": {
+                            "a": 1.0,
+                            "b": 0.20000000298023224,
+                            "g": 0.20000000298023224,
+                            "r": 0.20000000298023224
+                        },
+                        "backgroundHoverColor": {
+                            "a": 1.0,
+                            "b": 0.30000001192092896,
+                            "g": 0.30000001192092896,
+                            "r": 0.30000001192092896
+                        },
+                        "centerTextX": true,
+                        "centerTextY": true,
+                        "drawOutline": false,
+                        "drawOutlineOnHoverOnly": true,
+                        "fitToText": true,
+                        "outlineColor": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 1.0,
+                            "r": 0.0
+                        },
+                        "outlineHoverColor": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "padding": {
+                            "x": 0.25,
+                            "y": 0.15000000596046448
+                        },
+                        "showBackground": true,
+                        "textColor": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "textHoverColor": {
+                            "a": 1.0,
+                            "b": 0.6000000238418579,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "textOffset": {
+                            "x": 0.0,
+                            "y": 0.0
+                        }
+                    },
+                    "text": "Circle Both"
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": false,
+            "position": {
+                "x": -18.19999885559082,
+                "y": -6.800000190734863
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 2.2799999713897705,
+                "y": 0.7200000286102295
+            },
+            "z": 10
+        },
+        "CircleDraw": {
+            "components": {
+                "Button": {
+                    "backgroundImagePath": "",
+                    "fontPath": "./fonts/droid_sans.ttf",
+                    "fontSize": 18,
+                    "message": "CircleDraw",
+                    "style": {
+                        "backgroundColor": {
+                            "a": 1.0,
+                            "b": 0.20000000298023224,
+                            "g": 0.20000000298023224,
+                            "r": 0.20000000298023224
+                        },
+                        "backgroundHoverColor": {
+                            "a": 1.0,
+                            "b": 0.30000001192092896,
+                            "g": 0.30000001192092896,
+                            "r": 0.30000001192092896
+                        },
+                        "centerTextX": true,
+                        "centerTextY": true,
+                        "drawOutline": false,
+                        "drawOutlineOnHoverOnly": true,
+                        "fitToText": true,
+                        "outlineColor": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 1.0,
+                            "r": 0.0
+                        },
+                        "outlineHoverColor": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "padding": {
+                            "x": 0.25,
+                            "y": 0.15000000596046448
+                        },
+                        "showBackground": true,
+                        "textColor": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "textHoverColor": {
+                            "a": 1.0,
+                            "b": 0.6000000238418579,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "textOffset": {
+                            "x": 0.0,
+                            "y": 0.0
+                        }
+                    },
+                    "text": "Circle Draw"
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": false,
+            "position": {
+                "x": -15.19999885559082,
+                "y": -6.800000190734863
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 2.3600001335144043,
+                "y": 0.7200000286102295
+            },
+            "z": 10
+        },
+        "CircleFill": {
+            "components": {
+                "Button": {
+                    "backgroundImagePath": "",
+                    "fontPath": "./fonts/droid_sans.ttf",
+                    "fontSize": 18,
+                    "message": "CircleFill",
+                    "style": {
+                        "backgroundColor": {
+                            "a": 1.0,
+                            "b": 0.20000000298023224,
+                            "g": 0.20000000298023224,
+                            "r": 0.20000000298023224
+                        },
+                        "backgroundHoverColor": {
+                            "a": 1.0,
+                            "b": 0.30000001192092896,
+                            "g": 0.30000001192092896,
+                            "r": 0.30000001192092896
+                        },
+                        "centerTextX": true,
+                        "centerTextY": true,
+                        "drawOutline": false,
+                        "drawOutlineOnHoverOnly": true,
+                        "fitToText": true,
+                        "outlineColor": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 1.0,
+                            "r": 0.0
+                        },
+                        "outlineHoverColor": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "padding": {
+                            "x": 0.25,
+                            "y": 0.15000000596046448
+                        },
+                        "showBackground": true,
+                        "textColor": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "textHoverColor": {
+                            "a": 1.0,
+                            "b": 0.6000000238418579,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "textOffset": {
+                            "x": 0.0,
+                            "y": 0.0
+                        }
+                    },
+                    "text": "Circle Fill"
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": false,
+            "position": {
+                "x": -12.19999885559082,
+                "y": -6.800000190734863
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 2.0,
+                "y": 0.7200000286102295
+            },
+            "z": 10
+        },
+        "Ground": {
+            "components": {
+                "Box": {
+                    "box": {
+                        "size": {
+                            "x": 16.0,
+                            "y": 0.5
+                        }
+                    },
+                    "density": 1.0,
+                    "fillColor": {
+                        "a": 0.30000001192092896,
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 0.0
+                    },
+                    "fillDraw": true,
+                    "filter": 0,
+                    "friction": 0.30000001192092896,
+                    "isSensor": false,
+                    "positionOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "restitution": 0.0,
+                    "shapeColor": {
+                        "a": 1.0,
+                        "b": 0.0,
+                        "g": 0.0,
+                        "r": 1.0
+                    },
+                    "shapeDraw": true,
+                    "type": "Box"
+                },
+                "RigidBody": {
+                    "motionLocks": {
+                        "angularZ": true,
+                        "linearX": true,
+                        "linearY": true
+                    },
+                    "type": 0
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": true,
+            "position": {
+                "x": 0.0,
+                "y": 10.300000190734863
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 32.0,
+                "y": 1.0
+            },
+            "z": 0
+        },
+        "controller": {
+            "components": {
+                "ShapesController": {
+                    "boxFillDraw": true,
+                    "boxShapeDraw": true,
+                    "circleFillDraw": true,
+                    "circleShapeDraw": true
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": false,
+            "position": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 1.0,
+                "y": 1.0
+            },
+            "z": 0
+        }
+    },
+    "sceneName": "Shapes"
+}

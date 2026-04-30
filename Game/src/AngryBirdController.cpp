@@ -5,8 +5,9 @@
 #include "Circle.h"
 #include "Prefabs.h"
 #include "Spawner.h"
+#include "Camera2D.h"
+#include "BukiContainers.h"
 #include "ComponentRegistration.h"
-#include "Camera.h"
 
 REGISTER_COMPONENT(AngryBirdController, "AngryBirdController");
 
@@ -30,15 +31,23 @@ void buki::AngryBirdController::Start()
 	spawner->AddPrototype("StoneSlim", new StoneSlim());
 	//Spawner* spawner = World().Find("Spawner")->GetComponent<Spawner>();
 	anchor = World().Find("anchor");
-	anchorPos = anchor->GetTransform()->GetPosition();
-	clickPos = Vector2::ZERO;
-	forceMultiplier = 12.0f;
+	anchorPos = anchor->T()->GetPosition();
+	clickPos = { 0.0f,0.0f };
+	forceMultiplier = 6.0f;
 	shotLength = 4.0f;
 	aimingSound = Audio().LoadSound("./Audio/AngryBird/Sfx - Slingshot Streched.mp3");
 	launchingSound = Audio().LoadSound("./Audio/AngryBird/Sfx - Globe Bird Launch 3.mp3");
 	AddCollisionSound("./Audio/AngryBird/Sfx - Globe Bird Hit 1.mp3");
 	AddCollisionSound("./Audio/AngryBird/Sfx - Globe Bird Hit 2.mp3");
 	AddCollisionSound("./Audio/AngryBird/Sfx - Globe Bird Hit 3.mp3");
+
+	for (auto* e : World().GetEntitiesInWorld())
+	{
+		if (e->GetComponent<Button>())
+		{
+			buttonsInScene.push_back(e->GetComponent<Button>());
+		}
+	}
 }
 
 void buki::AngryBirdController::Destroy()
@@ -52,11 +61,20 @@ void buki::AngryBirdController::FixedUpdate(const float dt)
 
 void buki::AngryBirdController::Update(const float dt)
 {
-	if (Input().IsButtonDown(2))
+	UIHovered = false;
+	for (auto* button : buttonsInScene)
+	{
+		if (button->IsHovered())
+		{
+			UIHovered = true;
+			break;
+		}
+	}
+	if (Input().IsMouseButtonDown(2))
 	{
 		Entity* groundEntity = World().Find("Ground");
-		Vector2 groundPos = groundEntity->GetTransform()->GetPosition();
-		Vector2 groundSize = groundEntity->GetTransform()->GetSize();
+		Vector2 groundPos = groundEntity->T()->GetPosition();
+		Vector2 groundSize = groundEntity->T()->GetSize();
 		Spawner* spawner = m_Entity->GetComponent<Spawner>();
 		const Vector2 size = Vector2(0.75f, 2.25f);
 		Vector2 rectpos = { 0.0f, groundPos.y - (groundSize.y / 2.0f) - (size.x / 2.0f) };
@@ -70,15 +88,14 @@ void buki::AngryBirdController::Update(const float dt)
 		//spawner->Spawn("StoneSlim", rectpos, size, 0.0f);
 	}
 
-	if (Engine::GetInstance().GetTimeScale() == 0.0f) return;
-	float x, y;
-	Input().GetMousePosition(&x, &y);
-	Vector2 mousePos = Vector2(x, y);
-	Vector2 birdPos = m_Entity->GetTransform()->GetPosition();
-	float birdRadius = m_Entity->GetTransform()->GetSize().x;
+	if (Engine::Get().GetTimeScale() == 0.0f) return;
+	Vector2 mousePos;
+	Input().GetMousePositionWorld(&mousePos.x, &mousePos.y);
+	Vector2 birdPos = m_Entity->T()->GetPosition();
+	float birdRadius = m_Entity->T()->GetSize().x;
 	std::vector<Entity*> entities;
 	bool onUI = Physics().QueryPoint(mousePos, entities, 1 << 8);
-	if (Input().IsButtonDown(0) && !onUI)
+	if (Input().IsMouseButtonDown(0) && !onUI)
 	{
 		if (!thrown)
 		{
@@ -95,13 +112,13 @@ void buki::AngryBirdController::Update(const float dt)
 	}
 	if (aiming)
 	{
-		if (Input().IsButtonUp(0))
+		if (Input().IsMouseButtonUp(0))
 		{
 			if (aiming)
 			{
 				aiming = false;
-				clickPos = Vector2::ZERO;
-				Throw(anchorPos - m_Entity->GetTransform()->GetPosition());
+				clickPos = { 0.0f,0.0f };
+				Throw(anchorPos - m_Entity->T()->GetPosition());
 			}
 		}
 		else
@@ -109,7 +126,7 @@ void buki::AngryBirdController::Update(const float dt)
 			Vector2 offset = clickPos - mousePos;
 			if (offset.Length() > shotLength) offset = offset.GetNormalized() * shotLength;
 			Vector2 slignPos = anchorPos - offset;
-			m_Entity->GetTransform()->SetPosition(slignPos);
+			m_Entity->T()->SetPosition(slignPos);
 		}
 	}
 }
@@ -144,6 +161,14 @@ void buki::AngryBirdController::OnCollisionHit(Entity* other)
 	Log().LogMessage("Collision HIT with: " + other->GetName());
 }
 
+void buki::AngryBirdController::OnSensorEnter(Entity* other)
+{
+}
+
+void buki::AngryBirdController::OnSensorExit(Entity* other)
+{
+}
+
 json buki::AngryBirdController::Serialize()
 {
 	json doc;
@@ -168,62 +193,62 @@ void buki::AngryBirdController::Throw(const Vector2 _v)
 void buki::AngryBirdController::Reset()
 {
 	m_Entity->DeactivatePhysics();
-	m_Entity->GetTransform()->SetPosition(anchorPos);
-	m_Entity->GetTransform()->SetRotation(0.0f);
+	m_Entity->T()->SetPosition(anchorPos);
+	m_Entity->T()->SetRotation(0.0f);
 }
 
 void buki::AngryBirdController::EditorController()
 {
-	int scroll;
+	/*Camera2D camera = buki::Engine::Get().GetActiveCamera();
+	int scroll = Input().GetMouseWheelDelta();
 	bool movingScreen = false;
-	if (Input().GetMouseScrollUp(&scroll))
-	{
-		float scale = (float)scroll;
-		Graphics().AddScale(scale);
-	}
-	else if (Input().GetMouseScrollDown(&scroll))
-	{
-		float scale = (float)scroll;
-		Graphics().SubScale(scale);
-	}
-	if (Input().IsButtonPressed(1))
+	if (Input().IsMouseButtonPressed(1))
 	{
 		movingScreen = true;
 	}
-	if (Input().IsButtonDown(1))
+	if (Input().IsMouseButtonDown(1))
 	{
-		Input().GetMousePosition(&firstMousePos.x, &firstMousePos.y);
+		int x, y;
+		Input().GetMousePositionScreen(&x, &y);
+		firstMousePos.x = (float)x;
+		firstMousePos.y = (float)y;
 	}
-	if (Input().IsButtonUp(1))
+	if (Input().IsMouseButtonUp(1))
 	{
 		movingScreen = false;
 	}
 	if (movingScreen)
 	{
-		Vector2 cameraPos = Graphics().GetCamera()->GetPosition();
+		glm::vec2 posVec = buki::Engine::Get().GetActiveCamera().position;
+		Vector2 cameraPos = { posVec.x, posVec.y};
 		Vector2 mousePos;
-		Input().GetMousePosition(&mousePos.x, &mousePos.y);
+		int x, y;
+		Input().GetMousePositionScreen(&x, &y);
+		mousePos.x = (float)x;
+		mousePos.y = (float)y;
 		Vector2 mouseDelta = mousePos - firstMousePos;
-		Graphics().GetCamera()->SetPosition(cameraPos - mouseDelta);
-		Input().GetMousePosition(&firstMousePos.x, &firstMousePos.y);
+		buki::Engine::Get().GetActiveCamera().position = { cameraPos.x - mouseDelta.x, cameraPos.y - mouseDelta.y };
+		Input().GetMousePositionScreen(&x, &y);
+		firstMousePos.x = (float)x;
+		firstMousePos.y = (float)y;
 	}
 	if (Input().IsKeyDown(EKey::EKEY_H))
 	{
 		float scale;
 		Graphics().SetScale(METRES_TO_PIXELS);
 		Graphics().GetScale(&scale);
-		Graphics().GetCamera()->SetPosition(Vector2(0.0f, 0.0f));
+		buki::Engine::Get().GetActiveCamera().position = { 0.0f, 0.0f };
 	}
-	float timeScale = Engine::GetInstance().GetTimeScale();
+	float timeScale = buki::Engine::Get().GetTimeScale();
 	if (Input().IsKeyDown(EKey::EKEY_SPACE))
 	{
-		Engine::GetInstance().SetTimeScale(timeScale == 1.0f ? 0.0f : 1.0f);
-	}
+		buki::Engine::Get().SetTimeScale(timeScale == 1.0f ? 0.0f : 1.0f);
+	}*/
 }
 
 void buki::AngryBirdController::AddCollisionSound(const std::string& sound)
 {
-	size_t id = buki::Engine::GetInstance().Audio().LoadSound(sound);
+	size_t id = buki::Engine::Get().Audio().LoadSound(sound);
 	collisionSounds.push_back(id);
 }
 

@@ -15,6 +15,10 @@
 #include <cstdint>
 #include <string>
 
+#include "Graphics/Font2D.h"
+#include <SDL3_ttf/SDL_ttf.h>
+#include <vector>
+
 namespace
 {
 	buki::IPlatform* g_OpenGLPlatform = nullptr;
@@ -365,7 +369,7 @@ void buki::OpenGLGraphics::FillRect(const Vector2& center, const Vector2& size, 
 	DrawPrimitiveInternal(points, color, GL_TRIANGLE_FAN);
 }
 
-void buki::OpenGLGraphics::DrawCircleOutline(const Vector2& center, float radius, const Color& color)
+void buki::OpenGLGraphics::DrawCircleOutline(const Vector2& center, float radius, const Color& color, float rotationRadians)
 {
 	const glm::vec2 screenCenter = WorldToScreen(glm::vec2{ center.x, center.y }, buki::Engine::Get().GetActiveCamera());
 
@@ -379,7 +383,7 @@ void buki::OpenGLGraphics::DrawCircleOutline(const Vector2& center, float radius
 	const float angleOffset = 6.28318530718f / 4;
 	for (int i = 0; i < segments; ++i)
 	{
-		const float a = (static_cast<float>(i) * step) - angleOffset;
+		const float a = (static_cast<float>(i) * step) - angleOffset + rotationRadians;
 		points.push_back(
 			{
 				screenCenter.x + std::cos(a) * screenRadius,
@@ -564,7 +568,14 @@ void buki::OpenGLGraphics::DrawSprite(
 	);
 }
 
-void buki::OpenGLGraphics::DrawSprite(const Texture2D& texture, const RectF& worldRectMeters, const RectF& sourceRectPixels, float rotationRadians, bool flipX, bool flipY, const Color& color)
+void buki::OpenGLGraphics::DrawSprite(
+	const Texture2D& texture, 
+	const RectF& worldRectMeters, 
+	const RectF& sourceRectPixels, 
+	float rotationRadians, 
+	bool flipX,
+	bool flipY, 
+	const Color& color)
 {
 	DrawSprite(
 		texture,
@@ -578,6 +589,277 @@ void buki::OpenGLGraphics::DrawSprite(const Texture2D& texture, const RectF& wor
 		flipY,
 		color
 	);
+}
+
+void buki::OpenGLGraphics::DestroyFont(Font2D& font)
+{
+	if (font.textureId != 0)
+	{
+		DestroyTexture(font.textureId);
+	}
+
+	font.textureId = 0;
+	font.atlasWidth = 0;
+	font.atlasHeight = 0;
+	font.fontSize = 0;
+	font.lineHeight = 0;
+	font.valid = false;
+	font.glyphs.clear();
+}
+
+buki::Font2D buki::OpenGLGraphics::CreateFontFromFile(const std::string& path, int fontSize)
+{
+	Font2D font{};
+
+	if (!TTF_WasInit())
+	{
+		if (TTF_Init() == -1)
+		{
+			OutputDebugStringA("TTF_Init failed\n");
+			return font;
+		}
+	}
+
+	TTF_Font* ttf = TTF_OpenFont(path.c_str(), fontSize);
+	if (ttf == nullptr)
+	{
+		OutputDebugStringA("TTF_OpenFont failed\n");
+		return font;
+	}
+
+	constexpr int firstChar = 32;
+	constexpr int lastChar = 126;
+	constexpr int glyphPadding = 1;
+
+	int atlasWidth = glyphPadding;
+	int atlasHeight = 0;
+
+	struct TempGlyphSurface
+	{
+		char c = 0;
+		SDL_Surface* surface = nullptr;
+		int minX = 0;
+		int maxX = 0;
+		int minY = 0;
+		int maxY = 0;
+		int advance = 0;
+	};
+
+	std::vector<TempGlyphSurface> tempGlyphs;
+	tempGlyphs.reserve(lastChar - firstChar + 1);
+
+	for (int i = firstChar; i <= lastChar; ++i)
+	{
+		const char c = static_cast<char>(i);
+
+		int minX = 0, maxX = 0, minY = 0, maxY = 0, advance = 0;
+		if (TTF_GetGlyphMetrics(ttf, static_cast<std::uint32_t>(c), &minX, &maxX, &minY, &maxY, &advance) == false)
+		{
+			continue;
+		}
+
+		SDL_Color white{ 255, 255, 255, 255 };
+		SDL_Surface* glyphSurface = TTF_RenderGlyph_Blended(ttf, static_cast<std::uint32_t>(c), white);
+		if (glyphSurface == nullptr)
+		{
+			continue;
+		}
+
+		if (glyphSurface->format != SDL_PIXELFORMAT_RGBA32)
+		{
+			SDL_Surface* converted = SDL_ConvertSurface(glyphSurface, SDL_PIXELFORMAT_RGBA32);
+			SDL_DestroySurface(glyphSurface);
+			glyphSurface = converted;
+		}
+
+		if (glyphSurface == nullptr)
+		{
+			continue;
+		}
+
+		tempGlyphs.push_back({ c, glyphSurface, minX, maxX, minY, maxY, advance });
+
+		atlasWidth += glyphSurface->w + glyphPadding;
+		atlasHeight = std::max(atlasHeight, glyphSurface->h);
+	}
+
+	atlasHeight += glyphPadding * 2;
+
+	if (atlasWidth <= 0 || atlasHeight <= 0 || tempGlyphs.empty())
+	{
+		TTF_CloseFont(ttf);
+		return font;
+	}
+
+	std::vector<std::uint8_t> pixels(static_cast<std::size_t>(atlasWidth * atlasHeight * 4), 0);
+
+	int penX = glyphPadding;
+
+	for (const TempGlyphSurface& tg : tempGlyphs)
+	{
+		for (int y = 0; y < tg.surface->h; ++y)
+		{
+			const std::uint8_t* srcRow = static_cast<const std::uint8_t*>(tg.surface->pixels) + y * tg.surface->pitch;
+			std::uint8_t* dstRow = pixels.data() + ((y + glyphPadding) * atlasWidth + penX) * 4;
+			std::memcpy(dstRow, srcRow, static_cast<std::size_t>(tg.surface->w) * 4);
+		}
+
+		Glyph2D glyph{};
+		glyph.sourceRectPixels = RectF{
+			static_cast<float>(penX),
+			static_cast<float>(glyphPadding),
+			static_cast<float>(tg.surface->w),
+			static_cast<float>(tg.surface->h)
+		};
+		glyph.width = tg.surface->w;
+		glyph.height = tg.surface->h;
+		glyph.bearingX = tg.minX;
+		glyph.bearingY = tg.maxY;
+		glyph.advance = tg.advance;
+
+		font.glyphs[tg.c] = glyph;
+		penX += tg.surface->w + glyphPadding;
+	}
+
+	font.textureId = CreateTextureRGBA8(pixels.data(), atlasWidth, atlasHeight);
+	font.atlasWidth = atlasWidth;
+	font.atlasHeight = atlasHeight;
+	font.fontSize = fontSize;
+	font.lineHeight = TTF_GetFontHeight(ttf);
+	font.valid = (font.textureId != 0);
+
+	for (TempGlyphSurface& tg : tempGlyphs)
+	{
+		if (tg.surface != nullptr)
+		{
+			SDL_DestroySurface(tg.surface);
+		}
+	}
+
+	TTF_CloseFont(ttf);
+	return font;
+}
+
+void buki::OpenGLGraphics::DrawTextToCamera(
+	const Font2D& font,
+	const std::string& text,
+	const Camera2D& camera,
+	const glm::vec2& worldPositionMeters,
+	const Color& color,
+	bool centerX,
+	bool centerY)
+{
+	if (!font.IsValid() || text.empty())
+	{
+		return;
+	}
+
+	const glm::vec2 originPixels = WorldToScreen(worldPositionMeters, camera);
+
+	float startX = originPixels.x;
+	float startY = originPixels.y;
+
+	Vector2 textSize = MeasureText(font, text) * METRES_TO_PIXELS;
+	int lineCount = textSize.y / font.lineHeight;
+	if (centerX)
+	{
+		startX -= textSize.x * 0.5f;
+	}
+
+	if (centerY)
+	{
+		startY -= textSize.y * 0.5f;
+	}
+	float penX = startX;
+	const float baselineY = startY + ((static_cast<float>(font.lineHeight)*0.5f) * (lineCount));
+
+	for (char c : text)
+	{
+		const Glyph2D* glyph = font.GetGlyph(c);
+		if (glyph == nullptr)
+		{
+			continue;
+		}
+
+		const float glyphX = penX + static_cast<float>(glyph->bearingX);
+		const float glyphY = baselineY - static_cast<float>(glyph->bearingY);
+
+		const UVRect uvRect = BuildUVRect(
+			glyph->sourceRectPixels,
+			static_cast<float>(font.atlasWidth),
+			static_cast<float>(font.atlasHeight),
+			false,
+			false
+		);
+
+		DrawTexturedQuad(
+			font.textureId,
+			camera,
+			ScreenToWorld(glm::vec2{ glyphX + glyph->width * 0.5f, glyphY + glyph->height * 0.5f }, camera),
+			static_cast<float>(glyph->width) / METRES_TO_PIXELS,
+			static_cast<float>(glyph->height) / METRES_TO_PIXELS,
+			0.0f,
+			uvRect,
+			color
+		);
+
+		penX += static_cast<float>(glyph->advance);
+	}
+}
+
+buki::Vector2 buki::OpenGLGraphics::MeasureText(const Font2D& font, const std::string& text) const
+{
+	if (!font.IsValid() || text.empty())
+	{
+		return Vector2{ 0.0f, 0.0f };
+	}
+
+	float lineWidth = 0.0f;
+	float maxWidth = 0.0f;
+	int lineCount = 1;
+
+	for (char c : text)
+	{
+		if (c == '\n')
+		{
+			maxWidth = std::max(maxWidth, lineWidth);
+			lineWidth = 0.0f;
+			++lineCount;
+			continue;
+		}
+
+		const Glyph2D* glyph = font.GetGlyph(c);
+		if (glyph == nullptr)
+		{
+			continue;
+		}
+
+		lineWidth += static_cast<float>(glyph->advance);
+	}
+
+	maxWidth = std::max(maxWidth, lineWidth);
+
+	const float height = static_cast<float>(lineCount * font.lineHeight);
+
+	return Vector2{ maxWidth / METRES_TO_PIXELS, height / METRES_TO_PIXELS };
+}
+
+float buki::OpenGLGraphics::MeasureTextWidthPixels(const Font2D& font, const std::string& text) const
+{
+	float width = 0.0f;
+
+	for (char c : text)
+	{
+		const Glyph2D* glyph = font.GetGlyph(c);
+		if (glyph == nullptr)
+		{
+			continue;
+		}
+
+		width += static_cast<float>(glyph->advance);
+	}
+
+	return width;
 }
 
 bool buki::OpenGLGraphics::InitializeLoader(IPlatform& platform)

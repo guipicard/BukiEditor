@@ -3,15 +3,13 @@
 #include "Engine.h"
 #include "Prefabs.h"
 #include "Sprite.h"
-#include "CircleCollider.h"
-#include "BoxCollider.h"
 #include "RigidBody.h"
 #include "Spawner.h"
 #include "Text.h"
-#include "Camera.h"
+#include "Camera2D.h"
 #include "Box.h"
 #include "Circle.h"
-#include "EditorController.h"
+#include "Button.h"
 #include "ComponentRegistration.h"
 
 REGISTER_COMPONENT(ShapesController, "ShapesController");
@@ -36,9 +34,14 @@ void buki::ShapesController::Start()
 	}
 	spawner->AddPrototype("circle", new CircleShape());
 	spawner->AddPrototype("rectangle", new RectangleShape());
-#if _DEBUG
-	m_Entity->AddComponent<EditorController>();
-#endif
+
+	for (auto* e : World().GetEntitiesInWorld())
+	{
+		if (e->GetComponent<Button>())
+		{
+			buttonsInScene.push_back(e->GetComponent<Button>());
+		}
+	}
 }
 
 void buki::ShapesController::FixedUpdate(const float dt)
@@ -47,50 +50,46 @@ void buki::ShapesController::FixedUpdate(const float dt)
 
 void buki::ShapesController::Update(const float dt)
 {
+	UIHovered = false;
+	for (auto* button : buttonsInScene)
+	{
+		if (button->IsHovered())
+		{
+			UIHovered = true;
+			break;
+		}
+	}
 	if (Input().IsKeyDown(EKey::EKEY_BACKSPACE))
 	{
 		World().SetLoadScene("Menu");
 	}
-	float mouseX, mouseY;
-	Input().GetMousePosition(&mouseX, &mouseY);
-	Vector2 pos = Vector2(mouseX, mouseY);
+	Vector2 mousePos;
+	Input().GetMousePositionWorld(&mousePos.x, &mousePos.y);
+	Vector2 pos = mousePos;
 	Vector2 size = Vector2();
-	std::vector<Entity*> hitEntities;
-	bool hit = Physics().QueryPoint(pos, hitEntities, 1 << 8);
-	if (hit)
+	float timeScale = Engine::Get().GetTimeScale();
+	if (!UIHovered && timeScale != 0.0f)
 	{
-		float timeScale = Engine::GetInstance().GetTimeScale();
-		if (hitEntities[0] && timeScale == 1.0f)
-		{
-			if (!hitEntities[0]->GetComponent<Button>())
-			{
-				hit = false;
-			}
-		}
-	}
-	if (!hit)
-	{
-
-		if (Input().IsButtonUp(0))
+		if (Input().IsMouseButtonUp(0))
 		{
 
 			Entity* e = spawner->Spawn("rectangle", pos, size, 0.0f);
 			Box* s = e->GetComponent<Box>();
 			//if (s)
 			{
-				s->fillDraw = boxFillDraw;
-				s->shapeDraw = boxShapeDraw;
+				s->def.fillDraw = boxFillDraw;
+				s->def.shapeDraw = boxShapeDraw;
 			}
-			Vector2 colSize = s->Collider.Size;
+			Vector2 colSize = s->def.size;
 		}
-		if (Input().IsButtonUp(2))
+		if (Input().IsMouseButtonUp(2))
 		{
 			Entity* e = spawner->Spawn("circle", pos, size, 0.0f);
 			Circle* s = e->GetComponent<Circle>();
 			//if (s)
 			{
-				s->fillDraw = circleFillDraw;
-				s->shapeDraw = circleShapeDraw;
+				s->def.fillDraw = circleFillDraw;
+				s->def.shapeDraw = circleShapeDraw;
 			}
 		}
 	}
@@ -98,7 +97,7 @@ void buki::ShapesController::Update(const float dt)
 	for (auto e : World().GetEntitiesInWorld())
 	{
 		if (e == nullptr) return;
-		Transform* tm = e->GetTransform();
+		Transform* tm = e->T();
 		Vector2 pos = tm->GetPosition();
 		if (pos.y > 30.0f)
 		{
@@ -117,6 +116,14 @@ void buki::ShapesController::OnCollisionExit(Entity* other)
 }
 
 void buki::ShapesController::OnCollisionHit(Entity* other)
+{
+}
+
+void buki::ShapesController::OnSensorEnter(Entity* other)
+{
+}
+
+void buki::ShapesController::OnSensorExit(Entity* other)
 {
 }
 

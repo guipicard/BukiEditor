@@ -1,8 +1,6 @@
 #pragma once
 #include "Entity.h"
 #include "RigidBody.h"
-#include "BoxCollider.h"
-#include "CircleCollider.h"
 #include "Engine.h"
 #include "BukiContainers.h"
 #include "Shapes.h"
@@ -96,14 +94,21 @@ void buki::Entity::ActivatePhysics()
 
 	const BodyId bodyId = Engine::Get().Physics().CreatePhysicsBody(this);
 	rb->SetBodyId(bodyId);
-	m_Physics = true;
 
 	std::vector<Shapes*> shapes = GetAllComponentsOfType<Shapes>();
-	for (Shapes* shape : shapes)
+	if (shapes.empty())
 	{
-		if (shape != nullptr)
+		Engine::Get().Log().LogMessage("Entity " + m_Name + " has no shapes to activate physics with.");
+	}
+	else
+	{
+		m_Physics = true;
+		for (Shapes* shape : shapes)
 		{
-			shape->SetPhysics();
+			if (shape != nullptr)
+			{
+				shape->SetPhysics();
+			}
 		}
 	}
 }
@@ -135,68 +140,94 @@ void buki::Entity::DeactivatePhysics()
 
 	m_Physics = false;
 }
-
-json buki::Entity::Serialize() const 
+json buki::Entity::Serialize() const
 {
 	json doc;
-	doc["position"]["x"] = transform->GetPosition().x;
-	doc["position"]["y"] = transform->GetPosition().y;
-	doc["rotation"] = transform->GetRotation().GetRadians();
-	doc["size"]["x"] = transform->GetSize().x;
-	doc["size"]["y"] = transform->GetSize().y;
+
+	if (transform != nullptr)
+	{
+		doc["position"]["x"] = transform->GetPosition().x;
+		doc["position"]["y"] = transform->GetPosition().y;
+		doc["rotation"] = transform->GetRotation().GetRadians();
+		doc["size"]["x"] = transform->GetSize().x;
+		doc["size"]["y"] = transform->GetSize().y;
+	}
+	else
+	{
+		doc["position"]["x"] = 0.0f;
+		doc["position"]["y"] = 0.0f;
+		doc["rotation"] = 0.0f;
+		doc["size"]["x"] = 0.0f;
+		doc["size"]["y"] = 0.0f;
+	}
+
 	doc["z"] = zAxis;
 	doc["layer"] = layer;
 	doc["physics"] = m_Physics;
-	for each(std::pair<const type_info*, Component*> cmp in m_ComponentByType)
-	{
-		const std::type_info* typeInfo = cmp.first;
-		Component* component = cmp.second;
-		if (component->IsSerialized()) continue;
-		std::string typeName = ComponentFactory::GetTypeName(*typeInfo);
-		Engine::Get().Log().LogMessage("Serializing component: " + typeName);
-		if (typeName.empty())
-		{
-			Engine::Get().Log().LogMessage("no string for this cmp type");
-		}
-		doc["components"][typeName] = cmp.second->Serialize();
-		component->SetSerialized(true);
-	}
 	doc["enable"] = enabled;
+
+	for (const auto& [typeInfo, component] : m_ComponentByType)
+	{
+		std::string typeName = ComponentFactory::GetTypeName(*typeInfo);
+		if (!typeName.empty() && component != nullptr)
+		{
+			doc["components"][typeName] = component->Serialize();
+		}
+	}
+
 	return doc;
 }
 
 void buki::Entity::Deserialize(json _doc)
 {
-	Vector2 position;
-	position.x = _doc["position"]["x"].get<float>();
-	position.y = _doc["position"]["y"].get<float>();
-	float rotation = _doc["rotation"].get<float>();
-	Vector2 size;
-	size.x = _doc["size"]["x"].get<float>();
-	size.y = _doc["size"]["y"].get<float>();
+	Vector2 position{ 0.0f, 0.0f };
+	Vector2 size{ 0.0f, 0.0f };
+	float rotation = 0.0f;
+
+	if (_doc.contains("position"))
+	{
+		position.x = _doc["position"].value("x", 0.0f);
+		position.y = _doc["position"].value("y", 0.0f);
+	}
+
+	rotation = _doc.value("rotation", 0.0f);
+
+	if (_doc.contains("size"))
+	{
+		size.x = _doc["size"].value("x", 0.0f);
+		size.y = _doc["size"].value("y", 0.0f);
+	}
+
 	Initialize(position, rotation, size);
-	zAxis = _doc["z"].get<int>();
-	layer = _doc["layer"].get<std::string>();
-	if (_doc["physics"].get<bool>() && GetComponent<RigidBody>() == nullptr)
+
+	zAxis = _doc.value("z", 0);
+	layer = _doc.value("layer", std::string{});
+	enabled = _doc.value("enable", true);
+	m_Physics = false;
+
+	if (_doc.contains("components") && _doc["components"].is_object())
 	{
-		ComponentFactory::Create(this, "RigidBody", _doc["components"]["RigidBody"]);
-	}
-	enabled = _doc["enable"].get<bool>();
-	for (auto& componentData : _doc["components"].items())
-	{
-		const std::string& typeName = componentData.key();
-		const json& componentJson = componentData.value();
-		if (typeName == "RigidBody") continue;
-		ComponentFactory::Create(this, typeName, componentJson);
-		
-	}
-	
-	if (GetComponent<RigidBody>())
-	{
-		ActivatePhysics();
+		for (auto& componentData : _doc["components"].items())
+		{
+			const std::string& typeName = componentData.key();
+			const json& componentJson = componentData.value();
+
+			Component* component = ComponentFactory::Create(this, typeName, componentJson);
+			if (component == nullptr)
+			{
+				Engine::Get().Log().LogMessage("Unknown component type during deserialize: " + typeName);
+			}
+		}
 	}
 }
 
 void buki::Entity::Set()
 {
+	for (const auto& [typeInfo, component] : m_ComponentByType)
+	{
+		if (component != nullptr)
+		{
+			component->Set();
+		}
+	}
 }

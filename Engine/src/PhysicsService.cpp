@@ -4,8 +4,6 @@
 #include "Entity.h"
 #include "box2d.h"
 #include "RigidBody.h"
-#include "BoxCollider.h"
-#include "CircleCollider.h"
 #include "BukiContainers.h"
 #include "MonoBehaviour.h"
 #include "Shapes.h"

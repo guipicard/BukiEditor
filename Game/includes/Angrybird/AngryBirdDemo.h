@@ -11,8 +11,8 @@ namespace buki
 {
 	struct Entity;
 	struct Sprite;
-	struct Atlas;
 	struct Spawner;
+	struct TileLayer;
 
 	struct AngryBirdDemo : public BukiScene, Observer<std::string>
 	{
@@ -22,8 +22,6 @@ namespace buki
 		virtual void OnNotify(const std::string& button) override;
 	private:
 		void CreateMenu();
-		Entity* Background;
-		Atlas* BackgroundImage;
 		Spawner* spawner;
 	};
 }

@@ -8,6 +8,7 @@ namespace buki
 	struct Collider;
 	struct RigidBody;
 	struct Text;
+	struct Button;
 
 	struct ShapesController : public MonoBehaviour
 	{
@@ -20,6 +21,8 @@ namespace buki
 		virtual void OnCollisionEnter(Entity* other) override;
 		virtual void OnCollisionExit(Entity* other) override;
 		virtual void OnCollisionHit(Entity* other) override;
+		virtual void OnSensorEnter(Entity* other) override;
+		virtual void OnSensorExit(Entity* other) override;
 
 		virtual json Serialize() override;
 		virtual void Deserialize(json _doc) override;
@@ -31,7 +34,7 @@ namespace buki
 		inline void DrawBoxFill(const bool state) { boxFillDraw = state; }
 		inline void DrawBoxShape(const bool state) { boxShapeDraw = state; }
 	private:
-		Vector2 firstMousePos = Vector2::ZERO;
+		Vector2 firstMousePos = { 0.0f,0.0f };
 
 		Spawner* spawner;
 		
@@ -40,5 +43,8 @@ namespace buki
 
 		bool boxFillDraw = true;
 		bool boxShapeDraw = true;
+
+		std::vector<Button*> buttonsInScene;
+		bool UIHovered = false;
 	};
 }

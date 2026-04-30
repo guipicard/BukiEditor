@@ -1,0 +1,428 @@
+{
+    "camera": {
+        "position": {
+            "x": 0.0,
+            "y": 0.0
+        },
+        "viewportHeight": 1080.0,
+        "viewportWidth": 1920.0,
+        "zoom": 1.0
+    },
+    "entities": {
+        "AbPlayButton": {
+            "components": {
+                "Button": {
+                    "backgroundImagePath": "",
+                    "fontPath": "./fonts/Kenney/Kenney Blocks.ttf",
+                    "fontSize": 36,
+                    "message": "AngryBird",
+                    "style": {
+                        "backgroundColor": {
+                            "a": 1.0,
+                            "b": 0.20000000298023224,
+                            "g": 0.20000000298023224,
+                            "r": 0.20000000298023224
+                        },
+                        "backgroundHoverColor": {
+                            "a": 1.0,
+                            "b": 0.30000001192092896,
+                            "g": 0.30000001192092896,
+                            "r": 0.30000001192092896
+                        },
+                        "centerTextX": true,
+                        "centerTextY": true,
+                        "drawOutline": false,
+                        "drawOutlineOnHoverOnly": true,
+                        "fitToText": true,
+                        "outlineColor": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 1.0,
+                            "r": 0.0
+                        },
+                        "outlineHoverColor": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "padding": {
+                            "x": 0.25,
+                            "y": 0.15000000596046448
+                        },
+                        "showBackground": true,
+                        "textColor": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "textHoverColor": {
+                            "a": 1.0,
+                            "b": 0.6000000238418579,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "textOffset": {
+                            "x": 0.0,
+                            "y": 0.0
+                        }
+                    },
+                    "text": "Angry Bird Demo"
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": false,
+            "position": {
+                "x": 0.0,
+                "y": -0.0
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 8.139999389648438,
+                "y": 1.380000114440918
+            },
+            "z": 10
+        },
+        "PlatformerPlayButton": {
+            "components": {
+                "Button": {
+                    "backgroundImagePath": "",
+                    "fontPath": "./fonts/Kenney/Kenney Blocks.ttf",
+                    "fontSize": 36,
+                    "message": "Platformer",
+                    "style": {
+                        "backgroundColor": {
+                            "a": 1.0,
+                            "b": 0.20000000298023224,
+                            "g": 0.20000000298023224,
+                            "r": 0.20000000298023224
+                        },
+                        "backgroundHoverColor": {
+                            "a": 1.0,
+                            "b": 0.30000001192092896,
+                            "g": 0.30000001192092896,
+                            "r": 0.30000001192092896
+                        },
+                        "centerTextX": true,
+                        "centerTextY": true,
+                        "drawOutline": false,
+                        "drawOutlineOnHoverOnly": true,
+                        "fitToText": true,
+                        "outlineColor": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 1.0,
+                            "r": 0.0
+                        },
+                        "outlineHoverColor": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "padding": {
+                            "x": 0.25,
+                            "y": 0.15000000596046448
+                        },
+                        "showBackground": true,
+                        "textColor": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "textHoverColor": {
+                            "a": 1.0,
+                            "b": 0.6000000238418579,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "textOffset": {
+                            "x": 0.0,
+                            "y": 0.0
+                        }
+                    },
+                    "text": "Platformer"
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": false,
+            "position": {
+                "x": 0.0,
+                "y": 2.700000047683716
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 6.079999923706055,
+                "y": 1.380000114440918
+            },
+            "z": 10
+        },
+        "QuitButton": {
+            "components": {
+                "Button": {
+                    "backgroundImagePath": "",
+                    "fontPath": "./fonts/Kenney/Kenney Blocks.ttf",
+                    "fontSize": 36,
+                    "message": "Quit",
+                    "style": {
+                        "backgroundColor": {
+                            "a": 1.0,
+                            "b": 0.20000000298023224,
+                            "g": 0.20000000298023224,
+                            "r": 0.20000000298023224
+                        },
+                        "backgroundHoverColor": {
+                            "a": 1.0,
+                            "b": 0.30000001192092896,
+                            "g": 0.30000001192092896,
+                            "r": 0.30000001192092896
+                        },
+                        "centerTextX": true,
+                        "centerTextY": true,
+                        "drawOutline": false,
+                        "drawOutlineOnHoverOnly": true,
+                        "fitToText": true,
+                        "outlineColor": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 1.0,
+                            "r": 0.0
+                        },
+                        "outlineHoverColor": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "padding": {
+                            "x": 0.25,
+                            "y": 0.15000000596046448
+                        },
+                        "showBackground": true,
+                        "textColor": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "textHoverColor": {
+                            "a": 1.0,
+                            "b": 0.6000000238418579,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "textOffset": {
+                            "x": 0.0,
+                            "y": 0.0
+                        }
+                    },
+                    "text": "Quit"
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": false,
+            "position": {
+                "x": 0.0,
+                "y": 8.100000381469727
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 2.6600000858306885,
+                "y": 1.380000114440918
+            },
+            "z": 10
+        },
+        "SceneTestPlayButton": {
+            "components": {
+                "Button": {
+                    "backgroundImagePath": "",
+                    "fontPath": "./fonts/Kenney/Kenney Blocks.ttf",
+                    "fontSize": 36,
+                    "message": "SceneTest",
+                    "style": {
+                        "backgroundColor": {
+                            "a": 1.0,
+                            "b": 0.20000000298023224,
+                            "g": 0.20000000298023224,
+                            "r": 0.20000000298023224
+                        },
+                        "backgroundHoverColor": {
+                            "a": 1.0,
+                            "b": 0.30000001192092896,
+                            "g": 0.30000001192092896,
+                            "r": 0.30000001192092896
+                        },
+                        "centerTextX": true,
+                        "centerTextY": true,
+                        "drawOutline": false,
+                        "drawOutlineOnHoverOnly": true,
+                        "fitToText": true,
+                        "outlineColor": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 1.0,
+                            "r": 0.0
+                        },
+                        "outlineHoverColor": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "padding": {
+                            "x": 0.25,
+                            "y": 0.15000000596046448
+                        },
+                        "showBackground": true,
+                        "textColor": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "textHoverColor": {
+                            "a": 1.0,
+                            "b": 0.6000000238418579,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "textOffset": {
+                            "x": 0.0,
+                            "y": 0.0
+                        }
+                    },
+                    "text": "SceneTest"
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": false,
+            "position": {
+                "x": 0.0,
+                "y": 5.400000095367432
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 5.360000133514404,
+                "y": 1.380000114440918
+            },
+            "z": 10
+        },
+        "ShapesPlayButton": {
+            "components": {
+                "Button": {
+                    "backgroundImagePath": "",
+                    "fontPath": "./fonts/Kenney/Kenney Blocks.ttf",
+                    "fontSize": 36,
+                    "message": "Shapes",
+                    "style": {
+                        "backgroundColor": {
+                            "a": 1.0,
+                            "b": 0.20000000298023224,
+                            "g": 0.20000000298023224,
+                            "r": 0.20000000298023224
+                        },
+                        "backgroundHoverColor": {
+                            "a": 1.0,
+                            "b": 0.30000001192092896,
+                            "g": 0.30000001192092896,
+                            "r": 0.30000001192092896
+                        },
+                        "centerTextX": true,
+                        "centerTextY": true,
+                        "drawOutline": false,
+                        "drawOutlineOnHoverOnly": true,
+                        "fitToText": true,
+                        "outlineColor": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 1.0,
+                            "r": 0.0
+                        },
+                        "outlineHoverColor": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "padding": {
+                            "x": 0.25,
+                            "y": 0.15000000596046448
+                        },
+                        "showBackground": true,
+                        "textColor": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "textHoverColor": {
+                            "a": 1.0,
+                            "b": 0.6000000238418579,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "textOffset": {
+                            "x": 0.0,
+                            "y": 0.0
+                        }
+                    },
+                    "text": "Shapes Demo"
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": false,
+            "position": {
+                "x": 0.0,
+                "y": -2.700000047683716
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 6.300000190734863,
+                "y": 1.380000114440918
+            },
+            "z": 10
+        },
+        "Title": {
+            "components": {
+                "Text": {
+                    "centerX": true,
+                    "centerY": true,
+                    "color": {
+                        "a": 1.0,
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "fontPath": "./fonts/Kenney/Kenney Blocks.ttf",
+                    "fontSize": 48,
+                    "positionOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "text": "Press Enter To Switch Scenes"
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": false,
+            "position": {
+                "x": 0.0,
+                "y": -6.75
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 1.0,
+                "y": 1.0
+            },
+            "z": 0
+        }
+    },
+    "sceneName": "Menu"
+}

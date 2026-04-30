@@ -2,15 +2,16 @@
 #include "Engine.h"
 #include "Entity.h"
 #include "Sprite.h"
-#include "Atlas.h"
 #include "RigidBody.h"
 #include "Box.h"
-#include "CircleCollider.h"
 #include "Spawner.h"
 #include "Prefabs.h"
 #include "Button.h"
 #include "Text.h"
 #include "AngryBirdController.h"
+#include "Camera2D.h"
+#include "EditorController.h"
+#include "TileLayer.h"
 
 buki::AGLevel2::AGLevel2()
 {
@@ -25,26 +26,33 @@ buki::AGLevel2::AGLevel2()
 
 void buki::AGLevel2::CodeLoad()
 {
-	buki::Engine::GetInstance().Graphics().SetCameraPosition(Vector2::ZERO);
+	Engine::Get().Graphics().SetCameraPosition(0.0f, 0.0f);
+
 	Background = Instantiate("Background");
 	spawner = Background->AddComponent<Spawner>();
-	spawner->AddPrototype("StoneSlim", new WoodSlim());
-	BackgroundImage = Background->AddComponent<Atlas>();
-	BackgroundImage->Load("assets/Kenney/Physics Assets/PNG/Backgrounds/colored_desert.png");
+	spawner->AddPrototype("WoodSlim", new WoodSlim());
+	BackgroundImage = Background->AddComponent<TileLayer>();
+	BackgroundImage->SetAtlasPath("/assets/Kenney/Physics Assets/PNG/Backgrounds/colored_desert.png");
 
 	Ground = Instantiate("Ground");
-	RigidBody* GroundRB = Ground->AddComponent<RigidBody>();
-	Box* GroundCollider = Ground->AddComponent<Box>();
-	GroundSprite = Ground->AddComponent<Atlas>();
-	GroundSprite->Load("assets/Kenney/Physics Assets/PNG/Other/grass.png");
+	RigidBody* groundRB = Ground->AddComponent<RigidBody>();
+	Box* groundCollider = Ground->AddComponent<Box>();
+	GroundSprite = Ground->AddComponent<TileLayer>();
+	GroundSprite->SetAtlasPath("/assets/Kenney/Physics Assets/PNG/Other/grass.png");
+
+	BackgroundImage->Set();
+	GroundSprite->Set();
 
 	GroundAndBackground();
 
-	GroundRB->Type = RigidBody::BodyType::Static;
-	GroundRB->motionLocks = { true };
-	GroundCollider->Collider.density = 1.0f;
-	GroundCollider->Collider.material.friction = 0.3f;
-	GroundCollider->Collider.Size = Ground->GetTransform()->GetSize() / 2;
+	groundRB->def.type = RigidBodyDef::BodyType::Static;
+	groundRB->def.motionLocks.linearX = true;
+	groundRB->def.motionLocks.linearY = true;
+	groundRB->def.motionLocks.angularZ = true;
+
+	groundCollider->def.density = 1.0f;
+	groundCollider->def.friction = 0.3f;
+	groundCollider->def.size = Ground->T()->GetSize();
 	Ground->ActivatePhysics();
 
 	InitLevel();
@@ -62,143 +70,172 @@ void buki::AGLevel2::OnNotify(const std::string& button)
 {
 	if (button == "menu")
 	{
-		buki::Engine::GetInstance().World().SetLoadScene("AngryBird");
+		buki::Engine::Get().World().SetLoadScene("AngryBird");
 	}
 	if (button == "reset")
 	{
-		buki::Engine::GetInstance().World().SetLoadScene("Ag_Lvl_2");
+		buki::Engine::Get().World().SetLoadScene("Ag_Lvl_2");
 	}
 }
 
 void buki::AGLevel2::GroundAndBackground()
 {
 	float intWindowW, intWindowH;
-	buki::Engine::GetInstance().Graphics().GetWindowSize(&intWindowW, &intWindowH);
+	Engine::Get().GetActiveCamera().GetViewportWorldSize(&intWindowW, &intWindowH);
 	Vector2 windowSize = Vector2(intWindowW, intWindowH);
-	//Background->GetTransform()->SetPosition(Vector2(windowSize.x / 2, windowSize.y / 2));
+
 	Vector2 bgTileSize = { windowSize.y, windowSize.y };
 	Vector2 groundTileSize = { 1.0f, 1.0f };
-	Vector2 groundPos = { 0.0f, (windowSize.y / 2) - (groundTileSize.y / 2) };
+	Vector2 BGPos = { 0.0f, 0.0f };
+	Vector2 groundPos = { 0.0f, (windowSize.y - groundTileSize.y) / 2 };
+	Vector2 bgSpriteSize = { BackgroundImage->GetTexture()->width, BackgroundImage->GetTexture()->height };
 
-	BackgroundImage->SetSize(bgTileSize);
-	int imgX, imgY;
-	BackgroundImage->GetTextureSize(&imgX, &imgY);
-	BackgroundImage->AddSource("bg", RectI{ 0,0, imgX, imgY });
-	BackgroundImage->SetTileSize(2, 1);
-	BackgroundImage->AddDestination("bg", 0, 0);
-	BackgroundImage->AddDestination("bg", 1, 0);
+	Ground->T()->SetPosition(groundPos);
+	BackgroundImage->SetDefaultTileSize(bgTileSize);
+	BackgroundImage->ClearTiles();
+	BackgroundImage->AddTile(Vector2{ -bgTileSize.x * 0.5f, 0.0f }, bgTileSize, RectF{ 0.0f, 0.0f, bgSpriteSize.x, bgSpriteSize.y });
+	BackgroundImage->AddTile(Vector2{ bgTileSize.x * 0.5f, 0.0f }, bgTileSize, RectF{ 0.0f, 0.0f, bgSpriteSize.x, bgSpriteSize.y });
 
-	Ground->GetTransform()->SetPosition(groundPos);
-	GroundSprite->SetSize(groundTileSize);
-	GroundSprite->GetTextureSize(&imgX, &imgY);
-	GroundSprite->AddSource("ground", RectI{ 0,0, imgX, imgY });
-	int tileNum = (int)(windowSize.x / groundTileSize.x) * 2;
-	GroundSprite->SetTileSize(tileNum, 1);
-	Ground->GetTransform()->SetSize(Vector2(groundTileSize.x * tileNum, groundTileSize.y));
-	Background->GetTransform()->SetSize(Vector2(bgTileSize.x * 2, bgTileSize.y));
-	for (int i = 0; i < tileNum; i++)
-	{
-		GroundSprite->AddDestination("ground", i, 0);
-	}
+	GroundSprite->SetDefaultTileSize(groundTileSize);
+	GroundSprite->ClearTiles();
+
+	int tileNum = static_cast<int>(windowSize.x / groundTileSize.x) * 2;
+	GroundSprite->BuildUniformStrip(
+		tileNum,
+		Vector2{ -windowSize.x + groundTileSize.x * 0.5f, 0.0f },
+		Vector2{ groundTileSize.x, 0.0f },
+		groundTileSize,
+		RectF{ 0.0f, 0.0f, (float)(GroundSprite->GetTexture()->width), (float)(GroundSprite->GetTexture()->height) }
+	);
+
+	Ground->T()->SetSize(Vector2(groundTileSize.x * tileNum, groundTileSize.y));
+	Background->T()->SetSize(Vector2(bgTileSize.x * 2.0f, bgTileSize.y));
 }
 
 void buki::AGLevel2::InitLevel()
 {
 	float intWindowW, intWindowH;
-	buki::Engine::GetInstance().Graphics().GetWindowSize(&intWindowW, &intWindowH);
+	Engine::Get().GetActiveCamera().GetViewportWorldSize(&intWindowW, &intWindowH);
 	Vector2 windowSize = Vector2(intWindowW, intWindowH);
-	RectF dest = RectF(windowSize.x / 2.0f, windowSize.y, windowSize.x, 1.0f);
-	dest.y -= dest.h / 2;
+	RectF dest = { windowSize.x / 2.0f, windowSize.y, windowSize.x, 1.0f };
+	dest.y -= dest.h / 2.0f;
 
 	const Vector2 size = Vector2(0.75f, 2.25f);
 	Vector2 pos = Vector2((windowSize.x / 2) - 6.0f, (windowSize.y / 2) - (dest.h) - (size.y / 2.0f));
 	float rotation = 0.0f;
-	spawner->Spawn("StoneSlim", pos, size, rotation);
+	spawner->Spawn("WoodSlim", pos, size, rotation);
 	pos.x += size.y;
-	spawner->Spawn("StoneSlim", pos, size, rotation);
+	spawner->Spawn("WoodSlim", pos, size, rotation);
 	pos.x += size.y;
-	spawner->Spawn("StoneSlim", pos, size, rotation);
+	spawner->Spawn("WoodSlim", pos, size, rotation);
 	pos.x -= (size.y) / 2.0f;
 	pos.y -= ((size.y / 2.0f) + (size.x / 2.0f));
 	rotation = 1.57079633f;
-	spawner->Spawn("StoneSlim", pos, size, rotation);
+	spawner->Spawn("WoodSlim", pos, size, rotation);
 	pos.x -= size.y;
-	spawner->Spawn("StoneSlim", pos, size, rotation);
+	spawner->Spawn("WoodSlim", pos, size, rotation);
 	pos.x += size.y;
 	pos.y -= ((size.y / 2.0f) + (size.x / 2.0f));
 	rotation = 0.0f;
-	spawner->Spawn("StoneSlim", pos, size, rotation);
+	spawner->Spawn("WoodSlim", pos, size, rotation);
 	pos.x -= size.y;
-	spawner->Spawn("StoneSlim", pos, size, rotation);
+	spawner->Spawn("WoodSlim", pos, size, rotation);
 	pos.x += size.y / 2.0f;
 	pos.y -= (size.y / 2.0f) + (size.x / 2.0f);
 	rotation = 1.57079633f;
-	spawner->Spawn("StoneSlim", pos, size, rotation);
+	spawner->Spawn("WoodSlim", pos, size, rotation);
 }
 
 void buki::AGLevel2::SpawnSlignshot(float _offset)
 {
 	float intWindowW, intWindowH;
-	buki::Engine::GetInstance().Graphics().GetWindowSize(&intWindowW, &intWindowH);
+	Engine::Get().GetActiveCamera().GetViewportWorldSize(&intWindowW, &intWindowH);
 	Vector2 windowSize = Vector2(intWindowW, intWindowH);
-	RectF dest = RectF(windowSize.x / 2.0f, windowSize.y, windowSize.x, 1.0f);
-	dest.y -= dest.h / 2;
+	RectF dest = { windowSize.x / 2.0f, windowSize.y, windowSize.x, 1.0f };
+	dest.y -= dest.h / 2.0f;
 
 	slignshot1 = Instantiate("slignshot1");
 	slignshot2 = Instantiate("slignshot2");
-	Vector2 slighshotSize = Vector2(2.0f, 4.0f);
-	Vector2 slighshotPos = Vector2(_offset, (windowSize.y / 2) - dest.h - (slighshotSize.y / 2));
-	slignshot1->GetTransform()->SetPosition(slighshotPos);
-	slignshot1->GetTransform()->SetSize(slighshotSize);
-	slignshot2->GetTransform()->SetPosition(slighshotPos);
-	slignshot2->GetTransform()->SetSize(slighshotSize);
-	Sprite* slignshot1Img = slignshot1->AddComponent<Sprite>();
-	Sprite* slignshot2Img = slignshot2->AddComponent<Sprite>();
-	slignshot1Img->Load("assets/slignshot1.png");
-	slignshot2Img->Load("assets/slignshot2.png");
+
+	Vector2 slingshotSize = Vector2(2.0f, 4.0f);
+	Vector2 slingshotPos = Vector2(_offset, (windowSize.y / 2.0f) - dest.h - (slingshotSize.y / 2.0f));
+
+	slignshot1->T()->SetPosition(slingshotPos);
+	slignshot1->T()->SetSize(slingshotSize);
+	slignshot2->T()->SetPosition(slingshotPos);
+	slignshot2->T()->SetSize(slingshotSize);
+
+	Sprite* slingshot1Img = slignshot1->AddComponent<Sprite>();
+	Sprite* slingshot2Img = slignshot2->AddComponent<Sprite>();
+	slingshot1Img->SetPath("/assets/slignshot1.png");
+	slingshot2Img->SetPath("/assets/slignshot2.png");
+
 	slignshot2->SetZ(2);
 
-	slighshotPos.y -= 1.5f;
-	slighshotPos.x += 0.18f;
+	slingshotPos.y -= 1.5f;
+	slingshotPos.x += 0.18f;
 
 	Entity* anchor = Instantiate("anchor");
-	anchor->GetTransform()->SetPosition(slighshotPos);
+	anchor->T()->SetPosition(slingshotPos);
 
 	spawner->AddPrototype("bird", new Bird());
-	spawner->Spawn("bird", slighshotPos, Vector2(1.0f, 1.0f), 0.0f);
+	spawner->Spawn("bird", slingshotPos, Vector2(1.0f, 1.0f), 0.0f);
 }
 
 void buki::AGLevel2::CreateLevelMenu()
 {
+	std::string buttonFont = "./fonts/Kenney/Kenney Blocks.ttf";
+
 	float intWindowW, intWindowH;
-	buki::Engine::GetInstance().Graphics().GetWindowSize(&intWindowW, &intWindowH);
+	Engine::Get().GetActiveCamera().GetViewportWorldSize(&intWindowW, &intWindowH);
 	Vector2 windowSize = Vector2(intWindowW, intWindowH);
 
 	Vector2 buttonsSize = Vector2(0.5f, 0.5f);
 
-	buki::Entity* resetButtonEntity = Instantiate("resetButton");
-	Button* resetButton = resetButtonEntity->AddComponent<Button>();
-	resetButton->SetMessage("reset");
-	resetButton->SetbuttonFont("./fonts/Kenney/Kenney Blocks.ttf");
-	resetButton->SetButtonText("reset", 24);
-	resetButton->ShowBackground(true);
-	resetButton->GetText()->SetColor(Color::BLACK);
-	resetButton->SetOutlineColor(Color::BLACK);
-	resetButtonEntity->GetTransform()->SetPosition(Vector2(-buttonsSize.y * 3, (-windowSize.y / 2) + (buttonsSize.y * 2)));
-	resetButtonEntity->GetTransform()->SetSize(buttonsSize);
-	resetButton->OnClick.AddListener(this);
-	resetButton->Set();
+	ButtonStyle style{
+		{ 1.0f, 1.0f, 1.0f, 1.0f },
+		{ 1.0f, 1.0f, 0.6f, 1.0f },
+		{ 0.2f, 0.2f, 0.2f, 1.0f },
+		{ 0.3f, 0.3f, 0.3f, 1.0f },
+		{ 0.0f, 1.0f, 0.0f, 1.0f },
+		{ 1.0f, 1.0f, 0.0f, 1.0f },
+		Vector2(0.25f, 0.15f),
+		Vector2(0.0f, 0.0f),
+		true,
+		true,
+		false,
+		true,
+		true,
+		true
+	};
 
-	buki::Entity* abMenuButtonEntity = Instantiate("abMenuButton");
+	Entity* resetButtonEntity = Instantiate("resetButton");
+	resetButtonEntity->T()->SetPosition(Vector2(-buttonsSize.y * 3.0f, (-windowSize.y / 2.0f) + (buttonsSize.y * 2.0f)));
+	resetButtonEntity->T()->SetSize(buttonsSize);
+	Button* resetButton = resetButtonEntity->AddComponent<Button>();
+	resetButton->SetStyle(style);
+	resetButton->SetFontPath(buttonFont);
+	resetButton->SetFontSize(24);
+	resetButton->SetText("Reset");
+	resetButton->SetMessage("reset");
+
+	Entity* abMenuButtonEntity = Instantiate("abMenuButton");
+	abMenuButtonEntity->T()->SetPosition(Vector2(buttonsSize.y * 3.0f, (-windowSize.y / 2.0f) + (buttonsSize.y * 2.0f)));
+	abMenuButtonEntity->T()->SetSize(buttonsSize);
 	Button* abMenuButton = abMenuButtonEntity->AddComponent<Button>();
+	abMenuButton->SetStyle(style);
+	abMenuButton->SetFontPath(buttonFont);
+	abMenuButton->SetFontSize(24);
+	abMenuButton->SetText("menu");
 	abMenuButton->SetMessage("menu");
-	abMenuButton->SetbuttonFont("./fonts/Kenney/Kenney Blocks.ttf");
-	abMenuButton->SetButtonText("menu", 24);
-	abMenuButton->ShowBackground(true);
-	abMenuButton->GetText()->SetColor(Color::BLACK);
-	abMenuButton->SetOutlineColor(Color::BLACK);
-	abMenuButtonEntity->GetTransform()->SetPosition(Vector2(buttonsSize.y * 3, (-windowSize.y / 2) + (buttonsSize.y * 2)));
-	abMenuButtonEntity->GetTransform()->SetSize(buttonsSize);
-	abMenuButton->OnClick.AddListener(this);
-	abMenuButton->Set();
+
+	Entity* saveButtonEntity = Instantiate("SaveButton");
+	saveButtonEntity->T()->SetPosition(Vector2(0.0f, (-windowSize.y / 2.0f) + (buttonsSize.y * 4.0f)));
+	saveButtonEntity->T()->SetSize(buttonsSize);
+	Button* saveButton = saveButtonEntity->AddComponent<Button>();
+	saveButton->SetStyle(style);
+	saveButton->SetFontPath(buttonFont);
+	saveButton->SetFontSize(24);
+	saveButton->SetText("save");
+	saveButton->SetMessage("save");
 }

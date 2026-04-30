@@ -1,4 +1,5 @@
-const startupProject = "Editor"
+const exeNames = {Game: "Game", Editor: "Editor"};
+const startupProject = exeNames.Game;
 const editorDependencies = {
     Game: ["Engine", "Box2D"],
     Editor: ["Engine", "Box2D", "imgui-docking"]
@@ -57,6 +58,14 @@ fs.copyFileSync("./libs/SDL3_mixer.dll", "./build/SDL3_mixer.dll");
 fs.copyFileSync("./libs/SDL3_mixer.lib", "./build/SDL3_mixer.lib");
 fs.copyFileSync("./libs/SDL3_mixer.pdb", "./build/SDL3_mixer.pdb");
 
+fs.copyFileSync("./libs/SDL3_ttf.dll", "./Deployment/SDL3_ttf.dll");
+fs.copyFileSync("./libs/SDL3_ttf.lib", "./Deployment/SDL3_ttf.lib");
+fs.copyFileSync("./libs/SDL3_ttf.pdb", "./Deployment/SDL3_ttf.pdb");
+
+fs.copyFileSync("./libs/SDL3_ttf.dll", "./build/SDL3_ttf.dll");
+fs.copyFileSync("./libs/SDL3_ttf.lib", "./build/SDL3_ttf.lib");
+fs.copyFileSync("./libs/SDL3_ttf.pdb", "./build/SDL3_ttf.pdb");
+
 fs.copyFileSync("./libs/vld_x64.dll", "./Deployment/vld_x64.dll");
 fs.copyFileSync("./libs/vld.lib", "./Deployment/vld.lib");
 fs.copyFileSync("./libs/vld_x64.pdb", "./Deployment/vld_x64.pdb");
@@ -67,6 +76,7 @@ fs.copyFileSync("./libs/vld_x64.pdb", "./build/vld_x64.pdb");
 
 editorproj.addLib(path.resolve("./vendor/SDL3-3.4.4/lib/x64/SDL3"));
 editorproj.addLib(path.resolve("./vendor/SDL3_mixer-devel-3.2.0-VC/SDL3_mixer-3.2.0/lib/x64/SDL3_mixer"));
+editorproj.addLib(path.resolve("./vendor/SDL3_ttf-devel-3.1.0-VC/SDL3_ttf-3.1.0/lib/x64/SDL3_ttf"));
 editorproj.addLib(path.resolve("./build/x64/Debug/Box2D"));
 editorproj.addLib(path.resolve("./build/x64/Debug/imgui-docking"));
 editorproj.addLib(path.resolve("./build/x64/Debug/Engine"));
@@ -74,6 +84,7 @@ editorproj.addLib("opengl32");
 
 gameproj.addLib(path.resolve("./vendor/SDL3-3.4.4/lib/x64/SDL3"));
 gameproj.addLib(path.resolve("./vendor/SDL3_mixer-devel-3.2.0-VC/SDL3_mixer-3.2.0/lib/x64/SDL3_mixer"));
+gameproj.addLib(path.resolve("./vendor/SDL3_ttf-devel-3.1.0-VC/SDL3_ttf-3.1.0/lib/x64/SDL3_ttf"));
 gameproj.addLib(path.resolve("./build/x64/Debug/Box2D"));
 gameproj.addLib(path.resolve("./build/x64/Debug/Engine"));
 

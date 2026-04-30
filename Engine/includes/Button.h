@@ -1,62 +1,103 @@
 #pragma once
+
 #include "Component.h"
 #include "IUpdatable.h"
 #include "IDrawable.h"
-#include "Observer.h"
-#include "Subject.h"
-#include "Color.h"
-#include <string>
+#include "Graphics/Texture2D.h"
+#include "Graphics/Font2D.h"
+#include "BukiContainers.h"
 
-using json = nlohmann::json;
+#include <functional>
+#include <string>
 
 namespace buki
 {
-	struct Text;
-	class Entity;
-	struct Sprite;
-	struct Box;
-	struct RigidBody;
-	struct Button : public Component, public IUpdatable, public IDrawable
+	struct ButtonStyle
 	{
-		Button(Entity* entity);
-		virtual void Start() override;
-		virtual void Update(float dt) override;
-		virtual void Draw(float alpha) override;
-		virtual void Destroy() override;
+		Color textColor{ 1.0f, 1.0f, 1.0f, 1.0f };
+		Color textHoverColor{ 1.0f, 1.0f, 0.6f, 1.0f };
 
-		virtual json Serialize() override;
-		virtual void Deserialize(json _doc) override;
-		virtual void Set() override;
+		Color backgroundColor{ 1.0f, 1.0f, 1.0f, 1.0f };
+		Color backgroundHoverColor{ 1.0f, 1.0f, 1.0f, 1.0f };
 
-		Text* GetText() const { return textContainer; }
+		Color outlineColor{ 0.0f, 1.0f, 0.0f, 1.0f };
+		Color outlineHoverColor{ 1.0f, 1.0f, 0.0f, 1.0f };
+
+		Vector2 padding{ 0.25f, 0.15f };
+		Vector2 textOffset{ 0.0f, 0.0f };
+
+		bool showBackground = true;
+		bool fitToText = true;
+		bool drawOutline = false;
+		bool drawOutlineOnHoverOnly = true;
+		bool centerTextX = true;
+		bool centerTextY = true;
+	};
+
+	struct Button final : public Component, public IUpdatable, public IDrawable
+	{
+	public:
+		explicit Button(Entity* entity);
+		~Button() override = default;
+
+		void Start() override;
+		void Update(float dt) override;
+		void Draw(float alpha) override;
+		void Destroy() override;
+
+		json Serialize() override;
+		void Deserialize(json doc) override;
+		void Set() override;
+
+		void SetText(const std::string& text) { m_Text = text; }
+		const std::string& GetText() const { return m_Text; }
+
+		void SetFontPath(const std::string& path) { m_FontPath = path; }
+		const std::string& GetFontPath() const { return m_FontPath; }
+
+		void SetFontSize(int size) { m_FontSize = size; }
+		int GetFontSize() const { return m_FontSize; }
+
+		void SetBackgroundImage(const std::string& path) { m_BackgroundImagePath = path; }
+		const std::string& GetBackgroundImage() const { return m_BackgroundImagePath; }
+
+		void SetStyle(const ButtonStyle& style) { m_Style = style; }
+		ButtonStyle& Style() { return m_Style; }
+		const ButtonStyle& Style() const { return m_Style; }
+
 		Vector2 GetPosition() const;
-		//Vector2 GetFullPosition() const;
 		Vector2 GetSize() const;
-		//void SetSize(const Vector2 _size);
-		//Vector2 GetFullSize() const;
-		void SetImage(const std::string _path);
-		//void SetPosition(const Vector2 _pos) { position = _pos; }
-		inline void SetbuttonFont(const std::string font) { textFont = font; }
-		inline std::string GetbuttonFont() { return textFont; }
-		void SetButtonText(const std::string text, int size);
-		void SetMessage(std::string _message) { message = _message; }
-		void ShowBackground(bool _state) { background = _state; }
-		//inline void SetOutlineColor(Color _color) { outlineColor = _color; }
-		inline void SetFitToText(bool _state) { sizeFitToText = _state; }
-		Subject<std::string> OnClick;
+		Vector2 GetTextSize() const;
+		RectF GetBounds() const;
+
+		bool IsHovered() const { return m_Hovered; }
+		bool IsPressed() const { return m_Pressed; }
+
+		void SetOnClick(const std::function<void()>& callback) { m_OnClick = callback; }
+
+		void SetMessage(const std::string& msg) { message = msg; }
 	private:
-		bool m_Draw = false;
-		std::string buttonText;
-		std::string textFont;
+		void RefreshResources();
+		void RefreshLayout();
+		bool ContainsPoint(const Vector2& point) const;
+
+	private:
+		std::string m_Text = "Button";
+		std::string m_FontPath = "./fonts/Kenney/Kenney Blocks.ttf";
+		std::string m_BackgroundImagePath;
+
+		int m_FontSize = 24;
+
+		Font2D* m_Font = nullptr;
+		Texture2D* m_BackgroundTexture = nullptr;
+
+		ButtonStyle m_Style{};
+
+		bool m_Hovered = false;
+		bool m_Pressed = false;
+		bool m_ClickedLastFrame = false;
+
+		std::function<void()> m_OnClick;
 		std::string message;
-		int textSize;
-		bool clicked;
-		bool background = true;
-		//Color outlineColor;
-		bool sizeFitToText = true;
-		Sprite* buttonSprite;
-		Text* textContainer;
-		Box* box;
-		RigidBody* rb;
 	};
 }

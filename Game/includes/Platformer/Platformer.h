@@ -3,19 +3,20 @@
 
 namespace buki
 {
-	struct Atlas;
 	struct Entity;
+	struct TileLayer;
 	struct Platformer : public BukiScene
 	{
 		Platformer();
 		virtual void CodeLoad() override;
 		virtual void OnWindowResize() override;
+		virtual void OnNotify(const std::string& button) override;
 	private:
 		void GroundAndBackground();
 		Entity* Ground;
-		Atlas* GroundAtlas;
+		TileLayer* GroundAtlas;
 		Entity* Background;
-		Atlas* BackgroundAtlas;
+		TileLayer* BackgroundAtlas;
 		Entity* PlayerEntity;
 	};
 }

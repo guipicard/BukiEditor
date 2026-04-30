@@ -6,9 +6,8 @@
 #include "IGraphics.h"
 #include "IInput.h"
 #include "Text.h"
-#include "Vector2.h"
+#include "BukiContainers.h"
 #include "Button.h"
-#include "Component.h"
 #include "AngryBirdController.h"
 #include "Box.h"
 
@@ -18,60 +17,91 @@ buki::MenuScene::MenuScene()
 
 void buki::MenuScene::CodeLoad()
 {
-	buki::Engine::GetInstance().Graphics().SetCameraPosition(Vector2::ZERO);
+	Engine::Get().Graphics().SetCameraPosition(0.0f, 0.0f);
+
+	std::string buttonFont = "./fonts/Kenney/Kenney Blocks.ttf";
+
 	float windowW, windowH;
-	Engine::GetInstance().Graphics().GetWindowSize(&windowW, &windowH);
+	Engine::Get().GetActiveCamera().GetViewportWorldSize(&windowW, &windowH);
 
 	buki::Entity* TitleEntity = Instantiate("Title");
 	Text* TitleText = TitleEntity->AddComponent<Text>();
-	TitleText->LoadText("./fonts/Kenney/Kenney Blocks.ttf", 48);
-	TitleText->SetFixed(false);
+	TitleText->SetFontPath(buttonFont);
+	TitleText->SetFontSize(48);
 	TitleText->SetText("Press Enter To Switch Scenes");
-	float heightStep = windowH / 5;
-	TitleEntity->GetTransform()->SetPosition(Vector2(0.0f, -heightStep * 2.0f));
+
+	float heightStep = windowH / 8.0f;
+
+	TitleEntity->T()->SetPosition(Vector2(0.0f, -heightStep * 2.5f));
 
 	Vector2 buttonsSize = Vector2(1.0f, 1.0f);
 
+	ButtonStyle style{
+		{ 1.0f, 1.0f, 1.0f, 1.0f },
+		{ 1.0f, 1.0f, 0.6f, 1.0f },
+		{ 0.2f, 0.2f, 0.2f, 1.0f },
+		{ 0.3f, 0.3f, 0.3f, 1.0f },
+		{ 0.0f, 1.0f, 0.0f, 1.0f },
+		{ 1.0f, 1.0f, 0.0f, 1.0f },
+		Vector2(0.25f, 0.15f),
+		Vector2(0.0f, 0.0f),
+		true,
+		true,
+		false,
+		true,
+		true,
+		true
+	};
+
 	buki::Entity* ShapesButtonEntity = Instantiate("ShapesPlayButton");
-	ShapesButtonEntity->GetTransform()->SetSize(buttonsSize);
-	ShapesButtonEntity->GetTransform()->SetPosition(Vector2(0.0f, -heightStep));
+	ShapesButtonEntity->T()->SetSize(buttonsSize);
+	ShapesButtonEntity->T()->SetPosition(Vector2(0.0f, -heightStep * 1.0f));
 	Button* playButton = ShapesButtonEntity->AddComponent<Button>();
+	playButton->SetStyle(style);
+	playButton->SetFontPath(buttonFont);
+	playButton->SetFontSize(36);
+	playButton->SetText("Shapes Demo");
 	playButton->SetMessage("Shapes");
-	playButton->SetbuttonFont("./fonts/Kenney/Kenney Blocks.ttf");
-	playButton->SetButtonText("Shapes Demo", 36);
-	playButton->OnClick.AddListener(this);
-	playButton->Set();
 
 	buki::Entity* AngryBirdButtonEntity = Instantiate("AbPlayButton");
-	AngryBirdButtonEntity->GetTransform()->SetSize(buttonsSize);
-	AngryBirdButtonEntity->GetTransform()->SetPosition(Vector2(0.0f, 0.0f));
+	AngryBirdButtonEntity->T()->SetSize(buttonsSize);
+	AngryBirdButtonEntity->T()->SetPosition(Vector2(0.0f, -heightStep * 0.0f));
 	Button* AngryBirdButton = AngryBirdButtonEntity->AddComponent<Button>();
+	AngryBirdButton->SetStyle(style);
+	AngryBirdButton->SetFontPath(buttonFont);
+	AngryBirdButton->SetFontSize(36);
+	AngryBirdButton->SetText("Angry Bird Demo");
 	AngryBirdButton->SetMessage("AngryBird");
-	AngryBirdButton->SetbuttonFont("./fonts/Kenney/Kenney Blocks.ttf");
-	AngryBirdButton->SetButtonText("Angry Bird Demo", 36);
-	AngryBirdButton->OnClick.AddListener(this);
-	AngryBirdButton->Set();
-
 
 	buki::Entity* PPButtonEntity = Instantiate("PlatformerPlayButton");
-	PPButtonEntity->GetTransform()->SetSize(buttonsSize);
-	PPButtonEntity->GetTransform()->SetPosition(Vector2(0.0f, heightStep * 1.0f));
+	PPButtonEntity->T()->SetSize(buttonsSize);
+	PPButtonEntity->T()->SetPosition(Vector2(0.0f, heightStep * 1.0f));
 	Button* PPButton = PPButtonEntity->AddComponent<Button>();
+	PPButton->SetStyle(style);
+	PPButton->SetFontPath(buttonFont);
+	PPButton->SetFontSize(36);
+	PPButton->SetText("Platformer");
 	PPButton->SetMessage("Platformer");
-	PPButton->SetbuttonFont("./fonts/Kenney/Kenney Blocks.ttf");
-	PPButton->SetButtonText("Platformer", 36);
-	PPButton->OnClick.AddListener(this);
-	PPButton->Set();
+
+	buki::Entity* SceneTestButtonEntity = Instantiate("SceneTestPlayButton");
+	SceneTestButtonEntity->T()->SetSize(buttonsSize);
+	SceneTestButtonEntity->T()->SetPosition(Vector2(0.0f, heightStep * 2.0f));
+	Button* SceneTestButton = SceneTestButtonEntity->AddComponent<Button>();
+	SceneTestButton->SetStyle(style);
+	SceneTestButton->SetFontPath(buttonFont);
+	SceneTestButton->SetFontSize(36);
+	SceneTestButton->SetText("SceneTest");
+	SceneTestButton->SetMessage("SceneTest");
 
 	buki::Entity* QuitEntity = Instantiate("QuitButton");
-	QuitEntity->GetTransform()->SetSize(buttonsSize);
-	QuitEntity->GetTransform()->SetPosition(Vector2(0.0f, heightStep * 2.0f));
+	QuitEntity->T()->SetSize(buttonsSize);
+	QuitEntity->T()->SetPosition(Vector2(0.0f, heightStep * 3.0f));
 	Button* QuitButton = QuitEntity->AddComponent<Button>();
+	QuitButton->SetStyle(style);
+	QuitButton->SetFontPath(buttonFont);
+	QuitButton->SetFontSize(36);
+	QuitButton->SetText("Quit");
 	QuitButton->SetMessage("Quit");
-	QuitButton->SetbuttonFont("./fonts/Kenney/Kenney Blocks.ttf");
-	QuitButton->SetButtonText("Quit", 36);
-	QuitButton->OnClick.AddListener(this);
-	QuitButton->Set();
 
 	SaveScene();
 }
@@ -83,6 +113,9 @@ void buki::MenuScene::OnWindowResize()
 
 void buki::MenuScene::OnNotify(const std::string& button)
 {
-	if (button == "Quit") buki::Engine::GetInstance().Input().ExitProgram();
-	buki::Engine::GetInstance().World().SetLoadScene(button);
+	if (button == "Quit")
+	{
+		buki::Engine::Get().Platform().RequestQuit();
+	}
+	buki::Engine::Get().World().SetLoadScene(button);
 }

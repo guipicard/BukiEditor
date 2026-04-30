@@ -13,7 +13,11 @@ void buki::Box::Draw(float alpha)
 
 	Vector2 pos = m_Entity->T()->GetPosition();
 	float angle = m_Entity->T()->GetRotation().GetRadians();
-	RectF dstRect = { pos.x, pos.y, def.size.x, def.size.y };
+	
+	if (def.size.x <= 0.0f || def.size.y <= 0.0f)
+	{
+		return;
+	}
 
 	if (def.fillDraw)
 	{
@@ -49,7 +53,7 @@ void buki::Box::SetPhysics()
 	shapeDef.enableContactEvents = true;
 	shapeDef.userData = m_Entity;
 	shapeDef.isSensor = def.isSensor;
-	//shapeDef.filter.categoryBits = def.filter;
+	//shapeDef.filter.maskBits = def.filter;
 
 	BodyId bId = rb->GetBodyId();
 	b2BodyId b2Id = b2BodyId{ bId.index1, bId.world0, bId.generation };
@@ -63,7 +67,7 @@ void buki::Box::SetPhysics()
 
 json buki::Box::Serialize()
 {
-	json doc = Shapes::Serialize();
+	json doc = SerializeShapeDef(def);
 	doc["type"] = "Box";
 	doc["box"]["size"]["x"] = def.size.x;
 	doc["box"]["size"]["y"] = def.size.y;
@@ -72,15 +76,21 @@ json buki::Box::Serialize()
 
 void buki::Box::Deserialize(json _doc)
 {
-	Shapes::Deserialize(_doc);
+	def = DefaultBoxShapeDef();
+	DeserializeShapeDef(_doc, def);
 
-	if (_doc.contains("box"))
+	if (_doc.contains("box") && _doc["box"].contains("size"))
 	{
-		def.size.x = _doc["box"]["size"].value("x", 1.0f);
-		def.size.y = _doc["box"]["size"].value("y", 1.0f);
+		def.size.x = _doc["box"]["size"].value("x", def.size.x);
+		def.size.y = _doc["box"]["size"].value("y", def.size.y);
 	}
 }
 
 void buki::Box::Set()
 {
+	if (!m_Entity->GetComponent<RigidBody>())
+	{
+		return;
+	}
+	m_Entity->ActivatePhysics();
 }

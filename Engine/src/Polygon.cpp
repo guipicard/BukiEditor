@@ -75,7 +75,7 @@ void buki::Polygon::SetPhysics()
     b2Polygon polygon = b2MakePolygon(&hull, 0);
 
     b2ShapeDef shapeDef = b2DefaultShapeDef();
-    //shapeDef.density = def.density;
+    shapeDef.density = def.density;
     shapeDef.material.friction = def.friction;
     shapeDef.material.restitution = def.restitution;
     shapeDef.enableContactEvents = true;
@@ -96,21 +96,30 @@ void buki::Polygon::SetPhysics()
 
 json buki::Polygon::Serialize()
 {
-    json doc = Shapes::Serialize();
-	doc["radius"] = def.radius;
-	doc["segments"] = def.segments;
-
+    json doc = SerializeShapeDef(def);
+    doc["type"] = "Polygon";
+    doc["polygon"]["radius"] = def.radius;
+    doc["polygon"]["segments"] = def.segments;
     return doc;
 }
 
 void buki::Polygon::Deserialize(json _doc)
 {
-    Shapes::Deserialize(_doc);
+    def = DefaultPolygonShapeDef();
+    DeserializeShapeDef(_doc, def);
 
-	def.radius = _doc.value("radius", 1.0f);
-	def.segments = _doc.value("segments", 3);
+    if (_doc.contains("polygon"))
+    {
+        def.radius = _doc["polygon"].value("radius", def.radius);
+        def.segments = _doc["polygon"].value("segments", def.segments);
+    }
 }
 
 void buki::Polygon::Set()
 {
+    if (!m_Entity->GetComponent<RigidBody>())
+    {
+        return;
+    }
+    m_Entity->ActivatePhysics();
 }

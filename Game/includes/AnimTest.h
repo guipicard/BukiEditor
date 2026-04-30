@@ -9,6 +9,8 @@ namespace buki
 	struct Box;
 	struct Circle;
 	struct Polygon;
+	struct Text;
+
 	struct AnimTest : public MonoBehaviour
 	{
 		AnimTest(Entity* entity);
@@ -34,9 +36,10 @@ namespace buki
 	private:
 		Animation* anim = nullptr;
 		Box* boxCollider = nullptr;
-		Circle* circleCollider = nullptr;
-		Polygon* polygonCollider = nullptr;
+		//Circle* circleCollider = nullptr;
+		//Polygon* polygonCollider = nullptr;
 		RigidBody* rigidbody = nullptr;
+		Text* text = nullptr;
 
 		size_t jumpSFX = 0;
 

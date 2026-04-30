@@ -12,6 +12,7 @@
 #include <string>
 #include "Memory.h"
 #include "Graphics/Camera2D.h"
+#include "Graphics/FontManager.h"
 
 namespace buki {
     using Uint32 = std::uint32_t;
@@ -40,8 +41,10 @@ namespace buki {
         IWorld& World() const { return *m_World; }
         PhysicsService& Physics() const { return *m_Physics; }
         TextureManager& Textures() { return *m_TextureManager; }
+        FontManager& Fonts() { return *m_FontManager; }
         Camera2D& GetActiveCamera() { return m_Camera; }
         const Camera2D& GetActiveCamera() const { return m_Camera; }
+        Camera2D* GetActiveCameraPtr() { return &m_Camera; }
     private:
         Engine() = default;
 
@@ -69,8 +72,8 @@ namespace buki {
         PhysicsService* m_Physics = nullptr;
         Camera2D m_Camera;
         IAudio* m_Audio = nullptr;
-        //Editor* m_Editor = nullptr;
 
         Scope<TextureManager> m_TextureManager;
+        Scope<FontManager> m_FontManager;
     };
 }

@@ -1,3 +1,4 @@
+#pragma once
 #include "OpenGlTest.h"
 
 #include "Engine.h"
@@ -5,9 +6,12 @@
 #include "Graphics/Texture2D.h"
 #include "Units.h"
 
-#include <Windows.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/constants.hpp>
+//#include <Windows.h>
+//#include <glm/glm.hpp>
+//#include <glm/gtc/constants.hpp>
+#include "ComponentRegistration.h"
+
+REGISTER_COMPONENT(OpenGlTest, "OpenGlTest");
 
 namespace
 {
@@ -25,7 +29,6 @@ buki::OpenGlTest::OpenGlTest(Entity* entity)
 
 void buki::OpenGlTest::Awake()
 {
-    m_PlayerTexture = Textures().Load("./assets/Samurai/HURT.png");
 }
 
 void buki::OpenGlTest::Start() {}
@@ -35,10 +38,10 @@ void buki::OpenGlTest::Update(float dt) {}
 
 void buki::OpenGlTest::Draw(float alpha)
 {
+    m_PlayerTexture = Textures().Load("./assets/Samurai/HURT.png");
     if (m_TestTextureId == 0)
     {
         m_TestTextureId = Graphics().CreateTextureRGBA8(kPixels, 2, 2);
-        OutputDebugStringA(m_TestTextureId != 0 ? "Created test texture OK\n" : "Failed to create test texture\n");
     }
 
     const Camera2D& camera = Engine::Get().GetActiveCamera();

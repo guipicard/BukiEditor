@@ -49,6 +49,7 @@ bool Engine::Init(const std::string& title, int w, int h)
 	m_Camera.viewportHeight = static_cast<float>(h);
 
 	m_TextureManager = MakeScope<TextureManager>(*m_Graphics);
+	m_FontManager = MakeScope<FontManager>(*m_Graphics);
 
 	m_Input = new SDLInput();
 	m_Platform->SetInput(m_Input);
@@ -185,11 +186,15 @@ void Engine::Shutdown()
 	    delete m_Audio;
 	    m_Audio = nullptr;
 	}
-	SDL_Quit();
 	if (m_TextureManager)
 	{
 		m_TextureManager->Clear();
 		m_TextureManager.reset();
+	}
+	if (m_FontManager)
+	{
+		m_FontManager->Clear();
+		m_FontManager.reset();
 	}
 	if (m_World != nullptr)
 	{
@@ -231,5 +236,6 @@ void Engine::Shutdown()
 		m_Console = nullptr;
 	}
 
+	SDL_Quit();
 	m_IsInit = false;
 }

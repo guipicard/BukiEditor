@@ -10,7 +10,7 @@
 namespace buki
 {
 	struct Entity;
-	struct MenuScene : public BukiScene, Observer<std::string>
+	struct MenuScene : public BukiScene
 	{
 		MenuScene();
 		virtual void CodeLoad() override;

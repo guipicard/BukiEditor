@@ -25,5 +25,9 @@ namespace buki
 
 		virtual void OnSensorEnter(Entity* other) = 0;
 		virtual void OnSensorExit(Entity* other) = 0;
+
+		virtual json Serialize() override = 0;
+		virtual void Deserialize(json _doc) = 0;
+		virtual void Set() = 0;
 	};
 }

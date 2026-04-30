@@ -15,21 +15,23 @@ namespace buki
         OpenGlTest(Entity* entity);
         ~OpenGlTest() = default;
 
-        void Awake() override;
-        void Start() override;
-        void FixedUpdate(float dt) override;
-        void Destroy() override;
-        void Update(float dt) override;
-        void Draw(float alpha) override;
-        void OnCollisionEnter(Entity* other) override;
-        void OnCollisionExit(Entity* other) override;
-        void OnCollisionHit(Entity* other) override;
-        void OnSensorEnter(Entity* other) override;
-        void OnSensorExit(Entity* other) override;
+        virtual void Awake() override;
+        virtual void Start() override;
+        virtual void Destroy() override;
 
-        json Serialize() override;
-        void Deserialize(json _doc) override;
-        void Set() override;
+        virtual void FixedUpdate(float dt) override;
+        virtual void Update(float dt) override;
+        virtual void Draw(float alpha) override;
+
+        virtual void OnCollisionEnter(Entity* other) override;
+        virtual void OnCollisionExit(Entity* other) override;
+        virtual void OnCollisionHit(Entity* other) override;
+        virtual void OnSensorEnter(Entity* other) override;
+        virtual void OnSensorExit(Entity* other) override;
+
+        virtual json Serialize() override;
+        virtual void Deserialize(json _doc) override;
+        virtual void Set() override;
 
     private:
         static constexpr std::array<float, 4> kFull = { 0.0f, 0.0f, 1.0f, 1.0f };

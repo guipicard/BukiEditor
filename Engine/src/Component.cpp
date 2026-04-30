@@ -45,6 +45,11 @@ buki::TextureManager& buki::Component::Textures() const
 	return Engine::Get().Textures();
 }
 
+buki::FontManager& buki::Component::Fonts() const
+{
+	return Engine::Get().Fonts();
+}
+
 buki::Camera2D& buki::Component::Camera() const
 {
 	return Engine::Get().GetActiveCamera();

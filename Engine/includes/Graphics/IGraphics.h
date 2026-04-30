@@ -7,6 +7,7 @@
 #include "BukiContainers.h"
 #include "Graphics/Camera2D.h"
 #include "glm/glm.hpp"
+#include "Graphics/Font2D.h"
 
 namespace buki
 {
@@ -50,7 +51,7 @@ namespace buki
 		virtual void DrawLine(const Vector2& a, const Vector2& b, const Color& color) = 0;
 		virtual void DrawRectOutline(const Vector2& center, const Vector2& size, float rotationRadians, const Color& color) = 0;
 		virtual void FillRect(const Vector2& center, const Vector2& size, float rotationRadians, const Color& color) = 0;
-		virtual void DrawCircleOutline(const Vector2& center, float radius, const Color& color) = 0;
+		virtual void DrawCircleOutline(const Vector2& center, float radius, const Color& color, float rotationRadians = 0.0f) = 0;
 		virtual void FillCircle(const Vector2& center, float radius, const Color& color) = 0;
 		virtual void DrawPolygonOutline(const Vector2& center, float radius, float rotationRadians, const Color& color, int segments) = 0;
 		virtual void FillPolygon(const Vector2& center, float radius, float rotationRadians, const Color& color, int segments) = 0;
@@ -102,5 +103,19 @@ namespace buki
 			bool flipX = false,
 			bool flipY = false,
 			const Color& color = {}) = 0;
+
+		virtual Font2D CreateFontFromFile(const std::string& path, int fontSize) = 0;
+		virtual void DestroyFont(Font2D& font) = 0;
+
+		virtual void DrawTextToCamera(
+			const Font2D& font,
+			const std::string& text,
+			const Camera2D& camera,
+			const glm::vec2& worldPositionMeters,
+			const Color& color = {},
+			bool centerX = false,
+			bool centerY = false) = 0;
+
+		virtual Vector2 MeasureText(const Font2D& font, const std::string& text) const = 0;
 	};
 }

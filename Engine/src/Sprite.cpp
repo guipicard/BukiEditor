@@ -1,81 +1,114 @@
-#pragma once
 #include "Sprite.h"
+
+#include "Engine.h"
 #include "Entity.h"
-#include "Button.h"
-#include "Text.h"
 
-buki::Sprite::Sprite(Entity* _entity)
-	: Component(_entity)
+namespace buki
 {
-	sizeOffset = m_Entity->T()->GetSize();
-}
+    Sprite::Sprite(Entity* entity)
+        : Component(entity)
+    {
+        if (m_Entity != nullptr && m_Entity->T() != nullptr)
+        {
+            m_SizeOffset = m_Entity->T()->GetSize();
+        }
+    }
 
-void buki::Sprite::Draw(float alpha)
-{
-	Transform* state = m_Entity->T();
-	RectF _dst{
-		(state->GetPosition().x + positionOffset.x - (sizeOffset.x * 0.5f)),
-		(state->GetPosition().y + positionOffset.y - (sizeOffset.y * 0.5f)),
-		sizeOffset.x,
-		sizeOffset.y
-	};
-	//Graphics().DrawTexture(m_Id, m_Src, _dst, state->GetRotation().GetRadians(), m_Flip, m_Color);
-}
+    void Sprite::Draw(float alpha)
+    {
+        if (m_Texture == nullptr || !m_Texture->IsValid() || m_Entity == nullptr || m_Entity->T() == nullptr)
+        {
+            return;
+        }
 
-void buki::Sprite::Load(const std::string& _path)
-{
-	path = _path;
-	if (path != "")
-	{
-		//m_Id = Graphics().LoadTexture(path);
-		//Graphics().GetTextureSize(m_Id, &m_Src.w, &m_Src.h);
-	}
-}
+        Transform* t = m_Entity->T();
+        const Vector2 pos = t->GetPosition() + m_PositionOffset;
+        const Vector2 size = (m_SizeOffset.x != 0.0f && m_SizeOffset.y != 0.0f)
+            ? m_SizeOffset
+            : t->GetSize();
 
-json buki::Sprite::Serialize()
-{
-	json doc;
-	doc["path"] = path;
-	doc["position"]["x"] = positionOffset.x;
-	doc["position"]["y"] = positionOffset.y;
-	doc["size"]["x"] = sizeOffset.x;
-	doc["size"]["y"] = sizeOffset.y;
-	doc["color"]["r"] = m_Color.r;
-	doc["color"]["g"] = m_Color.g;
-	doc["color"]["b"] = m_Color.b;
-	doc["color"]["a"] = m_Color.a;
-	doc["flip"]["h"] = m_Flip.h;
-	doc["flip"]["v"] = m_Flip.v;
-	return doc;
-}
+        RectF source = m_SourceRectPixels;
+        if (!m_UseSourceRect)
+        {
+            source = RectF{
+                0.0f,
+                0.0f,
+                static_cast<float>(m_Texture->width),
+                static_cast<float>(m_Texture->height)
+            };
+        }
 
-void buki::Sprite::Deserialize(json _doc)
-{
-	path = _doc["path"].get<std::string>();
-	positionOffset.x = _doc["position"]["x"].get<float>();
-	positionOffset.y = _doc["position"]["y"].get<float>();
-	sizeOffset.x = _doc["size"]["x"].get<float>();
-	sizeOffset.y = _doc["size"]["y"].get<float>();
-	m_Color.r = _doc["color"]["r"].get<unsigned char>();
-	m_Color.g = _doc["color"]["g"].get<unsigned char>();
-	m_Color.b = _doc["color"]["b"].get<unsigned char>();
-	m_Color.a = _doc["color"]["a"].get<unsigned char>();
-	m_Flip.h = _doc["flip"]["h"].get<bool>();
-	m_Flip.v = _doc["flip"]["v"].get<bool>();
-}
+        Graphics().DrawSprite(
+            *m_Texture,
+            Camera(),
+            glm::vec2{ pos.x, pos.y },
+            size.x,
+            size.y,
+            source,
+            t->GetRotation().GetRadians(),
+            m_Flip.h,
+            m_Flip.v,
+            m_Color
+        );
+    }
 
-void buki::Sprite::Set()
-{
-	Load(path);
-}
+    json Sprite::Serialize()
+    {
+        json doc;
+        doc["path"] = m_Path;
+        doc["positionOffset"]["x"] = m_PositionOffset.x;
+        doc["positionOffset"]["y"] = m_PositionOffset.y;
+        doc["size"]["x"] = m_SizeOffset.x;
+        doc["size"]["y"] = m_SizeOffset.y;
+        doc["color"]["r"] = m_Color.r;
+        doc["color"]["g"] = m_Color.g;
+        doc["color"]["b"] = m_Color.b;
+        doc["color"]["a"] = m_Color.a;
+        doc["flip"]["h"] = m_Flip.h;
+        doc["flip"]["v"] = m_Flip.v;
+        doc["useSourceRect"] = m_UseSourceRect;
+        doc["sourceRect"]["x"] = m_SourceRectPixels.x;
+        doc["sourceRect"]["y"] = m_SourceRectPixels.y;
+        doc["sourceRect"]["w"] = m_SourceRectPixels.w;
+        doc["sourceRect"]["h"] = m_SourceRectPixels.h;
+        return doc;
+    }
 
-void buki::Sprite::SetColor(const Color& color)
-{
-	//m_Color.Set(color);
-}
+    void Sprite::Deserialize(json doc)
+    {
+        m_Path = doc.value("path", "");
+        m_PositionOffset.x = doc["positionOffset"].value("x", 0.0f);
+        m_PositionOffset.y = doc["positionOffset"].value("y", 0.0f);
+        m_SizeOffset.x = doc["size"].value("x", 0.0f);
+        m_SizeOffset.y = doc["size"].value("y", 0.0f);
 
-void buki::Sprite::SetFlip(bool h, bool v)
-{
-	m_Flip.h = h;
-	m_Flip.v = v;
+        m_Color.r = doc["color"].value("r", 1.0f);
+        m_Color.g = doc["color"].value("g", 1.0f);
+        m_Color.b = doc["color"].value("b", 1.0f);
+        m_Color.a = doc["color"].value("a", 1.0f);
+
+        m_Flip.h = doc["flip"].value("h", false);
+        m_Flip.v = doc["flip"].value("v", false);
+
+        m_UseSourceRect = doc.value("useSourceRect", false);
+        m_SourceRectPixels.x = doc["sourceRect"].value("x", 0.0f);
+        m_SourceRectPixels.y = doc["sourceRect"].value("y", 0.0f);
+        m_SourceRectPixels.w = doc["sourceRect"].value("w", 0.0f);
+        m_SourceRectPixels.h = doc["sourceRect"].value("h", 0.0f);
+    }
+
+    void Sprite::Set()
+    {
+        m_Texture = nullptr;
+
+        if (!m_Path.empty())
+        {
+            m_Texture = Textures().Load(m_Path);
+        }
+    }
+
+    void Sprite::SetPath(const std::string& path)
+    {
+        m_Path = path;
+    }
 }

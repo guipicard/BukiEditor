@@ -23,6 +23,7 @@ namespace buki
         bool IsMouseButtonUp(int button) const override;
 
         void GetMousePositionScreen(int* x, int* y) const override;
+        void GetMousePositionWorld(float* x, float* y) const override;
         int GetMouseWheelDelta() const override;
 
     private:

@@ -1,21 +1,19 @@
-#pragma once
 #include "ShapesDemo.h"
+
 #include "Engine.h"
 #include "Animation.h"
 #include "Spawner.h"
 #include "Prototypes.h"
-#include "Player.h"
-#include "CircleCollider.h"
 #include "Box.h"
 #include "Circle.h"
 #include "Sprite.h"
-#include "Atlas.h"
 #include "RigidBody.h"
 #include "Text.h"
 #include "ShapesController.h"
 #include "EditorController.h"
 #include "Button.h"
-#include "Camera.h"
+#include "Camera2D.h"
+#include "TileLayer.h"
 
 using namespace buki;
 
@@ -29,106 +27,128 @@ ShapesDemo::ShapesDemo()
 
 void buki::ShapesDemo::CodeLoad()
 {
-	buki::Engine::GetInstance().Graphics().SetCameraPosition(Vector2::ZERO);
-	Background = Instantiate("Background");
-	BackgroundImage = Background->AddComponent<Atlas>();
+	Engine::Get().Graphics().SetCameraPosition(0.0f, 0.0f);
+
 	Ground = Instantiate("Ground");
-	RigidBody* GroundRB = Ground->AddComponent<RigidBody>();
-	Box* GroundCollider = Ground->AddComponent<Box>();
-	GroundSprite = Ground->AddComponent<Atlas>();
-	GroundSprite->Load("assets/Kenney/Physics Assets/PNG/Other/grass.png");
+	RigidBody* groundRB = Ground->AddComponent<RigidBody>();
+	Box* groundCollider = Ground->AddComponent<Box>();
 
 	GroundAndBackground();
 
-	GroundRB->Type = RigidBody::BodyType::Static;
-	GroundRB->motionLocks = { true };
-	GroundCollider->Collider.density = 1.0f;
-	GroundCollider->Collider.material.friction = 0.3f;
-	GroundCollider->Collider.Size = Ground->GetTransform()->GetSize() / 2;
+	groundRB->def.type = RigidBodyDef::BodyType::Static;
+	groundRB->def.motionLocks.linearX = true;
+	groundRB->def.motionLocks.linearY = true;
+	groundRB->def.motionLocks.angularZ = true;
+
+	groundCollider->def.density = 1.0f;
+	groundCollider->def.friction = 0.3f;
+	groundCollider->def.size = Ground->T()->GetSize() / 2.0f;
+	groundCollider->def.fillDraw = true;
+	groundCollider->def.shapeDraw = true;
+	groundCollider->def.filter = 0;
+
 	Ground->ActivatePhysics();
 
 	Entity* controllerEntity = Instantiate("controller");
 	controllerEntity->AddComponent<ShapesController>();
 
 	Vector2 buttonsSize = Vector2(1.0f, 0.5f);
-	Camera* camera = buki::Engine::GetInstance().Graphics().GetCamera();
-	Vector2 cameraPos = camera->position;
-	Vector2 cameraSize = { camera->width, camera->height };
-	cameraSize /= METRES_TO_PIXELS;
-	Vector2 ButtonPos = { -cameraSize / 2 };
-	ButtonPos += {1.0f, 1.0f};
+	Camera2D camera = Engine::Get().GetActiveCamera();
+	Vector2 cameraSize;
+	camera.GetViewportWorldSize(&cameraSize.x, &cameraSize.y);
 
-	buki::Entity* BoxBothEntity = Instantiate("BoxBoth");
-	Button* BoxBothButton = BoxBothEntity->AddComponent<Button>();
-	BoxBothButton->SetbuttonFont("./fonts/droid_sans.ttf");
-	BoxBothButton->SetButtonText("Box Both", 18);
-	BoxBothEntity->GetTransform()->SetSize(buttonsSize);
-	BoxBothEntity->GetTransform()->SetPosition(ButtonPos);
-	BoxBothButton->SetMessage("BoxBoth");
-	BoxBothButton->OnClick.AddListener(this);
-	BoxBothButton->Set();
+	Vector2 buttonPos = { -cameraSize / 2.0f };
+	buttonPos += { 1.0f, 1.0f };
 
-	ButtonPos.x += 3.0f;
+	std::string fontpath = "./fonts/droid_sans.ttf";
 
-	buki::Entity* BoxDrawEntity = Instantiate("BoxDraw");
-	Button* BoxDrawButton = BoxDrawEntity->AddComponent<Button>();
-	BoxDrawButton->SetbuttonFont("./fonts/droid_sans.ttf");
-	BoxDrawButton->SetButtonText("Box Draw", 18);
-	BoxDrawEntity->GetTransform()->SetSize(buttonsSize);
-	BoxDrawEntity->GetTransform()->SetPosition(ButtonPos);
-	BoxDrawButton->SetMessage("BoxDraw");
-	BoxDrawButton->OnClick.AddListener(this);
-	BoxDrawButton->Set();
+	ButtonStyle style{
+		{ 1.0f, 1.0f, 1.0f, 1.0f },
+		{ 1.0f, 1.0f, 0.6f, 1.0f },
+		{ 0.2f, 0.2f, 0.2f, 1.0f },
+		{ 0.3f, 0.3f, 0.3f, 1.0f },
+		{ 0.0f, 1.0f, 0.0f, 1.0f },
+		{ 1.0f, 1.0f, 0.0f, 1.0f },
+		Vector2(0.25f, 0.15f),
+		Vector2(0.0f, 0.0f),
+		true,
+		true,
+		false,
+		true,
+		true,
+		true
+	};
 
-	ButtonPos.x += 3.0f;
+	Entity* boxBothEntity = Instantiate("BoxBoth");
+	boxBothEntity->T()->SetSize(buttonsSize);
+	boxBothEntity->T()->SetPosition(buttonPos);
+	Button* boxBothButton = boxBothEntity->AddComponent<Button>();
+	boxBothButton->SetStyle(style);
+	boxBothButton->SetFontPath(fontpath);
+	boxBothButton->SetText("Box Both");
+	boxBothButton->SetFontSize(18);
+	boxBothButton->SetMessage("BoxBoth");
 
-	buki::Entity* BoxFillEntity = Instantiate("BoxFill");
-	Button* BoxFillButton = BoxFillEntity->AddComponent<Button>();
-	BoxFillButton->SetbuttonFont("./fonts/droid_sans.ttf");
-	BoxFillButton->SetButtonText("Box Fill", 18);
-	BoxFillEntity->GetTransform()->SetSize(buttonsSize);
-	BoxFillEntity->GetTransform()->SetPosition(ButtonPos);
-	BoxFillButton->SetMessage("BoxFill");
-	BoxFillButton->OnClick.AddListener(this);
-	BoxFillButton->Set();
+	buttonPos.x += 3.0f;
 
+	Entity* boxDrawEntity = Instantiate("BoxDraw");
+	boxDrawEntity->T()->SetSize(buttonsSize);
+	boxDrawEntity->T()->SetPosition(buttonPos);
+	Button* boxDrawButton = boxDrawEntity->AddComponent<Button>();
+	boxDrawButton->SetStyle(style);
+	boxDrawButton->SetFontPath(fontpath);
+	boxDrawButton->SetText("Box Draw");
+	boxDrawButton->SetFontSize(18);
+	boxDrawButton->SetMessage("BoxDraw");
 
-	ButtonPos.x -= 6.0f;
-	ButtonPos.y += 3.0f;
+	buttonPos.x += 3.0f;
 
-	buki::Entity* CircleBothEntity = Instantiate("CircleBoth");
-	Button* CircleBothButton = CircleBothEntity->AddComponent<Button>();
-	CircleBothButton->SetbuttonFont("./fonts/droid_sans.ttf");
-	CircleBothButton->SetButtonText("Circle Both", 18);
-	CircleBothEntity->GetTransform()->SetSize(buttonsSize);
-	CircleBothEntity->GetTransform()->SetPosition(ButtonPos);
-	CircleBothButton->SetMessage("CircleBoth");
-	CircleBothButton->OnClick.AddListener(this);
-	CircleBothButton->Set();
+	Entity* boxFillEntity = Instantiate("BoxFill");
+	boxFillEntity->T()->SetSize(buttonsSize);
+	boxFillEntity->T()->SetPosition(buttonPos);
+	Button* boxFillButton = boxFillEntity->AddComponent<Button>();
+	boxFillButton->SetStyle(style);
+	boxFillButton->SetFontPath(fontpath);
+	boxFillButton->SetText("Box Fill");
+	boxFillButton->SetFontSize(18);
+	boxFillButton->SetMessage("BoxFill");
 
-	ButtonPos.x += 3.0f;
+	buttonPos.x -= 6.0f;
+	buttonPos.y += 3.0f;
 
-	buki::Entity* CircleDrawEntity = Instantiate("CircleDraw");
-	Button* CircleDrawButton = CircleDrawEntity->AddComponent<Button>();
-	CircleDrawButton->SetbuttonFont("./fonts/droid_sans.ttf");
-	CircleDrawButton->SetButtonText("Circle Draw", 18);
-	CircleDrawEntity->GetTransform()->SetSize(buttonsSize);
-	CircleDrawEntity->GetTransform()->SetPosition(ButtonPos);
-	CircleDrawButton->SetMessage("CircleDraw");
-	CircleDrawButton->OnClick.AddListener(this);
-	CircleDrawButton->Set();
+	Entity* circleBothEntity = Instantiate("CircleBoth");
+	circleBothEntity->T()->SetSize(buttonsSize);
+	circleBothEntity->T()->SetPosition(buttonPos);
+	Button* circleBothButton = circleBothEntity->AddComponent<Button>();
+	circleBothButton->SetStyle(style);
+	circleBothButton->SetFontPath(fontpath);
+	circleBothButton->SetText("Circle Both");
+	circleBothButton->SetFontSize(18);
+	circleBothButton->SetMessage("CircleBoth");
 
-	ButtonPos.x += 3.0f;
+	buttonPos.x += 3.0f;
 
-	buki::Entity* CircleFillEntity = Instantiate("CircleFill");
-	Button* CircleFillButton = CircleFillEntity->AddComponent<Button>();
-	CircleFillButton->SetbuttonFont("./fonts/droid_sans.ttf");
-	CircleFillButton->SetButtonText("Circle Fill", 18);
-	CircleFillEntity->GetTransform()->SetSize(buttonsSize);
-	CircleFillEntity->GetTransform()->SetPosition(ButtonPos);
-	CircleFillButton->SetMessage("CircleFill");
-	CircleFillButton->OnClick.AddListener(this);
-	CircleFillButton->Set();
+	Entity* circleDrawEntity = Instantiate("CircleDraw");
+	circleDrawEntity->T()->SetSize(buttonsSize);
+	circleDrawEntity->T()->SetPosition(buttonPos);
+	Button* circleDrawButton = circleDrawEntity->AddComponent<Button>();
+	circleDrawButton->SetStyle(style);
+	circleDrawButton->SetFontPath(fontpath);
+	circleDrawButton->SetText("Circle Draw");
+	circleDrawButton->SetFontSize(18);
+	circleDrawButton->SetMessage("CircleDraw");
+
+	buttonPos.x += 3.0f;
+
+	Entity* circleFillEntity = Instantiate("CircleFill");
+	circleFillEntity->T()->SetSize(buttonsSize);
+	circleFillEntity->T()->SetPosition(buttonPos);
+	Button* circleFillButton = circleFillEntity->AddComponent<Button>();
+	circleFillButton->SetStyle(style);
+	circleFillButton->SetFontPath(fontpath);
+	circleFillButton->SetText("Circle Fill");
+	circleFillButton->SetFontSize(18);
+	circleFillButton->SetMessage("CircleFill");
 
 	SaveScene();
 }
@@ -139,49 +159,58 @@ void buki::ShapesDemo::OnWindowResize()
 
 void buki::ShapesDemo::OnNotify(const std::string& button)
 {
-	ShapesController* controller = buki::Engine::GetInstance().World().Find("controller")->GetComponent<ShapesController>();
+	ShapesController* controller = Engine::Get().World().Find("controller")->GetComponent<ShapesController>();
+
 	if (button == "BoxBoth")
 	{
 		controller->DrawBoxFill(true);
 		controller->DrawBoxShape(true);
-		for each(auto e  in buki::Engine::GetInstance().World().GetEntitiesInWorld())
+
+		for (auto e : Engine::Get().World().GetEntitiesInWorld())
 		{
-			if (e->GetComponent<Atlas>()) continue;
+			if (e->GetComponent<TileLayer>()) continue;
+
 			Box* box = e->GetComponent<Box>();
-			if (box && box->filter != 8)
+			if (box && box->def.filter != 8 && box->def.filter != 1)
 			{
-				box->fillDraw = true;
-				box->shapeDraw = true;
+				box->def.fillDraw = true;
+				box->def.shapeDraw = true;
 			}
 		}
 	}
+
 	if (button == "BoxDraw")
 	{
 		controller->DrawBoxFill(false);
 		controller->DrawBoxShape(true);
-		for each(auto e  in buki::Engine::GetInstance().World().GetEntitiesInWorld())
+
+		for (auto e : Engine::Get().World().GetEntitiesInWorld())
 		{
-			if (e->GetComponent<Atlas>()) continue;
+			if (e->GetComponent<TileLayer>()) continue;
+
 			Box* box = e->GetComponent<Box>();
-			if (box && box->filter != 8)
+			if (box && box->def.filter != 8 && box->def.filter != 1)
 			{
-				box->fillDraw = false;
-				box->shapeDraw = true;
+				box->def.fillDraw = false;
+				box->def.shapeDraw = true;
 			}
 		}
 	}
+
 	if (button == "BoxFill")
 	{
 		controller->DrawBoxFill(true);
 		controller->DrawBoxShape(false);
-		for each(auto e  in buki::Engine::GetInstance().World().GetEntitiesInWorld())
+
+		for (auto e : Engine::Get().World().GetEntitiesInWorld())
 		{
-			if (e->GetComponent<Atlas>()) continue;
+			if (e->GetComponent<TileLayer>()) continue;
+
 			Box* box = e->GetComponent<Box>();
-			if (box && box->filter != 8)
+			if (box && box->def.filter != 8 && box->def.filter != 1)
 			{
-				box->fillDraw = true;
-				box->shapeDraw = false;
+				box->def.fillDraw = true;
+				box->def.shapeDraw = false;
 			}
 		}
 	}
@@ -190,44 +219,52 @@ void buki::ShapesDemo::OnNotify(const std::string& button)
 	{
 		controller->DrawCircleFill(true);
 		controller->DrawCircleShape(true);
-		for each(auto e  in buki::Engine::GetInstance().World().GetEntitiesInWorld())
+
+		for (auto e : Engine::Get().World().GetEntitiesInWorld())
 		{
-			if (e->GetComponent<Atlas>()) continue;
+			if (e->GetComponent<TileLayer>()) continue;
+
 			Circle* circle = e->GetComponent<Circle>();
-			if (circle && circle->filter != 8)
+			if (circle && circle->def.filter != 8 && circle->def.filter != 1)
 			{
-				circle->fillDraw = true;
-				circle->shapeDraw = true;
+				circle->def.fillDraw = true;
+				circle->def.shapeDraw = true;
 			}
 		}
 	}
+
 	if (button == "CircleDraw")
 	{
 		controller->DrawCircleFill(false);
 		controller->DrawCircleShape(true);
-		for each(auto e  in buki::Engine::GetInstance().World().GetEntitiesInWorld())
+
+		for (auto e : Engine::Get().World().GetEntitiesInWorld())
 		{
-			if (e->GetComponent<Atlas>()) continue;
+			if (e->GetComponent<TileLayer>()) continue;
+
 			Circle* circle = e->GetComponent<Circle>();
-			if (circle && circle->filter != 8)
+			if (circle && circle->def.filter != 8 && circle->def.filter != 1)
 			{
-				circle->fillDraw = false;
-				circle->shapeDraw = true;
+				circle->def.fillDraw = false;
+				circle->def.shapeDraw = true;
 			}
 		}
 	}
+
 	if (button == "CircleFill")
 	{
 		controller->DrawCircleFill(true);
 		controller->DrawCircleShape(false);
-		for each(auto e  in buki::Engine::GetInstance().World().GetEntitiesInWorld())
+
+		for (auto e : Engine::Get().World().GetEntitiesInWorld())
 		{
-			if (e->GetComponent<Atlas>()) continue;
+			if (e->GetComponent<TileLayer>()) continue;
+
 			Circle* circle = e->GetComponent<Circle>();
-			if (circle && circle->filter != 8)
+			if (circle && circle->def.filter != 8 && circle->def.filter != 1)
 			{
-				circle->fillDraw = true;
-				circle->shapeDraw = false;
+				circle->def.fillDraw = true;
+				circle->def.shapeDraw = false;
 			}
 		}
 	}
@@ -235,27 +272,49 @@ void buki::ShapesDemo::OnNotify(const std::string& button)
 
 void buki::ShapesDemo::GroundAndBackground()
 {
-	Engine::GetInstance().Log().LogMessage("shapes");
+	Engine::Get().Log().LogMessage("shapes");
+
 	float intWindowW, intWindowH;
-	buki::Engine::GetInstance().Graphics().GetWindowSize(&intWindowW, &intWindowH);
+	Engine::Get().GetActiveCamera().GetViewportWorldSize(&intWindowW, &intWindowH);
 	Vector2 windowSize = Vector2(intWindowW, intWindowH);
-	Background->GetTransform()->SetPosition(Vector2::ZERO);
-	float groundWidth = windowSize.x - 6.0f;
-	Vector2 bgTileSize = { windowSize.y, windowSize.y };
-	Vector2 groundTileSize = { 1.0f, 1.0f };
-	Vector2 groundPos = { 0.0f, windowSize.y / 2 - (groundTileSize.y / 2) };
+	const float groundWidth = windowSize.x - 6.0f;
+	const Vector2 bgTileSize = { windowSize.y, windowSize.y };
+	const Vector2 groundTileSize = { 1.0f, 1.0f };
+	const Vector2 groundPos = { 0.0f, windowSize.y / 2.0f - (groundTileSize.y / 2.0f) };
+	const int tileNum = static_cast<int>(groundWidth / groundTileSize.x);
 
-	int imgX, imgY;
+	Ground->T()->SetPosition(groundPos);
 
-	Ground->GetTransform()->SetPosition(groundPos);
-	GroundSprite->SetSize(groundTileSize);
-	GroundSprite->GetTextureSize(&imgX, &imgY);
-	GroundSprite->AddSource("ground", RectI{ 0,0, imgX, imgY });
-	int tileNum = (int)(groundWidth / groundTileSize.x);
-	GroundSprite->SetTileSize(tileNum, 1);
-	Ground->GetTransform()->SetSize(Vector2(groundTileSize.x * tileNum, groundTileSize.y));
-	for (int i = 0; i < tileNum; i++)
+	if (GroundSprite)
 	{
-		GroundSprite->AddDestination("ground", i, 0);
+
+		GroundSprite->ClearTiles();
+		GroundSprite->SetDefaultTileSize(groundTileSize);
+
+		RectF groundSourceRect{ 0.0f, 0.0f, static_cast<float>(GroundSprite->GetTexture()->width), static_cast<float>(GroundSprite->GetTexture()->height) };
+
+		GroundSprite->BuildUniformStrip(
+			tileNum,
+			Vector2{ -groundWidth * 0.5f + groundTileSize.x * 0.5f, 0.0f },
+			Vector2{ groundTileSize.x, 0.0f },
+			groundTileSize,
+			groundSourceRect
+		);
+
 	}
+	Ground->T()->SetSize(Vector2(groundTileSize.x * tileNum, groundTileSize.y));
+	if (BackgroundImage == nullptr )
+	{
+		Engine::Get().Log().LogError("Failed to load background or ground texture.");
+		return;
+	}
+	Background->T()->SetPosition({ 0.0f,0.0f });
+
+
+	BackgroundImage->ClearTiles();
+	BackgroundImage->SetDefaultTileSize(bgTileSize);
+
+	RectF bgSourceRect{ 0.0f, 0.0f, static_cast<float>(BackgroundImage->GetTexture()->width), static_cast<float>(BackgroundImage->GetTexture()->height) };
+	BackgroundImage->BuildUniformStrip(2, Vector2{ -bgTileSize.x * 0.5f, 0.0f }, Vector2{ bgTileSize.x, 0.0f }, bgTileSize, bgSourceRect);
+
 }

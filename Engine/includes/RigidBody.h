@@ -9,7 +9,7 @@ namespace buki
 {
     struct BodyId
     {
-        BodyId() : index1(0), world0(0), generation(0) {}
+        BodyId() : index1(-1), world0(-1), generation(-1) {}
         BodyId(int32_t i, uint16_t w, uint16_t r) : index1(i), world0(w), generation(r) {}
         int32_t index1;
         uint16_t world0;

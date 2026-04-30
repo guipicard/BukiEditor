@@ -10,15 +10,16 @@ namespace buki
     {
         Polygon(Entity* entity) : Shapes(entity) {}
         ~Polygon() = default;
-        void Draw(float alpha) override;
-        void Start() override;
-        void Destroy() override;
-        void SetPhysics() override;
-        json Serialize() override;
-        void Deserialize(json _doc) override;
-        void Set() override;
 
-    public:
+        virtual void Draw(float alpha) override;
+        virtual void Start() override;
+        virtual void Destroy() override;
+        virtual void SetPhysics() override;
+
+        virtual json Serialize() override;
+        virtual void Deserialize(json _doc) override;
+        virtual void Set() override;
+
         PolygonShapeDef def = DefaultPolygonShapeDef();
     };
 }

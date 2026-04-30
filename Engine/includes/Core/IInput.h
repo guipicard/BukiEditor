@@ -23,6 +23,7 @@ namespace buki
         virtual bool IsMouseButtonUp(int button) const = 0;
 
         virtual void GetMousePositionScreen(int* x, int* y) const = 0;
+        virtual void GetMousePositionWorld(float* x, float* y) const = 0;
         virtual int GetMouseWheelDelta() const = 0;
     };
 }

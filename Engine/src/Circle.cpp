@@ -9,6 +9,7 @@
 void buki::Circle::Draw(float alpha)
 {
 	Vector2 pos = m_Entity->T()->GetPosition();
+	float rotation = m_Entity->T()->GetRotation().GetRadians();
 
 	if (def.fillDraw)
 	{
@@ -17,7 +18,7 @@ void buki::Circle::Draw(float alpha)
 
 	if (def.shapeDraw)
 	{
-		Graphics().DrawCircleOutline(pos, def.radius, def.shapeColor);
+		Graphics().DrawCircleOutline(pos, def.radius, def.shapeColor, rotation);
 	}
 }
 
@@ -37,7 +38,7 @@ void buki::Circle::SetPhysics()
 		return;
 	}
 	b2ShapeDef b2def = b2DefaultShapeDef();
-	//b2def.density = def.density;
+	b2def.density = def.density;
 	b2def.material.friction = def.friction;
 	b2def.material.restitution = def.restitution;
 	b2def.enableContactEvents = true;
@@ -61,22 +62,36 @@ void buki::Circle::SetPhysics()
 
 json buki::Circle::Serialize()
 {
-	json doc = Shapes::Serialize();
+	json doc = SerializeShapeDef(def);
 	doc["type"] = "Circle";
 	doc["circle"]["radius"] = def.radius;
+	doc["circle"]["positionOffset"]["x"] = def.positionOffset.x;
+	doc["circle"]["positionOffset"]["y"] = def.positionOffset.y;
 	return doc;
 }
 
 void buki::Circle::Deserialize(json _doc)
 {
-	Shapes::Deserialize(_doc);
+	def = DefaultCircleShapeDef();
+	DeserializeShapeDef(_doc, def);
 
 	if (_doc.contains("circle"))
 	{
-		def.radius = _doc["circle"].value("radius", 0.5f);
+		def.radius = _doc["circle"].value("radius", def.radius);
+
+		if (_doc["circle"].contains("positionOffset"))
+		{
+			def.positionOffset.x = _doc["circle"]["positionOffset"].value("x", def.positionOffset.x);
+			def.positionOffset.y = _doc["circle"]["positionOffset"].value("y", def.positionOffset.y);
+		}
 	}
 }
 
 void buki::Circle::Set()
 {
+	if (!m_Entity->GetComponent<RigidBody>())
+	{
+		return;
+	}
+	m_Entity->ActivatePhysics();
 }

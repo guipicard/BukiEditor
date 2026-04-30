@@ -1,6 +1,5 @@
 #pragma once
 #include "Shapes.h"
-#include "CircleCollider.h"
 
 namespace buki
 {

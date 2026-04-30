@@ -67,6 +67,14 @@ void buki::BricksBehaviour::OnCollisionHit(Entity* other)
 
 }
 
+void buki::BricksBehaviour::OnSensorEnter(Entity* other)
+{
+}
+
+void buki::BricksBehaviour::OnSensorExit(Entity* other)
+{
+}
+
 json buki::BricksBehaviour::Serialize()
 {
 	json doc;
@@ -94,22 +102,24 @@ void buki::BricksBehaviour::Set()
 {
 	for (auto& img : stageImages)
 	{
-		spriteComponent->Load(img);
+		spriteComponent->SetPath(img);
+		spriteComponent->Set();
 	}
-	spriteComponent->Load(stageImages[0]);
+	spriteComponent->SetPath(stageImages[0]);
+	spriteComponent->Set();
 	for (auto& sound : collisionSounds)
 	{
-		size_t id = buki::Engine::GetInstance().Audio().LoadSound(sound);
+		size_t id = buki::Engine::Get().Audio().LoadSound(sound);
 		soundMap[sound] = id;
 	}
 	for (auto& sound : DamageSounds)
 	{
-		size_t id = buki::Engine::GetInstance().Audio().LoadSound(sound);
+		size_t id = buki::Engine::Get().Audio().LoadSound(sound);
 		soundMap[sound] = id;
 	}
 	for (auto& sound : BreakSounds)
 	{
-		size_t id = buki::Engine::GetInstance().Audio().LoadSound(sound);
+		size_t id = buki::Engine::Get().Audio().LoadSound(sound);
 		soundMap[sound] = id;
 	}
 }
@@ -119,27 +129,28 @@ void buki::BricksBehaviour::AddImage(const std::string& image)
 	stageImages.push_back(image);
 	if (stageImages.size() == 1)
 	{
-		spriteComponent->Load(image);
+		spriteComponent->SetPath(image);
+		spriteComponent->Set();
 	}
 }
 
 void buki::BricksBehaviour::AddCollisionSound(const std::string& sound)
 {
-	size_t id = buki::Engine::GetInstance().Audio().LoadSound(sound);
+	size_t id = buki::Engine::Get().Audio().LoadSound(sound);
 	collisionSounds.push_back(sound);
 	soundMap[sound] = id;
 }
 
 void buki::BricksBehaviour::AddDamageSound(const std::string& sound)
 {
-	size_t id = buki::Engine::GetInstance().Audio().LoadSound(sound);
+	size_t id = buki::Engine::Get().Audio().LoadSound(sound);
 	DamageSounds.push_back(sound);
 	soundMap[sound] = id;
 }
 
 void buki::BricksBehaviour::AddBreakSound(const std::string& sound)
 {
-	size_t id = buki::Engine::GetInstance().Audio().LoadSound(sound);
+	size_t id = buki::Engine::Get().Audio().LoadSound(sound);
 	BreakSounds.push_back(sound);
 	soundMap[sound] = id;
 }
@@ -190,7 +201,8 @@ void buki::BricksBehaviour::TakeDamage(float damage)
 	if (stageIndex < stageImages.size())
 	{
 		std::string currentImage = spriteComponent->GetPath();
-		spriteComponent->Load(stageImages[stageIndex]);
+		spriteComponent->SetPath(stageImages[stageIndex]);
+		spriteComponent->Set();
 		if (currentImage != stageImages[stageIndex])
 		{
 			PlayDamageSound();
@@ -205,6 +217,6 @@ void buki::BricksBehaviour::TakeDamage(float damage)
 	}
 	else
 	{
-		buki::Engine::GetInstance().Log().LogError("Stage Out of Bounds: " + std::to_string(static_cast<int>(dmgDone / stageHealth)));
+		buki::Engine::Get().Log().LogError("Stage Out of Bounds: " + std::to_string(static_cast<int>(dmgDone / stageHealth)));
 	}
 }

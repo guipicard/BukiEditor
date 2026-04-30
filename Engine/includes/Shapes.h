@@ -23,13 +23,17 @@ namespace buki
 		virtual ~Shapes() = default;
 
 		virtual void SetPhysics() = 0;
-		virtual json Serialize() override;
-		virtual void Deserialize(json _doc) override;
+
+		virtual json Serialize() =0;
+		virtual void Deserialize(json _doc) =0;
+		virtual void Set() = 0;
 
 
 		void SetShapeId(ShapeId id) { shapeId = id; }
 		ShapeId GetShapeId() const { return shapeId; }
 	protected:
+		json SerializeShapeDef(const ShapeDef& def) const;
+		void DeserializeShapeDef(const json& doc, ShapeDef& def) const;
 		ShapeId shapeId = ShapeId();
 	};
 }

@@ -1,42 +1,47 @@
 #pragma once
 
-#include <Sprite.h>
-#include <IDrawable.h>
-#include <Color.h>
+#include "Component.h"
+#include "IDrawable.h"
+#include "Graphics/Font2D.h"
+#include "BukiContainers.h"
+
 #include <string>
 
 namespace buki
 {
-	//[SerializableComponent]
-	struct Text : public Sprite
-	{
-		Text(Entity* _entity);
-		~Text();
-		void Draw(float alpha);
-		void LoadText(const std::string& _path, int size);
-		std::string& GetText() const;
-		inline void SetBackground(const bool _state) { m_Background = _state; }
-		inline Vector2 GetSize() const { return textSize; }
-		void SetText(std::string _text);
-		//inline void GetSize(Vector2 _pos) { textPos = _pos; }
-		inline void SetBackgroundColor(Color _color) { backgroundColor = _color; }
-		virtual json Serialize() override;
-		virtual void Deserialize(json _doc) override;
-		virtual void Set() override;
-		inline bool GetFixed() const { return fixed; }
-		void SetFixed(const bool state);
-		const Vector2 SetBackgroundOffset() const { return backgroundOffset; }
-		const void SetBackgroundOffset(Vector2 offset) { backgroundOffset = offset; }
-	private:
-		void SetTextScalable(std::string _text);
-		void SetTextFixed(std::string _text);
-		std::string m_Text = "";
-		bool m_Background = false;
-		Vector2 textSize;
-		Vector2 backgroundOffset;
-		//Vector2 textPos;
-		Color backgroundColor;
-		int fontSize = 24;
-		bool fixed = false;
-	};
+    struct Text final : public Component, public IDrawable
+    {
+    public:
+        explicit Text(Entity* entity);
+        ~Text() override = default;
+
+        void Draw(float alpha) override;
+
+        json Serialize() override;
+        void Deserialize(json doc) override;
+        void Set() override;
+
+        void SetText(const std::string& text) { m_Text = text; }
+        const std::string& GetText() const { return m_Text; }
+
+        void SetFontPath(const std::string& path) { m_FontPath = path; }
+        void SetFontSize(int size) { m_FontSize = size; }
+        void SetCentering(bool x, bool y) { m_CenterX = x; m_CenterY = y; }
+		void SetColor(const Color& color) { m_Color = color; }
+		void SetPositionOffset(const Vector2& offset) { m_PositionOffset = offset; }
+
+        [[nodiscard]] Vector2 GetSize() const;
+    private:
+        Font2D* m_Font = nullptr;
+
+        std::string m_Text;
+        std::string m_FontPath;
+
+        int m_FontSize = 24;
+        Color m_Color{ 1.f, 1.f, 1.f, 1.f };
+
+        Vector2 m_PositionOffset{ 0.f, 0.f };
+        bool m_CenterX = true;
+        bool m_CenterY = true;
+    };
 }

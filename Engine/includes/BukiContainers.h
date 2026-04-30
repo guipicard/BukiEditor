@@ -213,7 +213,7 @@ namespace buki
 			float length = sqrtf(x * x + y * y);
 			if (length < FLT_EPSILON)
 			{
-				return ZERO;
+				return {0.0f,0.0f};
 			}
 
 			float invLength = 1.0f / length;
@@ -237,13 +237,18 @@ namespace buki
 		inline static const double GetRotationDegree(double angle) { return angle * 57.2958; }
 		inline static const Vector2 Lerp(const Vector2& a, const Vector2& b, float t) { return { (1.0f - t) * a.x + t * b.x, (1.0f - t) * a.y + t * b.y }; }
 
-		static const Vector2& ZERO;
-		static const Vector2& RIGHT;
-		static const Vector2& UP;
-		static const Vector2& DOWN;
-		static const Vector2& LEFT;
+		//static const Vector2& ZERO;
+		//static const Vector2& RIGHT;
+		//static const Vector2& UP;
+		//static const Vector2& DOWN;
+		//static const Vector2& LEFT;
+		/*const buki::Vector2& buki::Vector2::ZERO = buki::Vector2(0.0f, 0.0f);
+		const buki::Vector2& buki::Vector2::RIGHT = buki::Vector2(1.0f, 0.0f);
+		const buki::Vector2& buki::Vector2::UP = buki::Vector2(0.0f, 1.0f);
+		const buki::Vector2& buki::Vector2::DOWN = buki::Vector2(0.0f, -1.0f);
+		const buki::Vector2& buki::Vector2::LEFT = buki::Vector2(-1.0f, 0.0f);*/
 	};
-
+	
 	struct AABB
 	{
 		Vector2 min, max;

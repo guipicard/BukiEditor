@@ -1,11 +1,10 @@
 #pragma once
 #include "Platformer.h"
 #include "Entity.h"
-#include "Atlas.h"
+#include "TileLayer.h"
 #include "RigidBody.h"
 #include "Box.h"
-#include "Player.h"
-#include "Animation.h"
+#include "AnimTest.h"
 #include "Circle.h"
 #include "Engine.h"
 
@@ -20,75 +19,90 @@ buki::Platformer::Platformer()
 
 void buki::Platformer::CodeLoad()
 {
-	buki::Engine::GetInstance().Graphics().SetCameraPosition(Vector2::ZERO);
+	buki::Engine::Get().Graphics().SetCameraPosition(0.0f, 0.0f);
 	Background = Instantiate("Background");
-	BackgroundAtlas = Background->AddComponent<Atlas>();
-	BackgroundAtlas->Load("assets/Kenney/Physics Assets/PNG/Backgrounds/colored_shroom.png");
+	BackgroundAtlas = Background->AddComponent<TileLayer>();
+	BackgroundAtlas->SetAtlasPath("/assets/Kenney/Physics Assets/PNG/Backgrounds/colored_shroom.png");
+
 	Ground = Instantiate("Ground");
 	Ground->SetLayer("Ground");
 	RigidBody* GroundRB = Ground->AddComponent<RigidBody>();
 	Box* GroundCollider = Ground->AddComponent<Box>();
-	GroundAtlas = Ground->AddComponent<Atlas>();
-	GroundAtlas->Load("assets/Kenney/Physics Assets/PNG/Other/dirt.png");
+	GroundAtlas = Ground->AddComponent<TileLayer>();
+	GroundAtlas->SetAtlasPath("/assets/Kenney/Physics Assets/PNG/Other/dirt.png");
 
 	float intWindowW, intWindowH;
-	buki::Engine::GetInstance().Graphics().GetWindowSize(&intWindowW, &intWindowH);
+	buki::Engine::Get().GetActiveCamera().GetViewportWorldSize(&intWindowW, &intWindowH);
 	Vector2 windowSize = Vector2(intWindowW, intWindowH);
-	RectF dest = RectF(windowSize.x / 2.0f, windowSize.y, windowSize.x, 1.0f);
+	RectF dest = RectF{windowSize.x / 2.0f, windowSize.y, windowSize.x, 1.0f};
 	dest.y -= dest.h / 2;
+
+	GroundAtlas->Set();
+	BackgroundAtlas->Set();
 
 	GroundAndBackground();
 
-	GroundRB->Type = RigidBody::BodyType::Static;
-	GroundRB->motionLocks = { true,true,true };
-	GroundCollider->Collider.material.restitution = 0.0f;
-	GroundCollider->Collider.material.friction = 1.0f;
-	GroundCollider->Collider.Size = Ground->GetTransform()->GetSize() / 2;
+	
 
-	Ground->ActivatePhysics();
-
-	PlayerEntity = Instantiate("Player");
-	//Vector2 playerSpawnPos = Vector2(dest.x, dest.y - dest.h - (1.9f));
-	PlayerEntity->GetTransform()->SetPosition(Vector2::ZERO);
-	PlayerEntity->GetTransform()->SetSize({ 5.0f, 5.0f });
-	Player* playerCmp = PlayerEntity->AddComponent<Player>();
-
-	Ground->ActivatePhysics();
+	PlayerEntity = Instantiate("AnimTest");
+	PlayerEntity->SetZ(3);
+	AnimTest* playerCmp = PlayerEntity->AddComponent<AnimTest>();
 }
 
 void buki::Platformer::OnWindowResize()
 {
 }
 
+void buki::Platformer::OnNotify(const std::string& button)
+{
+}
+
 void buki::Platformer::GroundAndBackground()
 {
 	float intWindowW, intWindowH;
-	buki::Engine::GetInstance().Graphics().GetWindowSize(&intWindowW, &intWindowH);
+	Engine::Get().GetActiveCamera().GetViewportWorldSize(&intWindowW, &intWindowH);
 	Vector2 windowSize = Vector2(intWindowW, intWindowH);
-	Background->GetTransform()->SetPosition(Vector2(0, 0));
+
 	Vector2 bgTileSize = { windowSize.y, windowSize.y };
+	Vector2 BGPos = { 0.0f, 0.0f };
+	Vector2 bgSpriteSize = { BackgroundAtlas->GetTexture()->width, BackgroundAtlas->GetTexture()->height };
+	
+	BackgroundAtlas->SetDefaultTileSize(bgTileSize);
+	BackgroundAtlas->ClearTiles();
+	BackgroundAtlas->AddTile(Vector2{ -bgTileSize.x * 0.5f, 0.0f }, bgTileSize, RectF{ 0.0f, 0.0f, bgSpriteSize.x, bgSpriteSize.y });
+	BackgroundAtlas->AddTile(Vector2{ bgTileSize.x * 0.5f, 0.0f }, bgTileSize, RectF{ 0.0f, 0.0f, bgSpriteSize.x, bgSpriteSize.y });
+	Background->T()->SetSize(Vector2(bgTileSize.x * 2.0f, bgTileSize.y));
+	
 	Vector2 groundTileSize = { 1.0f, 1.0f };
-	Vector2 groundPos = { 0.0f, (windowSize.y / 2) - (groundTileSize.y / 2) };
-	//Vector2 groundPos = { windowSize.x / 2.0f, windowSize.y - (groundTileSize.y / 2) };
+	Vector2 groundPos = { 0.0f, (windowSize.y - (groundTileSize.y*3)) / 2 };
+	Background->T()->SetSize(Vector2(bgTileSize.x * 2, bgTileSize.y));
+	int tileNum = static_cast<int>(windowSize.x / groundTileSize.x);
+	Vector2 groundSize = { groundTileSize.x * tileNum, groundTileSize.y };
 
-	BackgroundAtlas->SetSize(bgTileSize);
-	int imgX, imgY;
-	BackgroundAtlas->GetTextureSize(&imgX, &imgY);
-	BackgroundAtlas->AddSource("bg", RectI{ 0,0, imgX, imgY });
-	BackgroundAtlas->SetTileSize(2, 1);
-	BackgroundAtlas->AddDestination("bg", 0, 0);
-	BackgroundAtlas->AddDestination("bg", 1, 0);
+	Ground->T()->SetPosition(groundPos);
+	Ground->T()->SetSize(Vector2(groundTileSize.x * tileNum, groundTileSize.y));
+	GroundAtlas->SetDefaultTileSize(groundTileSize);
+	GroundAtlas->ClearTiles();
 
-	Ground->GetTransform()->SetPosition(groundPos);
-	GroundAtlas->SetSize(groundTileSize);
-	GroundAtlas->GetTextureSize(&imgX, &imgY);
-	GroundAtlas->AddSource("ground", RectI{ 0,0, imgX, imgY });
-	int tileNum = (int)(windowSize.x / groundTileSize.x) *3;
-	GroundAtlas->SetTileSize(tileNum, 1);
-	Ground->GetTransform()->SetSize(Vector2(groundTileSize.x * tileNum, groundTileSize.y));
-	Background->GetTransform()->SetSize(Vector2(bgTileSize.x * 2, bgTileSize.y));
-	for (int i = 0; i < tileNum; i++)
-	{
-		GroundAtlas->AddDestination("ground", i, 0);
-	}
+	GroundAtlas->BuildUniformStrip(
+		tileNum,
+		Vector2{ (-windowSize.x + groundTileSize.x + (windowSize.x-groundSize.x)) * 0.5f, 0.0f },
+		Vector2{ groundTileSize.x, 0.0f },
+		groundTileSize,
+		RectF{ 0.0f, 0.0f, (float)(GroundAtlas->GetTexture()->width), (float)(GroundAtlas->GetTexture()->height) }
+	);
+
+	Ground->T()->SetSize(groundSize);
+
+	RigidBody* GroundRB = Ground->GetComponent<RigidBody>();
+	GroundRB->def.type = RigidBody::BodyType::Static;
+	GroundRB->def.motionLocks = { true,true,true };
+	Box* GroundCollider = Ground->GetComponent<Box>();
+	GroundCollider->def.shapeDraw = true;
+	GroundCollider->def.restitution = 0.0f;
+	GroundCollider->def.friction = 1.0f;
+	GroundCollider->def.size = groundSize;
+
+	buki::Engine::Get().Log().LogMessage("Ground size: " + std::to_string(groundSize.x) + " x " + std::to_string(groundSize.y));
+	Ground->ActivatePhysics();
 }

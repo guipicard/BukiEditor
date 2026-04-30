@@ -265,6 +265,10 @@ namespace buki
 
 	void Animation::Set()
 	{
-		Start();
+		if (m_Animator.IsPlaying())
+		{
+			const auto* frame = m_Animator.GetCurrentFrame();
+			(void)frame;
+		}
 	}
 }

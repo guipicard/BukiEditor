@@ -14,6 +14,7 @@ namespace buki
 	class IWorld;
 	class PhysicsService;
 	class TextureManager;
+	class FontManager;
 	struct Camera2D;
 
 	struct Component
@@ -32,12 +33,6 @@ namespace buki
 
 		inline Entity* GetEntity() { return m_Entity; }
 
-		inline bool IsSerialized() const { return m_Serialized; }
-		inline bool IsDeserialized() const { return m_Deserialized; }
-		inline void SetSerialized(const bool state) { m_Serialized = state; }
-		inline void SetDeserialized(const bool state) { m_Deserialized = state; }
-		inline bool IsSavable() const { return m_Savable; }
-
 	protected:
 		IInput& Input() const;
 		ILogger& Log() const;
@@ -46,11 +41,9 @@ namespace buki
 		IWorld& World() const;
 		PhysicsService& Physics() const;
 		TextureManager& Textures() const;
+		FontManager& Fonts() const;
 		Camera2D& Camera() const;
 
 		Entity* m_Entity = nullptr;
-		bool m_Serialized = false;
-		bool m_Deserialized = false;
-		bool m_Savable = true;
 	};
 }

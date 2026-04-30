@@ -9,6 +9,10 @@
 #include "RigidBody.h"
 #include "EKey.h"
 #include "BukiContainers.h"
+#include "Text.h"
+#include "ComponentRegistration.h"
+
+REGISTER_COMPONENT(AnimTest, "AnimTest");
 
 buki::AnimTest::AnimTest(Entity* entity)
 	: MonoBehaviour(entity)
@@ -17,6 +21,10 @@ buki::AnimTest::AnimTest(Entity* entity)
 }
 
 void buki::AnimTest::Awake()
+{
+}
+
+void buki::AnimTest::Start()
 {
 	if (!anim)
 	{
@@ -28,20 +36,22 @@ void buki::AnimTest::Awake()
 	}
 	if (!boxCollider)
 	{
-		//boxCollider = m_Entity->AddComponent<Box>();
+		boxCollider = m_Entity->AddComponent<Box>();
 	}
-	if (!circleCollider)
+	//if (!circleCollider)
+	//{
+	//	//circleCollider = m_Entity->AddComponent<Circle>();
+	//}
+	//if (!polygonCollider)
+	//{
+	//	//polygonCollider = m_Entity->AddComponent<Polygon>();
+	//}
+	if (!text)
 	{
-		circleCollider = m_Entity->AddComponent<Circle>();
+		text = m_Entity->AddComponent<Text>();
 	}
-	if (!polygonCollider)
-	{
-		polygonCollider = m_Entity->AddComponent<Polygon>();
-	}
-}
-
-void buki::AnimTest::Start()
-{
+	m_Entity->T()->SetPosition({ 0.0f, 0.0f });
+	m_Entity->T()->SetSize({ 8.0f, 8.0f });
 	if (!Audio().LoadSound("/audio/AngryBird/Sfx - Wood Collision A1.mp3"))
 	{
 		Log().LogError("Failed to load jump sound effect.");
@@ -58,26 +68,27 @@ void buki::AnimTest::Start()
 	if (boxCollider)
 	{
 		boxCollider->def.shapeDraw = true;
-		boxCollider->def.fillDraw = true;
+		boxCollider->def.fillDraw = false;
 
-		boxCollider->def.size = Vector2{ -1.0f, -1.0f } + m_Entity->T()->GetSize() / 2;
+		//boxCollider->def.size = m_Entity->T()->GetSize();
+		boxCollider->def.size = m_Entity->T()->GetSize()/2.8f;
 	}
-	if (circleCollider)
-	{
-		circleCollider->def.shapeDraw = true;
-		circleCollider->def.fillDraw = true;
+	//if (circleCollider)
+	//{
+	//	circleCollider->def.shapeDraw = true;
+	//	circleCollider->def.fillDraw = true;
 
-		circleCollider->def.radius = 0.1f + m_Entity->T()->GetSize().x / 4;
-		circleCollider->def.isSensor = true;
-	}
-	if (polygonCollider)
-	{
-		polygonCollider->def.shapeDraw = true;
-		polygonCollider->def.fillDraw = true;
+	//	circleCollider->def.radius = 0.1f + m_Entity->T()->GetSize().x / 4;
+	//	circleCollider->def.isSensor = true;
+	//}
+	//if (polygonCollider)
+	//{
+	//	polygonCollider->def.shapeDraw = true;
+	//	polygonCollider->def.fillDraw = true;
 
-		polygonCollider->def.radius = m_Entity->T()->GetSize().x / 4;
-		polygonCollider->def.segments = 5;
-	}
+	//	polygonCollider->def.radius = m_Entity->T()->GetSize().x / 4;
+	//	polygonCollider->def.segments = 5;
+	//}
 	m_Entity->ActivatePhysics();
 
 	Texture2D* idleTexture = Textures().Load("./assets/Samurai/IDLE.png");
@@ -392,6 +403,13 @@ void buki::AnimTest::Start()
 	anim->params.params["flipx"] = false;
 
 	anim->m_StateMachine.SetInitialState("idle");
+	
+	text->SetFontPath("./fonts/Kenney/Kenney Future Narrow.ttf");
+	text->SetFontSize(24);
+	text->SetText(anim->m_StateMachine.GetCurrentState());
+	text->SetPositionOffset({ 0.0f, -3.0f });
+	text->Set();
+	anim->Set();
 	//anim->m_ClipLibrary.LoadFromFile("./assets/Animations/PlayerIdle.anim");
 
 	/*anim->Deserialize({
@@ -453,6 +471,13 @@ void buki::AnimTest::Update(const float dt)
 	{
 		anim->params.Set("flipx", false);
 	}
+
+	const std::string currentState = anim->m_StateMachine.GetCurrentState();
+	if (currentState != text->GetText())
+	{
+		text->SetText(currentState);
+		text->Set();
+	}
 }
 
 void buki::AnimTest::OnCollisionEnter(Entity* other)
@@ -492,4 +517,5 @@ void buki::AnimTest::Deserialize(json _doc)
 
 void buki::AnimTest::Set()
 {
+	
 }

@@ -8,12 +8,12 @@ using namespace buki;
 
 namespace buki
 {
-	struct Entity;
+	class Entity;
 	struct Spawner;
 	struct Sprite;
-	struct Atlas;
 	struct ShapesController;
-	struct ShapesDemo : public BukiScene, Observer<std::string>
+	struct TileLayer;
+	struct ShapesDemo : public BukiScene
 	{
 		ShapesDemo();
 		virtual void CodeLoad() override;
@@ -22,8 +22,8 @@ namespace buki
 	private:
 		void GroundAndBackground();
 		Entity* Ground;
-		Atlas* GroundSprite;
+		TileLayer* GroundSprite;
 		Entity* Background;
-		Atlas* BackgroundImage;
+		TileLayer* BackgroundImage;
 	};
 }

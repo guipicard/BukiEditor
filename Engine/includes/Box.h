@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Shapes.h"
-#include "BoxCollider.h"
 #include "PhysicsDefs.h"
 #include "Graphics/Texture2D.h"
 

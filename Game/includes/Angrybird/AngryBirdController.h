@@ -4,6 +4,7 @@
 namespace buki
 {
 	struct Spawner;
+	struct Button;
 	struct AngryBirdController : public MonoBehaviour
 	{
 		AngryBirdController(Entity* _entity);
@@ -17,6 +18,8 @@ namespace buki
 		virtual void OnCollisionEnter(Entity* other) override;
 		virtual void OnCollisionExit(Entity* other) override;
 		virtual void OnCollisionHit(Entity* other) override;
+		virtual void OnSensorEnter(Entity* other) override;
+		virtual void OnSensorExit(Entity* other) override;
 
 		virtual json Serialize() override;	
 		virtual void Deserialize(json _doc) override;
@@ -40,8 +43,11 @@ namespace buki
 		float soundDamageThreshold = 5.0f;
 
 		void EditorController();
-		Vector2 firstMousePos = Vector2::ZERO;
+		Vector2 firstMousePos = { 0.0f,0.0f };
 
 		int debugUpdateCounter = 0;
+
+		std::vector<Button*> buttonsInScene;
+		bool UIHovered = false;
 	};
 }

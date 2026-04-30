@@ -45,7 +45,7 @@ namespace buki
 		virtual void DrawLine(const Vector2& a, const Vector2& b, const Color& color) override;
 		virtual void DrawRectOutline(const Vector2& center, const Vector2& size, float rotationRadians, const Color& color) override;
 		virtual void FillRect(const Vector2& center, const Vector2& size, float rotationRadians, const Color& color) override;
-		virtual void DrawCircleOutline(const Vector2& center, float radius, const Color& color) override;
+		virtual void DrawCircleOutline(const Vector2& center, float radius, const Color& color, float rotationRadians = 0.0f) override;
 		virtual void FillCircle(const Vector2& center, float radius, const Color& color) override;
 		virtual void DrawPolygonOutline(const Vector2& center, float radius, float rotationRadians, const Color& color, int segments) override;
 		virtual void FillPolygon(const Vector2& center, float radius, float rotationRadians, const Color& color, int segments) override;
@@ -98,6 +98,20 @@ namespace buki
 			bool flipY = false,
 			const Color& color = {}) override;
 
+		Font2D CreateFontFromFile(const std::string& path, int fontSize) override;
+		void DestroyFont(Font2D& font) override;
+
+		virtual void DrawTextToCamera(
+			const Font2D& font,
+			const std::string& text,
+			const Camera2D& camera,
+			const glm::vec2& worldPositionMeters,
+			const Color& color = {},
+			bool centerX = false,
+			bool centerY = false) override;
+
+		virtual Vector2 MeasureText(const Font2D& font, const std::string& text) const override;
+
 	private:
 
 		bool InitializeLoader(IPlatform& platform);
@@ -138,6 +152,8 @@ namespace buki
 			bool CreateDebugLinePipeline();
 			void DestroyDebugLinePipeline();
 			void DrawPrimitiveInternal(const std::vector<glm::vec2>& points, const Color& color, GLenum mode);
+
+			float MeasureTextWidthPixels(const Font2D& font, const std::string& text) const;
 
 	private:
 		IPlatform* m_Platform = nullptr;

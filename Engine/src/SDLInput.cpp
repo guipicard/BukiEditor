@@ -3,6 +3,9 @@
 #include <SDL3/SDL.h>
 #include <algorithm>
 
+#include "Engine.h"
+#include "Camera2dUtils.h"
+
 namespace buki
 {
     void SDLInput::BeginFrame()
@@ -162,6 +165,13 @@ namespace buki
     {
         if (x) *x = m_MouseX;
         if (y) *y = m_MouseY;
+    }
+
+    void SDLInput::GetMousePositionWorld(float* x, float* y) const
+    {
+		glm::vec2 worldPos = ScreenToWorld(glm::vec2{ static_cast<float>(m_MouseX), static_cast<float>(m_MouseY) }, Engine::Get().GetActiveCamera());
+        if (x) *x = worldPos.x;
+		if (y) *y = worldPos.y;
     }
 
     int SDLInput::GetMouseWheelDelta() const

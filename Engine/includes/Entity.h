@@ -27,7 +27,6 @@ namespace buki
 		void Destroy();
 
 		Transform* T() { return transform; }
-		//const Transform* T() const { return transform; }
 		void Initialize(Vector2 position, float rotation, Vector2 size);
 		std::string GetName() { return m_Name; }
 		inline void SetName(std::string name) { m_Name = name; }

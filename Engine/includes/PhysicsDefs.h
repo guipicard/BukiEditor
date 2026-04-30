@@ -40,12 +40,12 @@ namespace buki
         bool shapeDraw;
         Color shapeColor;
         Color fillColor;
-        bool isSensor ;
+        bool isSensor;
         int filter;
         float density;
         float friction;
         float restitution;
-		Vector2 angleOffset;
+		//float angleOffset;
 		Vector2 positionOffset;
     };
 
@@ -61,7 +61,7 @@ namespace buki
 		def.density = 1.0f;
 		def.friction = 0.6f;
 		def.restitution = 0.0f;
-		def.angleOffset = { 0.0f, 0.0f };
+		//def.angleOffset = 0.0f;
 		def.positionOffset = { 0.0f, 0.0f };
         return def;
     }
@@ -77,21 +77,23 @@ namespace buki
         def.fillDraw = false;
         def.shapeDraw = false;
         def.fillColor = { 0.0f, 1.0f, 1.0f, 0.3f };
-        def.shapeColor = { 1.0f, 1.0f, 0.0f, 1.0f };
+        def.shapeColor = { 1.0f, 0.0f, 0.0f, 1.0f };
         def.isSensor = false;
         def.filter = 0;
         def.density = 1.0f;
         def.friction = 0.6f;
         def.restitution = 0.0f;
+        //def.angleOffset = 0.0f;
+        def.positionOffset = { 0.0f, 0.0f };
 
 		def.size = { 1.0f, 1.0f };
+		def.positionOffset = { 0.0f, 0.0f };
         return def;
     }
 
     struct CircleShapeDef : public ShapeDef
     {
         float radius;
-        Vector2 offset;
     };
 
     inline CircleShapeDef DefaultCircleShapeDef()
@@ -106,9 +108,10 @@ namespace buki
         def.density = 1.0f;
         def.friction = 0.6f;
         def.restitution = 0.0f;
+        //def.angleOffset = 0.0f;
+        def.positionOffset = { 0.0f, 0.0f };
 
         def.radius = 1.0f;
-        def.offset = { 0.0f, 0.0f };
         return def;
     }
 
@@ -130,6 +133,8 @@ namespace buki
         def.density = 1.0f;
         def.friction = 0.6f;
         def.restitution = 0.0f;
+        //def.angleOffset = 0.0f;
+        def.positionOffset = { 0.0f, 0.0f };
 
         def.radius = 1.0f;
         def.segments = 3;

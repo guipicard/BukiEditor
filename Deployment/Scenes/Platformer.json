@@ -1,0 +1,1144 @@
+{
+    "camera": {
+        "position": {
+            "x": 0.0,
+            "y": 0.0
+        },
+        "viewportHeight": 1080.0,
+        "viewportWidth": 1920.0,
+        "zoom": 1.0
+    },
+    "entities": {
+        "AnimTest": {
+            "components": {
+                "AnimTest": null
+            },
+            "enable": true,
+            "layer": "",
+            "physics": false,
+            "position": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 1.0,
+                "y": 1.0
+            },
+            "z": 3
+        },
+        "Background": {
+            "components": {
+                "TileLayer": {
+                    "atlasPath": "/assets/Kenney/Physics Assets/PNG/Backgrounds/colored_shroom.png",
+                    "defaultTileSize": {
+                        "x": 21.600000381469727,
+                        "y": 21.600000381469727
+                    },
+                    "layerOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "layerTint": {
+                        "a": 1.0,
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "tiles": [
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -10.800000190734863,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 21.600000381469727,
+                                "y": 21.600000381469727
+                            },
+                            "sourceRectPixels": {
+                                "h": 1024.0,
+                                "w": 1024.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 10.800000190734863,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 21.600000381469727,
+                                "y": 21.600000381469727
+                            },
+                            "sourceRectPixels": {
+                                "h": 1024.0,
+                                "w": 1024.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        }
+                    ]
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": false,
+            "position": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 43.20000076293945,
+                "y": 21.600000381469727
+            },
+            "z": 0
+        },
+        "Ground": {
+            "components": {
+                "Box": {
+                    "box": {
+                        "size": {
+                            "x": 38.0,
+                            "y": 1.0
+                        }
+                    },
+                    "density": 1.0,
+                    "fillColor": {
+                        "a": 0.30000001192092896,
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 0.0
+                    },
+                    "fillDraw": false,
+                    "filter": 0,
+                    "friction": 1.0,
+                    "isSensor": false,
+                    "positionOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "restitution": 0.0,
+                    "shapeColor": {
+                        "a": 1.0,
+                        "b": 0.0,
+                        "g": 0.0,
+                        "r": 1.0
+                    },
+                    "shapeDraw": true,
+                    "type": "Box"
+                },
+                "RigidBody": {
+                    "motionLocks": {
+                        "angularZ": true,
+                        "linearX": true,
+                        "linearY": true
+                    },
+                    "type": 0
+                },
+                "TileLayer": {
+                    "atlasPath": "/assets/Kenney/Physics Assets/PNG/Other/dirt.png",
+                    "defaultTileSize": {
+                        "x": 1.0,
+                        "y": 1.0
+                    },
+                    "layerOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "layerTint": {
+                        "a": 1.0,
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "tiles": [
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -18.5,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 70.0,
+                                "w": 70.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -17.5,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 70.0,
+                                "w": 70.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -16.5,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 70.0,
+                                "w": 70.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -15.5,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 70.0,
+                                "w": 70.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -14.5,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 70.0,
+                                "w": 70.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -13.5,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 70.0,
+                                "w": 70.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -12.5,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 70.0,
+                                "w": 70.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -11.5,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 70.0,
+                                "w": 70.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -10.5,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 70.0,
+                                "w": 70.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -9.5,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 70.0,
+                                "w": 70.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -8.5,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 70.0,
+                                "w": 70.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -7.5,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 70.0,
+                                "w": 70.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -6.5,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 70.0,
+                                "w": 70.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -5.5,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 70.0,
+                                "w": 70.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -4.5,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 70.0,
+                                "w": 70.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -3.5,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 70.0,
+                                "w": 70.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -2.5,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 70.0,
+                                "w": 70.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -1.5,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 70.0,
+                                "w": 70.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -0.5,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 70.0,
+                                "w": 70.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 0.5,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 70.0,
+                                "w": 70.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 1.5,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 70.0,
+                                "w": 70.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 2.5,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 70.0,
+                                "w": 70.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 3.5,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 70.0,
+                                "w": 70.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 4.5,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 70.0,
+                                "w": 70.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 5.5,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 70.0,
+                                "w": 70.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 6.5,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 70.0,
+                                "w": 70.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 7.5,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 70.0,
+                                "w": 70.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 8.5,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 70.0,
+                                "w": 70.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 9.5,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 70.0,
+                                "w": 70.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 10.5,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 70.0,
+                                "w": 70.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 11.5,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 70.0,
+                                "w": 70.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 12.5,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 70.0,
+                                "w": 70.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 13.5,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 70.0,
+                                "w": 70.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 14.5,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 70.0,
+                                "w": 70.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 15.5,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 70.0,
+                                "w": 70.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 16.5,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 70.0,
+                                "w": 70.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 17.5,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 70.0,
+                                "w": 70.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 18.5,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 70.0,
+                                "w": 70.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        }
+                    ]
+                }
+            },
+            "enable": true,
+            "layer": "Ground",
+            "physics": true,
+            "position": {
+                "x": 0.0,
+                "y": 9.300000190734863
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 38.0,
+                "y": 1.0
+            },
+            "z": 0
+        }
+    },
+    "sceneName": "Platformer"
+}

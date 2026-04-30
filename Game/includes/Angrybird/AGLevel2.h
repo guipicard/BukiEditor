@@ -8,10 +8,10 @@
 
 namespace buki
 {
-	struct Entity;
+	class Entity;
 	struct Sprite;
-	struct Atlas;
 	struct Spawner;
+	struct TileLayer;
 
 	struct AGLevel2 : public BukiScene, Observer<std::string>
 	{
@@ -25,9 +25,9 @@ namespace buki
 		void SpawnSlignshot(float _offset);
 		void CreateLevelMenu();
 		Entity* Ground;
-		Atlas* GroundSprite;
+		TileLayer* GroundSprite;
 		Entity* Background;
-		Atlas* BackgroundImage;
+		TileLayer* BackgroundImage;
 		Spawner* spawner;
 		Entity* slignshot1;
 		Entity* slignshot2;

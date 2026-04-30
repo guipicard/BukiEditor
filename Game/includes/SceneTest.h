@@ -8,7 +8,6 @@ namespace buki
 {
 	class Entity;
 	struct Sprite;
-	struct Atlas;
 	struct Spawner;
 
 	struct SceneTest : public BukiScene, Observer<std::string>

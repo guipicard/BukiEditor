@@ -1,0 +1,3385 @@
+{
+    "camera": {
+        "position": {
+            "x": 0.0,
+            "y": 0.0
+        },
+        "viewportHeight": 1080.0,
+        "viewportWidth": 1920.0,
+        "zoom": 1.0
+    },
+    "entities": {
+        "Background": {
+            "components": {
+                "Spawner": null,
+                "TileLayer": {
+                    "atlasPath": "/assets/Kenney/Physics Assets/PNG/Backgrounds/colored_desert.png",
+                    "defaultTileSize": {
+                        "x": 21.600000381469727,
+                        "y": 21.600000381469727
+                    },
+                    "layerOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "layerTint": {
+                        "a": 1.0,
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "tiles": [
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -10.800000190734863,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 21.600000381469727,
+                                "y": 21.600000381469727
+                            },
+                            "sourceRectPixels": {
+                                "h": 1024.0,
+                                "w": 1024.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 10.800000190734863,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 21.600000381469727,
+                                "y": 21.600000381469727
+                            },
+                            "sourceRectPixels": {
+                                "h": 1024.0,
+                                "w": 1024.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        }
+                    ]
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": false,
+            "position": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 43.20000076293945,
+                "y": 21.600000381469727
+            },
+            "z": 0
+        },
+        "Ground": {
+            "components": {
+                "Box": {
+                    "box": {
+                        "size": {
+                            "x": 76.0,
+                            "y": 1.0
+                        }
+                    },
+                    "density": 1.0,
+                    "fillColor": {
+                        "a": 0.30000001192092896,
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 0.0
+                    },
+                    "fillDraw": false,
+                    "filter": 0,
+                    "friction": 0.30000001192092896,
+                    "isSensor": false,
+                    "positionOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "restitution": 0.0,
+                    "shapeColor": {
+                        "a": 1.0,
+                        "b": 0.0,
+                        "g": 0.0,
+                        "r": 1.0
+                    },
+                    "shapeDraw": false,
+                    "type": "Box"
+                },
+                "RigidBody": {
+                    "motionLocks": {
+                        "angularZ": true,
+                        "linearX": true,
+                        "linearY": true
+                    },
+                    "type": 0
+                },
+                "TileLayer": {
+                    "atlasPath": "/assets/Kenney/Physics Assets/PNG/Other/grass.png",
+                    "defaultTileSize": {
+                        "x": 1.0,
+                        "y": 1.0
+                    },
+                    "layerOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "layerTint": {
+                        "a": 1.0,
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "tiles": [
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -37.89999771118164,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -36.89999771118164,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -35.89999771118164,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -34.89999771118164,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -33.89999771118164,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -32.89999771118164,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -31.89999771118164,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -30.89999771118164,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -29.89999771118164,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -28.89999771118164,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -27.89999771118164,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -26.89999771118164,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -25.89999771118164,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -24.89999771118164,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -23.89999771118164,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -22.89999771118164,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -21.89999771118164,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -20.89999771118164,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -19.89999771118164,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -18.89999771118164,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -17.89999771118164,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -16.89999771118164,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -15.89999771118164,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -14.89999771118164,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -13.89999771118164,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -12.89999771118164,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -11.89999771118164,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -10.89999771118164,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -9.89999771118164,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -8.89999771118164,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -7.899997711181641,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -6.899997711181641,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -5.899997711181641,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -4.899997711181641,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -3.8999977111816406,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -2.8999977111816406,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -1.8999977111816406,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": -0.8999977111816406,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 0.10000228881835938,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 1.1000022888183594,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 2.1000022888183594,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 3.1000022888183594,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 4.100002288818359,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 5.100002288818359,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 6.100002288818359,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 7.100002288818359,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 8.10000228881836,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 9.10000228881836,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 10.10000228881836,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 11.10000228881836,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 12.10000228881836,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 13.10000228881836,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 14.10000228881836,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 15.10000228881836,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 16.10000228881836,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 17.10000228881836,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 18.10000228881836,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 19.10000228881836,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 20.10000228881836,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 21.10000228881836,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 22.10000228881836,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 23.10000228881836,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 24.10000228881836,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 25.10000228881836,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 26.10000228881836,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 27.10000228881836,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 28.10000228881836,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 29.10000228881836,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 30.10000228881836,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 31.10000228881836,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 32.10000228881836,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 33.10000228881836,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 34.10000228881836,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 35.10000228881836,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 36.10000228881836,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "flipX": false,
+                            "flipY": false,
+                            "localPosition": {
+                                "x": 37.10000228881836,
+                                "y": 0.0
+                            },
+                            "size": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "sourceRectPixels": {
+                                "h": 128.0,
+                                "w": 128.0,
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "visible": true
+                        }
+                    ]
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": true,
+            "position": {
+                "x": 0.0,
+                "y": 10.300000190734863
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 76.0,
+                "y": 1.0
+            },
+            "z": 0
+        },
+        "SaveButton": {
+            "components": {
+                "Button": {
+                    "backgroundImagePath": "",
+                    "fontPath": "./fonts/Kenney/Kenney Blocks.ttf",
+                    "fontSize": 24,
+                    "message": "save",
+                    "style": {
+                        "backgroundColor": {
+                            "a": 1.0,
+                            "b": 0.20000000298023224,
+                            "g": 0.20000000298023224,
+                            "r": 0.20000000298023224
+                        },
+                        "backgroundHoverColor": {
+                            "a": 1.0,
+                            "b": 0.30000001192092896,
+                            "g": 0.30000001192092896,
+                            "r": 0.30000001192092896
+                        },
+                        "centerTextX": true,
+                        "centerTextY": true,
+                        "drawOutline": false,
+                        "drawOutlineOnHoverOnly": true,
+                        "fitToText": true,
+                        "outlineColor": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 1.0,
+                            "r": 0.0
+                        },
+                        "outlineHoverColor": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "padding": {
+                            "x": 0.25,
+                            "y": 0.15000000596046448
+                        },
+                        "showBackground": true,
+                        "textColor": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "textHoverColor": {
+                            "a": 1.0,
+                            "b": 0.6000000238418579,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "textOffset": {
+                            "x": 0.0,
+                            "y": 0.0
+                        }
+                    },
+                    "text": "save"
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": false,
+            "position": {
+                "x": 0.0,
+                "y": -8.800000190734863
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 1.940000057220459,
+                "y": 1.0199999809265137
+            },
+            "z": 10
+        },
+        "WoodSlim1": {
+            "components": {
+                "Box": {
+                    "box": {
+                        "size": {
+                            "x": 0.75,
+                            "y": 2.25
+                        }
+                    },
+                    "density": 3.0,
+                    "fillColor": {
+                        "a": 0.30000001192092896,
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 0.0
+                    },
+                    "fillDraw": false,
+                    "filter": 0,
+                    "friction": 0.4000000059604645,
+                    "isSensor": false,
+                    "positionOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "restitution": 0.30000001192092896,
+                    "shapeColor": {
+                        "a": 1.0,
+                        "b": 0.0,
+                        "g": 0.0,
+                        "r": 1.0
+                    },
+                    "shapeDraw": false,
+                    "type": "Box"
+                },
+                "BricksBehaviour": {
+                    "BreakSounds": [
+                        "./audio/AngryBird/Sfx - Wood Destroyed A1.mp3",
+                        "./audio/AngryBird/Sfx - Wood Destroyed A2.mp3",
+                        "./audio/AngryBird/Sfx - Wood Destroyed A3.mp3"
+                    ],
+                    "DamageSounds": [
+                        "./audio/AngryBird/Sfx - Wood Damage A1.mp3",
+                        "./audio/AngryBird/Sfx - Wood Damage A2.mp3",
+                        "./audio/AngryBird/Sfx - Wood Damage A3.mp3"
+                    ],
+                    "collisionSounds": [
+                        "./audio/AngryBird/Sfx - Wood Collision A1.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A2.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A3.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A4.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A5.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A6.mp3"
+                    ],
+                    "health": 75.0,
+                    "maxHealth": 75.0,
+                    "stageImages": [
+                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
+                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood024.png",
+                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood051.png"
+                    ]
+                },
+                "RigidBody": {
+                    "motionLocks": {
+                        "angularZ": false,
+                        "linearX": false,
+                        "linearY": false
+                    },
+                    "type": 2
+                },
+                "Sprite": {
+                    "color": {
+                        "a": 1.0,
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
+                    "positionOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 0.75,
+                        "y": 2.25
+                    },
+                    "sourceRect": {
+                        "h": 0.0,
+                        "w": 0.0,
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "useSourceRect": false
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": true,
+            "position": {
+                "x": 13.19999885559082,
+                "y": 8.675000190734863
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 0.75,
+                "y": 2.25
+            },
+            "z": 0
+        },
+        "WoodSlim2": {
+            "components": {
+                "Box": {
+                    "box": {
+                        "size": {
+                            "x": 0.75,
+                            "y": 2.25
+                        }
+                    },
+                    "density": 3.0,
+                    "fillColor": {
+                        "a": 0.30000001192092896,
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 0.0
+                    },
+                    "fillDraw": false,
+                    "filter": 0,
+                    "friction": 0.4000000059604645,
+                    "isSensor": false,
+                    "positionOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "restitution": 0.30000001192092896,
+                    "shapeColor": {
+                        "a": 1.0,
+                        "b": 0.0,
+                        "g": 0.0,
+                        "r": 1.0
+                    },
+                    "shapeDraw": false,
+                    "type": "Box"
+                },
+                "BricksBehaviour": {
+                    "BreakSounds": [
+                        "./audio/AngryBird/Sfx - Wood Destroyed A1.mp3",
+                        "./audio/AngryBird/Sfx - Wood Destroyed A2.mp3",
+                        "./audio/AngryBird/Sfx - Wood Destroyed A3.mp3"
+                    ],
+                    "DamageSounds": [
+                        "./audio/AngryBird/Sfx - Wood Damage A1.mp3",
+                        "./audio/AngryBird/Sfx - Wood Damage A2.mp3",
+                        "./audio/AngryBird/Sfx - Wood Damage A3.mp3"
+                    ],
+                    "collisionSounds": [
+                        "./audio/AngryBird/Sfx - Wood Collision A1.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A2.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A3.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A4.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A5.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A6.mp3"
+                    ],
+                    "health": 75.0,
+                    "maxHealth": 75.0,
+                    "stageImages": [
+                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
+                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood024.png",
+                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood051.png"
+                    ]
+                },
+                "RigidBody": {
+                    "motionLocks": {
+                        "angularZ": false,
+                        "linearX": false,
+                        "linearY": false
+                    },
+                    "type": 2
+                },
+                "Sprite": {
+                    "color": {
+                        "a": 1.0,
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
+                    "positionOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 0.75,
+                        "y": 2.25
+                    },
+                    "sourceRect": {
+                        "h": 0.0,
+                        "w": 0.0,
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "useSourceRect": false
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": true,
+            "position": {
+                "x": 15.44999885559082,
+                "y": 8.675000190734863
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 0.75,
+                "y": 2.25
+            },
+            "z": 0
+        },
+        "WoodSlim3": {
+            "components": {
+                "Box": {
+                    "box": {
+                        "size": {
+                            "x": 0.75,
+                            "y": 2.25
+                        }
+                    },
+                    "density": 3.0,
+                    "fillColor": {
+                        "a": 0.30000001192092896,
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 0.0
+                    },
+                    "fillDraw": false,
+                    "filter": 0,
+                    "friction": 0.4000000059604645,
+                    "isSensor": false,
+                    "positionOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "restitution": 0.30000001192092896,
+                    "shapeColor": {
+                        "a": 1.0,
+                        "b": 0.0,
+                        "g": 0.0,
+                        "r": 1.0
+                    },
+                    "shapeDraw": false,
+                    "type": "Box"
+                },
+                "BricksBehaviour": {
+                    "BreakSounds": [
+                        "./audio/AngryBird/Sfx - Wood Destroyed A1.mp3",
+                        "./audio/AngryBird/Sfx - Wood Destroyed A2.mp3",
+                        "./audio/AngryBird/Sfx - Wood Destroyed A3.mp3"
+                    ],
+                    "DamageSounds": [
+                        "./audio/AngryBird/Sfx - Wood Damage A1.mp3",
+                        "./audio/AngryBird/Sfx - Wood Damage A2.mp3",
+                        "./audio/AngryBird/Sfx - Wood Damage A3.mp3"
+                    ],
+                    "collisionSounds": [
+                        "./audio/AngryBird/Sfx - Wood Collision A1.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A2.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A3.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A4.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A5.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A6.mp3"
+                    ],
+                    "health": 75.0,
+                    "maxHealth": 75.0,
+                    "stageImages": [
+                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
+                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood024.png",
+                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood051.png"
+                    ]
+                },
+                "RigidBody": {
+                    "motionLocks": {
+                        "angularZ": false,
+                        "linearX": false,
+                        "linearY": false
+                    },
+                    "type": 2
+                },
+                "Sprite": {
+                    "color": {
+                        "a": 1.0,
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
+                    "positionOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 0.75,
+                        "y": 2.25
+                    },
+                    "sourceRect": {
+                        "h": 0.0,
+                        "w": 0.0,
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "useSourceRect": false
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": true,
+            "position": {
+                "x": 17.69999885559082,
+                "y": 8.675000190734863
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 0.75,
+                "y": 2.25
+            },
+            "z": 0
+        },
+        "WoodSlim4": {
+            "components": {
+                "Box": {
+                    "box": {
+                        "size": {
+                            "x": 0.75,
+                            "y": 2.25
+                        }
+                    },
+                    "density": 3.0,
+                    "fillColor": {
+                        "a": 0.30000001192092896,
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 0.0
+                    },
+                    "fillDraw": false,
+                    "filter": 0,
+                    "friction": 0.4000000059604645,
+                    "isSensor": false,
+                    "positionOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "restitution": 0.30000001192092896,
+                    "shapeColor": {
+                        "a": 1.0,
+                        "b": 0.0,
+                        "g": 0.0,
+                        "r": 1.0
+                    },
+                    "shapeDraw": false,
+                    "type": "Box"
+                },
+                "BricksBehaviour": {
+                    "BreakSounds": [
+                        "./audio/AngryBird/Sfx - Wood Destroyed A1.mp3",
+                        "./audio/AngryBird/Sfx - Wood Destroyed A2.mp3",
+                        "./audio/AngryBird/Sfx - Wood Destroyed A3.mp3"
+                    ],
+                    "DamageSounds": [
+                        "./audio/AngryBird/Sfx - Wood Damage A1.mp3",
+                        "./audio/AngryBird/Sfx - Wood Damage A2.mp3",
+                        "./audio/AngryBird/Sfx - Wood Damage A3.mp3"
+                    ],
+                    "collisionSounds": [
+                        "./audio/AngryBird/Sfx - Wood Collision A1.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A2.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A3.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A4.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A5.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A6.mp3"
+                    ],
+                    "health": 75.0,
+                    "maxHealth": 75.0,
+                    "stageImages": [
+                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
+                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood024.png",
+                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood051.png"
+                    ]
+                },
+                "RigidBody": {
+                    "motionLocks": {
+                        "angularZ": false,
+                        "linearX": false,
+                        "linearY": false
+                    },
+                    "type": 2
+                },
+                "Sprite": {
+                    "color": {
+                        "a": 1.0,
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
+                    "positionOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 0.75,
+                        "y": 2.25
+                    },
+                    "sourceRect": {
+                        "h": 0.0,
+                        "w": 0.0,
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "useSourceRect": false
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": true,
+            "position": {
+                "x": 16.57499885559082,
+                "y": 7.175000190734863
+            },
+            "rotation": 1.5707963705062866,
+            "size": {
+                "x": 0.75,
+                "y": 2.25
+            },
+            "z": 0
+        },
+        "WoodSlim5": {
+            "components": {
+                "Box": {
+                    "box": {
+                        "size": {
+                            "x": 0.75,
+                            "y": 2.25
+                        }
+                    },
+                    "density": 3.0,
+                    "fillColor": {
+                        "a": 0.30000001192092896,
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 0.0
+                    },
+                    "fillDraw": false,
+                    "filter": 0,
+                    "friction": 0.4000000059604645,
+                    "isSensor": false,
+                    "positionOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "restitution": 0.30000001192092896,
+                    "shapeColor": {
+                        "a": 1.0,
+                        "b": 0.0,
+                        "g": 0.0,
+                        "r": 1.0
+                    },
+                    "shapeDraw": false,
+                    "type": "Box"
+                },
+                "BricksBehaviour": {
+                    "BreakSounds": [
+                        "./audio/AngryBird/Sfx - Wood Destroyed A1.mp3",
+                        "./audio/AngryBird/Sfx - Wood Destroyed A2.mp3",
+                        "./audio/AngryBird/Sfx - Wood Destroyed A3.mp3"
+                    ],
+                    "DamageSounds": [
+                        "./audio/AngryBird/Sfx - Wood Damage A1.mp3",
+                        "./audio/AngryBird/Sfx - Wood Damage A2.mp3",
+                        "./audio/AngryBird/Sfx - Wood Damage A3.mp3"
+                    ],
+                    "collisionSounds": [
+                        "./audio/AngryBird/Sfx - Wood Collision A1.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A2.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A3.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A4.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A5.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A6.mp3"
+                    ],
+                    "health": 75.0,
+                    "maxHealth": 75.0,
+                    "stageImages": [
+                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
+                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood024.png",
+                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood051.png"
+                    ]
+                },
+                "RigidBody": {
+                    "motionLocks": {
+                        "angularZ": false,
+                        "linearX": false,
+                        "linearY": false
+                    },
+                    "type": 2
+                },
+                "Sprite": {
+                    "color": {
+                        "a": 1.0,
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
+                    "positionOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 0.75,
+                        "y": 2.25
+                    },
+                    "sourceRect": {
+                        "h": 0.0,
+                        "w": 0.0,
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "useSourceRect": false
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": true,
+            "position": {
+                "x": 14.32499885559082,
+                "y": 7.175000190734863
+            },
+            "rotation": 1.5707963705062866,
+            "size": {
+                "x": 0.75,
+                "y": 2.25
+            },
+            "z": 0
+        },
+        "WoodSlim6": {
+            "components": {
+                "Box": {
+                    "box": {
+                        "size": {
+                            "x": 0.75,
+                            "y": 2.25
+                        }
+                    },
+                    "density": 3.0,
+                    "fillColor": {
+                        "a": 0.30000001192092896,
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 0.0
+                    },
+                    "fillDraw": false,
+                    "filter": 0,
+                    "friction": 0.4000000059604645,
+                    "isSensor": false,
+                    "positionOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "restitution": 0.30000001192092896,
+                    "shapeColor": {
+                        "a": 1.0,
+                        "b": 0.0,
+                        "g": 0.0,
+                        "r": 1.0
+                    },
+                    "shapeDraw": false,
+                    "type": "Box"
+                },
+                "BricksBehaviour": {
+                    "BreakSounds": [
+                        "./audio/AngryBird/Sfx - Wood Destroyed A1.mp3",
+                        "./audio/AngryBird/Sfx - Wood Destroyed A2.mp3",
+                        "./audio/AngryBird/Sfx - Wood Destroyed A3.mp3"
+                    ],
+                    "DamageSounds": [
+                        "./audio/AngryBird/Sfx - Wood Damage A1.mp3",
+                        "./audio/AngryBird/Sfx - Wood Damage A2.mp3",
+                        "./audio/AngryBird/Sfx - Wood Damage A3.mp3"
+                    ],
+                    "collisionSounds": [
+                        "./audio/AngryBird/Sfx - Wood Collision A1.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A2.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A3.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A4.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A5.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A6.mp3"
+                    ],
+                    "health": 75.0,
+                    "maxHealth": 75.0,
+                    "stageImages": [
+                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
+                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood024.png",
+                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood051.png"
+                    ]
+                },
+                "RigidBody": {
+                    "motionLocks": {
+                        "angularZ": false,
+                        "linearX": false,
+                        "linearY": false
+                    },
+                    "type": 2
+                },
+                "Sprite": {
+                    "color": {
+                        "a": 1.0,
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
+                    "positionOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 0.75,
+                        "y": 2.25
+                    },
+                    "sourceRect": {
+                        "h": 0.0,
+                        "w": 0.0,
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "useSourceRect": false
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": true,
+            "position": {
+                "x": 16.57499885559082,
+                "y": 5.675000190734863
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 0.75,
+                "y": 2.25
+            },
+            "z": 0
+        },
+        "WoodSlim7": {
+            "components": {
+                "Box": {
+                    "box": {
+                        "size": {
+                            "x": 0.75,
+                            "y": 2.25
+                        }
+                    },
+                    "density": 3.0,
+                    "fillColor": {
+                        "a": 0.30000001192092896,
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 0.0
+                    },
+                    "fillDraw": false,
+                    "filter": 0,
+                    "friction": 0.4000000059604645,
+                    "isSensor": false,
+                    "positionOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "restitution": 0.30000001192092896,
+                    "shapeColor": {
+                        "a": 1.0,
+                        "b": 0.0,
+                        "g": 0.0,
+                        "r": 1.0
+                    },
+                    "shapeDraw": false,
+                    "type": "Box"
+                },
+                "BricksBehaviour": {
+                    "BreakSounds": [
+                        "./audio/AngryBird/Sfx - Wood Destroyed A1.mp3",
+                        "./audio/AngryBird/Sfx - Wood Destroyed A2.mp3",
+                        "./audio/AngryBird/Sfx - Wood Destroyed A3.mp3"
+                    ],
+                    "DamageSounds": [
+                        "./audio/AngryBird/Sfx - Wood Damage A1.mp3",
+                        "./audio/AngryBird/Sfx - Wood Damage A2.mp3",
+                        "./audio/AngryBird/Sfx - Wood Damage A3.mp3"
+                    ],
+                    "collisionSounds": [
+                        "./audio/AngryBird/Sfx - Wood Collision A1.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A2.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A3.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A4.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A5.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A6.mp3"
+                    ],
+                    "health": 75.0,
+                    "maxHealth": 75.0,
+                    "stageImages": [
+                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
+                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood024.png",
+                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood051.png"
+                    ]
+                },
+                "RigidBody": {
+                    "motionLocks": {
+                        "angularZ": false,
+                        "linearX": false,
+                        "linearY": false
+                    },
+                    "type": 2
+                },
+                "Sprite": {
+                    "color": {
+                        "a": 1.0,
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
+                    "positionOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 0.75,
+                        "y": 2.25
+                    },
+                    "sourceRect": {
+                        "h": 0.0,
+                        "w": 0.0,
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "useSourceRect": false
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": true,
+            "position": {
+                "x": 14.32499885559082,
+                "y": 5.675000190734863
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 0.75,
+                "y": 2.25
+            },
+            "z": 0
+        },
+        "WoodSlim8": {
+            "components": {
+                "Box": {
+                    "box": {
+                        "size": {
+                            "x": 0.75,
+                            "y": 2.25
+                        }
+                    },
+                    "density": 3.0,
+                    "fillColor": {
+                        "a": 0.30000001192092896,
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 0.0
+                    },
+                    "fillDraw": false,
+                    "filter": 0,
+                    "friction": 0.4000000059604645,
+                    "isSensor": false,
+                    "positionOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "restitution": 0.30000001192092896,
+                    "shapeColor": {
+                        "a": 1.0,
+                        "b": 0.0,
+                        "g": 0.0,
+                        "r": 1.0
+                    },
+                    "shapeDraw": false,
+                    "type": "Box"
+                },
+                "BricksBehaviour": {
+                    "BreakSounds": [
+                        "./audio/AngryBird/Sfx - Wood Destroyed A1.mp3",
+                        "./audio/AngryBird/Sfx - Wood Destroyed A2.mp3",
+                        "./audio/AngryBird/Sfx - Wood Destroyed A3.mp3"
+                    ],
+                    "DamageSounds": [
+                        "./audio/AngryBird/Sfx - Wood Damage A1.mp3",
+                        "./audio/AngryBird/Sfx - Wood Damage A2.mp3",
+                        "./audio/AngryBird/Sfx - Wood Damage A3.mp3"
+                    ],
+                    "collisionSounds": [
+                        "./audio/AngryBird/Sfx - Wood Collision A1.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A2.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A3.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A4.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A5.mp3",
+                        "./audio/AngryBird/Sfx - Wood Collision A6.mp3"
+                    ],
+                    "health": 75.0,
+                    "maxHealth": 75.0,
+                    "stageImages": [
+                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
+                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood024.png",
+                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood051.png"
+                    ]
+                },
+                "RigidBody": {
+                    "motionLocks": {
+                        "angularZ": false,
+                        "linearX": false,
+                        "linearY": false
+                    },
+                    "type": 2
+                },
+                "Sprite": {
+                    "color": {
+                        "a": 1.0,
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
+                    "positionOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 0.75,
+                        "y": 2.25
+                    },
+                    "sourceRect": {
+                        "h": 0.0,
+                        "w": 0.0,
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "useSourceRect": false
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": true,
+            "position": {
+                "x": 15.44999885559082,
+                "y": 4.175000190734863
+            },
+            "rotation": 1.5707963705062866,
+            "size": {
+                "x": 0.75,
+                "y": 2.25
+            },
+            "z": 0
+        },
+        "abMenuButton": {
+            "components": {
+                "Button": {
+                    "backgroundImagePath": "",
+                    "fontPath": "./fonts/Kenney/Kenney Blocks.ttf",
+                    "fontSize": 24,
+                    "message": "menu",
+                    "style": {
+                        "backgroundColor": {
+                            "a": 1.0,
+                            "b": 0.20000000298023224,
+                            "g": 0.20000000298023224,
+                            "r": 0.20000000298023224
+                        },
+                        "backgroundHoverColor": {
+                            "a": 1.0,
+                            "b": 0.30000001192092896,
+                            "g": 0.30000001192092896,
+                            "r": 0.30000001192092896
+                        },
+                        "centerTextX": true,
+                        "centerTextY": true,
+                        "drawOutline": false,
+                        "drawOutlineOnHoverOnly": true,
+                        "fitToText": true,
+                        "outlineColor": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 1.0,
+                            "r": 0.0
+                        },
+                        "outlineHoverColor": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "padding": {
+                            "x": 0.25,
+                            "y": 0.15000000596046448
+                        },
+                        "showBackground": true,
+                        "textColor": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "textHoverColor": {
+                            "a": 1.0,
+                            "b": 0.6000000238418579,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "textOffset": {
+                            "x": 0.0,
+                            "y": 0.0
+                        }
+                    },
+                    "text": "menu"
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": false,
+            "position": {
+                "x": 1.5,
+                "y": -9.800000190734863
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 2.059999942779541,
+                "y": 1.0199999809265137
+            },
+            "z": 10
+        },
+        "anchor": {
+            "enable": true,
+            "layer": "",
+            "physics": false,
+            "position": {
+                "x": -11.819999694824219,
+                "y": 6.300000190734863
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 1.0,
+                "y": 1.0
+            },
+            "z": 0
+        },
+        "bird1": {
+            "components": {
+                "AngryBirdController": null,
+                "Circle": {
+                    "circle": {
+                        "positionOffset": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "radius": 0.5
+                    },
+                    "density": 1.0,
+                    "fillColor": {
+                        "a": 0.30000001192092896,
+                        "b": 0.0,
+                        "g": 0.0,
+                        "r": 1.0
+                    },
+                    "fillDraw": false,
+                    "filter": 0,
+                    "friction": 0.30000001192092896,
+                    "isSensor": false,
+                    "positionOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "restitution": 0.5,
+                    "shapeColor": {
+                        "a": 1.0,
+                        "b": 0.0,
+                        "g": 1.0,
+                        "r": 0.0
+                    },
+                    "shapeDraw": false,
+                    "type": "Circle"
+                },
+                "Sprite": {
+                    "color": {
+                        "a": 1.0,
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "path": "/assets/Kenney/Physics Assets/PNG/Aliens/alienGreen_round.png",
+                    "positionOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 1.0,
+                        "y": 1.0
+                    },
+                    "sourceRect": {
+                        "h": 0.0,
+                        "w": 0.0,
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "useSourceRect": false
+                }
+            },
+            "enable": true,
+            "layer": "Projectile",
+            "physics": false,
+            "position": {
+                "x": -11.819999694824219,
+                "y": 6.300000190734863
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 1.0,
+                "y": 1.0
+            },
+            "z": 1
+        },
+        "resetButton": {
+            "components": {
+                "Button": {
+                    "backgroundImagePath": "",
+                    "fontPath": "./fonts/Kenney/Kenney Blocks.ttf",
+                    "fontSize": 24,
+                    "message": "reset",
+                    "style": {
+                        "backgroundColor": {
+                            "a": 1.0,
+                            "b": 0.20000000298023224,
+                            "g": 0.20000000298023224,
+                            "r": 0.20000000298023224
+                        },
+                        "backgroundHoverColor": {
+                            "a": 1.0,
+                            "b": 0.30000001192092896,
+                            "g": 0.30000001192092896,
+                            "r": 0.30000001192092896
+                        },
+                        "centerTextX": true,
+                        "centerTextY": true,
+                        "drawOutline": false,
+                        "drawOutlineOnHoverOnly": true,
+                        "fitToText": true,
+                        "outlineColor": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 1.0,
+                            "r": 0.0
+                        },
+                        "outlineHoverColor": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "padding": {
+                            "x": 0.25,
+                            "y": 0.15000000596046448
+                        },
+                        "showBackground": true,
+                        "textColor": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "textHoverColor": {
+                            "a": 1.0,
+                            "b": 0.6000000238418579,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "textOffset": {
+                            "x": 0.0,
+                            "y": 0.0
+                        }
+                    },
+                    "text": "Reset"
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": false,
+            "position": {
+                "x": -1.5,
+                "y": -9.800000190734863
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 2.299999952316284,
+                "y": 1.0199999809265137
+            },
+            "z": 10
+        },
+        "slignshot1": {
+            "components": {
+                "Sprite": {
+                    "color": {
+                        "a": 1.0,
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "path": "/assets/slignshot1.png",
+                    "positionOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 2.0,
+                        "y": 4.0
+                    },
+                    "sourceRect": {
+                        "h": 0.0,
+                        "w": 0.0,
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "useSourceRect": false
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": false,
+            "position": {
+                "x": -12.0,
+                "y": 7.800000190734863
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 2.0,
+                "y": 4.0
+            },
+            "z": 0
+        },
+        "slignshot2": {
+            "components": {
+                "Sprite": {
+                    "color": {
+                        "a": 1.0,
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "path": "/assets/slignshot2.png",
+                    "positionOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 2.0,
+                        "y": 4.0
+                    },
+                    "sourceRect": {
+                        "h": 0.0,
+                        "w": 0.0,
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "useSourceRect": false
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": false,
+            "position": {
+                "x": -12.0,
+                "y": 7.800000190734863
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 2.0,
+                "y": 4.0
+            },
+            "z": 2
+        }
+    },
+    "sceneName": "Ag_Lvl_2"
+}
