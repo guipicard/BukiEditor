@@ -30,7 +30,7 @@ void buki::AngryBirdController::Start()
 	}
 	spawner->AddPrototype("StoneSlim", new StoneSlim());
 	//Spawner* spawner = World().Find("Spawner")->GetComponent<Spawner>();
-	anchor = World().Find("anchor");
+	anchor = World().FindEntityByName("anchor");
 	anchorPos = anchor->T()->GetPosition();
 	clickPos = { 0.0f,0.0f };
 	forceMultiplier = 6.0f;
@@ -72,7 +72,7 @@ void buki::AngryBirdController::Update(const float dt)
 	}
 	if (Input().IsMouseButtonDown(2))
 	{
-		Entity* groundEntity = World().Find("Ground");
+		Entity* groundEntity = World().FindEntityByName("Ground");
 		Vector2 groundPos = groundEntity->T()->GetPosition();
 		Vector2 groundSize = groundEntity->T()->GetSize();
 		Spawner* spawner = m_Entity->GetComponent<Spawner>();

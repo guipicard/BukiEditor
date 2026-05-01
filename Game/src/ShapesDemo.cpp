@@ -159,7 +159,7 @@ void buki::ShapesDemo::OnWindowResize()
 
 void buki::ShapesDemo::OnNotify(const std::string& button)
 {
-	ShapesController* controller = Engine::Get().World().Find("controller")->GetComponent<ShapesController>();
+	ShapesController* controller = Engine::Get().World().FindEntityByName("controller")->GetComponent<ShapesController>();
 
 	if (button == "BoxBoth")
 	{

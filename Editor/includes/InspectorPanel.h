@@ -8,5 +8,8 @@ namespace buki
 	{
 	public:
 		void Render(EditorState& state);
+
+	private:
+		bool DrawStringField(const char* label, std::string& value);
 	};
 }

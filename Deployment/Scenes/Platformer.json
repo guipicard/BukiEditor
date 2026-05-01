@@ -1140,5 +1140,6 @@
             "z": 0
         }
     },
-    "sceneName": "Platformer"
+    "sceneName": "Platformer",
+    "scenePath": "../Deployment/Scenes/Platformer.json"
 }

@@ -45,6 +45,15 @@ namespace buki {
         Camera2D& GetActiveCamera() { return m_Camera; }
         const Camera2D& GetActiveCamera() const { return m_Camera; }
         Camera2D* GetActiveCameraPtr() { return &m_Camera; }
+
+        bool HasWorld() const { return m_World != nullptr; }
+        IWorld* GetWorldPtr() const { return m_World; }
+
+        bool HasGraphics() const { return m_Graphics != nullptr; }
+        bool HasInput() const { return m_Input != nullptr; }
+        bool HasPlatform() const { return m_Platform != nullptr; }
+        bool HasLogger() const { return m_Console != nullptr; }
+
     private:
         Engine() = default;
 

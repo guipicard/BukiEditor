@@ -19,7 +19,7 @@ buki::SceneTest::SceneTest()
 
 void buki::SceneTest::CodeLoad()
 {
-	Entity* test = buki::Engine::Get().World().Create("test");
+	Entity* test = buki::Engine::Get().World().CreateEntity("test");
 	OpenGlTest* opengl = test->AddComponent<OpenGlTest>();
 }
 void buki::SceneTest::OnWindowResize()

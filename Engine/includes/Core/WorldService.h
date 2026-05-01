@@ -2,6 +2,13 @@
 #include "IWorld.h"
 namespace buki
 {
+	enum class SceneSource
+	{
+		None,
+		Registered,
+		File
+	};
+
 	struct WorldService : public IWorld
 	{
 		WorldService();
@@ -12,19 +19,24 @@ namespace buki
 		virtual void Destroy() override;
 		virtual void Add(Entity* _entity) override;
 		virtual void Remove(Entity* _entity) override;
-		virtual Entity* Find(std::string _name) override;
+		virtual Entity* FindEntityByName(std::string _name) override;
 		virtual std::vector<Entity*> FindAll(std::string _name) override;
 		virtual void Load(const std::string& scene) override;
+		virtual bool LoadScene(const std::string& path) override;
+		virtual bool SaveScene(const std::string& path) const override;
 		virtual void SetLoadScene(const std::string& scene) override;
 		virtual void Unload() override;
 		virtual void Register(const std::string& name, IScene* scene) override;
 		virtual IScene* GetCurrentScene() override { return m_CurrentScene; }
 		virtual void SetCurrentSceneName(std::string _name) override { m_Name = _name; }
 		virtual std::string GetCurrentSceneName() override { return m_Name; }
-		virtual Entity* Create(const std::string& name) override;
+		virtual Entity* CreateEntity(const std::string& name) override;
 		virtual void LoadNextScene() override;
 		virtual std::vector<Entity*> GetEntitiesInWorld() override { return m_EntityInWorld; }
 		virtual void SortEntities() override;
+		virtual const std::string& GetCurrentScenePath() const override { return m_CurrentScenePath; }
+		virtual bool HasCurrentScenePath() const override { return !m_CurrentScenePath.empty(); }
+		virtual bool SaveCurrentScene() const override;
 		
 	private:
 		void CleanEntities();
@@ -41,5 +53,7 @@ namespace buki
 		std::map<std::string, IScene*> m_Scenes;
 		std::vector<std::string> m_ScenesByName;
 		IScene* m_CurrentScene = nullptr;
+		SceneSource m_SceneSource = SceneSource::None;
+		std::string m_CurrentScenePath = "";
 	};
 }

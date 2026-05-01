@@ -5,8 +5,8 @@
 #include "InspectorPanel.h"
 #include "SceneViewPanel.h"
 #include "ContentBrowserPanel.h"
-#include "imgui.h"
 
+typedef unsigned int ImGuiID;
 namespace buki
 {
 	class EditorLayer
@@ -15,9 +15,12 @@ namespace buki
 		EditorLayer() = default;
 		void Render();
 
+		EditorState& State() { return state; }
+
 	private:
 		void DrawDockspace();
 		void BuildDefaultLayout(ImGuiID dockspaceId);
+		void DrawMenuBar();
 
 	private:
 		EditorState state;

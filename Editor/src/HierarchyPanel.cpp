@@ -1,25 +1,87 @@
 #include "HierarchyPanel.h"
 
+#include "Engine.h"
+#include "Entity.h"
 #include "imgui.h"
+
+#include <string>
+#include <vector>
 
 void buki::HierarchyPanel::Render(EditorState& state)
 {
 	ImGui::Begin("Hierarchy", &state.showHierarchy);
 
-	ImGui::TextUnformatted("Scene");
+	auto* world = buki::Engine::Get().GetWorldPtr();
+	if (world == nullptr)
+	{
+		ImGui::TextUnformatted("World not initialized.");
+		ImGui::End();
+		return;
+	}
+
+	static char search[128] = {};
+	ImGui::InputTextWithHint("##search", "Search entities...", search, sizeof(search));
+	ImGui::SameLine();
+
+	if (ImGui::Button("Create Entity"))
+	{
+		Entity* entity = world->CreateEntity("New Entity");
+		if (entity != nullptr)
+		{
+			if (entity->T() != nullptr)
+			{
+				entity->T()->SetPosition({ 0.0f, 0.0f });
+				entity->T()->SetSize({ 1.0f, 1.0f });
+				entity->T()->SetRotation(0.0f);
+			}
+
+			state.selectedEntity = entity;
+			state.sceneDirty = true;
+		}
+	}
+
+	if (state.selectedEntity != nullptr)
+	{
+		ImGui::SameLine();
+		if (ImGui::Button("Delete Selected"))
+		{
+			state.selectedEntity->Destroy();
+			state.selectedEntity = nullptr;
+			state.sceneDirty = true;
+		}
+	}
+
 	ImGui::Separator();
 
-	if (ImGui::Selectable("Camera", state.selectedEntityId == 0))
-		state.selectedEntityId = 0;
+	const std::vector<Entity*> entities = world->GetEntitiesInWorld();
+	ImGui::Text("Entities: %d", static_cast<int>(entities.size()));
+	ImGui::Separator();
 
-	if (ImGui::Selectable("Player", state.selectedEntityId == 1))
-		state.selectedEntityId = 1;
+	for (Entity* entity : entities)
+	{
+		if (entity == nullptr)
+		{
+			continue;
+		}
 
-	if (ImGui::Selectable("Enemy", state.selectedEntityId == 2))
-		state.selectedEntityId = 2;
+		std::string displayName = entity->GetName();
+		if (displayName.empty())
+		{
+			displayName = "Unnamed Entity";
+		}
 
-	if (ImGui::Selectable("Light", state.selectedEntityId == 3))
-		state.selectedEntityId = 3;
+		if (search[0] != '\0' && displayName.find(search) == std::string::npos)
+		{
+			continue;
+		}
+
+		const bool selected = (state.selectedEntity == entity);
+
+		if (ImGui::Selectable(displayName.c_str(), selected))
+		{
+			state.selectedEntity = entity;
+		}
+	}
 
 	ImGui::End();
 }

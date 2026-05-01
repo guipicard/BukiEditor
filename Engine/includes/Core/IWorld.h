@@ -25,17 +25,21 @@ namespace buki
 
         virtual void Destroy() = 0; // Nettoie et libère les ressources utilisées par le monde du jeu.
 
-        virtual Entity* Create(const std::string& name) = 0; // Crée une nouvelle entité avec un nom spécifié.
+        virtual Entity* CreateEntity(const std::string& name) = 0; // Crée une nouvelle entité avec un nom spécifié.
 
         virtual void Add(Entity* _entity) = 0; // Ajoute une entité au monde du jeu.
 
         virtual void Remove(Entity* _entity) = 0; // Supprime une entité du monde du jeu.
 
-        virtual Entity* Find(std::string _name) = 0; // Recherche une entité dans le monde du jeu.
+        virtual Entity* FindEntityByName(std::string _name) = 0; // Recherche une entité dans le monde du jeu.
 
         virtual std::vector<Entity*> FindAll(std::string _name) = 0; // Recherche des entités au meme nom dans le monde du jeu.
 
         virtual void Load(const std::string& scene) = 0; // Charge une scène spécifiée par son nom.
+
+        virtual bool LoadScene(const std::string& path) = 0;
+
+        virtual bool SaveScene(const std::string& path) const = 0;
 
         virtual void SetLoadScene(const std::string& scene) = 0; // Définit la scène à charger.
 
@@ -55,6 +59,8 @@ namespace buki
 
         virtual void SortEntities() = 0; // sorts Entities present in the World by Z axis
 
-        
+		virtual const std::string& GetCurrentScenePath() const = 0; // Retourne le chemin de la scène actuelle.
+        virtual bool HasCurrentScenePath() const = 0;
+        virtual bool SaveCurrentScene() const = 0;
     };
 }

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <SDL3/SDL.h>
-
 #include "EditorLayer.h"
 
 namespace buki
@@ -12,7 +11,7 @@ namespace buki
 		~Editor();
 
 		bool Init();
-		void Update(SDL_Event const& e);
+		void Update(const SDL_Event& e);
 		void BeginFrame();
 		void Render();
 		void Present();
@@ -23,7 +22,6 @@ namespace buki
 		float clearColor[4] = { 0.10f, 0.10f, 0.12f, 1.00f };
 
 		SDL_Window* gameWindow = nullptr;
-		SDL_GLContext gl_context = nullptr;
 
 		EditorLayer editorLayer;
 	};

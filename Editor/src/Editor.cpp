@@ -1,11 +1,14 @@
 #include "Editor.h"
 
+#include "Engine.h"
+#include "Platform/SDLPlatform.h"
+
 #include "imgui.h"
 #include "imgui_impl_sdl3.h"
 #include "imgui_impl_opengl3.h"
 
-#include <cstdio>
 #include <SDL3/SDL_opengl.h>
+#include <cstdio>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -20,57 +23,28 @@ bool buki::Editor::Init()
 	::SetProcessDPIAware();
 #endif
 
-#if defined(IMGUI_IMPL_OPENGL_ES2)
-	const char* glsl_version = "#version 100";
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-#elif defined(IMGUI_IMPL_OPENGL_ES3)
-	const char* glsl_version = "#version 300 es";
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-#elif defined(__APPLE__)
-	const char* glsl_version = "#version 150";
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
-#else
+	if (!buki::Engine::Get().Init("Buki Editor", 1920, 1080))
+	{
+		return false;
+	}
+
+	auto* platform = dynamic_cast<buki::SDLPlatform*>(&buki::Engine::Get().Platform());
+	if (platform == nullptr)
+	{
+		std::printf("Error: Engine platform is not SDLPlatform\n");
+		return false;
+	}
+
+	gameWindow = platform->GetWindow();
+	void* glContext = platform->GetGLContext();
+
+	if (gameWindow == nullptr || glContext == nullptr)
+	{
+		std::printf("Error: SDL window or GL context is null\n");
+		return false;
+	}
+
 	const char* glsl_version = "#version 130";
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-#endif
-
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-
-	main_scale = 1.0f;
-
-	gameWindow = SDL_CreateWindow(
-		"Buki Editor",
-		1920,
-		1080,
-		SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY
-	);
-
-	if (!gameWindow)
-	{
-		std::printf("Error: SDL_CreateWindow(): %s\n", SDL_GetError());
-		return false;
-	}
-
-	gl_context = SDL_GL_CreateContext(gameWindow);
-	if (!gl_context)
-	{
-		std::printf("Error: SDL_GL_CreateContext(): %s\n", SDL_GetError());
-		return false;
-	}
-
-	SDL_GL_MakeCurrent(gameWindow, gl_context);
-	SDL_GL_SetSwapInterval(1);
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -91,9 +65,10 @@ bool buki::Editor::Init()
 		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 	}
 
-	if (!ImGui_ImplSDL3_InitForOpenGL(gameWindow, gl_context))
+	if (!ImGui_ImplSDL3_InitForOpenGL(gameWindow, glContext))
 	{
 		std::printf("Error: ImGui_ImplSDL3_InitForOpenGL() failed\n");
+		buki::Engine::Get().Platform().RequestQuit();
 		return false;
 	}
 
@@ -106,7 +81,7 @@ bool buki::Editor::Init()
 	return true;
 }
 
-void buki::Editor::Update(SDL_Event const& e)
+void buki::Editor::Update(const SDL_Event& e)
 {
 	ImGui_ImplSDL3_ProcessEvent(&e);
 }
@@ -140,18 +115,24 @@ void buki::Editor::Render()
 	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 	{
 		SDL_Window* backup_window = SDL_GL_GetCurrentWindow();
-		SDL_GLContext backup_context = SDL_GL_GetCurrentContext();
+		void* backup_context = SDL_GL_GetCurrentContext();
 
 		ImGui::UpdatePlatformWindows();
 		ImGui::RenderPlatformWindowsDefault();
 
-		SDL_GL_MakeCurrent(backup_window, backup_context);
+		if (backup_window != nullptr && backup_context != nullptr)
+		{
+			SDL_GL_MakeCurrent(backup_window, static_cast<SDL_GLContext>(backup_context));
+		}
 	}
 }
 
 void buki::Editor::Present()
 {
-	SDL_GL_SwapWindow(gameWindow);
+	if (gameWindow != nullptr)
+	{
+		SDL_GL_SwapWindow(gameWindow);
+	}
 }
 
 void buki::Editor::Shutdown()
@@ -159,16 +140,4 @@ void buki::Editor::Shutdown()
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL3_Shutdown();
 	ImGui::DestroyContext();
-
-	if (gl_context)
-	{
-		SDL_GL_DestroyContext(gl_context);
-		gl_context = nullptr;
-	}
-
-	if (gameWindow)
-	{
-		SDL_DestroyWindow(gameWindow);
-		gameWindow = nullptr;
-	}
 }

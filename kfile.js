@@ -1,5 +1,5 @@
 const exeNames = {Game: "Game", Editor: "Editor"};
-const startupProject = exeNames.Game;
+const startupProject = exeNames.Editor;
 const editorDependencies = {
     Game: ["Engine", "Box2D"],
     Editor: ["Engine", "Box2D", "imgui-docking"]

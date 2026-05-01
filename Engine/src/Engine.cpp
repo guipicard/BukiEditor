@@ -31,7 +31,7 @@ bool Engine::Init(const std::string& title, int w, int h)
 	m_Console->LogSuccess("Logger initialized");
 
 	m_Platform = new SDLPlatform();
-	if (!m_Platform->Initialize({ title, w, h }))
+	if (!m_Platform->Initialize(PlatformWindowDesc{ title, w, h }))
 	{
 		m_Console->LogSdlError();
 		return false;

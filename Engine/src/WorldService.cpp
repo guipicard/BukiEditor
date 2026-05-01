@@ -9,7 +9,9 @@
 #include <algorithm>
 #include <unordered_set>
 #include "ComponentRegistration.h"
-
+#include <fstream>
+#include <exception>
+#include "nlohmann/json.hpp"
 
 buki::WorldService::WorldService()
 {
@@ -55,6 +57,7 @@ void buki::WorldService::Render(float alpha)
 void buki::WorldService::Destroy()
 {
 	Unload();
+
 	for (std::map<std::string, IScene*>::iterator it = m_Scenes.begin(); it != m_Scenes.end(); ++it)
 	{
 		if (it->second != nullptr)
@@ -63,10 +66,15 @@ void buki::WorldService::Destroy()
 			it->second = nullptr;
 		}
 	}
-	m_Name = "";
-	m_SceneToLoad = "";
+
+	m_Scenes.clear();
 	m_ScenesByName.clear();
+
+	m_Name.clear();
+	m_SceneToLoad.clear();
 	m_CurrentScene = nullptr;
+	m_CurrentScenePath.clear();
+	m_SceneSource = SceneSource::None;
 }
 
 void buki::WorldService::Add(Entity* _entity)
@@ -84,9 +92,14 @@ void buki::WorldService::Remove(Entity* _entity)
 	}
 }
 
-buki::Entity* buki::WorldService::Find(std::string _name)
+buki::Entity* buki::WorldService::FindEntityByName(std::string _name)
 {
-	return m_EntityMap[_name];
+	auto it = m_EntityMap.find(_name);
+	if (it == m_EntityMap.end())
+	{
+		return nullptr;
+	}
+	return it->second;
 }
 
 std::vector<buki::Entity*> buki::WorldService::FindAll(std::string _name)
@@ -102,25 +115,139 @@ std::vector<buki::Entity*> buki::WorldService::FindAll(std::string _name)
 	return list;
 }
 
-void buki::WorldService::Load(const std::string& scene) {
+void buki::WorldService::Load(const std::string& scene)
+{
+	Unload();
+
 	if (m_Scenes.count(scene) > 0)
 	{
-		Unload();
 		m_CurrentScene = m_Scenes[scene];
 		SetCurrentSceneName(scene);
+		m_CurrentScenePath.clear();
+		m_SceneSource = SceneSource::Registered;
 		m_CurrentScene->Load();
 		m_CurrentScene->OnStart();
 	}
 	else
 	{
-		Unload();
 		m_CurrentScene = m_Scenes["Menu"];
 		SetCurrentSceneName("Menu");
+		m_CurrentScenePath.clear();
+		m_SceneSource = SceneSource::Registered;
 		m_CurrentScene->Load();
 		m_CurrentScene->OnStart();
 	}
 
-	m_SceneToLoad = "";
+	m_SceneToLoad.clear();
+}
+
+bool buki::WorldService::LoadScene(const std::string& path)
+{
+	std::ifstream file(path);
+	if (!file.is_open())
+	{
+		return false;
+	}
+
+	json doc;
+	try
+	{
+		file >> doc;
+	}
+	catch (const std::exception&)
+	{
+		return false;
+	}
+
+	Unload();
+
+	try
+	{
+		m_CurrentScene = nullptr;
+		m_CurrentScenePath = path;
+		m_SceneSource = SceneSource::File;
+
+		if (doc.contains("sceneName") && doc["sceneName"].is_string())
+		{
+			SetCurrentSceneName(doc["sceneName"].get<std::string>());
+		}
+		else
+		{
+			SetCurrentSceneName(std::filesystem::path(path).stem().string());
+		}
+
+		if (doc.contains("camera") && doc["camera"].is_object())
+		{
+			Engine::Get().GetActiveCameraPtr()->Deserialize(doc["camera"]);
+		}
+
+		if (doc.contains("entities") && doc["entities"].is_object())
+		{
+			for (auto& [entityName, entityDoc] : doc["entities"].items())
+			{
+				Entity* entity = CreateEntity(entityName);
+				if (entity != nullptr)
+				{
+					entity->Deserialize(entityDoc);
+				}
+			}
+		}
+
+		SortEntities();
+		m_SceneToLoad.clear();
+		return true;
+	}
+	catch (const std::exception&)
+	{
+		Unload();
+		return false;
+	}
+}
+
+bool buki::WorldService::SaveScene(const std::string& path) const
+{
+	json doc;
+
+	const std::filesystem::path filePath(path);
+	doc["sceneName"] = filePath.stem().string();
+	doc["scenePath"] = path;
+	doc["camera"] = Engine::Get().GetActiveCameraPtr()->Serialize();
+	doc["entities"] = json::object();
+
+	std::unordered_set<std::string> usedNames;
+
+	for (Entity* entity : m_EntityInWorld)
+	{
+		if (entity == nullptr)
+		{
+			continue;
+		}
+
+		std::string entityName = entity->GetName();
+		if (entityName.empty())
+		{
+			entityName = "Entity";
+		}
+
+		std::string uniqueName = entityName;
+		int suffix = 1;
+		while (usedNames.count(uniqueName) > 0)
+		{
+			uniqueName = entityName + "_" + std::to_string(suffix++);
+		}
+		usedNames.insert(uniqueName);
+
+		doc["entities"][uniqueName] = entity->Serialize();
+	}
+
+	std::ofstream file(path);
+	if (!file.is_open())
+	{
+		return false;
+	}
+
+	file << doc.dump(4);
+	return true;
 }
 
 void buki::WorldService::SetLoadScene(const std::string& scene)
@@ -131,23 +258,31 @@ void buki::WorldService::SetLoadScene(const std::string& scene)
 void buki::WorldService::Unload()
 {
 	CleanEntities();
+
 	if (m_CurrentScene != nullptr)
 	{
 		m_CurrentScene->OnStop();
-		for (auto entity : m_EntityInWorld)
-		{
-			if (entity != nullptr)
-			{
-				entity->Destroy();
-				delete entity;
-				entity = nullptr;
-			}
-		}
-		m_EntityMap.clear();
-		m_EntityInWorld.clear();
-		m_EntityToRemove.clear();
-		Engine::Get().Physics().Reset();
 	}
+
+	for (auto entity : m_EntityInWorld)
+	{
+		if (entity != nullptr)
+		{
+			entity->Destroy();
+			delete entity;
+			entity = nullptr;
+		}
+	}
+
+	m_EntityMap.clear();
+	m_EntityInWorld.clear();
+	m_EntityToRemove.clear();
+
+	Engine::Get().Physics().Reset();
+
+	m_CurrentScene = nullptr;
+	m_CurrentScenePath.clear();
+	m_SceneSource = SceneSource::None;
 }
 
 void buki::WorldService::Register(const std::string& name, IScene* scene)
@@ -165,7 +300,7 @@ void buki::WorldService::Register(const std::string& name, IScene* scene)
 	}
 }
 
-buki::Entity* buki::WorldService::Create(const std::string& name)
+buki::Entity* buki::WorldService::CreateEntity(const std::string& name)
 {
 	Entity* _e = new Entity(name);
 	Add(_e);
@@ -174,20 +309,31 @@ buki::Entity* buki::WorldService::Create(const std::string& name)
 
 void buki::WorldService::LoadNextScene()
 {
-	int index = -1;
-	for (int i = 0; i < m_ScenesByName.size(); i++)
+	int currentIndex = -1;
+
+	for (int i = 0; i < static_cast<int>(m_ScenesByName.size()); i++)
 	{
 		if (m_ScenesByName[i] == m_Name)
 		{
-			index = i + 1;
-
+			currentIndex = i;
+			break;
 		}
 	}
-	if (index > m_ScenesByName.size() - 1)
+
+	if (currentIndex == -1 || m_ScenesByName.empty())
 	{
 		SetLoadScene("Menu");
+		return;
 	}
-	if (index != -1) SetLoadScene(m_ScenesByName[index]);
+
+	int nextIndex = currentIndex + 1;
+	if (nextIndex >= static_cast<int>(m_ScenesByName.size()))
+	{
+		SetLoadScene("Menu");
+		return;
+	}
+
+	SetLoadScene(m_ScenesByName[nextIndex]);
 }
 
 void buki::WorldService::SortEntities()
@@ -212,6 +358,15 @@ void buki::WorldService::SortEntities()
 			m_EntityInWorld.push_back(e);
 		}
 	}
+}
+
+bool buki::WorldService::SaveCurrentScene() const
+{
+	if (m_CurrentScenePath.empty())
+	{
+		return false;
+	}
+	return SaveScene(m_CurrentScenePath);
 }
 
 void buki::WorldService::CleanEntities()

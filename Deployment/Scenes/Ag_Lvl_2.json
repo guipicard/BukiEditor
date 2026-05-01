@@ -3381,5 +3381,6 @@
             "z": 2
         }
     },
-    "sceneName": "Ag_Lvl_2"
+    "sceneName": "Ag_Lvl_2",
+    "scenePath": "../Deployment/Scenes/Ag_Lvl_2.json"
 }

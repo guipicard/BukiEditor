@@ -10,6 +10,8 @@
 #include <fstream>
 #include <iostream>
 
+#include <unordered_set>
+
 using json = nlohmann::json;
 
 buki::BukiScene::BukiScene()
@@ -22,7 +24,7 @@ buki::BukiScene::~BukiScene()
 
 buki::Entity* buki::BukiScene::Instantiate(const std::string _name)
 {
-	return buki::Engine::Get().World().Create(_name);
+	return buki::Engine::Get().World().CreateEntity(_name);
 }
 
 void buki::BukiScene::OnStart()
@@ -90,24 +92,41 @@ void buki::BukiScene::SaveScene(std::string fileName) const
 
 	json doc;
 	doc["sceneName"] = fileName;
+	doc["scenePath"] = path;
 
 	if (auto* camera = buki::Engine::Get().GetActiveCameraPtr(); camera != nullptr)
 	{
 		doc["camera"] = camera->Serialize();
 	}
 
-	json entitiesJson = json::object();
+	doc["entities"] = json::object();
+
+	std::unordered_set<std::string> usedNames;
 	IWorld& world = buki::Engine::Get().World();
 
-	for (auto entity : world.GetEntitiesInWorld())
+	for (Entity* entity : world.GetEntitiesInWorld())
 	{
-		if (entity != nullptr)
+		if (entity == nullptr)
 		{
-			entitiesJson[entity->GetName()] = entity->Serialize();
+			continue;
 		}
-	}
 
-	doc["entities"] = entitiesJson;
+		std::string entityName = entity->GetName();
+		if (entityName.empty())
+		{
+			entityName = "Entity";
+		}
+
+		std::string uniqueName = entityName;
+		int suffix = 1;
+		while (usedNames.count(uniqueName) > 0)
+		{
+			uniqueName = entityName + "_" + std::to_string(suffix++);
+		}
+		usedNames.insert(uniqueName);
+
+		doc["entities"][uniqueName] = entity->Serialize();
+	}
 
 	std::ofstream out(path, std::ios::out | std::ios::trunc);
 	if (!out.is_open())
@@ -150,7 +169,7 @@ void buki::BukiScene::FileLoad(std::string _path) const
 
 	for (auto it = entitiesJson.begin(); it != entitiesJson.end(); ++it)
 	{
-		Entity* entity = world.Create(it.key());
+		Entity* entity = world.CreateEntity(it.key());
 		if (entity == nullptr)
 		{
 			continue;

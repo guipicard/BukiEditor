@@ -15,7 +15,7 @@ buki::Entity* buki::CircleShape::Clone(Vector2 position, Vector2 size, float rot
 {
 	number++;
 	std::string name = "circle" + std::to_string(number);
-	Entity* circleEntity = Engine::Get().World().Create(name);
+	Entity* circleEntity = Engine::Get().World().CreateEntity(name);
 	int radius = rand() % 6 + 2;
 	float r = (float)radius;
 	r /= 4;
@@ -43,7 +43,7 @@ buki::Entity* buki::RectangleShape::Clone(Vector2 position, Vector2 size, float 
 {
 	number++;
 	std::string name = "rect" + std::to_string(number);
-	Entity* rectEntity = Engine::Get().World().Create(name);
+	Entity* rectEntity = Engine::Get().World().CreateEntity(name);
 	int sizeX = rand() % 10 + 2;
 	int sizeY = rand() % 10 + 2;
 	float rot = static_cast<float>((rand() % 7000) / 1000.0f);
@@ -71,7 +71,7 @@ buki::Entity* buki::StoneSlim::Clone(Vector2 position, Vector2 size, float rotat
 {
 	number++;
 	std::string name = "StoneSlim" + std::to_string(number);
-	Entity* rectEntity = Engine::Get().World().Create(name);
+	Entity* rectEntity = Engine::Get().World().CreateEntity(name);
 	rectEntity->Initialize(position, rotation, size);
 
 	rectEntity->AddComponent<Sprite>();
@@ -112,7 +112,7 @@ buki::Entity* buki::WoodSlim::Clone(Vector2 position, Vector2 size, float rotati
 {
 	number++;
 	std::string name = "WoodSlim" + std::to_string(number);
-	Entity* rectEntity = Engine::Get().World().Create(name);
+	Entity* rectEntity = Engine::Get().World().CreateEntity(name);
 	rectEntity->Initialize(position, rotation, size);
 
 	Sprite* m_Sprite = rectEntity->AddComponent<Sprite>();
@@ -154,7 +154,7 @@ buki::Entity* buki::GlassSlim::Clone(Vector2 position, Vector2 size, float rotat
 {
 	number++;
 	std::string name = "GlassSlim" + std::to_string(number);
-	Entity* rectEntity = Engine::Get().World().Create(name);
+	Entity* rectEntity = Engine::Get().World().CreateEntity(name);
 	rectEntity->Initialize(position, rotation, size);
 
 	Sprite* m_Sprite = rectEntity->AddComponent<Sprite>();
@@ -198,7 +198,7 @@ buki::Entity* buki::Bird::Clone(Vector2 position, Vector2 size, float rotation)
 {
 	number++;
 	std::string name = "bird" + std::to_string(number);
-	Entity* bird = Engine::Get().World().Create(name);
+	Entity* bird = Engine::Get().World().CreateEntity(name);
 	bird->T()->SetPosition(position);
 	bird->T()->SetSize(size);
 	bird->T()->SetRotation(rotation);
@@ -239,7 +239,7 @@ buki::Entity* buki::ButtonSimple::Clone(Vector2 position, Vector2 size, float ro
 		true,
 		true
 	};
-	Entity* button = Engine::Get().World().Create(name);
+	Entity* button = Engine::Get().World().CreateEntity(name);
 	//button->SetZ(10);
 	Button* buttonCmp = button->AddComponent<Button>();
 	button->T()->SetSize(size);
@@ -256,7 +256,7 @@ buki::Entity* buki::PauseScreen::Clone(Vector2 position, Vector2 size, float rot
 {
 	number++;
 	std::string name = "pauseScreen" + std::to_string(number);
-	Entity* screen = Engine::Get().World().Create(name);
+	Entity* screen = Engine::Get().World().CreateEntity(name);
 	Sprite* sprite = screen->AddComponent<Sprite>();
 	Color color = { 0.3f, 0.3f, 0.3f, 1.0f };
 	sprite->SetColor(color);

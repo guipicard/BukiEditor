@@ -1,64 +1,63 @@
 #pragma once
 
-#include "IPlatform.h"
+#include "Platform/IPlatform.h"
 #include <SDL3/SDL.h>
+#include <cstdint>
 
 namespace buki
 {
-    class IInput;
+	class IInput;
 
-    class SDLPlatform final : public IPlatform
-    {
-    public:
-        SDLPlatform() = default;
-        ~SDLPlatform() override;
+	class SDLPlatform final : public IPlatform
+	{
+	public:
+		SDLPlatform() = default;
+		~SDLPlatform() override;
 
-        bool Initialize(const PlatformWindowDesc& desc) override;
-        void Shutdown() override;
+		bool Initialize(const PlatformWindowDesc& desc) override;
+		void Shutdown() override;
 
-        void SetInput(IInput* input) override;
+		void SetInput(IInput* input);
 
-        void PumpEvents() override;
-        bool IsRunning() const override;
-        void RequestQuit() override;
+		void PumpEvents() override;
+		bool IsRunning() const override;
+		void RequestQuit() override;
 
-        void* GetNativeWindowHandle() const override;
-        void* GetGraphicsContextHandle() const override;
+		void* GetNativeWindowHandle() const override;
+		void* GetGraphicsContextHandle() const override;
+		void* GetProcAddress(const char* procName) const override;
 
-        virtual void* GetProcAddress(const char* procName) const override;
+		std::uint32_t GetWindowID() const override;
+		int GetWindowWidth() const override;
+		int GetWindowHeight() const override;
+		int GetDrawableWidth() const override;
+		int GetDrawableHeight() const override;
 
-        SDL_GLContext GetGLContext() const;
+		void SetVSync(bool enabled) override;
+		bool IsVSyncEnabled() const override;
+		void SwapBuffers() override;
 
-        std::uint32_t GetWindowID() const override;
+		SDL_Window* GetWindow() const;
+		void* GetGLContext() const;
 
-        int GetWindowWidth() const override;
-        int GetWindowHeight() const override;
-        int GetDrawableWidth() const override;
-        int GetDrawableHeight() const override;
+	private:
+		bool InitializeSDL();
+		bool CreateWindow(const PlatformWindowDesc& desc);
+		bool CreateOpenGLContext();
+		void UpdateWindowSizeCache();
+		void ResetState();
 
-        void SetVSync(bool enabled) override;
-        bool IsVSyncEnabled() const override;
+	private:
+		SDL_Window* m_Window = nullptr;
+		void* m_GLContext = nullptr;
+		IInput* m_Input = nullptr;
 
-        void SwapBuffers() override;
+		bool m_IsRunning = false;
+		bool m_VSync = true;
 
-    private:
-        bool InitializeSDL();
-        bool CreateWindow(const PlatformWindowDesc& desc);
-        bool CreateOpenGLContext();
-        void UpdateWindowSizeCache();
-        void ResetState();
-
-    private:
-        SDL_Window* m_Window = nullptr;
-        SDL_GLContext m_GLContext = nullptr;
-        IInput* m_Input = nullptr; // non-owning
-
-        bool m_IsRunning = false;
-        bool m_VSync = true;
-
-        int m_WindowWidth = 0;
-        int m_WindowHeight = 0;
-        int m_DrawableWidth = 0;
-        int m_DrawableHeight = 0;
-    };
+		int m_WindowWidth = 0;
+		int m_WindowHeight = 0;
+		int m_DrawableWidth = 0;
+		int m_DrawableHeight = 0;
+	};
 }

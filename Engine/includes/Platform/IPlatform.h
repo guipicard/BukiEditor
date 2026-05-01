@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <string>
 
+struct SDL_Window;
 namespace buki
 {
     class IInput;
@@ -48,5 +49,9 @@ namespace buki
         virtual bool IsVSyncEnabled() const = 0;
 
         virtual void SwapBuffers() = 0;
+
+        virtual SDL_Window* GetWindow() const = 0;
+        virtual void* GetGLContext() const = 0;
+
     };
 }

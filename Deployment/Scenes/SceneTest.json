@@ -28,5 +28,6 @@
             "z": 0
         }
     },
-    "sceneName": "SceneTest"
+    "sceneName": "SceneTest",
+    "scenePath": "../Deployment/Scenes/SceneTest.json"
 }
