@@ -37,6 +37,7 @@ namespace buki
 		virtual const std::string& GetCurrentScenePath() const override { return m_CurrentScenePath; }
 		virtual bool HasCurrentScenePath() const override { return !m_CurrentScenePath.empty(); }
 		virtual bool SaveCurrentScene() const override;
+		virtual bool RenameEntity(Entity* entity, const std::string& newName) override;
 		
 	private:
 		void CleanEntities();

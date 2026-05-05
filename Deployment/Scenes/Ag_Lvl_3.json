@@ -14,10 +14,19 @@
                 "Spawner": null,
                 "TileLayer": {
                     "atlasPath": "/assets/Kenney/Physics Assets/PNG/Backgrounds/colored_desert.png",
+                    "defaultFlipX": false,
+                    "defaultFlipY": false,
+                    "defaultSrcRect": {
+                        "h": 1.0,
+                        "w": 1.0,
+                        "x": 0.0,
+                        "y": 0.0
+                    },
                     "defaultTileSize": {
                         "x": 21.600000381469727,
                         "y": 21.600000381469727
                     },
+                    "defaultVisible": true,
                     "layerOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -140,10 +149,19 @@
                 },
                 "TileLayer": {
                     "atlasPath": "/assets/Kenney/Physics Assets/PNG/Other/grass.png",
+                    "defaultFlipX": false,
+                    "defaultFlipY": false,
+                    "defaultSrcRect": {
+                        "h": 1.0,
+                        "w": 1.0,
+                        "x": 0.0,
+                        "y": 0.0
+                    },
                     "defaultTileSize": {
                         "x": 1.0,
                         "y": 1.0
                     },
+                    "defaultVisible": true,
                     "layerOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -2060,7 +2078,7 @@
             },
             "enable": true,
             "layer": "",
-            "physics": false,
+            "physics": true,
             "position": {
                 "x": 0.0,
                 "y": 10.300000190734863
@@ -2182,6 +2200,31 @@
                     "shapeDraw": false,
                     "type": "Box"
                 },
+                "BricksBehaviour": {
+                    "BreakSounds": [
+                        "./audio/AngryBird/Sfx - Rock Destroyed A1.mp3",
+                        "./audio/AngryBird/Sfx - Rock Destroyed A2.mp3",
+                        "./audio/AngryBird/Sfx - Rock Destroyed A3.mp3"
+                    ],
+                    "DamageSounds": [
+                        "./audio/AngryBird/Sfx - Rock Damage A1.mp3",
+                        "./audio/AngryBird/Sfx - Rock Damage A2.mp3",
+                        "./audio/AngryBird/Sfx - Rock Damage A3.mp3"
+                    ],
+                    "collisionSounds": [
+                        "./audio/AngryBird/Sfx - Rock Collision A1.mp3",
+                        "./audio/AngryBird/Sfx - Rock Collision A2.mp3",
+                        "./audio/AngryBird/Sfx - Rock Collision A3.mp3",
+                        "./audio/AngryBird/Sfx - Rock Collision A4.mp3",
+                        "./audio/AngryBird/Sfx - Rock Collision A5.mp3"
+                    ],
+                    "maxHealth": 100.0,
+                    "stageImages": [
+                        "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone020.png",
+                        "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone025.png",
+                        "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone052.png"
+                    ]
+                },
                 "RigidBody": {
                     "motionLocks": {
                         "angularZ": false,
@@ -2221,7 +2264,7 @@
             },
             "enable": true,
             "layer": "",
-            "physics": false,
+            "physics": true,
             "position": {
                 "x": 13.19999885559082,
                 "y": 8.675000190734863
@@ -2267,6 +2310,31 @@
                     "shapeDraw": false,
                     "type": "Box"
                 },
+                "BricksBehaviour": {
+                    "BreakSounds": [
+                        "./audio/AngryBird/Sfx - Rock Destroyed A1.mp3",
+                        "./audio/AngryBird/Sfx - Rock Destroyed A2.mp3",
+                        "./audio/AngryBird/Sfx - Rock Destroyed A3.mp3"
+                    ],
+                    "DamageSounds": [
+                        "./audio/AngryBird/Sfx - Rock Damage A1.mp3",
+                        "./audio/AngryBird/Sfx - Rock Damage A2.mp3",
+                        "./audio/AngryBird/Sfx - Rock Damage A3.mp3"
+                    ],
+                    "collisionSounds": [
+                        "./audio/AngryBird/Sfx - Rock Collision A1.mp3",
+                        "./audio/AngryBird/Sfx - Rock Collision A2.mp3",
+                        "./audio/AngryBird/Sfx - Rock Collision A3.mp3",
+                        "./audio/AngryBird/Sfx - Rock Collision A4.mp3",
+                        "./audio/AngryBird/Sfx - Rock Collision A5.mp3"
+                    ],
+                    "maxHealth": 100.0,
+                    "stageImages": [
+                        "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone020.png",
+                        "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone025.png",
+                        "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone052.png"
+                    ]
+                },
                 "RigidBody": {
                     "motionLocks": {
                         "angularZ": false,
@@ -2306,7 +2374,7 @@
             },
             "enable": true,
             "layer": "",
-            "physics": false,
+            "physics": true,
             "position": {
                 "x": 15.44999885559082,
                 "y": 8.675000190734863
@@ -2352,6 +2420,31 @@
                     "shapeDraw": false,
                     "type": "Box"
                 },
+                "BricksBehaviour": {
+                    "BreakSounds": [
+                        "./audio/AngryBird/Sfx - Rock Destroyed A1.mp3",
+                        "./audio/AngryBird/Sfx - Rock Destroyed A2.mp3",
+                        "./audio/AngryBird/Sfx - Rock Destroyed A3.mp3"
+                    ],
+                    "DamageSounds": [
+                        "./audio/AngryBird/Sfx - Rock Damage A1.mp3",
+                        "./audio/AngryBird/Sfx - Rock Damage A2.mp3",
+                        "./audio/AngryBird/Sfx - Rock Damage A3.mp3"
+                    ],
+                    "collisionSounds": [
+                        "./audio/AngryBird/Sfx - Rock Collision A1.mp3",
+                        "./audio/AngryBird/Sfx - Rock Collision A2.mp3",
+                        "./audio/AngryBird/Sfx - Rock Collision A3.mp3",
+                        "./audio/AngryBird/Sfx - Rock Collision A4.mp3",
+                        "./audio/AngryBird/Sfx - Rock Collision A5.mp3"
+                    ],
+                    "maxHealth": 100.0,
+                    "stageImages": [
+                        "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone020.png",
+                        "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone025.png",
+                        "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone052.png"
+                    ]
+                },
                 "RigidBody": {
                     "motionLocks": {
                         "angularZ": false,
@@ -2391,7 +2484,7 @@
             },
             "enable": true,
             "layer": "",
-            "physics": false,
+            "physics": true,
             "position": {
                 "x": 17.69999885559082,
                 "y": 8.675000190734863
@@ -2437,6 +2530,31 @@
                     "shapeDraw": false,
                     "type": "Box"
                 },
+                "BricksBehaviour": {
+                    "BreakSounds": [
+                        "./audio/AngryBird/Sfx - Rock Destroyed A1.mp3",
+                        "./audio/AngryBird/Sfx - Rock Destroyed A2.mp3",
+                        "./audio/AngryBird/Sfx - Rock Destroyed A3.mp3"
+                    ],
+                    "DamageSounds": [
+                        "./audio/AngryBird/Sfx - Rock Damage A1.mp3",
+                        "./audio/AngryBird/Sfx - Rock Damage A2.mp3",
+                        "./audio/AngryBird/Sfx - Rock Damage A3.mp3"
+                    ],
+                    "collisionSounds": [
+                        "./audio/AngryBird/Sfx - Rock Collision A1.mp3",
+                        "./audio/AngryBird/Sfx - Rock Collision A2.mp3",
+                        "./audio/AngryBird/Sfx - Rock Collision A3.mp3",
+                        "./audio/AngryBird/Sfx - Rock Collision A4.mp3",
+                        "./audio/AngryBird/Sfx - Rock Collision A5.mp3"
+                    ],
+                    "maxHealth": 100.0,
+                    "stageImages": [
+                        "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone020.png",
+                        "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone025.png",
+                        "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone052.png"
+                    ]
+                },
                 "RigidBody": {
                     "motionLocks": {
                         "angularZ": false,
@@ -2476,7 +2594,7 @@
             },
             "enable": true,
             "layer": "",
-            "physics": false,
+            "physics": true,
             "position": {
                 "x": 16.57499885559082,
                 "y": 7.175000190734863
@@ -2522,6 +2640,31 @@
                     "shapeDraw": false,
                     "type": "Box"
                 },
+                "BricksBehaviour": {
+                    "BreakSounds": [
+                        "./audio/AngryBird/Sfx - Rock Destroyed A1.mp3",
+                        "./audio/AngryBird/Sfx - Rock Destroyed A2.mp3",
+                        "./audio/AngryBird/Sfx - Rock Destroyed A3.mp3"
+                    ],
+                    "DamageSounds": [
+                        "./audio/AngryBird/Sfx - Rock Damage A1.mp3",
+                        "./audio/AngryBird/Sfx - Rock Damage A2.mp3",
+                        "./audio/AngryBird/Sfx - Rock Damage A3.mp3"
+                    ],
+                    "collisionSounds": [
+                        "./audio/AngryBird/Sfx - Rock Collision A1.mp3",
+                        "./audio/AngryBird/Sfx - Rock Collision A2.mp3",
+                        "./audio/AngryBird/Sfx - Rock Collision A3.mp3",
+                        "./audio/AngryBird/Sfx - Rock Collision A4.mp3",
+                        "./audio/AngryBird/Sfx - Rock Collision A5.mp3"
+                    ],
+                    "maxHealth": 100.0,
+                    "stageImages": [
+                        "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone020.png",
+                        "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone025.png",
+                        "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone052.png"
+                    ]
+                },
                 "RigidBody": {
                     "motionLocks": {
                         "angularZ": false,
@@ -2561,7 +2704,7 @@
             },
             "enable": true,
             "layer": "",
-            "physics": false,
+            "physics": true,
             "position": {
                 "x": 14.32499885559082,
                 "y": 7.175000190734863
@@ -2607,6 +2750,31 @@
                     "shapeDraw": false,
                     "type": "Box"
                 },
+                "BricksBehaviour": {
+                    "BreakSounds": [
+                        "./audio/AngryBird/Sfx - Rock Destroyed A1.mp3",
+                        "./audio/AngryBird/Sfx - Rock Destroyed A2.mp3",
+                        "./audio/AngryBird/Sfx - Rock Destroyed A3.mp3"
+                    ],
+                    "DamageSounds": [
+                        "./audio/AngryBird/Sfx - Rock Damage A1.mp3",
+                        "./audio/AngryBird/Sfx - Rock Damage A2.mp3",
+                        "./audio/AngryBird/Sfx - Rock Damage A3.mp3"
+                    ],
+                    "collisionSounds": [
+                        "./audio/AngryBird/Sfx - Rock Collision A1.mp3",
+                        "./audio/AngryBird/Sfx - Rock Collision A2.mp3",
+                        "./audio/AngryBird/Sfx - Rock Collision A3.mp3",
+                        "./audio/AngryBird/Sfx - Rock Collision A4.mp3",
+                        "./audio/AngryBird/Sfx - Rock Collision A5.mp3"
+                    ],
+                    "maxHealth": 100.0,
+                    "stageImages": [
+                        "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone020.png",
+                        "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone025.png",
+                        "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone052.png"
+                    ]
+                },
                 "RigidBody": {
                     "motionLocks": {
                         "angularZ": false,
@@ -2646,7 +2814,7 @@
             },
             "enable": true,
             "layer": "",
-            "physics": false,
+            "physics": true,
             "position": {
                 "x": 16.57499885559082,
                 "y": 5.675000190734863
@@ -2692,6 +2860,31 @@
                     "shapeDraw": false,
                     "type": "Box"
                 },
+                "BricksBehaviour": {
+                    "BreakSounds": [
+                        "./audio/AngryBird/Sfx - Rock Destroyed A1.mp3",
+                        "./audio/AngryBird/Sfx - Rock Destroyed A2.mp3",
+                        "./audio/AngryBird/Sfx - Rock Destroyed A3.mp3"
+                    ],
+                    "DamageSounds": [
+                        "./audio/AngryBird/Sfx - Rock Damage A1.mp3",
+                        "./audio/AngryBird/Sfx - Rock Damage A2.mp3",
+                        "./audio/AngryBird/Sfx - Rock Damage A3.mp3"
+                    ],
+                    "collisionSounds": [
+                        "./audio/AngryBird/Sfx - Rock Collision A1.mp3",
+                        "./audio/AngryBird/Sfx - Rock Collision A2.mp3",
+                        "./audio/AngryBird/Sfx - Rock Collision A3.mp3",
+                        "./audio/AngryBird/Sfx - Rock Collision A4.mp3",
+                        "./audio/AngryBird/Sfx - Rock Collision A5.mp3"
+                    ],
+                    "maxHealth": 100.0,
+                    "stageImages": [
+                        "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone020.png",
+                        "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone025.png",
+                        "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone052.png"
+                    ]
+                },
                 "RigidBody": {
                     "motionLocks": {
                         "angularZ": false,
@@ -2731,7 +2924,7 @@
             },
             "enable": true,
             "layer": "",
-            "physics": false,
+            "physics": true,
             "position": {
                 "x": 14.32499885559082,
                 "y": 5.675000190734863
@@ -2777,6 +2970,31 @@
                     "shapeDraw": false,
                     "type": "Box"
                 },
+                "BricksBehaviour": {
+                    "BreakSounds": [
+                        "./audio/AngryBird/Sfx - Rock Destroyed A1.mp3",
+                        "./audio/AngryBird/Sfx - Rock Destroyed A2.mp3",
+                        "./audio/AngryBird/Sfx - Rock Destroyed A3.mp3"
+                    ],
+                    "DamageSounds": [
+                        "./audio/AngryBird/Sfx - Rock Damage A1.mp3",
+                        "./audio/AngryBird/Sfx - Rock Damage A2.mp3",
+                        "./audio/AngryBird/Sfx - Rock Damage A3.mp3"
+                    ],
+                    "collisionSounds": [
+                        "./audio/AngryBird/Sfx - Rock Collision A1.mp3",
+                        "./audio/AngryBird/Sfx - Rock Collision A2.mp3",
+                        "./audio/AngryBird/Sfx - Rock Collision A3.mp3",
+                        "./audio/AngryBird/Sfx - Rock Collision A4.mp3",
+                        "./audio/AngryBird/Sfx - Rock Collision A5.mp3"
+                    ],
+                    "maxHealth": 100.0,
+                    "stageImages": [
+                        "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone020.png",
+                        "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone025.png",
+                        "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone052.png"
+                    ]
+                },
                 "RigidBody": {
                     "motionLocks": {
                         "angularZ": false,
@@ -2816,7 +3034,7 @@
             },
             "enable": true,
             "layer": "",
-            "physics": false,
+            "physics": true,
             "position": {
                 "x": 15.44999885559082,
                 "y": 4.175000190734863
@@ -2921,6 +3139,11 @@
         },
         "bird1": {
             "components": {
+                "AngryBirdController": {
+                    "forceMultiplier": 6.0,
+                    "shotLength": 4.0,
+                    "soundDamageThreshold": 5.0
+                },
                 "Circle": {
                     "circle": {
                         "positionOffset": {
@@ -3162,23 +3385,8 @@
                 "y": 4.0
             },
             "z": 2
-        },
-        "test lvl3": {
-            "enable": true,
-            "layer": "",
-            "physics": false,
-            "position": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "rotation": 0.0,
-            "size": {
-                "x": 1.0,
-                "y": 1.0
-            },
-            "z": 0
         }
     },
     "sceneName": "Ag_Lvl_3",
-    "scenePath": "../Deployment/Scenes\\Ag_Lvl_3.json"
+    "scenePath": "../Deployment/Scenes/Ag_Lvl_3.json"
 }

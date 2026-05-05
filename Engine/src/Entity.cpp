@@ -168,7 +168,7 @@ json buki::Entity::Serialize() const
 
 	for (const auto& [typeInfo, component] : m_ComponentByType)
 	{
-		std::string typeName = ComponentFactory::GetTypeName(*typeInfo);
+		std::string typeName = buki::ComponentFactory::GetTypeName(*typeInfo);
 		if (!typeName.empty() && component != nullptr)
 		{
 			doc["components"][typeName] = component->Serialize();
@@ -212,7 +212,7 @@ void buki::Entity::Deserialize(json _doc)
 			const std::string& typeName = componentData.key();
 			const json& componentJson = componentData.value();
 
-			Component* component = ComponentFactory::Create(this, typeName, componentJson);
+			Component* component = ComponentFactory::CreateCmp(this, typeName, componentJson);
 			if (component == nullptr)
 			{
 				Engine::Get().Log().LogMessage("Unknown component type during deserialize: " + typeName);
@@ -230,4 +230,83 @@ void buki::Entity::Set()
 			component->Set();
 		}
 	}
+}
+
+bool buki::Entity::CanRemoveComponent(const std::string& typeName) const
+{
+	if (typeName.empty())
+	{
+		return false;
+	}
+
+	// Optional protected components
+	if (typeName == "Transform")
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool buki::Entity::RemoveComponentByTypeName(const std::string& typeName)
+{
+	if (!CanRemoveComponent(typeName))
+	{
+		return false;
+	}
+
+	Component* target = nullptr;
+	const std::type_info* targetType = nullptr;
+
+	for (auto it = m_ComponentByType.begin(); it != m_ComponentByType.end(); ++it)
+	{
+		if (it->second == nullptr)
+		{
+			continue;
+		}
+
+		const std::string registeredName = ComponentFactory::GetTypeName(*it->first);
+		if (registeredName == typeName)
+		{
+			target = it->second;
+			targetType = it->first;
+			break;
+		}
+	}
+
+	if (target == nullptr || targetType == nullptr)
+	{
+		return false;
+	}
+
+	const bool hadPhysics = m_Physics;
+	if (hadPhysics)
+	{
+		DeactivatePhysics();
+	}
+
+	if (dynamic_cast<IDrawable*>(target))
+	{
+		m_Drawable.erase(std::remove(m_Drawable.begin(), m_Drawable.end(), dynamic_cast<IDrawable*>(target)), m_Drawable.end());
+	}
+	if (dynamic_cast<IUpdatable*>(target))
+	{
+		m_Updatable.erase(std::remove(m_Updatable.begin(), m_Updatable.end(), dynamic_cast<IUpdatable*>(target)), m_Updatable.end());
+	}
+	if (dynamic_cast<IFixedUpdatable*>(target))
+	{
+		m_FixedUpdatable.erase(std::remove(m_FixedUpdatable.begin(), m_FixedUpdatable.end(), dynamic_cast<IFixedUpdatable*>(target)), m_FixedUpdatable.end());
+	}
+
+	target->Destroy();
+	delete target;
+
+	m_ComponentByType.erase(targetType);
+
+	if (hadPhysics && GetComponent<RigidBody>() != nullptr)
+	{
+		ActivatePhysics();
+	}
+
+	return true;
 }

@@ -14,10 +14,19 @@
                 "Spawner": null,
                 "TileLayer": {
                     "atlasPath": "/assets/Kenney/Physics Assets/PNG/Backgrounds/colored_desert.png",
+                    "defaultFlipX": false,
+                    "defaultFlipY": false,
+                    "defaultSrcRect": {
+                        "h": 1.0,
+                        "w": 1.0,
+                        "x": 0.0,
+                        "y": 0.0
+                    },
                     "defaultTileSize": {
                         "x": 21.600000381469727,
                         "y": 21.600000381469727
                     },
+                    "defaultVisible": true,
                     "layerOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -140,10 +149,19 @@
                 },
                 "TileLayer": {
                     "atlasPath": "/assets/Kenney/Physics Assets/PNG/Other/grass.png",
+                    "defaultFlipX": false,
+                    "defaultFlipY": false,
+                    "defaultSrcRect": {
+                        "h": 1.0,
+                        "w": 1.0,
+                        "x": 0.0,
+                        "y": 0.0
+                    },
                     "defaultTileSize": {
                         "x": 1.0,
                         "y": 1.0
                     },
+                    "defaultVisible": true,
                     "layerOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -2182,33 +2200,6 @@
                     "shapeDraw": false,
                     "type": "Box"
                 },
-                "BricksBehaviour": {
-                    "BreakSounds": [
-                        "./audio/AngryBird/Sfx - Wood Destroyed A1.mp3",
-                        "./audio/AngryBird/Sfx - Wood Destroyed A2.mp3",
-                        "./audio/AngryBird/Sfx - Wood Destroyed A3.mp3"
-                    ],
-                    "DamageSounds": [
-                        "./audio/AngryBird/Sfx - Wood Damage A1.mp3",
-                        "./audio/AngryBird/Sfx - Wood Damage A2.mp3",
-                        "./audio/AngryBird/Sfx - Wood Damage A3.mp3"
-                    ],
-                    "collisionSounds": [
-                        "./audio/AngryBird/Sfx - Wood Collision A1.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A2.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A3.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A4.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A5.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A6.mp3"
-                    ],
-                    "health": 75.0,
-                    "maxHealth": 75.0,
-                    "stageImages": [
-                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
-                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood024.png",
-                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood051.png"
-                    ]
-                },
                 "RigidBody": {
                     "motionLocks": {
                         "angularZ": false,
@@ -2293,33 +2284,6 @@
                     },
                     "shapeDraw": false,
                     "type": "Box"
-                },
-                "BricksBehaviour": {
-                    "BreakSounds": [
-                        "./audio/AngryBird/Sfx - Wood Destroyed A1.mp3",
-                        "./audio/AngryBird/Sfx - Wood Destroyed A2.mp3",
-                        "./audio/AngryBird/Sfx - Wood Destroyed A3.mp3"
-                    ],
-                    "DamageSounds": [
-                        "./audio/AngryBird/Sfx - Wood Damage A1.mp3",
-                        "./audio/AngryBird/Sfx - Wood Damage A2.mp3",
-                        "./audio/AngryBird/Sfx - Wood Damage A3.mp3"
-                    ],
-                    "collisionSounds": [
-                        "./audio/AngryBird/Sfx - Wood Collision A1.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A2.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A3.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A4.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A5.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A6.mp3"
-                    ],
-                    "health": 75.0,
-                    "maxHealth": 75.0,
-                    "stageImages": [
-                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
-                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood024.png",
-                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood051.png"
-                    ]
                 },
                 "RigidBody": {
                     "motionLocks": {
@@ -2406,33 +2370,6 @@
                     "shapeDraw": false,
                     "type": "Box"
                 },
-                "BricksBehaviour": {
-                    "BreakSounds": [
-                        "./audio/AngryBird/Sfx - Wood Destroyed A1.mp3",
-                        "./audio/AngryBird/Sfx - Wood Destroyed A2.mp3",
-                        "./audio/AngryBird/Sfx - Wood Destroyed A3.mp3"
-                    ],
-                    "DamageSounds": [
-                        "./audio/AngryBird/Sfx - Wood Damage A1.mp3",
-                        "./audio/AngryBird/Sfx - Wood Damage A2.mp3",
-                        "./audio/AngryBird/Sfx - Wood Damage A3.mp3"
-                    ],
-                    "collisionSounds": [
-                        "./audio/AngryBird/Sfx - Wood Collision A1.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A2.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A3.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A4.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A5.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A6.mp3"
-                    ],
-                    "health": 75.0,
-                    "maxHealth": 75.0,
-                    "stageImages": [
-                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
-                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood024.png",
-                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood051.png"
-                    ]
-                },
                 "RigidBody": {
                     "motionLocks": {
                         "angularZ": false,
@@ -2517,33 +2454,6 @@
                     },
                     "shapeDraw": false,
                     "type": "Box"
-                },
-                "BricksBehaviour": {
-                    "BreakSounds": [
-                        "./audio/AngryBird/Sfx - Wood Destroyed A1.mp3",
-                        "./audio/AngryBird/Sfx - Wood Destroyed A2.mp3",
-                        "./audio/AngryBird/Sfx - Wood Destroyed A3.mp3"
-                    ],
-                    "DamageSounds": [
-                        "./audio/AngryBird/Sfx - Wood Damage A1.mp3",
-                        "./audio/AngryBird/Sfx - Wood Damage A2.mp3",
-                        "./audio/AngryBird/Sfx - Wood Damage A3.mp3"
-                    ],
-                    "collisionSounds": [
-                        "./audio/AngryBird/Sfx - Wood Collision A1.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A2.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A3.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A4.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A5.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A6.mp3"
-                    ],
-                    "health": 75.0,
-                    "maxHealth": 75.0,
-                    "stageImages": [
-                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
-                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood024.png",
-                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood051.png"
-                    ]
                 },
                 "RigidBody": {
                     "motionLocks": {
@@ -2630,33 +2540,6 @@
                     "shapeDraw": false,
                     "type": "Box"
                 },
-                "BricksBehaviour": {
-                    "BreakSounds": [
-                        "./audio/AngryBird/Sfx - Wood Destroyed A1.mp3",
-                        "./audio/AngryBird/Sfx - Wood Destroyed A2.mp3",
-                        "./audio/AngryBird/Sfx - Wood Destroyed A3.mp3"
-                    ],
-                    "DamageSounds": [
-                        "./audio/AngryBird/Sfx - Wood Damage A1.mp3",
-                        "./audio/AngryBird/Sfx - Wood Damage A2.mp3",
-                        "./audio/AngryBird/Sfx - Wood Damage A3.mp3"
-                    ],
-                    "collisionSounds": [
-                        "./audio/AngryBird/Sfx - Wood Collision A1.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A2.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A3.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A4.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A5.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A6.mp3"
-                    ],
-                    "health": 75.0,
-                    "maxHealth": 75.0,
-                    "stageImages": [
-                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
-                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood024.png",
-                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood051.png"
-                    ]
-                },
                 "RigidBody": {
                     "motionLocks": {
                         "angularZ": false,
@@ -2741,33 +2624,6 @@
                     },
                     "shapeDraw": false,
                     "type": "Box"
-                },
-                "BricksBehaviour": {
-                    "BreakSounds": [
-                        "./audio/AngryBird/Sfx - Wood Destroyed A1.mp3",
-                        "./audio/AngryBird/Sfx - Wood Destroyed A2.mp3",
-                        "./audio/AngryBird/Sfx - Wood Destroyed A3.mp3"
-                    ],
-                    "DamageSounds": [
-                        "./audio/AngryBird/Sfx - Wood Damage A1.mp3",
-                        "./audio/AngryBird/Sfx - Wood Damage A2.mp3",
-                        "./audio/AngryBird/Sfx - Wood Damage A3.mp3"
-                    ],
-                    "collisionSounds": [
-                        "./audio/AngryBird/Sfx - Wood Collision A1.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A2.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A3.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A4.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A5.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A6.mp3"
-                    ],
-                    "health": 75.0,
-                    "maxHealth": 75.0,
-                    "stageImages": [
-                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
-                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood024.png",
-                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood051.png"
-                    ]
                 },
                 "RigidBody": {
                     "motionLocks": {
@@ -2854,33 +2710,6 @@
                     "shapeDraw": false,
                     "type": "Box"
                 },
-                "BricksBehaviour": {
-                    "BreakSounds": [
-                        "./audio/AngryBird/Sfx - Wood Destroyed A1.mp3",
-                        "./audio/AngryBird/Sfx - Wood Destroyed A2.mp3",
-                        "./audio/AngryBird/Sfx - Wood Destroyed A3.mp3"
-                    ],
-                    "DamageSounds": [
-                        "./audio/AngryBird/Sfx - Wood Damage A1.mp3",
-                        "./audio/AngryBird/Sfx - Wood Damage A2.mp3",
-                        "./audio/AngryBird/Sfx - Wood Damage A3.mp3"
-                    ],
-                    "collisionSounds": [
-                        "./audio/AngryBird/Sfx - Wood Collision A1.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A2.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A3.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A4.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A5.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A6.mp3"
-                    ],
-                    "health": 75.0,
-                    "maxHealth": 75.0,
-                    "stageImages": [
-                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
-                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood024.png",
-                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood051.png"
-                    ]
-                },
                 "RigidBody": {
                     "motionLocks": {
                         "angularZ": false,
@@ -2965,33 +2794,6 @@
                     },
                     "shapeDraw": false,
                     "type": "Box"
-                },
-                "BricksBehaviour": {
-                    "BreakSounds": [
-                        "./audio/AngryBird/Sfx - Wood Destroyed A1.mp3",
-                        "./audio/AngryBird/Sfx - Wood Destroyed A2.mp3",
-                        "./audio/AngryBird/Sfx - Wood Destroyed A3.mp3"
-                    ],
-                    "DamageSounds": [
-                        "./audio/AngryBird/Sfx - Wood Damage A1.mp3",
-                        "./audio/AngryBird/Sfx - Wood Damage A2.mp3",
-                        "./audio/AngryBird/Sfx - Wood Damage A3.mp3"
-                    ],
-                    "collisionSounds": [
-                        "./audio/AngryBird/Sfx - Wood Collision A1.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A2.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A3.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A4.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A5.mp3",
-                        "./audio/AngryBird/Sfx - Wood Collision A6.mp3"
-                    ],
-                    "health": 75.0,
-                    "maxHealth": 75.0,
-                    "stageImages": [
-                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
-                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood024.png",
-                        "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood051.png"
-                    ]
                 },
                 "RigidBody": {
                     "motionLocks": {
@@ -3137,7 +2939,6 @@
         },
         "bird1": {
             "components": {
-                "AngryBirdController": null,
                 "Circle": {
                     "circle": {
                         "positionOffset": {
@@ -3382,5 +3183,5 @@
         }
     },
     "sceneName": "Ag_Lvl_2",
-    "scenePath": "../Deployment/Scenes/Ag_Lvl_2.json"
+    "scenePath": "../Deployment/Scenes\\Ag_Lvl_2.json"
 }

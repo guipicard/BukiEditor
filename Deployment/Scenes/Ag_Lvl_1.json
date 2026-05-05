@@ -14,10 +14,19 @@
                 "Spawner": null,
                 "TileLayer": {
                     "atlasPath": "/assets/Kenney/Physics Assets/PNG/Backgrounds/colored_desert.png",
+                    "defaultFlipX": false,
+                    "defaultFlipY": false,
+                    "defaultSrcRect": {
+                        "h": 1.0,
+                        "w": 1.0,
+                        "x": 0.0,
+                        "y": 0.0
+                    },
                     "defaultTileSize": {
                         "x": 21.600000381469727,
                         "y": 21.600000381469727
                     },
+                    "defaultVisible": true,
                     "layerOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -151,7 +160,6 @@
                         "./audio/AngryBird/Sfx - Ice Light Collision A7.mp3",
                         "./audio/AngryBird/Sfx - Ice Light Collision A8.mp3"
                     ],
-                    "health": 50.0,
                     "maxHealth": 50.0,
                     "stageImages": [
                         "/assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass021.png",
@@ -265,7 +273,6 @@
                         "./audio/AngryBird/Sfx - Ice Light Collision A7.mp3",
                         "./audio/AngryBird/Sfx - Ice Light Collision A8.mp3"
                     ],
-                    "health": 50.0,
                     "maxHealth": 50.0,
                     "stageImages": [
                         "/assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass021.png",
@@ -379,7 +386,6 @@
                         "./audio/AngryBird/Sfx - Ice Light Collision A7.mp3",
                         "./audio/AngryBird/Sfx - Ice Light Collision A8.mp3"
                     ],
-                    "health": 50.0,
                     "maxHealth": 50.0,
                     "stageImages": [
                         "/assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass021.png",
@@ -493,7 +499,6 @@
                         "./audio/AngryBird/Sfx - Ice Light Collision A7.mp3",
                         "./audio/AngryBird/Sfx - Ice Light Collision A8.mp3"
                     ],
-                    "health": 50.0,
                     "maxHealth": 50.0,
                     "stageImages": [
                         "/assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass021.png",
@@ -607,7 +612,6 @@
                         "./audio/AngryBird/Sfx - Ice Light Collision A7.mp3",
                         "./audio/AngryBird/Sfx - Ice Light Collision A8.mp3"
                     ],
-                    "health": 50.0,
                     "maxHealth": 50.0,
                     "stageImages": [
                         "/assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass021.png",
@@ -721,7 +725,6 @@
                         "./audio/AngryBird/Sfx - Ice Light Collision A7.mp3",
                         "./audio/AngryBird/Sfx - Ice Light Collision A8.mp3"
                     ],
-                    "health": 50.0,
                     "maxHealth": 50.0,
                     "stageImages": [
                         "/assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass021.png",
@@ -835,7 +838,6 @@
                         "./audio/AngryBird/Sfx - Ice Light Collision A7.mp3",
                         "./audio/AngryBird/Sfx - Ice Light Collision A8.mp3"
                     ],
-                    "health": 50.0,
                     "maxHealth": 50.0,
                     "stageImages": [
                         "/assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass021.png",
@@ -949,7 +951,6 @@
                         "./audio/AngryBird/Sfx - Ice Light Collision A7.mp3",
                         "./audio/AngryBird/Sfx - Ice Light Collision A8.mp3"
                     ],
-                    "health": 50.0,
                     "maxHealth": 50.0,
                     "stageImages": [
                         "/assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass021.png",
@@ -1052,10 +1053,19 @@
                 },
                 "TileLayer": {
                     "atlasPath": "/assets/Kenney/Physics Assets/PNG/Other/grass.png",
+                    "defaultFlipX": false,
+                    "defaultFlipY": false,
+                    "defaultSrcRect": {
+                        "h": 1.0,
+                        "w": 1.0,
+                        "x": 0.0,
+                        "y": 0.0
+                    },
                     "defaultTileSize": {
                         "x": 1.0,
                         "y": 1.0
                     },
+                    "defaultVisible": true,
                     "layerOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -3051,7 +3061,7 @@
             "physics": false,
             "position": {
                 "x": 0.0,
-                "y": -8.800000190734863
+                "y": -8.5
             },
             "rotation": 0.0,
             "size": {
@@ -3153,7 +3163,11 @@
         },
         "bird1": {
             "components": {
-                "AngryBirdController": null,
+                "AngryBirdController": {
+                    "forceMultiplier": 6.0,
+                    "shotLength": 4.0,
+                    "soundDamageThreshold": 5.0
+                },
                 "Circle": {
                     "circle": {
                         "positionOffset": {
@@ -3398,5 +3412,5 @@
         }
     },
     "sceneName": "Ag_Lvl_1",
-    "scenePath": "../Deployment/Scenes/Ag_Lvl_1.json"
+    "scenePath": "../Deployment/Scenes\\Ag_Lvl_1.json"
 }

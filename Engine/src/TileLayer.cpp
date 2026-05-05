@@ -63,6 +63,17 @@ namespace buki
         doc["layerTint"]["b"] = m_LayerTint.b;
         doc["layerTint"]["a"] = m_LayerTint.a;
 
+        doc["defaultSrcRect"] = {
+            {"x", m_DefaultSourceRectPixels.x},
+            {"y", m_DefaultSourceRectPixels.y},
+            {"w", m_DefaultSourceRectPixels.w},
+            {"h", m_DefaultSourceRectPixels.h}
+		};
+
+		doc["defaultFlipX"] = m_DefaultFlipX;
+		doc["defaultFlipY"] = m_DefaultFlipY;
+		doc["defaultVisible"] = m_DefaultVisible;
+
         doc["tiles"] = json::array();
 
         for (const TileDrawData& tile : m_Tiles)
@@ -108,6 +119,43 @@ namespace buki
         m_LayerTint.g = doc["layerTint"].value("g", 1.0f);
         m_LayerTint.b = doc["layerTint"].value("b", 1.0f);
         m_LayerTint.a = doc["layerTint"].value("a", 1.0f);
+
+        if (doc.contains("defaultSrcRect") && doc["defaultSrcRect"].is_object())
+        {
+            m_DefaultSourceRectPixels.x = doc["defaultSrcRect"].value("x", 0.0f);
+            m_DefaultSourceRectPixels.y = doc["defaultSrcRect"].value("y", 0.0f);
+            m_DefaultSourceRectPixels.w = doc["defaultSrcRect"].value("w", 1.0f);
+            m_DefaultSourceRectPixels.h = doc["defaultSrcRect"].value("h", 1.0f);
+        }
+        else
+        {
+            m_DefaultSourceRectPixels = { 0.0f, 0.0f, 1.0f, 1.0f };
+		}
+
+        if (doc.contains("defaultFlipX"))
+        {
+            m_DefaultFlipX = doc.value("defaultFlipX", false);
+        }
+        else
+        {
+            m_DefaultFlipX = false;
+		}
+        if (doc.contains("defaultFlipY"))
+        {
+            m_DefaultFlipY = doc.value("defaultFlipY", false);
+        }
+        else
+        {
+            m_DefaultFlipY = false;
+        }
+        if (doc.contains("defaultVisible"))
+        {
+            m_DefaultVisible = doc.value("defaultVisible", true);
+        }
+        else
+        {
+            m_DefaultVisible = true;
+		}
 
         m_Tiles.clear();
 

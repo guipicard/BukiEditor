@@ -62,5 +62,6 @@ namespace buki
 		virtual const std::string& GetCurrentScenePath() const = 0; // Retourne le chemin de la scène actuelle.
         virtual bool HasCurrentScenePath() const = 0;
         virtual bool SaveCurrentScene() const = 0;
+        virtual bool RenameEntity(Entity* entity, const std::string& newName) = 0;
     };
 }

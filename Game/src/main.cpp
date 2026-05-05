@@ -10,6 +10,8 @@
 #include "AGLevel3.h"
 #include "SceneTest.h"
 #include "Platformer.h"
+#include "GameComponentRegistration.h"
+#include "EngineComponentRegistration.h"
 #include <string>
 
 using namespace buki;
@@ -29,10 +31,12 @@ void InitGameplay(void) {
 	Engine::Get().World().SetLoadScene("Menu");
 }
 
-INT WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ PSTR, _In_ INT) { {}
-if (Engine::Get().Init("Buki Engine", 1920, 1080)) {
-	InitGameplay();
-	Engine::Get().Start();
-}
-return 0;
+INT WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ PSTR, _In_ INT) {
+	buki::RegisterEngineComponents();
+	game::RegisterGameComponents();
+	if (Engine::Get().Init("Buki Engine", 1920, 1080)) {
+		InitGameplay();
+		Engine::Get().Start();
+	}
+	return 0;
 }

@@ -1,8 +1,12 @@
 #include "EditorLayer.h"
 
 #include "Engine.h"
+#include "Entity.h"
 #include "imgui.h"
 #include "imgui_internal.h"
+
+#include "EditorViewportFramebuffer.h"
+#include <glad/glad.h>
 
 void buki::EditorLayer::Render()
 {
@@ -28,10 +32,84 @@ void buki::EditorLayer::Render()
 		contentBrowserPanel.Render(state);
 	}
 
+	RenderSceneViewport();
+
 	if (state.showDemoWindow)
 	{
 		ImGui::ShowDemoWindow(&state.showDemoWindow);
 	}
+}
+
+void buki::EditorLayer::RenderSceneViewport()
+{
+	int renderWidth = static_cast<int>(state.viewportWidth);
+	int renderHeight = static_cast<int>(state.viewportHeight);
+
+	if (state.lockViewportRenderSize)
+	{
+		renderWidth = state.lockedViewportWidth;
+		renderHeight = state.lockedViewportHeight;
+	}
+
+	if (renderWidth <= 0 || renderHeight <= 0)
+	{
+		return;
+	}
+
+
+	if (!EditorViewportFramebuffer::Resize(state, renderWidth, renderHeight))
+	{
+		return;
+	}
+
+
+	GLint previousFramebuffer = 0;
+	GLint previousViewport[4] = {};
+	GLboolean depthTestWasEnabled = glIsEnabled(GL_DEPTH_TEST);
+	GLboolean blendWasEnabled = glIsEnabled(GL_BLEND);
+	GLboolean previousDepthMask = GL_TRUE;
+
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &previousFramebuffer);
+	glGetIntegerv(GL_VIEWPORT, previousViewport);
+	glGetBooleanv(GL_DEPTH_WRITEMASK, &previousDepthMask);
+
+	EditorViewportFramebuffer::Bind(state);
+
+	glViewport(0, 0, state.sceneFramebufferWidth, state.sceneFramebufferHeight);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+
+	glClearColor(0.12f, 0.12f, 0.14f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+	Engine::Get().World().Render(1.0f);
+
+	if (depthTestWasEnabled)
+	{
+		glEnable(GL_DEPTH_TEST);
+	}
+	else
+	{
+		glDisable(GL_DEPTH_TEST);
+	}
+
+	glDepthMask(previousDepthMask);
+
+	if (blendWasEnabled)
+	{
+		glEnable(GL_BLEND);
+	}
+	else
+	{
+		glDisable(GL_BLEND);
+	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, static_cast<GLuint>(previousFramebuffer));
+	glViewport(previousViewport[0], previousViewport[1], previousViewport[2], previousViewport[3]);
 }
 
 void buki::EditorLayer::DrawDockspace()
@@ -81,10 +159,12 @@ void buki::EditorLayer::BuildDefaultLayout(ImGuiID dockspaceId)
 	ImGuiID dock_left_id = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Left, 0.22f, nullptr, &dock_main_id);
 	ImGuiID dock_right_id = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Right, 0.28f, nullptr, &dock_main_id);
 	ImGuiID dock_bottom_id = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Down, 0.25f, nullptr, &dock_main_id);
+	ImGuiID dock_demo_id = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Right, 0.35f, nullptr, &dock_main_id);
 
 	ImGui::DockBuilderDockWindow("Hierarchy", dock_left_id);
 	ImGui::DockBuilderDockWindow("Inspector", dock_right_id);
 	ImGui::DockBuilderDockWindow("Scene", dock_main_id);
+	ImGui::DockBuilderDockWindow("ImGui Demo", dock_demo_id);
 	ImGui::DockBuilderDockWindow("Content Browser", dock_bottom_id);
 
 	ImGui::DockBuilderFinish(dockspaceId);

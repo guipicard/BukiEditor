@@ -11,7 +11,9 @@
     "entities": {
         "test": {
             "components": {
-                "OpenGlTest": null
+                "OpenGlTest": {
+                    "playerTexturePath": "./assets/Samurai/HURT.png"
+                }
             },
             "enable": true,
             "layer": "",

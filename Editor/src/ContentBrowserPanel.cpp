@@ -1,6 +1,7 @@
 #include "ContentBrowserPanel.h"
 
 #include "Engine.h"
+#include "Entity.h"
 #include "imgui.h"
 
 #include <filesystem>
@@ -101,6 +102,10 @@ void buki::ContentBrowserPanel::Render(EditorState& state)
 					state.selectedScenePath = path;
 					state.selectedEntity = nullptr;
 					state.sceneDirty = false;
+					for (auto entity : world->GetEntitiesInWorld())
+					{
+						entity->Set();
+					}
 				}
 			}
 		}

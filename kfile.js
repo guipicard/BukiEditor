@@ -1,8 +1,8 @@
 const exeNames = {Game: "Game", Editor: "Editor"};
 const startupProject = exeNames.Editor;
 const editorDependencies = {
-    Game: ["Engine", "Box2D"],
-    Editor: ["Engine", "Box2D", "imgui-docking"]
+    Game: ["UserProject", "Engine", "Box2D"],
+    Editor: ["UserProject", "Engine", "Box2D", "imgui-docking"]
 }
 
 
@@ -22,18 +22,21 @@ project.kore = false;
 
 
 const gameproj = await project.addProject("./Game");
+const userProject = await project.addProject("./UserProject");
 const editorproj = await project.addProject("./Editor");
 const engineproj = await project.addProject("./Engine");
 const boxproj = await project.addProject("./vendor/Box2D");
 const imguiproj = await project.addProject("./vendor/imgui-docking");
 
 gameproj.addIncludeDir("./vendor/Visual Leak Detector 2019/include");
+userProject.addIncludeDir("./vendor/Visual Leak Detector 2019/include");
 engineproj.addIncludeDir("./vendor/Visual Leak Detector 2019/include");
 boxproj.addIncludeDir("./vendor/Visual Leak Detector 2019/include");
 imguiproj.addIncludeDir("./vendor/Visual Leak Detector 2019/include");
 editorproj.addIncludeDir("./vendor/Visual Leak Detector 2019/include");
 
 gameproj.parent = null;
+userProject.parent = null;
 engineproj.parent = null;
 boxproj.parent = null;
 imguiproj.parent = null;
@@ -80,6 +83,7 @@ editorproj.addLib(path.resolve("./vendor/SDL3_ttf-devel-3.1.0-VC/SDL3_ttf-3.1.0/
 editorproj.addLib(path.resolve("./build/x64/Debug/Box2D"));
 editorproj.addLib(path.resolve("./build/x64/Debug/imgui-docking"));
 editorproj.addLib(path.resolve("./build/x64/Debug/Engine"));
+editorproj.addLib(path.resolve("./build/x64/Debug/UserProject"));
 editorproj.addLib("opengl32");
 
 gameproj.addLib(path.resolve("./vendor/SDL3-3.4.4/lib/x64/SDL3"));
@@ -87,7 +91,7 @@ gameproj.addLib(path.resolve("./vendor/SDL3_mixer-devel-3.2.0-VC/SDL3_mixer-3.2.
 gameproj.addLib(path.resolve("./vendor/SDL3_ttf-devel-3.1.0-VC/SDL3_ttf-3.1.0/lib/x64/SDL3_ttf"));
 gameproj.addLib(path.resolve("./build/x64/Debug/Box2D"));
 gameproj.addLib(path.resolve("./build/x64/Debug/Engine"));
-
+gameproj.addLib(path.resolve("./build/x64/Debug/UserProject"));
 
 resolve(project)
 

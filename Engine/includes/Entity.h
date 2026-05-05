@@ -8,6 +8,7 @@
 #include "Subject.h"
 #include "PhysicsService.h"
 #include "Component.h"
+#include "ComponentFactory.h"
 #include "nlohmann/json.hpp"
 
 using json = nlohmann::json;
@@ -16,7 +17,7 @@ namespace buki
 {
 	class Entity final
 	{
-	public:	
+	public:
 		virtual ~Entity() = default;
 		Entity();
 		Entity(std::string _name);
@@ -41,12 +42,16 @@ namespace buki
 
 		void Enable() { enabled = true; }
 		void Disable() { enabled = false; }
-		bool GetEnabled() const { return enabled; }
+		void SetEnable(bool _enabled) { enabled = _enabled; }
+		bool IsEnabled() const { return enabled; }
 
 		json Serialize() const;
 		void Deserialize(json _doc);
 		void Set();
-		
+
+		bool RemoveComponentByTypeName(const std::string& typeName);
+		bool CanRemoveComponent(const std::string& typeName) const;
+
 		template<typename T>
 		T* AddComponent()
 		{
@@ -73,6 +78,40 @@ namespace buki
 
 			return cmp;
 		}
+
+		bool Entity::AddComponentByTypeName(const std::string& name)
+		{
+			if (name.empty())
+			{
+				return false;
+			}
+
+			buki::Component* cmp = buki::ComponentFactory::CreateCmp(this, name, json{});
+			if (cmp == nullptr)
+			{
+				return false;
+			}
+
+			m_ComponentByType.emplace(&typeid(*cmp), cmp);
+
+			if (IDrawable* drawable = dynamic_cast<IDrawable*>(cmp))
+			{
+				m_Drawable.push_back(drawable);
+			}
+
+			if (IUpdatable* updatable = dynamic_cast<IUpdatable*>(cmp))
+			{
+				m_Updatable.push_back(updatable);
+			}
+
+			if (IFixedUpdatable* fixedUpdatable = dynamic_cast<IFixedUpdatable*>(cmp))
+			{
+				m_FixedUpdatable.push_back(fixedUpdatable);
+			}
+
+			return true;
+		}
+
 		template<typename T>
 		T* GetComponent()
 		{
@@ -89,7 +128,7 @@ namespace buki
 		T* GetComponentOfType()
 		{
 			const type_info* type = &typeid(T);
-			for each (std::pair<const type_info*, Component*> cmp in m_ComponentByType)
+			for each(std::pair<const type_info*, Component*> cmp in m_ComponentByType)
 			{
 				if (dynamic_cast<T*>(cmp.second) && type != cmp.first)
 				{
@@ -114,11 +153,34 @@ namespace buki
 			return components;
 		}
 
+		template<typename T>
+		bool HasComponent()
+		{
+			const type_info* type = &typeid(T);
+			return m_ComponentByType.find(type) != m_ComponentByType.end();
+		}
+
+		bool HasComponent(std::string name)
+		{
+			for each(std::pair<const type_info*, Component*> cmp in m_ComponentByType)
+			{
+				std::string cmpTypeName = buki::ComponentFactory::GetTypeName(*cmp.first);
+
+				if (cmpTypeName == name)
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		std::map<const type_info*, Component*> GetComponents() const { return m_ComponentByType; }
 	private:
 		std::string m_Name;
 
 		Transform* transform;
-		
+
 		std::map<const type_info*, Component*> m_ComponentByType;
 		std::vector<IDrawable*> m_Drawable;
 		std::vector<IUpdatable*> m_Updatable;
@@ -126,7 +188,7 @@ namespace buki
 
 		bool m_Physics = false;
 		bool enabled = true;
-		
+
 		int zAxis = 0;
 		std::string layer;
 	};

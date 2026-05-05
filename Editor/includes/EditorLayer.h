@@ -14,7 +14,7 @@ namespace buki
 	public:
 		EditorLayer() = default;
 		void Render();
-
+		void RenderSceneViewport();
 		EditorState& State() { return state; }
 
 	private:

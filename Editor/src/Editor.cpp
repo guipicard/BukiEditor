@@ -14,6 +14,8 @@
 #include <windows.h>
 #endif
 
+#include "EditorViewportFramebuffer.h"
+
 buki::Editor::Editor() = default;
 buki::Editor::~Editor() = default;
 
@@ -102,6 +104,8 @@ void buki::Editor::Render()
 	ImGui::Render();
 
 	glViewport(0, 0, static_cast<int>(io.DisplaySize.x), static_cast<int>(io.DisplaySize.y));
+	glDepthMask(GL_TRUE);
+	glEnable(GL_DEPTH_TEST);
 	glClearColor(
 		clearColor[0] * clearColor[3],
 		clearColor[1] * clearColor[3],
@@ -137,6 +141,7 @@ void buki::Editor::Present()
 
 void buki::Editor::Shutdown()
 {
+	EditorViewportFramebuffer::Shutdown(editorLayer.State());
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL3_Shutdown();
 	ImGui::DestroyContext();

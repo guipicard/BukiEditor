@@ -369,6 +369,36 @@ bool buki::WorldService::SaveCurrentScene() const
 	return SaveScene(m_CurrentScenePath);
 }
 
+bool buki::WorldService::RenameEntity(Entity* entity, const std::string& newName)
+{
+	if (entity == nullptr || newName.empty())
+	{
+		return false;
+	}
+
+	const std::string oldName = entity->GetName();
+	if (oldName == newName)
+	{
+		return true;
+	}
+
+	auto existing = m_EntityMap.find(newName);
+	if (existing != m_EntityMap.end() && existing->second != entity)
+	{
+		return false;
+	}
+
+	auto it = m_EntityMap.find(oldName);
+	if (it != m_EntityMap.end() && it->second == entity)
+	{
+		m_EntityMap.erase(it);
+	}
+
+	entity->SetName(newName);
+	m_EntityMap[newName] = entity;
+	return true;
+}
+
 void buki::WorldService::CleanEntities()
 {
 	if (m_EntityToRemove.size() > 0)

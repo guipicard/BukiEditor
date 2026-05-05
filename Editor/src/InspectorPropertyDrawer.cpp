@@ -1,0 +1,354 @@
+#include "InspectorPropertyDrawer.h"
+#include "Component.h"
+#include "MonoBehaviour.h"
+#include "Engine.h"
+#include "Entity.h"
+#include "IWorld.h"
+#include "PropertyInfo.h"
+#include "imgui.h"
+#include "ComponentFactory.h"
+
+bool buki::InspectorPropertyDrawer::DrawComponent(Component* component, std::string* name)
+{
+	if (component == nullptr)
+	{
+		return false;
+	}
+
+	MonoBehaviour* behaviour = dynamic_cast<MonoBehaviour*>(component);
+	if (behaviour != nullptr)
+	{
+		return DrawMonoBehaviour(behaviour, name);
+	}
+
+	return false;
+}
+
+bool buki::InspectorPropertyDrawer::DrawMonoBehaviour(MonoBehaviour* behaviour, std::string* name)
+{
+	if (behaviour == nullptr)
+	{
+		return false;
+	}
+
+	bool changed = false;
+	std::string cmpName = ComponentFactory::GetTypeName(typeid(*behaviour));
+	*name = cmpName;
+	if (cmpName.empty())
+	{
+		cmpName = "MonoBehaviour";
+	}
+
+	if (ImGui::TreeNodeEx(cmpName.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		for (const PropertyInfo& prop : behaviour->GetProperties())
+		{
+			char* base = reinterpret_cast<char*>(behaviour);
+			void* fieldPtr = base + prop.offset;
+
+			ImGui::PushID(prop.name.c_str());
+			changed |= DrawProperty(prop, fieldPtr);
+			ImGui::PopID();
+		}
+		ImGui::TreePop();
+	}
+
+	behaviour->OnInspectorGUI();
+	return changed;
+}
+
+bool buki::InspectorPropertyDrawer::DrawProperty(const PropertyInfo& prop, void* fieldPtr)
+{
+	switch (prop.type)
+	{
+	case PropertyType::Int:
+		return DrawIntProperty(prop, fieldPtr);
+	case PropertyType::Float:
+		return DrawFloatProperty(prop, fieldPtr);
+	case PropertyType::Bool:
+		return DrawBoolProperty(prop, fieldPtr);
+	case PropertyType::String:
+		return DrawStringProperty(prop, fieldPtr);
+	case PropertyType::StringList:
+		return DrawStringListProperty(prop, fieldPtr);
+	case PropertyType::ImageAsset:
+		return DrawAssetPicker(prop, fieldPtr, "IMAGE");
+	case PropertyType::AudioAsset:
+		return DrawAssetPicker(prop, fieldPtr, "AUDIO");
+	case PropertyType::EntityRef:
+		return DrawEntityPicker(prop, fieldPtr);
+	case PropertyType::PrefabRef:
+		return DrawPrefabPicker(prop, fieldPtr);
+	default:
+		return false;
+	}
+}
+
+bool buki::InspectorPropertyDrawer::DrawIntProperty(const PropertyInfo& prop, void* fieldPtr)
+{
+	int* value = reinterpret_cast<int*>(fieldPtr);
+	if (prop.hasMin && prop.hasMax)
+		return ImGui::SliderInt(prop.name.c_str(), value, static_cast<int>(prop.minValue), static_cast<int>(prop.maxValue));
+	return ImGui::DragInt(prop.name.c_str(), value, prop.dragSpeed);
+}
+
+bool buki::InspectorPropertyDrawer::DrawFloatProperty(const PropertyInfo& prop, void* fieldPtr)
+{
+	float* value = reinterpret_cast<float*>(fieldPtr);
+	if (prop.hasMin && prop.hasMax)
+		return ImGui::SliderFloat(prop.name.c_str(), value, prop.minValue, prop.maxValue);
+	return ImGui::DragFloat(prop.name.c_str(), value, prop.dragSpeed);
+}
+
+bool buki::InspectorPropertyDrawer::DrawBoolProperty(const PropertyInfo& prop, void* fieldPtr)
+{
+	bool* value = reinterpret_cast<bool*>(fieldPtr);
+	return ImGui::Checkbox(prop.name.c_str(), value);
+}
+
+bool buki::InspectorPropertyDrawer::DrawStringProperty(const PropertyInfo& prop, void* fieldPtr)
+{
+	std::string* value = reinterpret_cast<std::string*>(fieldPtr);
+	char buffer[256] = {};
+	std::strncpy(buffer, value->c_str(), sizeof(buffer) - 1);
+
+	if (ImGui::InputText(prop.name.c_str(), buffer, sizeof(buffer)))
+	{
+		*value = buffer;
+		return true;
+	}
+	return false;
+}
+
+bool buki::InspectorPropertyDrawer::DrawStringListProperty(const PropertyInfo& prop, void* fieldPtr)
+{
+	std::vector<std::string>* values = reinterpret_cast<std::vector<std::string>*>(fieldPtr);
+
+	ImGui::Text("%s", prop.name.c_str());
+	ImGui::Indent();
+
+	bool changed = false;
+	int removeIndex = -1;
+
+	for (int i = 0; i < static_cast<int>(values->size()); ++i)
+	{
+		ImGui::PushID(i);
+
+		char buffer[256] = {};
+		std::strncpy(buffer, (*values)[i].c_str(), sizeof(buffer) - 1);
+
+		ImGui::SetNextItemWidth(220.0f);
+		if (ImGui::InputText("##value", buffer, sizeof(buffer)))
+		{
+			(*values)[i] = buffer;
+			changed = true;
+		}
+
+		ImGui::SameLine();
+		if (ImGui::Button("-"))
+		{
+			removeIndex = i;
+		}
+
+		ImGui::PopID();
+	}
+
+	if (removeIndex >= 0)
+	{
+		values->erase(values->begin() + removeIndex);
+		changed = true;
+	}
+
+	if (ImGui::Button(("Add##" + prop.name).c_str()))
+	{
+		values->push_back("");
+		changed = true;
+	}
+
+	ImGui::Unindent();
+	return changed;
+}
+
+bool buki::InspectorPropertyDrawer::DrawAssetPicker(const PropertyInfo& prop, void* fieldPtr, const char* payloadType)
+{
+	std::string* path = reinterpret_cast<std::string*>(fieldPtr);
+	bool changed = false;
+
+	ImGui::Text("%s", prop.name.c_str());
+	ImGui::SameLine(180.0f);
+
+	char buffer[256] = {};
+	std::strncpy(buffer, path->c_str(), sizeof(buffer) - 1);
+
+	ImGui::SetNextItemWidth(220.0f);
+	if (ImGui::InputText(("##" + prop.name).c_str(), buffer, sizeof(buffer)))
+	{
+		*path = buffer;
+		changed = true;
+	}
+
+	ImGui::SameLine();
+	if (ImGui::Button(("...##" + prop.name).c_str()))
+	{
+		ImGui::OpenPopup(("AssetPicker##" + prop.name).c_str());
+	}
+
+	if (ImGui::BeginPopup(("AssetPicker##" + prop.name).c_str()))
+	{
+		ImGui::Text("Drop %s asset here", payloadType);
+		ImGui::Separator();
+
+		if (ImGui::Selectable("Clear"))
+		{
+			path->clear();
+			changed = true;
+		}
+
+		ImGui::EndPopup();
+	}
+
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadType))
+		{
+			const char* dropped = static_cast<const char*>(payload->Data);
+			*path = dropped ? dropped : "";
+			changed = true;
+		}
+		ImGui::EndDragDropTarget();
+	}
+
+	return changed;
+}
+
+bool buki::InspectorPropertyDrawer::DrawEntityPicker(const PropertyInfo& prop, void* fieldPtr)
+{
+	std::string* entityId = reinterpret_cast<std::string*>(fieldPtr);
+	bool changed = false;
+
+	ImGui::Text("%s", prop.name.c_str());
+	ImGui::SameLine(180.0f);
+
+	const char* preview = entityId->empty() ? "None" : entityId->c_str();
+	if (ImGui::Button(preview, ImVec2(220.0f, 0.0f)))
+	{
+		ImGui::OpenPopup(("EntityPicker##" + prop.name).c_str());
+	}
+
+	if (ImGui::BeginPopup(("EntityPicker##" + prop.name).c_str()))
+	{
+		if (ImGui::Selectable("None"))
+		{
+			entityId->clear();
+			changed = true;
+		}
+
+		IWorld& world = Engine::Get().World();
+		// Replace with your actual scene/entity access
+		for (Entity* entity : world.GetEntitiesInWorld())
+		{
+			if (entity == nullptr)
+			{
+				continue;
+			}
+
+			const std::string& name = entity->GetName();
+			if (ImGui::Selectable(name.c_str()))
+			{
+				*entityId = name;
+				changed = true;
+			}
+		}
+
+		ImGui::EndPopup();
+	}
+
+	return changed;
+}
+
+bool buki::InspectorPropertyDrawer::DrawPrefabPicker(const PropertyInfo& prop, void* fieldPtr)
+{
+	std::string* prefabPath = reinterpret_cast<std::string*>(fieldPtr);
+	bool changed = false;
+
+	ImGui::Text("%s", prop.name.c_str());
+	ImGui::SameLine(180.0f);
+
+	char buffer[256] = {};
+	std::strncpy(buffer, prefabPath->c_str(), sizeof(buffer) - 1);
+
+	ImGui::SetNextItemWidth(220.0f);
+	if (ImGui::InputText(("##" + prop.name).c_str(), buffer, sizeof(buffer)))
+	{
+		*prefabPath = buffer;
+		changed = true;
+	}
+
+	ImGui::SameLine();
+	if (ImGui::Button(("...##" + prop.name).c_str()))
+	{
+		ImGui::OpenPopup(("PrefabPicker##" + prop.name).c_str());
+	}
+
+	if (ImGui::BeginPopup(("PrefabPicker##" + prop.name).c_str()))
+	{
+		ImGui::Text("Choose a prefab");
+		ImGui::Separator();
+
+		if (ImGui::Selectable("Clear"))
+		{
+			prefabPath->clear();
+			changed = true;
+		}
+
+		ImGui::EndPopup();
+	}
+
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("PREFAB"))
+		{
+			const char* dropped = static_cast<const char*>(payload->Data);
+			*prefabPath = dropped ? dropped : "";
+			changed = true;
+		}
+		ImGui::EndDragDropTarget();
+	}
+
+	return changed;
+}
+
+bool buki::InspectorPropertyDrawer::DrawAddComponentPopup(Entity* owner)
+{
+	if (owner == nullptr)
+		return false;
+
+	bool changed = false;
+
+	if (ImGui::Button("Add Component"))
+		ImGui::OpenPopup("AddComponentPopup");
+
+	if (ImGui::BeginPopup("AddComponentPopup"))
+	{
+		if (ImGui::BeginMenu("Registered Components"))
+		{
+			for (const std::string& typeName : ComponentFactory::GetRegisteredTypeNames())
+			{
+				if (ImGui::MenuItem(typeName.c_str()))
+				{
+					if (!owner->HasComponent(typeName))
+					{
+						owner->AddComponentByTypeName(typeName);
+						changed = true;
+					}
+					ImGui::CloseCurrentPopup();
+				}
+			}
+			ImGui::EndMenu();
+		}
+
+		ImGui::EndPopup();
+	}
+
+	return changed;
+}

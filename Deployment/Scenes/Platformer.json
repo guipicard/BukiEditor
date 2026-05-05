@@ -11,7 +11,9 @@
     "entities": {
         "AnimTest": {
             "components": {
-                "AnimTest": null
+                "AnimTest": {
+                    "jumpSFXPath": "/audio/AngryBird/Sfx - Wood Collision A1.mp3"
+                }
             },
             "enable": true,
             "layer": "",
@@ -31,10 +33,19 @@
             "components": {
                 "TileLayer": {
                     "atlasPath": "/assets/Kenney/Physics Assets/PNG/Backgrounds/colored_shroom.png",
+                    "defaultFlipX": false,
+                    "defaultFlipY": false,
+                    "defaultSrcRect": {
+                        "h": 1.0,
+                        "w": 1.0,
+                        "x": 0.0,
+                        "y": 0.0
+                    },
                     "defaultTileSize": {
                         "x": 21.600000381469727,
                         "y": 21.600000381469727
                     },
+                    "defaultVisible": true,
                     "layerOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -157,10 +168,19 @@
                 },
                 "TileLayer": {
                     "atlasPath": "/assets/Kenney/Physics Assets/PNG/Other/dirt.png",
+                    "defaultFlipX": false,
+                    "defaultFlipY": false,
+                    "defaultSrcRect": {
+                        "h": 1.0,
+                        "w": 1.0,
+                        "x": 0.0,
+                        "y": 0.0
+                    },
                     "defaultTileSize": {
                         "x": 1.0,
                         "y": 1.0
                     },
+                    "defaultVisible": true,
                     "layerOffset": {
                         "x": 0.0,
                         "y": 0.0
