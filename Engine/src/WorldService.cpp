@@ -12,6 +12,11 @@
 #include <fstream>
 #include <exception>
 #include "nlohmann/json.hpp"
+#include <string>
+#include <filesystem>
+
+using json = nlohmann::json;
+namespace fs = std::filesystem;
 
 buki::WorldService::WorldService()
 {
@@ -90,6 +95,16 @@ void buki::WorldService::Remove(Entity* _entity)
 	{
 		m_EntityToRemove.emplace_back(_entity);
 	}
+}
+
+void buki::WorldService::RemoveFromScene(Entity* _entity)
+{
+	if (_entity == nullptr)
+	{
+		return;
+	}
+	Remove(_entity);
+	CleanEntities();
 }
 
 buki::Entity* buki::WorldService::FindEntityByName(std::string _name)
@@ -399,6 +414,54 @@ bool buki::WorldService::RenameEntity(Entity* entity, const std::string& newName
 	return true;
 }
 
+std::string buki::WorldService::MakeUniqueEntityName(const std::string& baseName) const
+{
+	if (baseName.empty())
+	{
+		return "Entity";
+	}
+
+	std::string candidate = baseName;
+	int index = 1;
+	while (buki::Engine::Get().GetWorldPtr()->FindEntityByName(candidate) != nullptr)
+	{
+		candidate = baseName + " (" + std::to_string(index) + ")";
+		++index;
+	}
+
+	return candidate;
+}
+
+buki::Entity* buki::WorldService::InstantiatePrefab(const std::string& prefabPath)
+{
+	if (prefabPath.empty())
+	{
+		return nullptr;
+	}
+
+	std::ifstream in(prefabPath);
+	if (!in.is_open())
+	{
+		return nullptr;
+	}
+
+	json doc;
+	in >> doc;
+
+	fs::path path(prefabPath);
+	std::string baseName = path.stem().string();
+	std::string uniqueName = MakeUniqueEntityName(baseName);
+
+	Entity* entity = CreateEntity(uniqueName);
+	if (entity == nullptr)
+	{
+		return nullptr;
+	}
+
+	entity->Deserialize(doc);
+	entity->SetName(uniqueName);
+	return entity;
+}
 void buki::WorldService::CleanEntities()
 {
 	if (m_EntityToRemove.size() > 0)
@@ -434,3 +497,4 @@ void buki::WorldService::CleanEntities()
 		m_EntityToRemove.clear();
 	}
 }
+

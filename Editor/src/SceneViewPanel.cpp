@@ -1,8 +1,13 @@
 #include "SceneViewPanel.h"
 
 #include "imgui.h"
+#include "Engine.h"
 #include <cstdint>
 #include <algorithm>
+
+#include <fstream>
+
+namespace fs = std::filesystem;
 
 namespace
 {
@@ -215,6 +220,22 @@ void buki::SceneViewPanel::Render(EditorState& state)
 			ImVec2(0, 1),
 			ImVec2(1, 0)
 		);
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("PREFAB"))
+			{
+				const char* droppedPath = static_cast<const char*>(payload->Data);
+				if (droppedPath != nullptr)
+				{
+					Entity* entity = buki::Engine::Get().World().InstantiatePrefab(fs::path(droppedPath).string());
+					if (entity != nullptr)
+					{
+						// optional: place at camera/world mouse position here
+					}
+				}
+			}
+			ImGui::EndDragDropTarget();
+		}
 
 		if (state.viewportDisplayMode != ViewportDisplayMode::Stretch)
 		{

@@ -7,6 +7,7 @@
 #include "PropertyInfo.h"
 #include "imgui.h"
 #include "ComponentFactory.h"
+#include "EntityRef.h"
 
 bool buki::InspectorPropertyDrawer::DrawComponent(Component* component, std::string* name)
 {
@@ -223,14 +224,30 @@ bool buki::InspectorPropertyDrawer::DrawAssetPicker(const PropertyInfo& prop, vo
 
 bool buki::InspectorPropertyDrawer::DrawEntityPicker(const PropertyInfo& prop, void* fieldPtr)
 {
-	std::string* entityId = reinterpret_cast<std::string*>(fieldPtr);
+	EntityRef* ref = reinterpret_cast<EntityRef*>(fieldPtr);
+	if (ref == nullptr)
+		return false;
+
 	bool changed = false;
 
 	ImGui::Text("%s", prop.name.c_str());
 	ImGui::SameLine(180.0f);
 
-	const char* preview = entityId->empty() ? "None" : entityId->c_str();
-	if (ImGui::Button(preview, ImVec2(220.0f, 0.0f)))
+	std::string previewText = "None";
+	if (ref->cached != nullptr)
+	{
+		previewText = ref->cached->GetName();
+	}
+	else if (!ref->entityName.empty())
+	{
+		previewText = ref->entityName;
+	}
+	else if (!ref->prefabPath.empty())
+	{
+		previewText = ref->prefabPath;
+	}
+
+	if (ImGui::Button(previewText.c_str(), ImVec2(220.0f, 0.0f)))
 	{
 		ImGui::OpenPopup(("EntityPicker##" + prop.name).c_str());
 	}
@@ -239,28 +256,58 @@ bool buki::InspectorPropertyDrawer::DrawEntityPicker(const PropertyInfo& prop, v
 	{
 		if (ImGui::Selectable("None"))
 		{
-			entityId->clear();
+			ref->Clear();
 			changed = true;
 		}
 
 		IWorld& world = Engine::Get().World();
-		// Replace with your actual scene/entity access
 		for (Entity* entity : world.GetEntitiesInWorld())
 		{
 			if (entity == nullptr)
-			{
 				continue;
-			}
 
-			const std::string& name = entity->GetName();
-			if (ImGui::Selectable(name.c_str()))
+			std::string name = entity->GetName();
+			const bool selected = (ref->entityName == name);
+
+			if (ImGui::Selectable(name.c_str(), selected))
 			{
-				*entityId = name;
+				ref->entityName = name;
+				ref->prefabPath.clear();
+				ref->cached = entity;
 				changed = true;
 			}
 		}
 
 		ImGui::EndPopup();
+	}
+
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ENTITY"))
+		{
+			Entity* droppedEntity = *static_cast<Entity* const*>(payload->Data);
+			if (droppedEntity != nullptr)
+			{
+				ref->entityName = droppedEntity->GetName();
+				ref->prefabPath.clear();
+				ref->cached = droppedEntity;
+				changed = true;
+			}
+		}
+
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("PREFAB"))
+		{
+			const char* droppedPath = static_cast<const char*>(payload->Data);
+			if (droppedPath != nullptr)
+			{
+				ref->entityName.clear();
+				ref->prefabPath = droppedPath;
+				ref->cached = nullptr;
+				changed = true;
+			}
+		}
+
+		ImGui::EndDragDropTarget();
 	}
 
 	return changed;

@@ -9,25 +9,65 @@
         "zoom": 1.0
     },
     "entities": {
-        "AnimTest": {
+        "AnimTestEntity": {
             "components": {
                 "AnimTest": {
                     "jumpSFXPath": "/audio/AngryBird/Sfx - Wood Collision A1.mp3"
+                },
+                "Box": {
+                    "box": {
+                        "size": {
+                            "x": 4.0,
+                            "y": 4.0
+                        }
+                    },
+                    "density": 0.5,
+                    "fillColor": {
+                        "a": 0.30000001192092896,
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 0.0
+                    },
+                    "fillDraw": false,
+                    "filter": 0,
+                    "friction": 0.6000000238418579,
+                    "isSensor": false,
+                    "positionOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "restitution": 0.0,
+                    "shapeColor": {
+                        "a": 1.0,
+                        "b": 0.0,
+                        "g": 0.0,
+                        "r": 1.0
+                    },
+                    "shapeDraw": true,
+                    "type": "Box"
+                },
+                "RigidBody": {
+                    "motionLocks": {
+                        "angularZ": false,
+                        "linearX": false,
+                        "linearY": false
+                    },
+                    "type": 2
                 }
             },
             "enable": true,
             "layer": "",
-            "physics": false,
+            "physics": true,
             "position": {
                 "x": 0.0,
                 "y": 0.0
             },
             "rotation": 0.0,
             "size": {
-                "x": 1.0,
-                "y": 1.0
+                "x": 8.0,
+                "y": 8.0
             },
-            "z": 3
+            "z": 1
         },
         "Background": {
             "components": {
@@ -1157,9 +1197,70 @@
                 "x": 38.0,
                 "y": 1.0
             },
-            "z": 0
+            "z": 1
+        },
+        "PolygonEntity": {
+            "components": {
+                "CameraFollow": {
+                    "target": {
+                        "entity": "AnimTestEntity",
+                        "prefab": ""
+                    }
+                },
+                "Polygon": {
+                    "density": 1.0,
+                    "fillColor": {
+                        "a": 0.886274516582489,
+                        "b": 0.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "fillDraw": true,
+                    "filter": 0,
+                    "friction": 0.6000000238418579,
+                    "isSensor": false,
+                    "polygon": {
+                        "radius": 1.0,
+                        "segments": 8
+                    },
+                    "positionOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "restitution": 0.0,
+                    "shapeColor": {
+                        "a": 1.0,
+                        "b": 1.0,
+                        "g": 0.0,
+                        "r": 0.0
+                    },
+                    "shapeDraw": true,
+                    "type": "Polygon"
+                },
+                "RigidBody": {
+                    "motionLocks": {
+                        "angularZ": false,
+                        "linearX": false,
+                        "linearY": false
+                    },
+                    "type": 2
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": true,
+            "position": {
+                "x": -4.699999809265137,
+                "y": 0.0
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 1.0,
+                "y": 1.0
+            },
+            "z": 1
         }
     },
     "sceneName": "Platformer",
-    "scenePath": "../Deployment/Scenes/Platformer.json"
+    "scenePath": "../Deployment/Scenes\\Platformer.scene"
 }

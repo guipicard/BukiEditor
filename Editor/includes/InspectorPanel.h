@@ -24,5 +24,6 @@ namespace buki
 		bool DrawCircleComponent(Component* cmp);
 		bool DrawPolygonComponent(Component* cmp);
 		std::string RemoveComponent(Component* cmp);
+		bool SaveSelectedEntityAsPrefab(Entity* entity);
 	};
 }

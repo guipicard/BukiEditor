@@ -3,9 +3,9 @@
 #include "Engine.h"
 #include "Entity.h"
 #include "imgui.h"
-
-#include <filesystem>
 #include <string>
+
+#include <fstream>
 
 namespace fs = std::filesystem;
 
@@ -13,59 +13,49 @@ void buki::ContentBrowserPanel::Render(EditorState& state)
 {
 	ImGui::Begin("Content Browser", &state.showContentBrowser);
 
+	auto* world = buki::Engine::Get().GetWorldPtr();
+
 	ImGui::TextWrapped("Path: %s", state.currentContentPath.string().c_str());
 	ImGui::Separator();
 
 	if (state.currentContentPath.has_parent_path())
 	{
 		if (ImGui::Button("Up"))
-		{
 			state.currentContentPath = state.currentContentPath.parent_path();
-		}
 	}
 
 	ImGui::SameLine();
 	if (ImGui::Button("Scenes Root"))
-	{
 		state.currentContentPath = state.scenesRootPath;
-	}
 
 	ImGui::SameLine();
+	if (ImGui::Button("Prefabs Root"))
+		state.currentContentPath = fs::path("../Deployment/Prefabs");
 
-	auto* world = buki::Engine::Get().GetWorldPtr();
-	const bool canSaveLoadedScene = (world != nullptr && world->HasCurrentScenePath());
-
-	if (!canSaveLoadedScene)
-	{
+	ImGui::SameLine();
+	bool canSaveScene = (world != nullptr && !world->GetCurrentScenePath().empty());
+	if (!canSaveScene)
 		ImGui::BeginDisabled();
-	}
 
-	if (ImGui::Button("Save Loaded Scene"))
+	if (ImGui::Button("Save Scene"))
 	{
-		if (world != nullptr && world->SaveCurrentScene())
+		if (world != nullptr)
 		{
-			state.sceneDirty = false;
-			state.selectedScenePath = std::filesystem::path(world->GetCurrentScenePath());
+			if (world->SaveCurrentScene())
+			{
+				state.sceneDirty = false;
+			}
 		}
 	}
 
-	if (!canSaveLoadedScene)
-	{
+	if (!canSaveScene)
 		ImGui::EndDisabled();
-	}
 
 	ImGui::Spacing();
 
-	if (!fs::exists(state.currentContentPath))
+	if (!fs::exists(state.currentContentPath) || !fs::is_directory(state.currentContentPath))
 	{
-		ImGui::TextUnformatted("Current path does not exist.");
-		ImGui::End();
-		return;
-	}
-
-	if (!fs::is_directory(state.currentContentPath))
-	{
-		ImGui::TextUnformatted("Current path is not a directory.");
+		ImGui::TextUnformatted("Current path is not a valid directory.");
 		ImGui::End();
 		return;
 	}
@@ -78,41 +68,73 @@ void buki::ContentBrowserPanel::Render(EditorState& state)
 		if (entry.is_directory())
 		{
 			if (ImGui::Selectable((name + "/").c_str(), false))
-			{
 				state.currentContentPath = path;
-			}
 			continue;
 		}
 
 		const std::string ext = path.extension().string();
 		const bool isSceneFile = (ext == ".json" || ext == ".scene");
-		const bool isSelected = (state.selectedScenePath == path);
+		const bool isPrefabFile = (ext == ".prefab");
 
 		if (isSceneFile)
 		{
-			if (ImGui::Selectable(name.c_str(), isSelected, ImGuiSelectableFlags_AllowDoubleClick))
+			if (ImGui::Selectable(name.c_str(), false, ImGuiSelectableFlags_AllowDoubleClick))
 			{
-				state.selectedScenePath = path;
-			}
-
-			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
-			{
-				if (world != nullptr && world->LoadScene(path.string()))
+				if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 				{
-					state.selectedScenePath = path;
-					state.selectedEntity = nullptr;
-					state.sceneDirty = false;
-					for (auto entity : world->GetEntitiesInWorld())
+					if (world != nullptr && world->LoadScene(path.string()))
 					{
-						entity->Set();
+						state.selectedScenePath = path;
+						state.selectedEntity = nullptr;
+						state.sceneDirty = false;
+
+						for (auto entity : world->GetEntitiesInWorld())
+						{
+							entity->Set();
+						}
 					}
 				}
+				else
+				{
+					state.selectedScenePath = path;
+				}
+			}
+		}
+		else if (isPrefabFile)
+		{
+			if (ImGui::Selectable(name.c_str(), false, ImGuiSelectableFlags_AllowDoubleClick))
+			{
+				if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+				{
+					world->InstantiatePrefab(path.string());
+				}
+			}
+
+			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID))
+			{
+				const std::string pathStr = path.string();
+				ImGui::SetDragDropPayload("PREFAB", pathStr.c_str(), pathStr.size() + 1);
+				ImGui::TextUnformatted(name.c_str());
+				ImGui::EndDragDropSource();
 			}
 		}
 		else
 		{
 			ImGui::TextUnformatted(name.c_str());
 		}
+	}
+
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("PREFAB"))
+		{
+			const char* dropped = static_cast<const char*>(payload->Data);
+			if (dropped != nullptr)
+			{
+				world->InstantiatePrefab(fs::path(dropped).string());
+			}
+		}
+		ImGui::EndDragDropTarget();
 	}
 
 	ImGui::End();

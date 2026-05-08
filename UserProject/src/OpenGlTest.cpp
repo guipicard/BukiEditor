@@ -117,4 +117,4 @@ void buki::OpenGlTest::OnCollisionExit(Entity* other) {}
 void buki::OpenGlTest::OnCollisionHit(Entity* other) {}
 void buki::OpenGlTest::OnSensorEnter(Entity* other){}
 void buki::OpenGlTest::OnSensorExit(Entity* other){}
-void buki::OpenGlTest::Set() {}
+void buki::OpenGlTest::OnSet() {}

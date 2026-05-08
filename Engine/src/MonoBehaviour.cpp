@@ -1,4 +1,5 @@
 #include "MonoBehaviour.h"
+#include "EntityRef.h"
 #include <string>
 
 
@@ -38,6 +39,22 @@ json buki::MonoBehaviour::Serialize()
 
 		case PropertyType::StringList:
 			doc[prop.name] = *reinterpret_cast<const std::vector<std::string>*>(fieldPtr);
+			break;
+
+		case PropertyType::ImageAsset:
+			doc[prop.name] = *reinterpret_cast<const std::string*>(fieldPtr);
+			break;
+
+		case PropertyType::AudioAsset:
+			doc[prop.name] = *reinterpret_cast<const std::string*>(fieldPtr);
+			break;
+
+		case PropertyType::EntityRef:
+			doc[prop.name] = *reinterpret_cast<const EntityRef*>(fieldPtr);
+			break;
+
+		case PropertyType::PrefabRef:
+			doc[prop.name] = *reinterpret_cast<const std::string*>(fieldPtr);
 			break;
 		}
 	}
@@ -94,6 +111,55 @@ void buki::MonoBehaviour::Deserialize(json doc)
 					doc[prop.name].get<std::vector<std::string>>();
 			}
 			break;
+
+		case PropertyType::ImageAsset:
+			if (doc[prop.name].is_string())
+			{
+				*reinterpret_cast<std::string*>(fieldPtr) = doc[prop.name].get<std::string>();
+			}
+			break;
+
+		case PropertyType::AudioAsset:
+			if (doc[prop.name].is_string())
+			{
+				*reinterpret_cast<std::string*>(fieldPtr) = doc[prop.name].get<std::string>();
+			}
+			break;
+
+		case PropertyType::EntityRef:
+			if (doc[prop.name].is_object())
+			{
+				*reinterpret_cast<EntityRef*>(fieldPtr) = doc[prop.name].get<EntityRef>();
+			}
+			break;
+
+		case PropertyType::PrefabRef:
+			if (doc[prop.name].is_string())
+			{
+				*reinterpret_cast<std::string*>(fieldPtr) = doc[prop.name].get<std::string>();
+			}
+			break;
 		}
 	}
+}
+
+void buki::MonoBehaviour::Set()
+{
+	for (const PropertyInfo& prop : GetProperties())
+	{
+		char* base = reinterpret_cast<char*>(this);
+		void* fieldPtr = base + prop.offset;
+
+		switch (prop.type)
+		{
+		case PropertyType::EntityRef:
+			ResolveEntityRef(*reinterpret_cast<EntityRef*>(fieldPtr));
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	OnSet();
 }

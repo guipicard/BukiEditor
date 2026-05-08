@@ -19,6 +19,7 @@ namespace buki
 		virtual void Destroy() override;
 		virtual void Add(Entity* _entity) override;
 		virtual void Remove(Entity* _entity) override;
+		virtual void RemoveFromScene(Entity* _entity) override;
 		virtual Entity* FindEntityByName(std::string _name) override;
 		virtual std::vector<Entity*> FindAll(std::string _name) override;
 		virtual void Load(const std::string& scene) override;
@@ -38,16 +39,13 @@ namespace buki
 		virtual bool HasCurrentScenePath() const override { return !m_CurrentScenePath.empty(); }
 		virtual bool SaveCurrentScene() const override;
 		virtual bool RenameEntity(Entity* entity, const std::string& newName) override;
+		std::string MakeUniqueEntityName(const std::string& baseName) const;
+		virtual Entity* InstantiatePrefab(const std::string& path) override;
 		
 	private:
 		void CleanEntities();
 		std::string m_Name;
 		std::string m_SceneToLoad;
-		//std::map<std::string, Entity*> &m_EntityMap = *new std::map<std::string, Entity*>();
-		//std::vector<Entity*> &m_EntityInWorld = *new std::vector<Entity*>();
-		//std::vector<Entity*> &m_EntityToRemove = *new std::vector<Entity*>();
-		//std::map<std::string, IScene*> &m_Scenes = *new std::map<std::string, IScene*>();
-		//std::vector<std::string> &m_ScenesByName = *new std::vector<std::string>();
 		std::map<std::string, Entity*> m_EntityMap;
 		std::vector<Entity*> m_EntityInWorld;
 		std::vector<Entity*> m_EntityToRemove;

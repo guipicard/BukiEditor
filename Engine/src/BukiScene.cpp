@@ -49,7 +49,7 @@ void buki::BukiScene::Load()
 		return;
 	}
 
-	const std::string path = "../Deployment/Scenes/" + name + ".json";
+	const std::string path = "../Deployment/Scenes/" + name + ".scene";
 
 	if (std::filesystem::exists(path))
 	{

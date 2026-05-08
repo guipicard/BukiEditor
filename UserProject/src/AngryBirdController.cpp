@@ -143,7 +143,7 @@ void buki::AngryBirdController::OnSensorExit(Entity* other)
 {
 }
 
-void buki::AngryBirdController::Set()
+void buki::AngryBirdController::OnSet()
 {
 }
 

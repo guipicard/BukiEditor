@@ -28,7 +28,7 @@ namespace buki
 		virtual void OnSensorEnter(Entity* other) override;
 		virtual void OnSensorExit(Entity* other) override;
 
-		virtual void Set() override;
+		virtual void OnSet() override;
 
 		//void Jump(float _force);
 		//void Move(Vector2 _dir, float _maxVel, float _speed);
@@ -46,8 +46,6 @@ namespace buki
 	private:
 		Animation* anim = nullptr;
 		Box* boxCollider = nullptr;
-		//Circle* circleCollider = nullptr;
-		//Polygon* polygonCollider = nullptr;
 		RigidBody* rigidbody = nullptr;
 		Text* text = nullptr;
 

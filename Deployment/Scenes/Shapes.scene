@@ -526,9 +526,24 @@
             "components": {
                 "ShapesController": {
                     "boxFillDraw": true,
+                    "boxRef": {
+                        "entity": "",
+                        "prefab": "../Deployment/Prefabs\\RectEntity.prefab"
+                    },
                     "boxShapeDraw": true,
                     "circleFillDraw": true,
-                    "circleShapeDraw": true
+                    "circleRef": {
+                        "entity": "",
+                        "prefab": "../Deployment/Prefabs\\CircleEntity.prefab"
+                    },
+                    "circleShapeDraw": true,
+                    "polygonFillDraw": true,
+                    "polygonRef": {
+                        "entity": "",
+                        "prefab": "../Deployment/Prefabs\\PolygonEntity.prefab"
+                    },
+                    "polygonShapeDraw": true,
+                    "polygonSides": 3
                 }
             },
             "enable": true,
@@ -547,5 +562,5 @@
         }
     },
     "sceneName": "Shapes",
-    "scenePath": "../Deployment/Scenes/Shapes.json"
+    "scenePath": "../Deployment/Scenes\\Shapes.scene"
 }

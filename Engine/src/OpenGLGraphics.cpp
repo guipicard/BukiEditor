@@ -457,7 +457,12 @@ std::vector<glm::vec2> buki::OpenGLGraphics::GetPolygonPoints(glm::vec2 center, 
 	}
 	const float step = 6.28318530718f / static_cast<float>(segments);
 	const float angleOffset = (6.28318530718f / 4);
-	for (int i = 0; i < segments + (additionnalSegments - 1); ++i)
+	int totalSegments = segments + additionnalSegments;
+	if (renderFill)
+	{
+		totalSegments -= 1;
+	}
+	for (int i = 0; i < totalSegments; ++i)
 	{
 		const float a = ((static_cast<float>(i) * step) - angleOffset) + rotationRadians;
 		points.push_back(

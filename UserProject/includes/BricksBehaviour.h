@@ -22,7 +22,7 @@ namespace buki
 		virtual void OnSensorEnter(Entity* other) override;
 		virtual void OnSensorExit(Entity* other) override;
 
-		virtual void Set() override;
+		virtual void OnSet() override;
 
 
 	public:

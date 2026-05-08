@@ -7,6 +7,7 @@
 #include "ShapesController.h"
 #include "AnimTest.h"
 #include "OpenGlTest.h"
+#include "CameraFollow.h"
 
 void game::RegisterGameComponents()
 {
@@ -15,4 +16,5 @@ void game::RegisterGameComponents()
 	REGISTER_COMPONENT_EXPLICIT(buki::ShapesController, "ShapesController");
 	REGISTER_COMPONENT_EXPLICIT(buki::AnimTest, "AnimTest");
 	REGISTER_COMPONENT_EXPLICIT(buki::OpenGlTest, "OpenGlTest");
+	REGISTER_COMPONENT_EXPLICIT(buki::CameraFollow, "CameraFollow");
 }

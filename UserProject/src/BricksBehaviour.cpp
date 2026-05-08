@@ -74,7 +74,7 @@ void buki::BricksBehaviour::OnSensorExit(Entity* other)
 {
 }
 
-void buki::BricksBehaviour::Set()
+void buki::BricksBehaviour::OnSet()
 {
 	spriteComponent = m_Entity->GetComponent<Sprite>();
 	for (auto& img : stageImages)

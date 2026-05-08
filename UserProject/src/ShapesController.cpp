@@ -8,6 +8,7 @@
 #include "Text.h"
 #include "Camera2D.h"
 #include "Box.h"
+#include "Polygon.h"
 #include "Circle.h"
 #include "Button.h"
 //#include "ComponentRegistration.h"
@@ -21,13 +22,6 @@ buki::ShapesController::ShapesController(Entity* entity)
 
 void buki::ShapesController::Start()
 {
-	spawner = m_Entity->GetComponent<Spawner>();
-	if (spawner == nullptr)
-	{
-		spawner = m_Entity->AddComponent<Spawner>();
-	}
-	spawner->AddPrototype("circle", new CircleShape());
-	spawner->AddPrototype("rectangle", new RectangleShape());
 
 	for (auto* e : World().GetEntitiesInWorld())
 	{
@@ -64,31 +58,64 @@ void buki::ShapesController::Update(const float dt)
 	Vector2 mousePos;
 	Input().GetMousePositionWorld(&mousePos.x, &mousePos.y);
 	Vector2 pos = mousePos;
-	Vector2 size = Vector2();
 	float timeScale = Engine::Get().GetTimeScale();
+
+	
+
 	if (!UIHovered && timeScale != 0.0f)
 	{
 		if (Input().IsMouseButtonUp(0))
 		{
+			int sizeX = rand() % 10 + 2;
+			int sizeY = rand() % 10 + 2;
+			float rot = static_cast<float>((rand() % 7000) / 1000.0f);
+			Vector2 randomSize = Vector2(sizeX, sizeY) / 5;
 
-			Entity* e = spawner->Spawn("rectangle", pos, size, 0.0f);
+			Entity* e = World().InstantiatePrefab(boxRef.prefabPath);
+			
 			Box* s = e->GetComponent<Box>();
-			//if (s)
-			{
-				s->def.fillDraw = boxFillDraw;
-				s->def.shapeDraw = boxShapeDraw;
-			}
-			Vector2 colSize = s->def.size;
+			s->def.fillDraw = boxFillDraw;
+			s->def.shapeDraw = boxShapeDraw;
+			s->def.size = randomSize;
+
+			e->Initialize(pos, rot, randomSize);
+			e->Set();
+		}
+		if (Input().IsMouseButtonUp(1))
+		{
+			int radius = rand() % 6 + 2;
+			int polygonSides = rand() % 6 + 3;
+			float r = (float)radius;
+			r /= 4;
+			float rot = static_cast<float>((rand() % 7000) / 1000.0f);
+			Vector2 randomSize = Vector2(r, r);
+
+			Entity* e = World().InstantiatePrefab(polygonRef.prefabPath);
+			Polygon* s = e->GetComponent<Polygon>();
+			s->def.fillDraw = boxFillDraw;
+			s->def.shapeDraw = boxShapeDraw;
+			s->def.radius = r;
+			s->def.segments = polygonSides;
+
+			e->Initialize(pos, rot, randomSize);
+			e->Set();
 		}
 		if (Input().IsMouseButtonUp(2))
 		{
-			Entity* e = spawner->Spawn("circle", pos, size, 0.0f);
+			int radius = rand() % 6 + 2;
+			float r = (float)radius;
+			r /= 4;
+			float rot = static_cast<float>((rand() % 7000) / 1000.0f);
+			Vector2 randomSize = Vector2(r, r);
+
+			Entity* e = World().InstantiatePrefab(circleRef.prefabPath);
 			Circle* s = e->GetComponent<Circle>();
-			//if (s)
-			{
-				s->def.fillDraw = circleFillDraw;
-				s->def.shapeDraw = circleShapeDraw;
-			}
+			s->def.fillDraw = circleFillDraw;
+			s->def.shapeDraw = circleShapeDraw;
+			s->def.radius = r;
+
+			e->Initialize(pos, rot, randomSize);
+			e->Set();
 		}
 	}
 
@@ -125,6 +152,6 @@ void buki::ShapesController::OnSensorExit(Entity* other)
 {
 }
 
-void buki::ShapesController::Set()
+void buki::ShapesController::OnSet()
 {
 }

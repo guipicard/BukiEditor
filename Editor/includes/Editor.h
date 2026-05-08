@@ -19,7 +19,11 @@ namespace buki
 
 	private:
 		float main_scale = 1.0f;
-		float clearColor[4] = { 0.10f, 0.10f, 0.12f, 1.00f };
+		float m_ClearColorR = 0.08f;
+		float m_ClearColorG = 0.08f;
+		float m_ClearColorB = 0.12f;
+		float m_ClearColorA = 1.0f;
+		float clearColor[4] = { m_ClearColorR, m_ClearColorG, m_ClearColorB, m_ClearColorA };
 
 		SDL_Window* gameWindow = nullptr;
 

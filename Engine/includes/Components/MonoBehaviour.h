@@ -30,7 +30,9 @@ namespace buki
 
 		virtual json Serialize() override;
 		virtual void Deserialize(json doc) override;
-		virtual void Set() = 0;
+
+		virtual void Set() override;
+		virtual void OnSet() = 0;
 
 		// MONOBEHAVIOUR
 		virtual void OnCollisionEnter(Entity* other) = 0;

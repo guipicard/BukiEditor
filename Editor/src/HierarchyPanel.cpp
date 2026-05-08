@@ -7,17 +7,18 @@
 #include <string>
 #include <vector>
 
+#include "nlohmann/json.hpp"
+#include <fstream>
+
+namespace fs = std::filesystem;
+using json = nlohmann::json;
+
 void buki::HierarchyPanel::Render(EditorState& state)
 {
 	ImGui::Begin("Hierarchy", &state.showHierarchy);
+	auto& world = buki::Engine::Get().World();
 
-	auto* world = buki::Engine::Get().GetWorldPtr();
-	if (world == nullptr)
-	{
-		ImGui::TextUnformatted("World not initialized.");
-		ImGui::End();
-		return;
-	}
+
 
 	static char search[128] = {};
 	ImGui::InputTextWithHint("##search", "Search entities...", search, sizeof(search));
@@ -25,7 +26,7 @@ void buki::HierarchyPanel::Render(EditorState& state)
 
 	if (ImGui::Button("Create Entity"))
 	{
-		Entity* entity = world->CreateEntity("New Entity");
+		Entity* entity = world.CreateEntity("New Entity");
 		if (entity != nullptr)
 		{
 			if (entity->T() != nullptr)
@@ -45,17 +46,16 @@ void buki::HierarchyPanel::Render(EditorState& state)
 		ImGui::SameLine();
 		if (ImGui::Button("Delete Selected"))
 		{
-			state.selectedEntity->Destroy();
+			world.RemoveFromScene(state.selectedEntity);
 			state.selectedEntity = nullptr;
 			state.sceneDirty = true;
 		}
 	}
 
-	ImGui::Separator();
 
-	const std::vector<Entity*> entities = world->GetEntitiesInWorld();
-	ImGui::Text("Entities: %d", static_cast<int>(entities.size()));
-	ImGui::Separator();
+	const std::vector<Entity*> entities = world.GetEntitiesInWorld();
+
+	ImGui::Text("Entities: %d", entities.size());
 
 	for (Entity* entity : entities)
 	{
@@ -69,19 +69,48 @@ void buki::HierarchyPanel::Render(EditorState& state)
 		{
 			displayName = "Unnamed Entity";
 		}
-
 		if (search[0] != '\0' && displayName.find(search) == std::string::npos)
 		{
 			continue;
 		}
 
 		const bool selected = (state.selectedEntity == entity);
-
 		if (ImGui::Selectable(displayName.c_str(), selected))
 		{
 			state.selectedEntity = entity;
 		}
+		if (ImGui::BeginDragDropSource())
+		{
+			Entity* draggedEntity = entity;
+			ImGui::SetDragDropPayload("ENTITY", &draggedEntity, sizeof(Entity*));
+			ImGui::TextUnformatted(entity->GetName().c_str());
+			ImGui::EndDragDropSource();
+		}
 	}
 
+
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("PREFAB"))
+		{
+			const char* droppedPath = static_cast<const char*>(payload->Data);
+			if (droppedPath != nullptr)
+			{
+				world.InstantiatePrefab(fs::path(droppedPath).string());
+			}
+		}
+		ImGui::EndDragDropTarget();
+	}
 	ImGui::End();
+}
+
+void buki::HierarchyPanel::SaveEntityAsPrefab(Entity* entity, const std::filesystem::path& path)
+{
+	if (!entity) return;
+	json prefabData = entity->Serialize();
+	std::ofstream out(path);
+	if (out.is_open())
+	{
+		out << prefabData.dump(4);
+	}
 }

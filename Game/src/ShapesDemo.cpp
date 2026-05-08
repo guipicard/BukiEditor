@@ -10,7 +10,6 @@
 #include "RigidBody.h"
 #include "Text.h"
 #include "ShapesController.h"
-#include "EditorController.h"
 #include "Button.h"
 #include "Camera2D.h"
 #include "TileLayer.h"

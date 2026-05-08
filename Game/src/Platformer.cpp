@@ -42,8 +42,6 @@ void buki::Platformer::CodeLoad()
 
 	GroundAndBackground();
 
-	
-
 	PlayerEntity = Instantiate("AnimTest");
 	PlayerEntity->SetZ(3);
 	AnimTest* playerCmp = PlayerEntity->AddComponent<AnimTest>();

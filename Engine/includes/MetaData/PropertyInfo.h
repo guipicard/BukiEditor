@@ -53,3 +53,9 @@ namespace buki
 
 #define BUKI_PROP_STRING_LIST(TYPE, FIELD) \
 	{ #FIELD, buki::PropertyType::StringList, offsetof(TYPE, FIELD) }
+
+#define BUKI_PROP_ENTITY(TYPE, FIELD) \
+	{ #FIELD, buki::PropertyType::EntityRef, offsetof(TYPE, FIELD) }
+
+#define BUKI_PROP_PREFAB(TYPE, FIELD) \
+	{ #FIELD, buki::PropertyType::PrefabRef, offsetof(TYPE, FIELD) }

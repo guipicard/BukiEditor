@@ -10,7 +10,6 @@
 #include "Text.h"
 #include "AngryBirdController.h"
 #include "Camera2D.h"
-#include "EditorController.h"
 #include "TileLayer.h"
 
 buki::AGLevel3::AGLevel3()

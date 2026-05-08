@@ -11,78 +11,37 @@
 #include "EKey.h"
 #include "BukiContainers.h"
 #include "Text.h"
-//#include "ComponentRegistration.h"
-//
-//REGISTER_COMPONENT(AnimTest, "AnimTest");
 
 buki::AnimTest::AnimTest(Entity* entity) : MonoBehaviour(entity) {}
 
 void buki::AnimTest::Start()
 {
+	anim = m_Entity->GetComponent<Animation>();
 	if (!anim)
 	{
 		anim = m_Entity->AddComponent<Animation>();
 	}
+	rigidbody = m_Entity->GetComponent<RigidBody>();
 	if (!rigidbody)
 	{
 		rigidbody = m_Entity->AddComponent<RigidBody>();
 	}
+	boxCollider = m_Entity->GetComponent<Box>();
 	if (!boxCollider)
 	{
 		boxCollider = m_Entity->AddComponent<Box>();
 	}
-	//if (!circleCollider)
-	//{
-	//	//circleCollider = m_Entity->AddComponent<Circle>();
-	//}
-	//if (!polygonCollider)
-	//{
-	//	//polygonCollider = m_Entity->AddComponent<Polygon>();
-	//}
+	text = m_Entity->GetComponent<Text>();
 	if (!text)
 	{
 		text = m_Entity->AddComponent<Text>();
 	}
-	m_Entity->T()->SetPosition({ 0.0f, 0.0f });
-	m_Entity->T()->SetSize({ 8.0f, 8.0f });
 	if (!Audio().LoadSound("/audio/AngryBird/Sfx - Wood Collision A1.mp3"))
 	{
 		Log().LogError("Failed to load jump sound effect.");
 		Log().LogSdlError();
 	}
 	jumpSFX = Audio().LoadSound(jumpSFXPath);
-	if (rigidbody)
-	{
-		rigidbody->def.type = RigidBodyDef::BodyType::Dynamic;
-		rigidbody->def.motionLocks.linearX = false;
-		rigidbody->def.motionLocks.linearY = false;
-		rigidbody->def.motionLocks.angularZ = false;
-	}
-	if (boxCollider)
-	{
-		boxCollider->def.shapeDraw = true;
-		boxCollider->def.fillDraw = false;
-
-		//boxCollider->def.size = m_Entity->T()->GetSize();
-		boxCollider->def.size = m_Entity->T()->GetSize() / 2.8f;
-	}
-	//if (circleCollider)
-	//{
-	//	circleCollider->def.shapeDraw = true;
-	//	circleCollider->def.fillDraw = true;
-
-	//	circleCollider->def.radius = 0.1f + m_Entity->T()->GetSize().x / 4;
-	//	circleCollider->def.isSensor = true;
-	//}
-	//if (polygonCollider)
-	//{
-	//	polygonCollider->def.shapeDraw = true;
-	//	polygonCollider->def.fillDraw = true;
-
-	//	polygonCollider->def.radius = m_Entity->T()->GetSize().x / 4;
-	//	polygonCollider->def.segments = 5;
-	//}
-	m_Entity->ActivatePhysics();
 
 	Texture2D* idleTexture = Textures().Load("./assets/Samurai/IDLE.png");
 	const float frameWidth = 96.0f;
@@ -403,42 +362,6 @@ void buki::AnimTest::Start()
 	text->SetPositionOffset({ 0.0f, -3.0f });
 	text->Set();
 	anim->Set();
-	//anim->m_ClipLibrary.LoadFromFile("./assets/Animations/PlayerIdle.anim");
-
-	/*anim->Deserialize({
-		{"clips", {
-			{"idle", {
-				{"name", "idle"},
-				{"loop", true},
-				{"frames", {
-					{
-						{"sourceRect", {{"x", 0}, {"y", 0}, {"w", 96}, {"h", 96}}},
-						{"originX", 48.0f},
-						{"originY", 48.0f},
-						{"duration", 0.15f}
-					},
-					{
-						{"sourceRect", {{"x", 96}, {"y", 0}, {"w", 96}, {"h", 96}}},
-						{"originX", 48.0f},
-						{"originY", 48.0f},
-						{"duration", 0.15f}
-					},
-					{
-						{"sourceRect", {{"x", 192}, {"y", 0}, {"w", 96}, {"h", 96}}},
-						{"originX", 48.0f},
-						{"originY", 48.0f},
-						{"duration", 0.15f}
-					},
-					{
-						{"sourceRect", {{"x", 288}, {"y", 0}, {"w", 96}, {"h", 96}}},
-						{"originX", 48.0f},
-						{"originY", 48.0f},
-						{"duration", 0.15f}
-					}
-				}}
-			}}
-		}},
-		});*/
 }
 
 void buki::AnimTest::FixedUpdate(const float dt)
@@ -504,7 +427,6 @@ void buki::AnimTest::OnSensorExit(Entity* other)
 	Log().LogMessage("SENSOR EXIT with entity: " + other->GetName());
 }
 
-void buki::AnimTest::Set()
+void buki::AnimTest::OnSet()
 {
-
 }

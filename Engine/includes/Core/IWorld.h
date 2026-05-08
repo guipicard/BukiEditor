@@ -31,6 +31,8 @@ namespace buki
 
         virtual void Remove(Entity* _entity) = 0; // Supprime une entité du monde du jeu.
 
+        virtual void RemoveFromScene(Entity* _entity) = 0;
+
         virtual Entity* FindEntityByName(std::string _name) = 0; // Recherche une entité dans le monde du jeu.
 
         virtual std::vector<Entity*> FindAll(std::string _name) = 0; // Recherche des entités au meme nom dans le monde du jeu.
@@ -63,5 +65,7 @@ namespace buki
         virtual bool HasCurrentScenePath() const = 0;
         virtual bool SaveCurrentScene() const = 0;
         virtual bool RenameEntity(Entity* entity, const std::string& newName) = 0;
+        virtual std::string MakeUniqueEntityName(const std::string& baseName) const = 0;
+        virtual Entity* InstantiatePrefab(const std::string& prefabPath) = 0;
     };
 }

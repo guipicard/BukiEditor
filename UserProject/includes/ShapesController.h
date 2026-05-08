@@ -1,5 +1,6 @@
 #pragma once
 #include "MonoBehaviour.h"
+#include "EntityRef.h"
 
 namespace buki
 {
@@ -27,7 +28,7 @@ namespace buki
 		virtual void OnSensorEnter(Entity* other) override;
 		virtual void OnSensorExit(Entity* other) override;
 
-		virtual void Set() override;
+		virtual void OnSet() override;
 
 	public:
 		const std::vector<PropertyInfo>& GetProperties() const override
@@ -36,7 +37,13 @@ namespace buki
 				BUKI_PROP_BOOL(ShapesController, circleFillDraw),
 				BUKI_PROP_BOOL(ShapesController, circleShapeDraw),
 				BUKI_PROP_BOOL(ShapesController, boxFillDraw),
-				BUKI_PROP_BOOL(ShapesController, boxShapeDraw)
+				BUKI_PROP_BOOL(ShapesController, boxShapeDraw),
+				BUKI_PROP_BOOL(ShapesController, polygonFillDraw),
+				BUKI_PROP_BOOL(ShapesController, polygonShapeDraw),
+				BUKI_PROP_ENTITY(ShapesController, boxRef),
+				BUKI_PROP_ENTITY(ShapesController, circleRef),
+				BUKI_PROP_ENTITY(ShapesController, polygonRef),
+				BUKI_PROP_INT(ShapesController, polygonSides),
 			};
 			return properties;
 		}
@@ -44,17 +51,25 @@ namespace buki
 		bool circleShapeDraw = true;
 		bool boxFillDraw = true;
 		bool boxShapeDraw = true;
-
+		bool polygonFillDraw = true;
+		bool polygonShapeDraw = true;
+		int polygonSides = 3;
+		EntityRef boxRef;
+		EntityRef circleRef;
+		EntityRef polygonRef;
 	public:
 		inline void DrawCircleFill(const bool state) { circleFillDraw = state; }
 		inline void DrawCircleShape(const bool state) { circleShapeDraw = state; }
 
 		inline void DrawBoxFill(const bool state) { boxFillDraw = state; }
 		inline void DrawBoxShape(const bool state) { boxShapeDraw = state; }
+
+		inline void DrawPolygonFill(const bool state) { polygonFillDraw = state; }
+		inline void DrawPolygonShape(const bool state) { polygonShapeDraw = state; }
 	private:
 		Vector2 firstMousePos = { 0.0f,0.0f };
 
-		Spawner* spawner;
+		//Spawner* spawner;
 
 
 		std::vector<Button*> buttonsInScene;
