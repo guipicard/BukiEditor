@@ -1,4 +1,4 @@
-build/
+build/**
 # Deployment/**
 # Deployment/assets
 # !Deployment/assets/**

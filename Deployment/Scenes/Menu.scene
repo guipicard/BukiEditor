@@ -401,7 +401,7 @@
                         "r": 1.0
                     },
                     "fontPath": "./fonts/Kenney/Kenney Blocks.ttf",
-                    "fontSize": 36,
+                    "fontSize": 48,
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
