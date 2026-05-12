@@ -50,7 +50,6 @@ buki::SDL_Audio::SDL_Audio()
 
 buki::SDL_Audio::~SDL_Audio()
 {
-    Destroy();
 }
 
 size_t buki::SDL_Audio::MakeId(const std::string& filename) const
@@ -278,7 +277,6 @@ void buki::SDL_Audio::Destroy()
     if (m_MusicTrack)
     {
         MIX_DestroyTrack(m_MusicTrack);
-        m_MusicTrack = nullptr;
     }
     for (auto& pair : m_MusicCache)
     {
@@ -293,7 +291,6 @@ void buki::SDL_Audio::Destroy()
     if (m_Mixer)
     {
         MIX_DestroyMixer(m_Mixer);
-        m_Mixer = nullptr;
     }
     if (SDL_WasInit(SDL_INIT_AUDIO))
     {

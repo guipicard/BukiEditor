@@ -11,7 +11,7 @@ namespace buki
 	class Entity;
 	struct Sprite;
 	struct Spawner;
-	struct TileLayer;
+	class TileLayer;
 
 	struct AGLevel3 : public BukiScene, Observer<std::string>
 	{

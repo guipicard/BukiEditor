@@ -17,7 +17,7 @@ namespace buki
 	class FontManager;
 	struct Camera2D;
 	 
-	struct Component
+	class Component
 	{
 	public:
 		virtual ~Component() = default;

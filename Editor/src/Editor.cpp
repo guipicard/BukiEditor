@@ -37,7 +37,7 @@ bool buki::Editor::Init()
 		return false;
 	}
 
-	gameWindow = platform->GetWindow();
+	gameWindow = (SDL_Window*)platform->GetWindow();
 	void* glContext = platform->GetGLContext();
 
 	if (gameWindow == nullptr || glContext == nullptr)
@@ -145,4 +145,5 @@ void buki::Editor::Shutdown()
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL3_Shutdown();
 	ImGui::DestroyContext();
+	buki::Engine::Get().Shutdown();
 }

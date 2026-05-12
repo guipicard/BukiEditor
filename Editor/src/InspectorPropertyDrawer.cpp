@@ -111,7 +111,7 @@ bool buki::InspectorPropertyDrawer::DrawStringProperty(const PropertyInfo& prop,
 {
 	std::string* value = reinterpret_cast<std::string*>(fieldPtr);
 	char buffer[256] = {};
-	std::strncpy(buffer, value->c_str(), sizeof(buffer) - 1);
+	strncpy_s(buffer, value->c_str(), sizeof(buffer) - 1);
 
 	if (ImGui::InputText(prop.name.c_str(), buffer, sizeof(buffer)))
 	{
@@ -136,7 +136,7 @@ bool buki::InspectorPropertyDrawer::DrawStringListProperty(const PropertyInfo& p
 		ImGui::PushID(i);
 
 		char buffer[256] = {};
-		std::strncpy(buffer, (*values)[i].c_str(), sizeof(buffer) - 1);
+		strncpy_s(buffer, (*values)[i].c_str(), sizeof(buffer) - 1);
 
 		ImGui::SetNextItemWidth(220.0f);
 		if (ImGui::InputText("##value", buffer, sizeof(buffer)))
@@ -179,7 +179,7 @@ bool buki::InspectorPropertyDrawer::DrawAssetPicker(const PropertyInfo& prop, vo
 	ImGui::SameLine(180.0f);
 
 	char buffer[256] = {};
-	std::strncpy(buffer, path->c_str(), sizeof(buffer) - 1);
+	strncpy_s(buffer, path->c_str(), sizeof(buffer) - 1);
 
 	ImGui::SetNextItemWidth(220.0f);
 	if (ImGui::InputText(("##" + prop.name).c_str(), buffer, sizeof(buffer)))
@@ -322,7 +322,7 @@ bool buki::InspectorPropertyDrawer::DrawPrefabPicker(const PropertyInfo& prop, v
 	ImGui::SameLine(180.0f);
 
 	char buffer[256] = {};
-	std::strncpy(buffer, prefabPath->c_str(), sizeof(buffer) - 1);
+	strncpy_s(buffer, prefabPath->c_str(), sizeof(buffer) - 1);
 
 	ImGui::SetNextItemWidth(220.0f);
 	if (ImGui::InputText(("##" + prop.name).c_str(), buffer, sizeof(buffer)))

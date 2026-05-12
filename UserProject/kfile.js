@@ -2,7 +2,7 @@ const path = require("path");
 let project = new Project("UserProject");
 
 project.setCStd("c17");
-project.setCppStd("c++17");
+project.setCppStd("c++20");
 
 project.kore = false;
 project.isStaticLib = true;

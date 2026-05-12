@@ -19,6 +19,14 @@ namespace buki {
 
     class Engine final {
     public:
+        Engine() = default;
+        ~Engine() = default;
+
+        Engine(const Engine&) = delete;
+        Engine& operator=(const Engine&) = delete;
+
+        Engine(Engine&&) = delete;
+        Engine& operator=(Engine&&) = delete;
         static Engine& Get()
         {
             static Engine instance;
@@ -47,24 +55,23 @@ namespace buki {
         Camera2D* GetActiveCameraPtr() { return &m_Camera; }
 
         bool HasWorld() const { return m_World != nullptr; }
-        IWorld* GetWorldPtr() const { return m_World; }
+        IWorld* GetWorldPtr() const { return m_World.get(); }
 
         bool HasGraphics() const { return m_Graphics != nullptr; }
         bool HasInput() const { return m_Input != nullptr; }
         bool HasPlatform() const { return m_Platform != nullptr; }
         bool HasLogger() const { return m_Console != nullptr; }
 
+        void Shutdown();
     private:
-        Engine() = default;
 
         void ProcessInput();
         void FixedUpdate(const float dt);
         void Update(float dt);
         void Render(float alpha);
-        void Shutdown();
 
         bool m_IsInit = false;
-        static constexpr Uint32 TARGET_FPS = 160;
+        static constexpr Uint32 TARGET_FPS = 60;
         static constexpr Uint32 MS_PER_FRAME = 1000 / TARGET_FPS;
         static constexpr Uint32 TARGET_PPS = 60;
         static constexpr Uint32 FIXED_TIMESTEP = 1000 / TARGET_PPS;
@@ -73,14 +80,14 @@ namespace buki {
         int m_CurrentPPS = 0;
         float m_TimeScale = 1.0f;
 
-        ILogger* m_Console = nullptr;
-        IPlatform* m_Platform = nullptr;
-        IGraphics* m_Graphics = nullptr;
-        IInput* m_Input = nullptr;
-        IWorld* m_World = nullptr;
-        PhysicsService* m_Physics = nullptr;
+        Scope<ILogger> m_Console;
+        Scope<IPlatform> m_Platform;
+        Scope<IGraphics> m_Graphics;
+        Scope<IInput> m_Input;
+        Scope<IWorld> m_World;
+        Scope<PhysicsService> m_Physics;
         Camera2D m_Camera;
-        IAudio* m_Audio = nullptr;
+        Scope<IAudio> m_Audio;
 
         Scope<TextureManager> m_TextureManager;
         Scope<FontManager> m_FontManager;

@@ -79,7 +79,7 @@ namespace buki
 			return cmp;
 		}
 
-		bool Entity::AddComponentByTypeName(const std::string& name)
+		bool AddComponentByTypeName(const std::string& name)
 		{
 			if (name.empty())
 			{
@@ -128,7 +128,7 @@ namespace buki
 		T* GetComponentOfType()
 		{
 			const type_info* type = &typeid(T);
-			for each(std::pair<const type_info*, Component*> cmp in m_ComponentByType)
+			for (std::pair<const type_info*, Component*> cmp : m_ComponentByType)
 			{
 				if (dynamic_cast<T*>(cmp.second) && type != cmp.first)
 				{
@@ -143,7 +143,7 @@ namespace buki
 		{
 			const type_info* type = &typeid(T);
 			std::vector<T*> components;
-			for each(std::pair<const type_info*, Component*> cmp in m_ComponentByType)
+			for (std::pair<const type_info*, Component*> cmp : m_ComponentByType)
 			{
 				if (dynamic_cast<T*>(cmp.second) && type != cmp.first)
 				{
@@ -162,7 +162,7 @@ namespace buki
 
 		bool HasComponent(std::string name)
 		{
-			for each(std::pair<const type_info*, Component*> cmp in m_ComponentByType)
+			for (std::pair<const type_info*, Component*> cmp : m_ComponentByType)
 			{
 				std::string cmpTypeName = buki::ComponentFactory::GetTypeName(*cmp.first);
 

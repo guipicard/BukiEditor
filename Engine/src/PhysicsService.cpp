@@ -14,7 +14,13 @@
 
 buki::PhysicsService::PhysicsService()
 {
-	worldId = CreateWorld();
+	contactEvents = new ContactEvents();
+	sensorEvents = new SensorEvents();
+}
+
+void buki::PhysicsService::InitPhysics()
+{
+	worldId = CreateNewWorld();
 }
 
 void buki::PhysicsService::LinearImpulse(Entity* _entity, const Vector2 _impulse, const bool _wake)
@@ -74,7 +80,7 @@ void buki::PhysicsService::Step(float dt)
 	if (b2ContactEvents.endCount > 0) contactEvents->FillCollisionCallbacks(b2ContactEvents.endEvents, b2ContactEvents.endCount, contactEvents->OnCollisionExit);
 	if (b2ContactEvents.hitCount > 0) contactEvents->FillCollisionCallbacks(b2ContactEvents.hitEvents, b2ContactEvents.hitCount, contactEvents->OnCollisionHit);
 	contactEvents->CollisionStep();
-	
+
 	b2SensorEvents b2SensorEvents = b2World_GetSensorEvents(b2wId);
 	if (b2SensorEvents.beginCount > 0)
 	{
@@ -130,8 +136,8 @@ buki::BodyId buki::PhysicsService::CreatePhysicsBody(Entity* entity)
 
 	const b2WorldId b2World = { worldId.index, worldId.generation };
 	const b2BodyId b2Body = b2CreateBody(b2World, &bodyDef);
-	
-	
+
+
 
 	return { b2Body.index1, b2Body.world0, b2Body.generation };
 }
@@ -152,8 +158,12 @@ buki::WorldId buki::PhysicsService::GetPhysicsWorld() const
 	return worldId;
 }
 
-buki::WorldId buki::PhysicsService::CreateWorld()
+buki::WorldId buki::PhysicsService::CreateNewWorld()
 {
+	if (worldId.index != 0 && worldId.generation != 0)
+	{
+		Destroy();
+	}
 	b2WorldDef worldDef = b2DefaultWorldDef();
 
 	worldDef.gravity = { 0.0f, 9.8f };
@@ -161,8 +171,8 @@ buki::WorldId buki::PhysicsService::CreateWorld()
 	//worldDef.userData = this; // Set user data to nullptr, can be used for custom data
 	b2WorldId wId = b2CreateWorld(&worldDef);
 	worldId = { wId.index1, wId.generation };
-	contactEvents = new ContactEvents();
-	sensorEvents = new SensorEvents();
+	if (contactEvents == nullptr) contactEvents = new ContactEvents();
+	if (sensorEvents == nullptr) sensorEvents = new SensorEvents();
 	return worldId;
 }
 
@@ -407,20 +417,23 @@ buki::AABB buki::PhysicsService::GetPhysicsSize(ShapeId _id) const
 
 void buki::PhysicsService::Destroy()
 {
-	contactEvents->Destroy();
 	if (contactEvents != nullptr)
 	{
+		contactEvents->Destroy();
 		delete contactEvents;
 		contactEvents = nullptr;
 	}
-	b2DestroyWorld(b2WorldId{ worldId.index, worldId.generation });
+	if (sensorEvents != nullptr)
+	{
+		sensorEvents->Destroy();
+		delete sensorEvents;
+		sensorEvents = nullptr;
+	}
+	if (b2World_IsValid({ worldId.index, worldId.generation }))
+	{
+		b2DestroyWorld(b2WorldId{ worldId.index, worldId.generation });
+	}
 	worldId = { 0,0 };
-}
-
-void buki::PhysicsService::Reset()
-{
-	Destroy();
-	CreateWorld();
 }
 
 template<typename T>
@@ -545,6 +558,14 @@ void buki::SensorEvents::SensorStep()
 	for (std::function<void()> cb : OnSensorExit)
 		cb();
 
+	for (auto func : OnSensorEnter)
+	{
+		delete& func;
+	}
+	for (auto func : OnSensorExit)
+	{
+		delete& func;
+	}
 	OnSensorEnter.clear();
 	OnSensorExit.clear();
 }

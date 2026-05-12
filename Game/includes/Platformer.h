@@ -3,8 +3,8 @@
 
 namespace buki
 {
-	struct Entity;
-	struct TileLayer;
+	class Entity;
+	class TileLayer;
 	struct Platformer : public BukiScene
 	{
 		Platformer();

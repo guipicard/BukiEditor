@@ -25,10 +25,11 @@ namespace buki
 
 		if (!InitializeSDL())
 		{
+			Shutdown();
 			return false;
 		}
 
-		if (!CreateWindow(desc))
+		if (!CreateSDLWindow(desc))
 		{
 			Shutdown();
 			return false;
@@ -102,7 +103,8 @@ namespace buki
 			SDL_DestroyWindow(m_Window);
 			m_Window = nullptr;
 		}
-
+		SDL_QuitSubSystem(SDL_INIT_VIDEO);
+		SDL_QuitSubSystem(SDL_INIT_EVENTS);
 		SDL_Quit();
 		ResetState();
 		m_Input = nullptr;
@@ -133,7 +135,7 @@ namespace buki
 		return SDL_GL_GetProcAddress(procName);
 	}
 
-	SDL_Window* SDLPlatform::GetWindow() const
+	void* SDLPlatform::GetWindow() const
 	{
 		return m_Window;
 	}
@@ -195,7 +197,13 @@ namespace buki
 
 	bool SDLPlatform::InitializeSDL()
 	{
-		if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS))
+		SDL_SetHint(SDL_HINT_SHUTDOWN_DBUS_ON_QUIT, "1");
+		if (!SDL_InitSubSystem(SDL_INIT_VIDEO))
+		{
+			return false;
+		}
+
+		if (!SDL_InitSubSystem(SDL_INIT_EVENTS))
 		{
 			return false;
 		}
@@ -233,7 +241,7 @@ namespace buki
 		return true;
 	}
 
-	bool SDLPlatform::CreateWindow(const PlatformWindowDesc& desc)
+	bool SDLPlatform::CreateSDLWindow(const PlatformWindowDesc& desc)
 	{
 		SDL_WindowFlags flags = SDL_WINDOW_OPENGL;
 

@@ -9,6 +9,8 @@
 #include "Units.h"
 #include "Engine.h"
 
+#include "Memory.h"
+
 #include <algorithm>
 #include <cmath>
 #include <cstddef>
@@ -18,6 +20,9 @@
 #include "Graphics/Font2D.h"
 #include <SDL3_ttf/SDL_ttf.h>
 #include <vector>
+
+using TtfFontPtr = std::unique_ptr<TTF_Font, decltype(&TTF_CloseFont)>;
+using SurfacePtr = std::unique_ptr<SDL_Surface, decltype(&SDL_DestroySurface)>;
 
 namespace
 {
@@ -158,6 +163,8 @@ void buki::OpenGLGraphics::Shutdown()
 	m_ViewportHeight = 0;
 	m_Platform = nullptr;
 	g_OpenGLPlatform = nullptr;
+
+	TTF_Quit();
 }
 
 void buki::OpenGLGraphics::BeginFrame()
@@ -429,7 +436,7 @@ void buki::OpenGLGraphics::DrawPolygonOutline(const Vector2& center, float radiu
 	}
 	const glm::vec2 screenCenter = WorldToScreen(glm::vec2{ center.x, center.y }, buki::Engine::Get().GetActiveCamera());
 	const float screenRadius = Units::ToPixels(radius);
-	std::vector<glm::vec2>& points = GetPolygonPoints(screenCenter, screenRadius, rotationRadians, segments, true);
+	auto points = GetPolygonPoints(screenCenter, screenRadius, rotationRadians, segments, true);
 	points.erase(points.begin());
 	DrawPrimitiveInternal(points, color, GL_LINE_LOOP);
 }
@@ -618,17 +625,20 @@ buki::Font2D buki::OpenGLGraphics::CreateFontFromFile(const std::string& path, i
 
 	if (!TTF_WasInit())
 	{
-		if (TTF_Init() == -1)
+		if (!TTF_Init())
 		{
-			OutputDebugStringA("TTF_Init failed\n");
+			Engine::Get().Log().LogWarning("TTF_Init failed");
 			return font;
 		}
 	}
 
-	TTF_Font* ttf = TTF_OpenFont(path.c_str(), fontSize);
-	if (ttf == nullptr)
+	using TtfFontPtr = std::unique_ptr<TTF_Font, decltype(&TTF_CloseFont)>;
+	using SurfacePtr = std::unique_ptr<SDL_Surface, decltype(&SDL_DestroySurface)>;
+
+	TtfFontPtr ttf(TTF_OpenFont(path.c_str(), static_cast<float>(fontSize)), TTF_CloseFont);
+	if (!ttf)
 	{
-		OutputDebugStringA("TTF_OpenFont failed\n");
+		Engine::Get().Log().LogWarning("TTF_OpenFont failed");
 		return font;
 	}
 
@@ -642,7 +652,7 @@ buki::Font2D buki::OpenGLGraphics::CreateFontFromFile(const std::string& path, i
 	struct TempGlyphSurface
 	{
 		char c = 0;
-		SDL_Surface* surface = nullptr;
+		SurfacePtr surface{ nullptr, SDL_DestroySurface };
 		int minX = 0;
 		int maxX = 0;
 		int minY = 0;
@@ -657,42 +667,62 @@ buki::Font2D buki::OpenGLGraphics::CreateFontFromFile(const std::string& path, i
 	{
 		const char c = static_cast<char>(i);
 
-		int minX = 0, maxX = 0, minY = 0, maxY = 0, advance = 0;
-		if (TTF_GetGlyphMetrics(ttf, static_cast<std::uint32_t>(c), &minX, &maxX, &minY, &maxY, &advance) == false)
+		int minX = 0;
+		int maxX = 0;
+		int minY = 0;
+		int maxY = 0;
+		int advance = 0;
+
+		if (!TTF_GetGlyphMetrics(ttf.get(), static_cast<std::uint32_t>(c), &minX, &maxX, &minY, &maxY, &advance))
 		{
 			continue;
 		}
 
 		SDL_Color white{ 255, 255, 255, 255 };
-		SDL_Surface* glyphSurface = TTF_RenderGlyph_Blended(ttf, static_cast<std::uint32_t>(c), white);
-		if (glyphSurface == nullptr)
+		SurfacePtr glyphSurface(
+			TTF_RenderGlyph_Blended(ttf.get(), static_cast<std::uint32_t>(c), white),
+			SDL_DestroySurface
+		);
+
+		if (!glyphSurface)
 		{
 			continue;
 		}
 
 		if (glyphSurface->format != SDL_PIXELFORMAT_RGBA32)
 		{
-			SDL_Surface* converted = SDL_ConvertSurface(glyphSurface, SDL_PIXELFORMAT_RGBA32);
-			SDL_DestroySurface(glyphSurface);
-			glyphSurface = converted;
-		}
+			SurfacePtr converted(
+				SDL_ConvertSurface(glyphSurface.get(), SDL_PIXELFORMAT_RGBA32),
+				SDL_DestroySurface
+			);
 
-		if (glyphSurface == nullptr)
-		{
-			continue;
-		}
+			if (!converted)
+			{
+				continue;
+			}
 
-		tempGlyphs.push_back({ c, glyphSurface, minX, maxX, minY, maxY, advance });
+			glyphSurface = std::move(converted);
+		}
 
 		atlasWidth += glyphSurface->w + glyphPadding;
 		atlasHeight = std::max(atlasHeight, glyphSurface->h);
+
+		tempGlyphs.push_back({
+			c,
+			std::move(glyphSurface),
+			minX,
+			maxX,
+			minY,
+			maxY,
+			advance
+			});
 	}
 
 	atlasHeight += glyphPadding * 2;
 
 	if (atlasWidth <= 0 || atlasHeight <= 0 || tempGlyphs.empty())
 	{
-		TTF_CloseFont(ttf);
+		Engine::Get().Log().LogWarning("TTF_OpenFont produced no glyphs");
 		return font;
 	}
 
@@ -702,46 +732,53 @@ buki::Font2D buki::OpenGLGraphics::CreateFontFromFile(const std::string& path, i
 
 	for (const TempGlyphSurface& tg : tempGlyphs)
 	{
-		for (int y = 0; y < tg.surface->h; ++y)
+		SDL_Surface* surface = tg.surface.get();
+		if (surface == nullptr)
 		{
-			const std::uint8_t* srcRow = static_cast<const std::uint8_t*>(tg.surface->pixels) + y * tg.surface->pitch;
-			std::uint8_t* dstRow = pixels.data() + ((y + glyphPadding) * atlasWidth + penX) * 4;
-			std::memcpy(dstRow, srcRow, static_cast<std::size_t>(tg.surface->w) * 4);
+			continue;
+		}
+
+		for (int y = 0; y < surface->h; ++y)
+		{
+			const std::uint8_t* srcRow =
+				static_cast<const std::uint8_t*>(surface->pixels) + y * surface->pitch;
+			std::uint8_t* dstRow =
+				pixels.data() + ((y + glyphPadding) * atlasWidth + penX) * 4;
+
+			std::memcpy(dstRow, srcRow, static_cast<std::size_t>(surface->w) * 4);
 		}
 
 		Glyph2D glyph{};
 		glyph.sourceRectPixels = RectF{
 			static_cast<float>(penX),
 			static_cast<float>(glyphPadding),
-			static_cast<float>(tg.surface->w),
-			static_cast<float>(tg.surface->h)
+			static_cast<float>(surface->w),
+			static_cast<float>(surface->h)
 		};
-		glyph.width = tg.surface->w;
-		glyph.height = tg.surface->h;
+		glyph.width = surface->w;
+		glyph.height = surface->h;
 		glyph.bearingX = tg.minX;
 		glyph.bearingY = tg.maxY;
 		glyph.advance = tg.advance;
 
 		font.glyphs[tg.c] = glyph;
-		penX += tg.surface->w + glyphPadding;
+		penX += surface->w + glyphPadding;
 	}
 
 	font.textureId = CreateTextureRGBA8(pixels.data(), atlasWidth, atlasHeight);
+	if (font.textureId == 0)
+	{
+		Engine::Get().Log().LogWarning("CreateTextureRGBA8 failed for font atlas");
+		font.glyphs.clear();
+		return font;
+	}
+
 	font.atlasWidth = atlasWidth;
 	font.atlasHeight = atlasHeight;
 	font.fontSize = fontSize;
-	font.lineHeight = TTF_GetFontHeight(ttf);
-	font.valid = (font.textureId != 0);
+	font.lineHeight = TTF_GetFontHeight(ttf.get());
+	font.valid = true;
 
-	for (TempGlyphSurface& tg : tempGlyphs)
-	{
-		if (tg.surface != nullptr)
-		{
-			SDL_DestroySurface(tg.surface);
-		}
-	}
-
-	TTF_CloseFont(ttf);
 	return font;
 }
 
@@ -765,7 +802,7 @@ void buki::OpenGLGraphics::DrawTextToCamera(
 	float startY = originPixels.y;
 
 	Vector2 textSize = MeasureText(font, text) * METRES_TO_PIXELS;
-	int lineCount = textSize.y / font.lineHeight;
+	int lineCount = (int)textSize.y / font.lineHeight;
 	if (centerX)
 	{
 		startX -= textSize.x * 0.5f;

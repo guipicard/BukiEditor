@@ -1,43 +1,34 @@
 #include "Engine.h"
 
-#include "Platform/SDLPlatform.h"
-#include "Graphics/OpenGLGraphics.h"
 #include "Core/LogConsole.h"
 #include "Core/LogFile.h"
-#include "Core/WorldService.h"
+#include "Platform/SDLPlatform.h"
+#include "Graphics/OpenGLGraphics.h"
 #include "Core/SDLInput.h"
-#include "PhysicsService.h"
-#include "Animation.h"
-#include "Entity.h"
-
-#include "Graphics/IGraphics.h"
-
-#include <array>
-
+#include "Core/WorldService.h"
 #include "Core/SDL_Audio.h"
-
-//#include "vld.h"
+#include "PhysicsService.h"
 
 using namespace buki;
 
 bool Engine::Init(const std::string& title, int w, int h)
 {
 #if _DEBUG
-	m_Console = new LogConsole();
+	m_Console = MakeScope<LogConsole>();
 #else
 	m_Console = new LogFile("./assets/LogFile.txt");
 #endif
 
 	m_Console->LogSuccess("Logger initialized");
 
-	m_Platform = new SDLPlatform();
+	m_Platform = MakeScope<SDLPlatform>();
 	if (!m_Platform->Initialize(PlatformWindowDesc{ title, w, h }))
 	{
 		m_Console->LogSdlError();
 		return false;
 	}
 
-	m_Graphics = new OpenGLGraphics();
+	m_Graphics = MakeScope<OpenGLGraphics>();
 	if (!m_Graphics->Initialize(*m_Platform))
 	{
 		m_Console->LogError("Graphics initialization failed");
@@ -51,11 +42,13 @@ bool Engine::Init(const std::string& title, int w, int h)
 	m_TextureManager = MakeScope<TextureManager>(*m_Graphics);
 	m_FontManager = MakeScope<FontManager>(*m_Graphics);
 
-	m_Input = new SDLInput();
-	m_Platform->SetInput(m_Input);
-	m_World = new WorldService();
-	m_Audio = new SDL_Audio();
-	m_Physics = new PhysicsService();
+	m_Input = MakeScope<SDLInput>();
+	m_Platform->SetInput(m_Input.get());
+	m_World = MakeScope<WorldService>();
+	m_Audio = MakeScope<SDL_Audio>();
+	m_Physics = MakeScope<PhysicsService>();
+
+	m_Physics->InitPhysics();
 
 	m_IsInit = true;
 	return true;
@@ -91,7 +84,6 @@ void Engine::Start()
 
 		ProcessInput();
 		bool consumedTransientInputs = false;
-
 		while (accumulator >= MS_PER_FRAME)
 		{
 			Update(static_cast<float>(MS_PER_FRAME) * 0.001f * m_TimeScale);
@@ -180,62 +172,30 @@ void Engine::Render(float alpha)
 
 void Engine::Shutdown()
 {
-	if (m_Audio != nullptr)
-	{
-	    m_Audio->Destroy();
-	    delete m_Audio;
-	    m_Audio = nullptr;
-	}
-	if (m_TextureManager)
-	{
-		m_TextureManager->Clear();
-		m_TextureManager.reset();
-	}
-	if (m_FontManager)
-	{
-		m_FontManager->Clear();
-		m_FontManager.reset();
-	}
-	if (m_World != nullptr)
-	{
-		m_World->Destroy();
-		delete m_World;
-		m_World = nullptr;
-	}
+	m_Audio->Destroy();
+	m_Audio.reset();
 
-	if (m_Physics != nullptr)
-	{
-		m_Physics->Destroy();
-		delete m_Physics;
-		m_Physics = nullptr;
-	}
+	m_TextureManager->Clear();
+	m_TextureManager.reset();
 
-	if (m_Input != nullptr)
-	{
-		delete m_Input;
-		m_Input = nullptr;
-	}
+	m_FontManager->Clear();
+	m_FontManager.reset();
 
-	if (m_Graphics != nullptr)
-	{
-		m_Graphics->Shutdown();
-		delete m_Graphics;
-		m_Graphics = nullptr;
-	}
+	m_Physics->Destroy();
+	m_Physics.reset();
 
-	if (m_Platform != nullptr)
-	{
-		m_Platform->Shutdown();
-		delete m_Platform;
-		m_Platform = nullptr;
-	}
+	m_World->Destroy();
+	m_World.reset();
 
-	if (m_Console != nullptr)
-	{
-		delete m_Console;
-		m_Console = nullptr;
-	}
+	m_Graphics->Shutdown();
+	m_Graphics.reset();
 
-	SDL_Quit();
+	m_Console.reset();
+
+	m_Input.reset();
+
+	m_Platform->Shutdown();
+	m_Platform.reset();
+
 	m_IsInit = false;
 }

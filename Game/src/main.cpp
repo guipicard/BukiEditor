@@ -32,11 +32,13 @@ void InitGameplay(void) {
 }
 
 INT WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ PSTR, _In_ INT) {
+	
 	buki::RegisterEngineComponents();
 	game::RegisterGameComponents();
 	if (Engine::Get().Init("Buki Engine", 1920, 1080)) {
 		InitGameplay();
 		Engine::Get().Start();
+		buki::ComponentFactory::Destroy();
 	}
 	return 0;
 }

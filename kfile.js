@@ -20,6 +20,8 @@ const fs = require("fs");
 let project = new Project("BukiSolution");
 project.kore = false;
 
+project.setCStd("c17");
+project.setCppStd("c++20");
 
 const gameproj = await project.addProject("./Game");
 const userProject = await project.addProject("./UserProject");
@@ -27,13 +29,6 @@ const editorproj = await project.addProject("./Editor");
 const engineproj = await project.addProject("./Engine");
 const boxproj = await project.addProject("./vendor/Box2D");
 const imguiproj = await project.addProject("./vendor/imgui-docking");
-
-gameproj.addIncludeDir("./vendor/Visual Leak Detector 2019/include");
-userProject.addIncludeDir("./vendor/Visual Leak Detector 2019/include");
-engineproj.addIncludeDir("./vendor/Visual Leak Detector 2019/include");
-boxproj.addIncludeDir("./vendor/Visual Leak Detector 2019/include");
-imguiproj.addIncludeDir("./vendor/Visual Leak Detector 2019/include");
-editorproj.addIncludeDir("./vendor/Visual Leak Detector 2019/include");
 
 gameproj.parent = null;
 userProject.parent = null;
@@ -43,7 +38,6 @@ imguiproj.parent = null;
 editorproj.parent = null;
 
 project.setDebugDir("./Deployment");
-
 
 fs.copyFileSync("./libs/SDL3.dll", "./Deployment/SDL3.dll");
 fs.copyFileSync("./libs/SDL3.lib", "./Deployment/SDL3.lib");
@@ -69,14 +63,6 @@ fs.copyFileSync("./libs/SDL3_ttf.dll", "./build/SDL3_ttf.dll");
 fs.copyFileSync("./libs/SDL3_ttf.lib", "./build/SDL3_ttf.lib");
 fs.copyFileSync("./libs/SDL3_ttf.pdb", "./build/SDL3_ttf.pdb");
 
-fs.copyFileSync("./libs/vld_x64.dll", "./Deployment/vld_x64.dll");
-fs.copyFileSync("./libs/vld.lib", "./Deployment/vld.lib");
-fs.copyFileSync("./libs/vld_x64.pdb", "./Deployment/vld_x64.pdb");
-
-fs.copyFileSync("./libs/vld_x64.dll", "./build/vld_x64.dll");
-fs.copyFileSync("./libs/vld.lib", "./build/vld.lib");
-fs.copyFileSync("./libs/vld_x64.pdb", "./build/vld_x64.pdb");
-
 editorproj.addLib(path.resolve("./vendor/SDL3-3.4.4/lib/x64/SDL3"));
 editorproj.addLib(path.resolve("./vendor/SDL3_mixer-devel-3.2.0-VC/SDL3_mixer-3.2.0/lib/x64/SDL3_mixer"));
 editorproj.addLib(path.resolve("./vendor/SDL3_ttf-devel-3.1.0-VC/SDL3_ttf-3.1.0/lib/x64/SDL3_ttf"));
@@ -94,7 +80,6 @@ gameproj.addLib(path.resolve("./build/x64/Debug/Engine"));
 gameproj.addLib(path.resolve("./build/x64/Debug/UserProject"));
 
 resolve(project)
-
 
 function setDefaultStartupProject(slnPath, projectName) {
     if (!fs.existsSync(slnPath)) {

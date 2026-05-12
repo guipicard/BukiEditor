@@ -23,7 +23,7 @@ namespace buki
         bool visible = true;
     };
 
-    struct TileLayer final : public Component, public IDrawable
+    class TileLayer final : public Component, public IDrawable
     {
     public:
         explicit TileLayer(Entity* entity);

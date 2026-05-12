@@ -28,6 +28,12 @@ buki::Component* buki::ComponentFactory::CreateCmp(Entity* e, const std::string&
 	return it->second(e, j);
 }
 
+void buki::ComponentFactory::Destroy()
+{
+	g_CreateMap.clear();
+	g_ReverseMap.clear();
+}
+
 std::string buki::ComponentFactory::GetTypeName(const std::type_info& type)
 {
 	auto it = g_ReverseMap.find(std::type_index(type));

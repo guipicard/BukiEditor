@@ -4,11 +4,11 @@ const fs = require("fs");
 let project = new Project("Engine");
 
 project.setCStd("c17");
-project.setCppStd("c++17");
+project.setCppStd("c++20");
 
 project.kore = false;
 project.isStaticLib = true;
-project.isLibrary = false;
+
 project.addDefine("KINC_STATIC_COMPILE");
 
 function applySdl3(proj, isRoot = false) {

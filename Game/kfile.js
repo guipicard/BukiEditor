@@ -2,10 +2,11 @@ const path = require("path");
 let project = new Project("Game");
 
 project.setCStd("c17");
-project.setCppStd("c++17");
+project.setCppStd("c++20");
 
 project.kore = false;
 project.isStaticLib = false;
+project.isLibrary = false;
 
 project.addIncludeDir("./Game/includes");
 

@@ -37,12 +37,12 @@ namespace buki
 		bool IsVSyncEnabled() const override;
 		void SwapBuffers() override;
 
-		SDL_Window* GetWindow() const;
+		void* GetWindow() const;
 		void* GetGLContext() const;
 
 	private:
 		bool InitializeSDL();
-		bool CreateWindow(const PlatformWindowDesc& desc);
+		bool CreateSDLWindow(const PlatformWindowDesc& desc);
 		bool CreateOpenGLContext();
 		void UpdateWindowSizeCache();
 		void ResetState();

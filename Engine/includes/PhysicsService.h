@@ -48,9 +48,9 @@ namespace buki
 		void FillCollisionCallbacks(T* instance, int count, std::vector<std::function<void()>>& funcList);
 
 		void Destroy() {
-			OnCollisionEnter.clear();
-			OnCollisionExit.clear();
-			OnCollisionHit.clear();
+			if (!OnCollisionEnter.empty()) OnCollisionEnter.clear();
+			if (!OnCollisionExit.empty()) OnCollisionExit.clear();
+			if (!OnCollisionHit.empty()) OnCollisionHit.clear();
 			delete& OnCollisionEnter;
 			delete& OnCollisionExit;
 			delete& OnCollisionHit;
@@ -70,8 +70,8 @@ namespace buki
 		void FillSensorCallbacks(T* instance, int count, std::vector<std::function<void()>>& funcList);
 
 		void Destroy() {
-			OnSensorEnter.clear();
-			OnSensorExit.clear();
+			if (OnSensorEnter.size() > 0)OnSensorEnter.clear();
+			if (OnSensorExit.size() > 0)OnSensorExit.clear();
 			delete& OnSensorEnter;
 			delete& OnSensorExit;
 		}
@@ -86,6 +86,7 @@ namespace buki
 	{
 	public:
 		PhysicsService();
+		void InitPhysics();
 		void LinearImpulse(Entity* _entity, const Vector2 _impulse, const bool _wake);
 		void SetAwake(const BodyId _id, const bool _state);
 		bool IsAwake(const BodyId _id) const;
@@ -95,7 +96,7 @@ namespace buki
 		WorldId GetPhysicsWorld() const;
 		BodyId CreatePhysicsBody(Entity* _entity);
 		void DestroyPhysicsBody(BodyId _id);
-		WorldId CreateWorld();
+		WorldId CreateNewWorld();
 		void SetForce(Entity* _entity, Vector2 _force, bool _wake);
 		float GetMass(BodyId _id);
 		Vector2 GetVelocity(Entity* _entity);
@@ -111,11 +112,9 @@ namespace buki
 		int GetType(BodyId _id) const;
 		AABB GetPhysicsSize(ShapeId _id) const;
 		void Destroy();
-		void Reset();
 	private:
-		WorldId worldId;
+		WorldId worldId = {0,0};
 		ContactEvents* contactEvents;
 		SensorEvents* sensorEvents;
 	};
-
 }

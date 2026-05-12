@@ -401,7 +401,7 @@
                         "r": 1.0
                     },
                     "fontPath": "./fonts/Kenney/Kenney Blocks.ttf",
-                    "fontSize": 48,
+                    "fontSize": 36,
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -425,5 +425,5 @@
         }
     },
     "sceneName": "Menu",
-    "scenePath": "../Deployment/Scenes/Menu.json"
+    "scenePath": "../Deployment/Scenes\\Menu.scene"
 }

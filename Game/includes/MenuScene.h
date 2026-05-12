@@ -9,7 +9,7 @@
 
 namespace buki
 {
-	struct Entity;
+	class Entity;
 	struct MenuScene : public BukiScene
 	{
 		MenuScene();

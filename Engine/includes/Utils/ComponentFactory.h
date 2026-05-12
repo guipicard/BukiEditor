@@ -21,6 +21,8 @@ namespace buki
 		static void Register(const std::string& typeName, CreateFn fn, const std::type_info& type);
 		static Component* CreateCmp(Entity* e, const std::string& typeName, const json& j);
 
+		static void Destroy();
+
 		static std::string GetTypeName(const std::type_info& type);
 
 		static std::string GetTypeName(const std::type_index type);

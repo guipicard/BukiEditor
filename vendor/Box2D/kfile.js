@@ -1,7 +1,7 @@
 let project = new Project("Box2D");
 
 project.setCStd("c17");
-project.setCppStd("c++17");
+project.setCppStd("c++20");
 
 project.kore = false;
 project.isStaticLib = true;

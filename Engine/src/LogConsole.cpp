@@ -25,7 +25,10 @@ namespace buki
     LogConsole::~LogConsole()
     {
 #ifdef _WIN32
+        std::cout << std::endl;
+        fclose(stdout);
         FreeConsole();
+        
 #endif
     }
 

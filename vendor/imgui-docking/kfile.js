@@ -1,7 +1,7 @@
 let project = new Project("imgui-docking");
 
 project.setCStd("c17");
-project.setCppStd("c++17");
+project.setCppStd("c++20");
 
 project.kore = false;
 project.isStaticLib = true;

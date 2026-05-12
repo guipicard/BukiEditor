@@ -12,7 +12,7 @@ namespace buki
 	struct Spawner;
 	struct Sprite;
 	struct ShapesController;
-	struct TileLayer;
+	class TileLayer;
 	struct ShapesDemo : public BukiScene
 	{
 		ShapesDemo();

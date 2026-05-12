@@ -13,7 +13,7 @@ namespace buki
 
     FontManager::~FontManager()
     {
-        Clear();
+        //Clear();
     }
 
     std::string FontManager::BuildAssetPath(const std::string& path) const
@@ -99,6 +99,7 @@ namespace buki
     {
         for (auto& [key, font] : m_Fonts)
         {
+            
             m_Graphics.DestroyFont(font);
         }
 

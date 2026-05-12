@@ -50,7 +50,7 @@ namespace buki
 
         virtual void SwapBuffers() = 0;
 
-        virtual SDL_Window* GetWindow() const = 0;
+        virtual void* GetWindow() const = 0;
         virtual void* GetGLContext() const = 0;
 
     };

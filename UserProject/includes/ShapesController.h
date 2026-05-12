@@ -43,7 +43,10 @@ namespace buki
 				BUKI_PROP_ENTITY(ShapesController, boxRef),
 				BUKI_PROP_ENTITY(ShapesController, circleRef),
 				BUKI_PROP_ENTITY(ShapesController, polygonRef),
+				BUKI_PROP_ENTITY(ShapesController, emptyEntityRef),
+				BUKI_PROP_PREFAB(ShapesController, emptyPrefabRef),
 				BUKI_PROP_INT(ShapesController, polygonSides),
+
 			};
 			return properties;
 		}
@@ -57,6 +60,8 @@ namespace buki
 		EntityRef boxRef;
 		EntityRef circleRef;
 		EntityRef polygonRef;
+		EntityRef emptyEntityRef;
+		EntityRef emptyPrefabRef;
 	public:
 		inline void DrawCircleFill(const bool state) { circleFillDraw = state; }
 		inline void DrawCircleShape(const bool state) { circleShapeDraw = state; }

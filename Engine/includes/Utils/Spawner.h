@@ -30,7 +30,7 @@ namespace buki {
 		virtual json Serialize() override
 		{
 			json doc;
-			for each(std::pair<const std::string, Prototypes*> proto in m_Prototypes)
+			for (std::pair<const std::string, Prototypes*> proto : m_Prototypes)
 			{
 				//doc["prototypes"][proto.first] = proto.second->Serialize();
 			}

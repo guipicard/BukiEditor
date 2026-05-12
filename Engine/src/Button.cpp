@@ -24,6 +24,7 @@ namespace buki
 
 	void Button::Destroy()
 	{
+		m_OnClick = nullptr;
 	}
 
 	void Button::Set()

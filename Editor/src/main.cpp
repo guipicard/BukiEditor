@@ -8,6 +8,7 @@
 #include "ComponentFactory.h"
 #include <cassert>
 
+
 INT WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ PSTR, _In_ INT)
 {
 	buki::RegisterEngineComponents();
@@ -17,15 +18,14 @@ INT WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ PSTR, _In_ INT)
 	assert(buki::ComponentFactory::IsRegistered("ShapesController"));
 	assert(buki::ComponentFactory::IsRegistered("AnimTest"));
 	assert(buki::ComponentFactory::IsRegistered("OpenGlTest"));
-	if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS))
-	{
-		return -1;
-	}
+	//if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS))
+	//{
+	//	return -1;
+	//}
 
 	buki::Editor editor;
 	if (!editor.Init())
 	{
-		SDL_Quit();
 		return -1;
 	}
 
@@ -49,6 +49,7 @@ INT WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ PSTR, _In_ INT)
 	}
 
 	editor.Shutdown();
-	SDL_Quit();
+	
+	buki::ComponentFactory::Destroy();
 	return 0;
 }

@@ -9,10 +9,10 @@
 
 namespace buki
 {
-	struct Entity;
+	class Entity;
 	struct Sprite;
 	struct Spawner;
-	struct TileLayer;
+	class TileLayer;
 
 	struct AngryBirdDemo : public BukiScene, Observer<std::string>
 	{

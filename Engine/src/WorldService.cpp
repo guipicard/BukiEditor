@@ -120,7 +120,7 @@ buki::Entity* buki::WorldService::FindEntityByName(std::string _name)
 std::vector<buki::Entity*> buki::WorldService::FindAll(std::string _name)
 {
 	std::vector<Entity*> list = std::vector<Entity*>();
-	for each(auto obj in m_EntityInWorld)
+	for (auto obj : m_EntityInWorld)
 	{
 		if (obj->GetName() == _name)
 		{
@@ -133,7 +133,6 @@ std::vector<buki::Entity*> buki::WorldService::FindAll(std::string _name)
 void buki::WorldService::Load(const std::string& scene)
 {
 	Unload();
-
 	if (m_Scenes.count(scene) > 0)
 	{
 		m_CurrentScene = m_Scenes[scene];
@@ -273,7 +272,6 @@ void buki::WorldService::SetLoadScene(const std::string& scene)
 void buki::WorldService::Unload()
 {
 	CleanEntities();
-
 	if (m_CurrentScene != nullptr)
 	{
 		m_CurrentScene->OnStop();
@@ -292,8 +290,6 @@ void buki::WorldService::Unload()
 	m_EntityMap.clear();
 	m_EntityInWorld.clear();
 	m_EntityToRemove.clear();
-
-	Engine::Get().Physics().Reset();
 
 	m_CurrentScene = nullptr;
 	m_CurrentScenePath.clear();
@@ -355,7 +351,7 @@ void buki::WorldService::SortEntities()
 {
 	std::vector<int> layerList = std::vector<int>();
 	std::map<int, std::vector<Entity*>> zMap = std::map<int, std::vector<Entity*>>();
-	for each(Entity * entity in m_EntityInWorld)
+	for (Entity * entity : m_EntityInWorld)
 	{
 		int z = entity->GetZ();
 		zMap[z].push_back(entity);
