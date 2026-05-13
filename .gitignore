@@ -1,5 +1,12 @@
-build/
-# Deployment/**
+build/*
+Deployment/**.dll
+Deployment/**.lib
+Deployment/**.pdb
+Deployment/**.dll
+Deployment/**.exe
+**.exe
+**.lnk
+**.sln
 # Deployment/assets
 # !Deployment/assets/**
 # Deployment/fonts

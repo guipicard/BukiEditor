@@ -4,6 +4,10 @@ setlocal EnableExtensions
 set ROOT=%~dp0
 cd /d "%ROOT%"
 
+if not exist "%ROOT%build" (
+    mkdir "%ROOT%build"
+) 
+
 set KMAKE=tools\KoreTools_windows_x64\KoreTools_windows_x64\kmake.exe
 set SOLUTION=build\BukiSolution.sln
 
