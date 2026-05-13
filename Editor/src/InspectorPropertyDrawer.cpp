@@ -399,3 +399,372 @@ bool buki::InspectorPropertyDrawer::DrawAddComponentPopup(Entity* owner)
 
 	return changed;
 }
+
+std::vector<std::string> buki::InspectorPropertyDrawer::GetSharedComponentTypeNames(const std::vector<Entity*>& entities)
+{
+	std::vector<std::string> result;
+	if (entities.empty() || entities[0] == nullptr)
+	{
+		return result;
+	}
+
+	for (auto& [type, component] : entities[0]->GetComponents())
+	{
+		if (component == nullptr)
+		{
+			continue;
+		}
+
+		std::string typeName = ComponentFactory::GetTypeName(*type);
+		if (typeName.empty())
+		{
+			typeName = type->name();
+		}
+
+		bool existsOnAll = true;
+		for (size_t i = 1; i < entities.size(); ++i)
+		{
+			Entity* entity = entities[i];
+			if (entity == nullptr || !entity->HasComponent(typeName))
+			{
+				existsOnAll = false;
+				break;
+			}
+		}
+
+		if (existsOnAll)
+		{
+			result.push_back(typeName);
+		}
+	}
+
+	return result;
+}
+
+bool buki::InspectorPropertyDrawer::DrawSharedComponent(const std::string& componentTypeName, const std::vector<Entity*>& entities)
+{
+	if (entities.empty())
+	{
+		return false;
+	}
+
+	bool changed = false;
+
+	for (Entity* entity : entities)
+	{
+		if (entity == nullptr)
+		{
+			return false;
+		}
+	}
+
+	Component* first = entities[0]->GetComponentByTypeName(componentTypeName);
+	if (first == nullptr)
+	{
+		return false;
+	}
+
+	if (dynamic_cast<MonoBehaviour*>(first) == nullptr)
+	{
+		ImGui::TextDisabled("Multi-edit currently implemented for MonoBehaviour/reflected components.");
+		return false;
+	}
+
+	MonoBehaviour* firstBehaviour = dynamic_cast<MonoBehaviour*>(first);
+	if (firstBehaviour == nullptr)
+	{
+		return false;
+	}
+
+	for (const PropertyInfo& prop : firstBehaviour->GetProperties())
+	{
+		if (prop.type == PropertyType::StringList)
+		{
+			ImGui::TextDisabled("%s: multi-edit not supported", prop.name.c_str());
+			continue;
+		}
+
+		if (prop.type == PropertyType::EntityRef || prop.type == PropertyType::PrefabRef)
+		{
+			ImGui::TextDisabled("%s: multi-edit not supported yet", prop.name.c_str());
+			continue;
+		}
+
+		Component* firstComponent = entities[0]->GetComponentByTypeName(componentTypeName);
+		if (firstComponent == nullptr)
+		{
+			continue;
+		}
+
+		char* firstBase = reinterpret_cast<char*>(firstComponent);
+		void* firstFieldPtr = firstBase + prop.offset;
+
+		if (prop.type == PropertyType::Int)
+		{
+			int firstValue = *reinterpret_cast<int*>(firstFieldPtr);
+			bool mixed = false;
+
+			for (size_t i = 1; i < entities.size(); ++i)
+			{
+				Component* component = entities[i]->GetComponentByTypeName(componentTypeName);
+				if (component == nullptr)
+				{
+					continue;
+				}
+
+				char* base = reinterpret_cast<char*>(component);
+				void* fieldPtr = base + prop.offset;
+				if (*reinterpret_cast<int*>(fieldPtr) != firstValue)
+				{
+					mixed = true;
+					break;
+				}
+			}
+
+			int value = firstValue;
+			bool edited = false;
+
+			if (mixed)
+			{
+				ImGui::TextUnformatted(prop.name.c_str());
+				ImGui::SameLine();
+				ImGui::TextDisabled("(mixed)");
+				edited = ImGui::DragInt(("##" + prop.name).c_str(), &value, prop.dragSpeed);
+			}
+			else
+			{
+				edited = DrawIntProperty(prop, &value);
+			}
+
+			if (edited)
+			{
+				for (Entity* entity : entities)
+				{
+					Component* component = entity->GetComponentByTypeName(componentTypeName);
+					if (component == nullptr)
+					{
+						continue;
+					}
+
+					char* base = reinterpret_cast<char*>(component);
+					void* fieldPtr = base + prop.offset;
+					*reinterpret_cast<int*>(fieldPtr) = value;
+				}
+				changed = true;
+			}
+		}
+		else if (prop.type == PropertyType::Float)
+		{
+			float firstValue = *reinterpret_cast<float*>(firstFieldPtr);
+			bool mixed = false;
+
+			for (size_t i = 1; i < entities.size(); ++i)
+			{
+				Component* component = entities[i]->GetComponentByTypeName(componentTypeName);
+				if (component == nullptr)
+				{
+					continue;
+				}
+
+				char* base = reinterpret_cast<char*>(component);
+				void* fieldPtr = base + prop.offset;
+				if (*reinterpret_cast<float*>(fieldPtr) != firstValue)
+				{
+					mixed = true;
+					break;
+				}
+			}
+
+			float value = firstValue;
+			bool edited = false;
+
+			if (mixed)
+			{
+				ImGui::TextUnformatted(prop.name.c_str());
+				ImGui::SameLine();
+				ImGui::TextDisabled("(mixed)");
+				edited = ImGui::DragFloat(("##" + prop.name).c_str(), &value, prop.dragSpeed);
+			}
+			else
+			{
+				edited = DrawFloatProperty(prop, &value);
+			}
+
+			if (edited)
+			{
+				for (Entity* entity : entities)
+				{
+					Component* component = entity->GetComponentByTypeName(componentTypeName);
+					if (component == nullptr)
+					{
+						continue;
+					}
+
+					char* base = reinterpret_cast<char*>(component);
+					void* fieldPtr = base + prop.offset;
+					*reinterpret_cast<float*>(fieldPtr) = value;
+				}
+				changed = true;
+			}
+		}
+		else if (prop.type == PropertyType::Bool)
+		{
+			bool firstValue = *reinterpret_cast<bool*>(firstFieldPtr);
+			bool allSame = true;
+
+			for (size_t i = 1; i < entities.size(); ++i)
+			{
+				Component* component = entities[i]->GetComponentByTypeName(componentTypeName);
+				if (component == nullptr)
+				{
+					continue;
+				}
+
+				char* base = reinterpret_cast<char*>(component);
+				void* fieldPtr = base + prop.offset;
+				if (*reinterpret_cast<bool*>(fieldPtr) != firstValue)
+				{
+					allSame = false;
+					break;
+				}
+			}
+
+			bool value = firstValue;
+			bool edited = false;
+
+			if (!allSame)
+			{
+				edited = DrawCheckboxMixedFallback(prop.name.c_str(), ("##" + prop.name).c_str(), value, !allSame);
+			}
+			else
+			{
+				edited = ImGui::Checkbox(prop.name.c_str(), &value);
+			}
+
+			if (edited)
+			{
+				for (Entity* entity : entities)
+				{
+					Component* component = entity->GetComponentByTypeName(componentTypeName);
+					if (component == nullptr)
+					{
+						continue;
+					}
+
+					char* base = reinterpret_cast<char*>(component);
+					void* fieldPtr = base + prop.offset;
+					*reinterpret_cast<bool*>(fieldPtr) = value;
+				}
+				changed = true;
+			}
+		}
+		else if (prop.type == PropertyType::String)
+		{
+			std::string firstValue = *reinterpret_cast<std::string*>(firstFieldPtr);
+			bool mixed = false;
+
+			for (size_t i = 1; i < entities.size(); ++i)
+			{
+				Component* component = entities[i]->GetComponentByTypeName(componentTypeName);
+				if (component == nullptr)
+				{
+					continue;
+				}
+
+				char* base = reinterpret_cast<char*>(component);
+				void* fieldPtr = base + prop.offset;
+				if (*reinterpret_cast<std::string*>(fieldPtr) != firstValue)
+				{
+					mixed = true;
+					break;
+				}
+			}
+
+			char buffer[256] = {};
+			strncpy_s(buffer, firstValue.c_str(), sizeof(buffer) - 1);
+
+			if (mixed)
+			{
+				ImGui::TextUnformatted(prop.name.c_str());
+				ImGui::SameLine();
+				ImGui::TextDisabled("(mixed)");
+			}
+
+			if (ImGui::InputText((mixed ? "##" + prop.name : prop.name).c_str(), buffer, sizeof(buffer)))
+			{
+				for (Entity* entity : entities)
+				{
+					Component* component = entity->GetComponentByTypeName(componentTypeName);
+					if (component == nullptr)
+					{
+						continue;
+					}
+
+					char* base = reinterpret_cast<char*>(component);
+					void* fieldPtr = base + prop.offset;
+					*reinterpret_cast<std::string*>(fieldPtr) = buffer;
+				}
+				changed = true;
+			}
+		}
+		else
+		{
+			ImGui::TextDisabled("%s: multi-edit not supported", prop.name.c_str());
+		}
+	}
+
+	return changed;
+}
+
+bool buki::InspectorPropertyDrawer::DrawCheckboxMixedFallback(const char* label, const char* hiddenId, bool& value, bool mixed)
+{
+	if (mixed)
+	{
+		ImGui::TextUnformatted(label);
+		ImGui::SameLine();
+		ImGui::TextDisabled("(mixed)");
+		return ImGui::Checkbox(hiddenId, &value);
+	}
+
+	return ImGui::Checkbox(label, &value);
+}
+
+bool buki::InspectorPropertyDrawer::DrawAddComponentPopup(const std::vector<Entity*>& owners)
+{
+	if (owners.empty())
+	{
+		return false;
+	}
+
+	bool changed = false;
+
+	if (ImGui::Button("Add Component"))
+		ImGui::OpenPopup("AddSharedComponentPopup");
+
+	if (ImGui::BeginPopup("AddSharedComponentPopup"))
+	{
+		if (ImGui::BeginMenu("Registered Components"))
+		{
+			for (const std::string& typeName : ComponentFactory::GetRegisteredTypeNames())
+			{
+				if (ImGui::MenuItem(typeName.c_str()))
+				{
+					for (Entity* owner : owners)
+					{
+						if (owner != nullptr && !owner->HasComponent(typeName))
+						{
+							owner->AddComponentByTypeName(typeName);
+							changed = true;
+						}
+					}
+					ImGui::CloseCurrentPopup();
+				}
+			}
+			ImGui::EndMenu();
+		}
+
+		ImGui::EndPopup();
+	}
+
+	return changed;
+}

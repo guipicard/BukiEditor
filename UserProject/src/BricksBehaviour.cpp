@@ -77,13 +77,20 @@ void buki::BricksBehaviour::OnSensorExit(Entity* other)
 void buki::BricksBehaviour::OnSet()
 {
 	spriteComponent = m_Entity->GetComponent<Sprite>();
-	for (auto& img : stageImages)
+	if (spriteComponent)
 	{
-		spriteComponent->SetPath(img);
-		spriteComponent->Set();
+		if (stageImages.size() > 0)
+		{
+
+			for (auto& img : stageImages)
+			{
+				spriteComponent->SetPath(img);
+				spriteComponent->Set();
+			}
+			spriteComponent->SetPath(stageImages[0]);
+			spriteComponent->Set();
+		}
 	}
-	spriteComponent->SetPath(stageImages[0]);
-	spriteComponent->Set();
 	for (auto& sound : collisionSounds)
 	{
 		size_t id = buki::Engine::Get().Audio().LoadSound(sound);

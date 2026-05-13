@@ -4,10 +4,41 @@
 #include "Entity.h"
 #include "imgui.h"
 #include <string>
+#include <algorithm>
 
 #include <fstream>
 
 namespace fs = std::filesystem;
+
+namespace
+{
+	bool IsImageExtension(const fs::path& path)
+	{
+		std::string ext = path.extension().string();
+		std::transform(ext.begin(), ext.end(), ext.begin(),
+			[](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+
+		return ext == ".png" ||
+			ext == ".jpg" ||
+			ext == ".jpeg" ||
+			ext == ".bmp" ||
+			ext == ".tga" ||
+			ext == ".gif" ||
+			ext == ".webp";
+	}
+
+	std::string ToAssetRelativePath(const fs::path& fullPath)
+	{
+		std::string normalized = fullPath.lexically_normal().generic_string();
+		const std::string marker = "/assets/";
+		size_t pos = normalized.find(marker);
+		if (pos != std::string::npos)
+		{
+			return normalized.substr(pos);
+		}
+		return normalized;
+	}
+}
 
 void buki::ContentBrowserPanel::Render(EditorState& state)
 {
@@ -31,6 +62,10 @@ void buki::ContentBrowserPanel::Render(EditorState& state)
 	ImGui::SameLine();
 	if (ImGui::Button("Prefabs Root"))
 		state.currentContentPath = fs::path("../Deployment/Prefabs");
+
+	ImGui::SameLine();
+	if (ImGui::Button("Assets Root"))
+		state.currentContentPath = fs::path("../Deployment/assets");
 
 	ImGui::SameLine();
 	bool canSaveScene = (world != nullptr && !world->GetCurrentScenePath().empty());
@@ -75,6 +110,7 @@ void buki::ContentBrowserPanel::Render(EditorState& state)
 		const std::string ext = path.extension().string();
 		const bool isSceneFile = (ext == ".json" || ext == ".scene");
 		const bool isPrefabFile = (ext == ".prefab");
+		const bool isImageFile = IsImageExtension(path);
 
 		if (isSceneFile)
 		{
@@ -115,6 +151,21 @@ void buki::ContentBrowserPanel::Render(EditorState& state)
 				const std::string pathStr = path.string();
 				ImGui::SetDragDropPayload("PREFAB", pathStr.c_str(), pathStr.size() + 1);
 				ImGui::TextUnformatted(name.c_str());
+				ImGui::EndDragDropSource();
+			}
+		}
+		else if (isImageFile)
+		{
+			if (ImGui::Selectable(name.c_str(), false))
+			{
+			}
+
+			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID))
+			{
+				const std::string relativePath = ToAssetRelativePath(path);
+				ImGui::SetDragDropPayload("IMAGE", relativePath.c_str(), relativePath.size() + 1);
+				ImGui::TextUnformatted(name.c_str());
+				ImGui::TextDisabled("%s", relativePath.c_str());
 				ImGui::EndDragDropSource();
 			}
 		}

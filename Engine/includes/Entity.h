@@ -175,6 +175,24 @@ namespace buki
 			return false;
 		}
 
+		Component* GetComponentByTypeName(const std::string& typeName)
+		{
+			for (auto& [type, component] : m_ComponentByType)
+			{
+				if (component == nullptr)
+					continue;
+
+				std::string current = ComponentFactory::GetTypeName(*type);
+				if (current.empty())
+					current = type->name();
+
+				if (current == typeName)
+					return component;
+			}
+
+			return nullptr;
+		}
+
 		std::map<const type_info*, Component*> GetComponents() const { return m_ComponentByType; }
 	private:
 		std::string m_Name;

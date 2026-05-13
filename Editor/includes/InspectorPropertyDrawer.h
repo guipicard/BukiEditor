@@ -1,5 +1,7 @@
 #pragma once
 #include <string>
+#include <vector>
+
 namespace buki
 {
 	class Component;
@@ -22,6 +24,9 @@ namespace buki
 		static bool DrawEntityPicker(const PropertyInfo& prop, void* fieldPtr);
 		static bool DrawPrefabPicker(const PropertyInfo& prop, void* fieldPtr);
 		static bool DrawAddComponentPopup(Entity* owner);
-
+		static bool DrawAddComponentPopup(const std::vector<Entity*>& owners);
+		static std::vector<std::string> GetSharedComponentTypeNames(const std::vector<Entity*>& entities);
+		static bool DrawSharedComponent(const std::string& componentTypeName, const std::vector<Entity*>& entities);
+		static bool DrawCheckboxMixedFallback(const char* label, const char* hiddenId, bool& value, bool mixed);
 	};
 }

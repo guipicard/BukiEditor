@@ -1,6 +1,7 @@
 #pragma once
 
 #include <filesystem>
+#include <vector>
 
 namespace buki
 {
@@ -16,6 +17,8 @@ namespace buki
 	struct EditorState
 	{
 		Entity* selectedEntity = nullptr;
+		std::vector<Entity*> selectedEntities;
+		Entity* activeEntity = nullptr;
 
 		bool showHierarchy = true;
 		bool showInspector = true;

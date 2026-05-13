@@ -160,7 +160,7 @@
                         "./audio/AngryBird/Sfx - Ice Light Collision A7.mp3",
                         "./audio/AngryBird/Sfx - Ice Light Collision A8.mp3"
                     ],
-                    "maxHealth": 50.0,
+                    "maxHealth": 100.0,
                     "stageImages": [
                         "/assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass021.png",
                         "/assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass026.png",
@@ -273,7 +273,7 @@
                         "./audio/AngryBird/Sfx - Ice Light Collision A7.mp3",
                         "./audio/AngryBird/Sfx - Ice Light Collision A8.mp3"
                     ],
-                    "maxHealth": 50.0,
+                    "maxHealth": 100.0,
                     "stageImages": [
                         "/assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass021.png",
                         "/assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass026.png",
@@ -386,7 +386,7 @@
                         "./audio/AngryBird/Sfx - Ice Light Collision A7.mp3",
                         "./audio/AngryBird/Sfx - Ice Light Collision A8.mp3"
                     ],
-                    "maxHealth": 50.0,
+                    "maxHealth": 100.0,
                     "stageImages": [
                         "/assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass021.png",
                         "/assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass026.png",
@@ -499,7 +499,7 @@
                         "./audio/AngryBird/Sfx - Ice Light Collision A7.mp3",
                         "./audio/AngryBird/Sfx - Ice Light Collision A8.mp3"
                     ],
-                    "maxHealth": 50.0,
+                    "maxHealth": 100.0,
                     "stageImages": [
                         "/assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass021.png",
                         "/assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass026.png",
@@ -612,7 +612,7 @@
                         "./audio/AngryBird/Sfx - Ice Light Collision A7.mp3",
                         "./audio/AngryBird/Sfx - Ice Light Collision A8.mp3"
                     ],
-                    "maxHealth": 50.0,
+                    "maxHealth": 100.0,
                     "stageImages": [
                         "/assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass021.png",
                         "/assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass026.png",
@@ -725,7 +725,7 @@
                         "./audio/AngryBird/Sfx - Ice Light Collision A7.mp3",
                         "./audio/AngryBird/Sfx - Ice Light Collision A8.mp3"
                     ],
-                    "maxHealth": 50.0,
+                    "maxHealth": 100.0,
                     "stageImages": [
                         "/assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass021.png",
                         "/assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass026.png",
@@ -838,7 +838,7 @@
                         "./audio/AngryBird/Sfx - Ice Light Collision A7.mp3",
                         "./audio/AngryBird/Sfx - Ice Light Collision A8.mp3"
                     ],
-                    "maxHealth": 50.0,
+                    "maxHealth": 100.0,
                     "stageImages": [
                         "/assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass021.png",
                         "/assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass026.png",
@@ -951,7 +951,7 @@
                         "./audio/AngryBird/Sfx - Ice Light Collision A7.mp3",
                         "./audio/AngryBird/Sfx - Ice Light Collision A8.mp3"
                     ],
-                    "maxHealth": 50.0,
+                    "maxHealth": 100.0,
                     "stageImages": [
                         "/assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass021.png",
                         "/assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass026.png",
@@ -1043,6 +1043,13 @@
                     "shapeDraw": false,
                     "type": "Box"
                 },
+                "BricksBehaviour": {
+                    "BreakSounds": [],
+                    "DamageSounds": [],
+                    "collisionSounds": [],
+                    "maxHealth": 100.0,
+                    "stageImages": []
+                },
                 "RigidBody": {
                     "motionLocks": {
                         "angularZ": true,
@@ -1050,6 +1057,34 @@
                         "linearY": true
                     },
                     "type": 0
+                },
+                "Sprite": {
+                    "color": {
+                        "a": 1.0,
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "flip": {
+                        "h": false,
+                        "v": false
+                    },
+                    "path": "",
+                    "positionOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "size": {
+                        "x": 76.0,
+                        "y": 1.0
+                    },
+                    "sourceRect": {
+                        "h": 0.0,
+                        "w": 0.0,
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "useSourceRect": false
                 },
                 "TileLayer": {
                     "atlasPath": "/assets/Kenney/Physics Assets/PNG/Other/grass.png",
@@ -3412,5 +3447,5 @@
         }
     },
     "sceneName": "Ag_Lvl_1",
-    "scenePath": "../Deployment/Scenes\\Ag_Lvl_1.json"
+    "scenePath": "../Deployment/Scenes\\Ag_Lvl_1.scene"
 }

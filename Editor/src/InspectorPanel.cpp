@@ -20,11 +20,17 @@
 #include "ComponentFactory.h"
 
 #include <fstream>
+#include <algorithm>
 
 namespace fs = std::filesystem;
 
 namespace
 {
+	bool ContainsEntityPtr(const std::vector<buki::Entity*>& entities, buki::Entity* entity)
+	{
+		return std::find(entities.begin(), entities.end(), entity) != entities.end();
+	}
+
 	float ClampMinFloat(float value, float minValue)
 	{
 		return (value < minValue) ? minValue : value;
@@ -49,83 +55,459 @@ namespace
 		if (result.y < minValue) result.y = minValue;
 		return result;
 	}
+
+	template<typename T>
+	T* GetSharedComponentAs(const std::vector<buki::Entity*>& entities, const std::string& typeName)
+	{
+		if (entities.empty() || entities[0] == nullptr)
+			return nullptr;
+
+		buki::Component* component = entities[0]->GetComponentByTypeName(typeName);
+		if (component == nullptr)
+			return nullptr;
+
+		return dynamic_cast<T*>(component);
+	}
+
+	template<typename T>
+	std::vector<T*> GatherSharedComponents(const std::vector<buki::Entity*>& entities, const std::string& typeName)
+	{
+		std::vector<T*> result;
+		result.reserve(entities.size());
+
+		for (buki::Entity* entity : entities)
+		{
+			if (entity == nullptr)
+				return {};
+
+			buki::Component* component = entity->GetComponentByTypeName(typeName);
+			if (component == nullptr)
+				return {};
+
+			T* typed = dynamic_cast<T*>(component);
+			if (typed == nullptr)
+				return {};
+
+			result.push_back(typed);
+		}
+
+		return result;
+	}
+
+	bool AreAllEqualBool(const std::vector<bool>& values)
+	{
+		if (values.empty())
+			return true;
+
+		for (size_t i = 1; i < values.size(); ++i)
+		{
+			if (values[i] != values[0])
+				return false;
+		}
+		return true;
+	}
+
+	bool AreAllEqualInt(const std::vector<int>& values)
+	{
+		if (values.empty())
+			return true;
+
+		for (size_t i = 1; i < values.size(); ++i)
+		{
+			if (values[i] != values[0])
+				return false;
+		}
+		return true;
+	}
+
+	bool AreAllEqualFloat(const std::vector<float>& values)
+	{
+		if (values.empty())
+			return true;
+
+		for (size_t i = 1; i < values.size(); ++i)
+		{
+			if (values[i] != values[0])
+				return false;
+		}
+		return true;
+	}
+
+	bool AreAllEqualString(const std::vector<std::string>& values)
+	{
+		if (values.empty())
+			return true;
+
+		for (size_t i = 1; i < values.size(); ++i)
+		{
+			if (values[i] != values[0])
+				return false;
+		}
+		return true;
+	}
+
+	bool AreAllEqualVector2(const std::vector<buki::Vector2>& values)
+	{
+		if (values.empty())
+			return true;
+
+		for (size_t i = 1; i < values.size(); ++i)
+		{
+			if (values[i].x != values[0].x || values[i].y != values[0].y)
+				return false;
+		}
+		return true;
+	}
+
+	bool AreAllEqualColor(const std::vector<buki::Color>& values)
+	{
+		if (values.empty())
+			return true;
+
+		for (size_t i = 1; i < values.size(); ++i)
+		{
+			if (values[i].r != values[0].r ||
+				values[i].g != values[0].g ||
+				values[i].b != values[0].b ||
+				values[i].a != values[0].a)
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
+	bool AreAllEqualRectF(const std::vector<buki::RectF>& values)
+	{
+		if (values.empty())
+			return true;
+
+		for (size_t i = 1; i < values.size(); ++i)
+		{
+			if (values[i].x != values[0].x ||
+				values[i].y != values[0].y ||
+				values[i].w != values[0].w ||
+				values[i].h != values[0].h)
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
+	void DrawMixedLabel(const char* label)
+	{
+		ImGui::TextUnformatted(label);
+		ImGui::SameLine();
+		ImGui::TextDisabled("(mixed)");
+	}
+
+	std::string ToLowerCopy(std::string value)
+	{
+		std::transform(value.begin(), value.end(), value.begin(),
+			[](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+		return value;
+	}
+
+	bool IsImageAssetPath(const fs::path& path)
+	{
+		std::string ext = ToLowerCopy(path.extension().string());
+		return ext == ".png" ||
+			ext == ".jpg" ||
+			ext == ".jpeg" ||
+			ext == ".bmp" ||
+			ext == ".tga" ||
+			ext == ".gif" ||
+			ext == ".webp";
+	}
+
+	std::string ToAssetRelativePath(const fs::path& fullPath)
+	{
+		std::string normalized = fullPath.lexically_normal().generic_string();
+		const std::string marker = "/assets/";
+		size_t pos = normalized.find(marker);
+		if (pos != std::string::npos)
+			return normalized.substr(pos);
+		return normalized;
+	}
+
+	std::string DisplayNameForAssetPath(const std::string& assetPath)
+	{
+		if (assetPath.empty())
+			return "";
+
+		return fs::path(assetPath).filename().string();
+	}
+
+	std::string FolderSuffixForAssetPath(const std::string& assetPath)
+	{
+		fs::path p(assetPath);
+		fs::path parent = p.parent_path();
+		if (parent.empty())
+			return "";
+
+		return "[" + parent.generic_string() + "]";
+	}
+
+	std::vector<std::string> CollectImageAssets(const fs::path& root)
+	{
+		std::vector<std::string> results;
+
+		if (!fs::exists(root) || !fs::is_directory(root))
+			return results;
+
+		for (const auto& entry : fs::recursive_directory_iterator(root))
+		{
+			if (!entry.is_regular_file())
+				continue;
+
+			if (!IsImageAssetPath(entry.path()))
+				continue;
+
+			results.push_back(ToAssetRelativePath(entry.path()));
+		}
+
+		std::sort(results.begin(), results.end());
+		return results;
+	}
 }
 
 void buki::InspectorPanel::Render(EditorState& state)
 {
 	ImGui::Begin("Inspector", &state.showInspector);
 
-	Entity* entity = state.selectedEntity;
-	if (entity == nullptr)
+	std::vector<Entity*> selected;
+	selected.reserve(state.selectedEntities.size());
+
+	auto& world = Engine::Get().World();
+	const std::vector<Entity*> allEntities = world.GetEntitiesInWorld();
+
+	for (Entity* entity : state.selectedEntities)
+	{
+		if (entity != nullptr && ContainsEntityPtr(allEntities, entity))
+		{
+			selected.push_back(entity);
+		}
+	}
+
+	if (selected.empty() && state.selectedEntity != nullptr && ContainsEntityPtr(allEntities, state.selectedEntity))
+	{
+		selected.push_back(state.selectedEntity);
+		state.selectedEntities = selected;
+		state.activeEntity = state.selectedEntity;
+	}
+
+	if (selected.empty())
 	{
 		ImGui::TextUnformatted("No entity selected.");
 		ImGui::End();
 		return;
 	}
 
-	bool changed = false;
-	ImGui::Text("Entity: %s", entity->GetName().c_str());
-	ImGui::Separator();
-
-	if (ImGui::Button("Save Prefab"))
+	if (selected.size() == 1)
 	{
-		changed |= SaveSelectedEntityAsPrefab(entity);
+		Entity* entity = selected[0];
+		state.selectedEntity = entity;
+		state.activeEntity = entity;
+
+		bool changed = false;
+		ImGui::Text("Entity: %s", entity->GetName().c_str());
+		ImGui::Separator();
+
+		if (ImGui::Button("Save Prefab"))
+		{
+			changed |= SaveSelectedEntityAsPrefab(entity);
+		}
+
+		ImGui::Spacing();
+		changed |= DrawEntitySection(entity);
+
+		std::string componentToRemove;
+
+		if (ImGui::CollapsingHeader("Components", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			for (auto& [type, component] : entity->GetComponents())
+			{
+				if (component == nullptr)
+					continue;
+
+				std::string cmpName = ComponentFactory::GetTypeName(*type);
+				if (cmpName.empty())
+					cmpName = type->name();
+
+				bool componentChanged = false;
+
+				if (dynamic_cast<Text*>(component))
+					componentChanged = DrawTextComponent(component);
+				else if (dynamic_cast<Button*>(component))
+					componentChanged = DrawButtonComponent(component);
+				else if (dynamic_cast<Sprite*>(component))
+					componentChanged = DrawSpriteComponent(component);
+				else if (dynamic_cast<TileLayer*>(component))
+					componentChanged = DrawTileLayerComponent(component, state);
+				else if (dynamic_cast<RigidBody*>(component))
+					componentChanged = DrawRigidBodyComponent(component);
+				else if (dynamic_cast<Box*>(component))
+					componentChanged = DrawBoxComponent(component);
+				else if (dynamic_cast<Circle*>(component))
+					componentChanged = DrawCircleComponent(component);
+				else if (dynamic_cast<Polygon*>(component))
+					componentChanged = DrawPolygonComponent(component);
+				else if (dynamic_cast<MonoBehaviour*>(component))
+					componentChanged = InspectorPropertyDrawer::DrawComponent(component, &cmpName);
+				else
+					ImGui::BulletText("%s", type->name());
+
+				changed |= componentChanged;
+
+				if (ImGui::Button(("Remove " + cmpName).c_str()))
+				{
+					componentToRemove = cmpName;
+				}
+			}
+
+			if (!componentToRemove.empty())
+			{
+				changed |= entity->RemoveComponentByTypeName(componentToRemove);
+			}
+
+			ImGui::Separator();
+			changed |= InspectorPropertyDrawer::DrawAddComponentPopup(entity);
+		}
+
+		if (changed)
+		{
+			state.sceneDirty = true;
+		}
+
+		ImGui::End();
+		return;
 	}
 
-	ImGui::Spacing();
-	changed |= DrawEntitySection(entity);
+	state.selectedEntity = state.activeEntity != nullptr ? state.activeEntity : selected.front();
 
-	std::string componentToRemove;
+	bool changed = false;
+	ImGui::Text("Entities Selected: %d", static_cast<int>(selected.size()));
+	ImGui::Separator();
 
-	if (ImGui::CollapsingHeader("Components", ImGuiTreeNodeFlags_DefaultOpen))
+	changed |= DrawMultiEntitySection(selected);
+
+	if (ImGui::CollapsingHeader("Shared Components", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		for (auto& [type, component] : entity->GetComponents())
+		changed |= InspectorPropertyDrawer::DrawAddComponentPopup(selected);
+
+		std::vector<std::string> sharedComponentTypes = InspectorPropertyDrawer::GetSharedComponentTypeNames(selected);
+		std::string componentToRemove;
+
+		for (const std::string& typeName : sharedComponentTypes)
 		{
-			if (component == nullptr)
-				continue;
-
-			std::string cmpName = ComponentFactory::GetTypeName(*type);
-			if (cmpName.empty())
-				cmpName = type->name();
-
-			bool componentChanged = false;
-
-			if (dynamic_cast<Text*>(component))
-				componentChanged = DrawTextComponent(component);
-			else if (dynamic_cast<Button*>(component))
-				componentChanged = DrawButtonComponent(component);
-			else if (dynamic_cast<Sprite*>(component))
-				componentChanged = DrawSpriteComponent(component);
-			else if (dynamic_cast<TileLayer*>(component))
-				componentChanged = DrawTileLayerComponent(component, state);
-			else if (dynamic_cast<RigidBody*>(component))
-				componentChanged = DrawRigidBodyComponent(component);
-			else if (dynamic_cast<Box*>(component))
-				componentChanged = DrawBoxComponent(component);
-			else if (dynamic_cast<Circle*>(component))
-				componentChanged = DrawCircleComponent(component);
-			else if (dynamic_cast<Polygon*>(component))
-				componentChanged = DrawPolygonComponent(component);
-			else if (dynamic_cast<MonoBehaviour*>(component))
-				componentChanged = InspectorPropertyDrawer::DrawComponent(component, &cmpName);
-			else
-				ImGui::BulletText("%s", type->name());
-
-			changed |= componentChanged;
-
-			if (ImGui::Button(("Remove " + cmpName).c_str()))
+			if (typeName == "Transform")
 			{
-				componentToRemove = cmpName;
+				continue;
+			}
+
+			if (typeName == "Text")
+			{
+				if (ImGui::TreeNodeEx("Text", ImGuiTreeNodeFlags_DefaultOpen))
+				{
+					changed |= DrawSharedTextComponents(selected);
+					ImGui::SameLine();
+					if (ImGui::Button("Remove##Text"))
+						componentToRemove = "Text";
+					ImGui::TreePop();
+				}
+			}
+			else if (typeName == "Button")
+			{
+				if (ImGui::TreeNodeEx("Button", ImGuiTreeNodeFlags_DefaultOpen))
+				{
+					changed |= DrawSharedButtonComponents(selected);
+					ImGui::SameLine();
+					if (ImGui::Button("Remove##Button"))
+						componentToRemove = "Button";
+					ImGui::TreePop();
+				}
+			}
+			else if (typeName == "Sprite")
+			{
+				if (ImGui::TreeNodeEx("Sprite", ImGuiTreeNodeFlags_DefaultOpen))
+				{
+					changed |= DrawSharedSpriteComponents(selected);
+					ImGui::SameLine();
+					if (ImGui::Button("Remove##Sprite"))
+						componentToRemove = "Sprite";
+					ImGui::TreePop();
+				}
+			}
+			else if (typeName == "RigidBody")
+			{
+				if (ImGui::TreeNodeEx("RigidBody", ImGuiTreeNodeFlags_DefaultOpen))
+				{
+					changed |= DrawSharedRigidBodyComponents(selected);
+					ImGui::SameLine();
+					if (ImGui::Button("Remove##RigidBody"))
+						componentToRemove = "RigidBody";
+					ImGui::TreePop();
+				}
+			}
+			else if (typeName == "Box")
+			{
+				if (ImGui::TreeNodeEx("Box", ImGuiTreeNodeFlags_DefaultOpen))
+				{
+					changed |= DrawSharedBoxComponents(selected);
+					ImGui::SameLine();
+					if (ImGui::Button("Remove##Box"))
+						componentToRemove = "Box";
+					ImGui::TreePop();
+				}
+			}
+			else if (typeName == "Circle")
+			{
+				if (ImGui::TreeNodeEx("Circle", ImGuiTreeNodeFlags_DefaultOpen))
+				{
+					changed |= DrawSharedCircleComponents(selected);
+					ImGui::SameLine();
+					if (ImGui::Button("Remove##Circle"))
+						componentToRemove = "Circle";
+					ImGui::TreePop();
+				}
+			}
+			else if (typeName == "Polygon")
+			{
+				if (ImGui::TreeNodeEx("Polygon", ImGuiTreeNodeFlags_DefaultOpen))
+				{
+					changed |= DrawSharedPolygonComponents(selected);
+					ImGui::SameLine();
+					if (ImGui::Button("Remove##Polygon"))
+						componentToRemove = "Polygon";
+					ImGui::TreePop();
+				}
+			}
+			else
+			{
+				if (ImGui::TreeNodeEx(typeName.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+				{
+					changed |= InspectorPropertyDrawer::DrawSharedComponent(typeName, selected);
+					ImGui::SameLine();
+					if (ImGui::Button(("Remove##" + typeName).c_str()))
+					{
+						componentToRemove = typeName;
+					}
+					ImGui::TreePop();
+				}
 			}
 		}
 
 		if (!componentToRemove.empty())
 		{
-			changed |= entity->RemoveComponentByTypeName(componentToRemove);
+			for (Entity* entity : selected)
+			{
+				if (entity != nullptr)
+				{
+					changed |= entity->RemoveComponentByTypeName(componentToRemove);
+				}
+			}
 		}
-
-		ImGui::Separator();
-		changed |= InspectorPropertyDrawer::DrawAddComponentPopup(entity);
 	}
 
 	if (changed)
@@ -134,6 +516,256 @@ void buki::InspectorPanel::Render(EditorState& state)
 	}
 
 	ImGui::End();
+}
+
+bool buki::InspectorPanel::DrawMultiEntitySection(const std::vector<Entity*>& entities)
+{
+	if (entities.empty())
+	{
+		return false;
+	}
+
+	bool changed = false;
+
+	if (ImGui::CollapsingHeader("Entity", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		bool allEnabled = true;
+		bool anyEnabled = false;
+
+		for (Entity* entity : entities)
+		{
+			if (entity == nullptr)
+			{
+				continue;
+			}
+
+			if (entity->IsEnabled())
+			{
+				anyEnabled = true;
+			}
+			else
+			{
+				allEnabled = false;
+			}
+		}
+
+		bool enabledValue = allEnabled;
+
+		if (allEnabled != anyEnabled)
+		{
+			DrawMixedLabel("Enabled");
+			if (ImGui::Checkbox("##Enabled", &enabledValue))
+			{
+				for (Entity* entity : entities)
+				{
+					if (entity != nullptr)
+					{
+						entity->SetEnable(enabledValue);
+					}
+				}
+				changed = true;
+			}
+		}
+		else
+		{
+			if (ImGui::Checkbox("Enabled", &enabledValue))
+			{
+				for (Entity* entity : entities)
+				{
+					if (entity != nullptr)
+					{
+						entity->SetEnable(enabledValue);
+					}
+				}
+				changed = true;
+			}
+		}
+
+		changed |= DrawMultiTransformSection(entities);
+
+		int firstZ = entities.front()->GetZ();
+		bool mixedZ = false;
+		for (Entity* entity : entities)
+		{
+			if (entity != nullptr && entity->GetZ() != firstZ)
+			{
+				mixedZ = true;
+				break;
+			}
+		}
+
+		int z = firstZ;
+		if (mixedZ)
+		{
+			DrawMixedLabel("Z");
+			if (ImGui::InputInt("##Z", &z))
+			{
+				for (Entity* entity : entities)
+				{
+					if (entity != nullptr)
+					{
+						entity->SetZ(z);
+					}
+				}
+				Engine::Get().World().SortEntities();
+				changed = true;
+			}
+		}
+		else
+		{
+			if (ImGui::InputInt("Z", &z))
+			{
+				for (Entity* entity : entities)
+				{
+					if (entity != nullptr)
+					{
+						entity->SetZ(z);
+					}
+				}
+				Engine::Get().World().SortEntities();
+				changed = true;
+			}
+		}
+	}
+
+	return changed;
+}
+
+bool buki::InspectorPanel::DrawMultiTransformSection(const std::vector<Entity*>& entities)
+{
+	if (entities.empty())
+	{
+		return false;
+	}
+
+	bool changed = false;
+
+	if (ImGui::TreeNodeEx("Transform", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		Vector2 firstPosition = entities.front()->T()->GetPosition();
+		Vector2 firstSize = entities.front()->T()->GetSize();
+		float firstRotation = entities.front()->T()->GetRotation().GetRadians();
+
+		bool mixedPosition = false;
+		bool mixedSize = false;
+		bool mixedRotation = false;
+
+		for (Entity* entity : entities)
+		{
+			if (entity == nullptr || entity->T() == nullptr)
+			{
+				continue;
+			}
+
+			Vector2 position = entity->T()->GetPosition();
+			Vector2 size = entity->T()->GetSize();
+			float rotation = entity->T()->GetRotation().GetRadians();
+
+			if (position.x != firstPosition.x || position.y != firstPosition.y)
+				mixedPosition = true;
+			if (size.x != firstSize.x || size.y != firstSize.y)
+				mixedSize = true;
+			if (rotation != firstRotation)
+				mixedRotation = true;
+		}
+
+		float pos[2] = { firstPosition.x, firstPosition.y };
+		if (mixedPosition)
+		{
+			DrawMixedLabel("Position");
+			if (ImGui::DragFloat2("##Position", pos, 0.1f, 0.0f, 0.0f, "%.3f"))
+			{
+				for (Entity* entity : entities)
+				{
+					if (entity != nullptr && entity->T() != nullptr)
+					{
+						entity->T()->SetPosition(Vector2(pos[0], pos[1]));
+					}
+				}
+				changed = true;
+			}
+		}
+		else
+		{
+			if (ImGui::DragFloat2("Position", pos, 0.1f, 0.0f, 0.0f, "%.3f"))
+			{
+				for (Entity* entity : entities)
+				{
+					if (entity != nullptr && entity->T() != nullptr)
+					{
+						entity->T()->SetPosition(Vector2(pos[0], pos[1]));
+					}
+				}
+				changed = true;
+			}
+		}
+
+		float sizeValues[2] = { firstSize.x, firstSize.y };
+		if (mixedSize)
+		{
+			DrawMixedLabel("Size");
+			if (ImGui::DragFloat2("##Size", sizeValues, 0.1f, 0.0f, 0.0f, "%.3f"))
+			{
+				for (Entity* entity : entities)
+				{
+					if (entity != nullptr && entity->T() != nullptr)
+					{
+						entity->T()->SetSize(Vector2(sizeValues[0], sizeValues[1]));
+					}
+				}
+				changed = true;
+			}
+		}
+		else
+		{
+			if (ImGui::DragFloat2("Size", sizeValues, 0.1f, 0.0f, 0.0f, "%.3f"))
+			{
+				for (Entity* entity : entities)
+				{
+					if (entity != nullptr && entity->T() != nullptr)
+					{
+						entity->T()->SetSize(Vector2(sizeValues[0], sizeValues[1]));
+					}
+				}
+				changed = true;
+			}
+		}
+
+		float rotation = firstRotation;
+		if (mixedRotation)
+		{
+			DrawMixedLabel("Rotation");
+			if (ImGui::DragFloat("##Rotation", &rotation, 0.1f, 0.0f, 0.0f, "%.3f"))
+			{
+				for (Entity* entity : entities)
+				{
+					if (entity != nullptr && entity->T() != nullptr)
+					{
+						entity->T()->SetRotation(rotation);
+					}
+				}
+				changed = true;
+			}
+		}
+		else
+		{
+			if (ImGui::DragFloat("Rotation", &rotation, 0.1f, 0.0f, 0.0f, "%.3f"))
+			{
+				for (Entity* entity : entities)
+				{
+					if (entity != nullptr && entity->T() != nullptr)
+					{
+						entity->T()->SetRotation(rotation);
+					}
+				}
+				changed = true;
+			}
+		}
+
+		ImGui::TreePop();
+	}
+
+	return changed;
 }
 
 bool buki::InspectorPanel::SaveSelectedEntityAsPrefab(Entity* entity)
@@ -245,17 +877,22 @@ bool buki::InspectorPanel::DrawTextComponent(Component* cmp)
 		char textBuffer[512] = {};
 		std::snprintf(textBuffer, sizeof(textBuffer), "%s", text->GetText().c_str());
 		if (ImGui::InputTextMultiline("Content", textBuffer, sizeof(textBuffer))) { text->SetText(textBuffer); changed = true; }
+
 		char fontPathBuffer[512] = {};
 		std::snprintf(fontPathBuffer, sizeof(fontPathBuffer), "%s", text->GetFontPath().c_str());
 		if (ImGui::InputText("Font Path", fontPathBuffer, sizeof(fontPathBuffer))) { text->SetFontPath(fontPathBuffer); changed = true; }
+
 		if (ImGui::InputInt("Font Size", text->GetFontSizeRef())) changed = true;
 		if (ImGui::Checkbox("Center X", text->GetCenterXRef())) changed = true;
 		if (ImGui::Checkbox("Center Y", text->GetCenterYRef())) changed = true;
+
 		Color color = text->GetColor();
 		float colorValues[4] = { color.r, color.g, color.b, color.a };
 		if (ImGui::ColorEdit4("Color", colorValues)) { text->SetColor({ colorValues[0], colorValues[1], colorValues[2], colorValues[3] }); changed = true; }
+
 		float offset[2] = { text->GetPositionOffset().x, text->GetPositionOffset().y };
 		if (ImGui::InputFloat2("Offset", offset, "%.3f")) { text->SetPositionOffset(Vector2(offset[0], offset[1])); changed = true; }
+
 		ImGui::TreePop();
 	}
 	return changed;
@@ -271,24 +908,33 @@ bool buki::InspectorPanel::DrawButtonComponent(Component* cmp)
 		char textBuffer[256] = {};
 		std::snprintf(textBuffer, sizeof(textBuffer), "%s", button->GetText().c_str());
 		if (ImGui::InputText("Text", textBuffer, sizeof(textBuffer))) { button->SetText(textBuffer); changed = true; }
+
 		char messageBuffer[256] = {};
 		std::snprintf(messageBuffer, sizeof(messageBuffer), "%s", button->GetMessage().c_str());
 		if (ImGui::InputText("Message", messageBuffer, sizeof(messageBuffer))) { button->SetMessage(messageBuffer); changed = true; }
+
 		char fontPathBuffer[512] = {};
 		std::snprintf(fontPathBuffer, sizeof(fontPathBuffer), "%s", button->GetFontPath().c_str());
 		if (ImGui::InputText("Font Path", fontPathBuffer, sizeof(fontPathBuffer))) { button->SetFontPath(fontPathBuffer); changed = true; }
+
 		int fontSize = button->GetFontSize();
 		if (ImGui::DragInt("Font Size", &fontSize, 1.0f, 1, 60)) { button->SetFontSize(fontSize); changed = true; }
+
 		bool centerX = button->Style().centerTextX;
 		if (ImGui::Checkbox("Center Text X", &centerX)) { button->Style().centerTextX = centerX; changed = true; }
+
 		bool centerY = button->Style().centerTextY;
 		if (ImGui::Checkbox("Center Text Y", &centerY)) { button->Style().centerTextY = centerY; changed = true; }
+
 		if (ImGui::Checkbox("Fit To Text", &button->Style().fitToText)) changed = true;
 		if (ImGui::Checkbox("Show Background", &button->Style().showBackground)) changed = true;
+
 		float bg[4] = { button->Style().backgroundColor.r, button->Style().backgroundColor.g, button->Style().backgroundColor.b, button->Style().backgroundColor.a };
 		if (ImGui::ColorEdit4("Background", bg)) { button->Style().backgroundColor = { bg[0], bg[1], bg[2], bg[3] }; changed = true; }
+
 		float textColor[4] = { button->Style().textColor.r, button->Style().textColor.g, button->Style().textColor.b, button->Style().textColor.a };
 		if (ImGui::ColorEdit4("Text Color", textColor)) { button->Style().textColor = { textColor[0], textColor[1], textColor[2], textColor[3] }; changed = true; }
+
 		ImGui::TreePop();
 	}
 	if (changed) { button->Set(); Engine::Get().Log().LogMessage("Button component updated."); }
@@ -304,25 +950,38 @@ bool buki::InspectorPanel::DrawSpriteComponent(Component* cmp)
 	{
 		char pathBuffer[512] = {};
 		std::snprintf(pathBuffer, sizeof(pathBuffer), "%s", sprite->GetPath().c_str());
-		if (ImGui::InputText("Texture Path", pathBuffer, sizeof(pathBuffer))) { sprite->SetPath(pathBuffer); changed = true; }
+		std::string spritePath = sprite->GetPath();
+		if (DrawImageAssetPathPicker("Texture Path", spritePath))
+		{
+			sprite->SetPath(spritePath);
+			changed = true;
+		}
+
 		Color color = sprite->GetColor();
 		float colorValues[4] = { color.r, color.g, color.b, color.a };
 		if (ImGui::ColorEdit4("Color", colorValues)) { sprite->SetColor({ colorValues[0], colorValues[1], colorValues[2], colorValues[3] }); changed = true; }
+
 		Vector2 posOffset = sprite->GetPositionOffset();
 		float posOffsetValues[2] = { posOffset.x, posOffset.y };
 		if (ImGui::InputFloat2("Position Offset", posOffsetValues, "%.3f")) { sprite->SetPositionOffset({ posOffsetValues[0], posOffsetValues[1] }); changed = true; }
+
 		Vector2 sizeOffset = sprite->GetSizeOffset();
 		float sizeOffsetValues[2] = { sizeOffset.x, sizeOffset.y };
 		if (ImGui::InputFloat2("Size Offset", sizeOffsetValues, "%.3f")) { sprite->SetSizeOffset({ sizeOffsetValues[0], sizeOffsetValues[1] }); changed = true; }
+
 		bool flipX = sprite->GetFlipX();
 		if (ImGui::Checkbox("Flip X", &flipX)) { sprite->SetFlipX(flipX); changed = true; }
+
 		bool flipY = sprite->GetFlipY();
 		if (ImGui::Checkbox("Flip Y", &flipY)) { sprite->SetFlipY(flipY); changed = true; }
+
 		bool useSourceRect = sprite->UsesSourceRect();
 		if (ImGui::Checkbox("Use Source Rect", &useSourceRect)) { sprite->SetUseSourceRect(useSourceRect); changed = true; }
+
 		RectF src = sprite->GetSourceRectPixels();
 		float srcValues[4] = { src.x, src.y, src.w, src.h };
 		if (ImGui::InputFloat4("Source Rect", srcValues, "%.3f")) { sprite->SetSourceRectPixels({ srcValues[0], srcValues[1], srcValues[2], srcValues[3] }); changed = true; }
+
 		ImGui::TreePop();
 	}
 	return changed;
@@ -337,30 +996,40 @@ bool buki::InspectorPanel::DrawTileLayerComponent(Component* cmp, EditorState& s
 	if (ImGui::TreeNodeEx("TileLayer", ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		ImGui::Checkbox("Apply To All Tiles", &state.setTilesDefaults);
+
 		char atlasPathBuffer[512] = {};
 		std::snprintf(atlasPathBuffer, sizeof(atlasPathBuffer), "%s", tileLayer->GetAtlasPath().c_str());
 		if (ImGui::InputText("Atlas Path", atlasPathBuffer, sizeof(atlasPathBuffer))) { tileLayer->SetAtlasPath(atlasPathBuffer); changed = true; }
+
 		Vector2 layerOffset = tileLayer->GetLayerOffset();
 		float layerOffsetValues[2] = { layerOffset.x, layerOffset.y };
 		if (ImGui::DragFloat2("Layer Offset", layerOffsetValues, 0.1f, 0.0f, 0.0f, "%.3f")) { tileLayer->SetLayerOffset({ layerOffsetValues[0], layerOffsetValues[1] }); changed = true; }
+
 		Vector2 defaultTileSize = tileLayer->GetDefaultTileSize();
 		float defaultTileSizeValues[2] = { defaultTileSize.x, defaultTileSize.y };
 		if (ImGui::DragFloat2("Default Tile Size", defaultTileSizeValues, 0.1f, 0.0f, 0.0f, "%.3f")) { tileLayer->SetDefaultTileSize({ defaultTileSizeValues[0], defaultTileSizeValues[1] }); if (state.setTilesDefaults) needRebuild = true; changed = true; }
+
 		RectF defaultSrc = tileLayer->GetDefaultSourceRectPixels();
 		int defaultSrcValues[4] = { (int)defaultSrc.x, (int)defaultSrc.y, (int)defaultSrc.w, (int)defaultSrc.h };
 		if (ImGui::DragInt4("Default Source Rect", defaultSrcValues, 1, 0, 0)) { tileLayer->SetDefaultSourceRectPixels({ (float)defaultSrcValues[0], (float)defaultSrcValues[1], (float)defaultSrcValues[2], (float)defaultSrcValues[3] }); if (state.setTilesDefaults) needRebuild = true; changed = true; }
+
 		Color tint = tileLayer->GetTint();
 		float tintValues[4] = { tint.r, tint.g, tint.b, tint.a };
 		if (ImGui::ColorEdit4("Tint", tintValues)) { tileLayer->SetTint({ tintValues[0], tintValues[1], tintValues[2], tintValues[3] }); changed = true; }
+
 		bool flipX = tileLayer->GetDefaultFlipX();
 		if (ImGui::Checkbox("Flip X", &flipX)) { tileLayer->SetDefaultFlipX(flipX); if (state.setTilesDefaults) needRebuild = true; changed = true; }
+
 		bool flipY = tileLayer->GetDefaultFlipY();
 		if (ImGui::Checkbox("Flip Y", &flipY)) { tileLayer->SetDefaultFlipY(flipY); if (state.setTilesDefaults) needRebuild = true; changed = true; }
+
 		bool visible = tileLayer->GetDefaultVisible();
 		if (ImGui::Checkbox("Visible", &visible)) { tileLayer->SetDefaultVisible(visible); if (state.setTilesDefaults) needRebuild = true; changed = true; }
+
 		auto& tiles = tileLayer->GetTiles();
 		ImGui::Text("Tile Count: %d", (int)tiles.size());
 		ImGui::TextUnformatted("Per-tile editor is temporary. Later this should move to a tile tool.");
+
 		if (ImGui::TreeNode("Tiles"))
 		{
 			for (int i = 0; i < static_cast<int>(tiles.size()); ++i)
@@ -371,23 +1040,30 @@ bool buki::InspectorPanel::DrawTileLayerComponent(Component* cmp, EditorState& s
 				{
 					float localPos[2] = { tile.localPosition.x, tile.localPosition.y };
 					if (ImGui::DragFloat2("Local Position", localPos, 0.1f, 0.0f, 0.0f, "%.3f")) { tile.localPosition = { localPos[0], localPos[1] }; changed = true; }
+
 					float size[2] = { tile.size.x, tile.size.y };
 					if (ImGui::DragFloat2("Size", size, 0.1f, 0.0f, 0.0f, "%.3f")) { tile.size = { size[0], size[1] }; changed = true; }
+
 					int src[4] = { (int)tile.sourceRectPixels.x, (int)tile.sourceRectPixels.y, (int)tile.sourceRectPixels.w, (int)tile.sourceRectPixels.h };
 					if (ImGui::DragInt4("Source Rect", src, 1, 0, 0)) { tile.sourceRectPixels = { (float)src[0], (float)src[1], (float)src[2], (float)src[3] }; changed = true; }
+
 					float tileColor[4] = { tile.color.r, tile.color.g, tile.color.b, tile.color.a };
 					if (ImGui::ColorEdit4("Color", tileColor)) { tile.color = { tileColor[0], tileColor[1], tileColor[2], tileColor[3] }; changed = true; }
+
 					if (ImGui::Checkbox("Flip X", &tile.flipX)) changed = true;
 					if (ImGui::Checkbox("Flip Y", &tile.flipY)) changed = true;
 					if (ImGui::Checkbox("Visible", &tile.visible)) changed = true;
+
 					ImGui::TreePop();
 				}
 				ImGui::PopID();
 			}
 			ImGui::TreePop();
 		}
+
 		ImGui::TreePop();
 	}
+
 	if (needRebuild)
 	{
 		for (TileDrawData& tile : tileLayer->GetTiles())
@@ -411,12 +1087,15 @@ bool buki::InspectorPanel::DrawRigidBodyComponent(Component* cmp)
 	{
 		ImGui::TextDisabled("Applied on scene/physics rebuild.");
 		ImGui::Separator();
+
 		const char* bodyTypeItems[] = { "Static", "Kinematic", "Dynamic" };
 		int currentType = static_cast<int>(rigidBody->def.type);
 		if (ImGui::Combo("Body Type", &currentType, bodyTypeItems, IM_ARRAYSIZE(bodyTypeItems))) { rigidBody->def.type = static_cast<RigidBody::BodyType>(currentType); changed = true; }
+
 		if (ImGui::Checkbox("Lock Linear X", &rigidBody->def.motionLocks.linearX)) changed = true;
 		if (ImGui::Checkbox("Lock Linear Y", &rigidBody->def.motionLocks.linearY)) changed = true;
 		if (ImGui::Checkbox("Lock Angular Z", &rigidBody->def.motionLocks.angularZ)) changed = true;
+
 		ImGui::TreePop();
 	}
 	return changed;
@@ -425,19 +1104,26 @@ bool buki::InspectorPanel::DrawRigidBodyComponent(Component* cmp)
 bool buki::InspectorPanel::DrawShapeCommonFields(ShapeDef& def)
 {
 	bool changed = false;
+
 	if (ImGui::Checkbox("Fill Draw", &def.fillDraw)) changed = true;
 	if (ImGui::Checkbox("Shape Draw", &def.shapeDraw)) changed = true;
+
 	float shapeColor[4] = { def.shapeColor.r, def.shapeColor.g, def.shapeColor.b, def.shapeColor.a };
 	if (ImGui::ColorEdit4("Shape Color", shapeColor)) { def.shapeColor = { shapeColor[0], shapeColor[1], shapeColor[2], shapeColor[3] }; changed = true; }
+
 	float fillColor[4] = { def.fillColor.r, def.fillColor.g, def.fillColor.b, def.fillColor.a };
 	if (ImGui::ColorEdit4("Fill Color", fillColor)) { def.fillColor = { fillColor[0], fillColor[1], fillColor[2], fillColor[3] }; changed = true; }
+
 	if (ImGui::Checkbox("Is Sensor", &def.isSensor)) changed = true;
 	if (ImGui::InputInt("Filter", &def.filter)) changed = true;
+
 	if (ImGui::InputFloat("Density", &def.density, 0.0f, 0.0f, "%.3f")) { def.density = ClampMinFloat(def.density, 0.0f); changed = true; }
 	if (ImGui::InputFloat("Friction", &def.friction, 0.0f, 0.0f, "%.3f")) { def.friction = ClampFloat(def.friction, 0.0f, 1.0f); changed = true; }
 	if (ImGui::InputFloat("Restitution", &def.restitution, 0.0f, 0.0f, "%.3f")) { def.restitution = ClampFloat(def.restitution, 0.0f, 1.0f); changed = true; }
+
 	float positionOffset[2] = { def.positionOffset.x, def.positionOffset.y };
 	if (ImGui::InputFloat2("Position Offset", positionOffset, "%.3f")) { def.positionOffset = { positionOffset[0], positionOffset[1] }; changed = true; }
+
 	return changed;
 }
 
@@ -485,10 +1171,981 @@ bool buki::InspectorPanel::DrawPolygonComponent(Component* cmp)
 	return changed;
 }
 
+bool buki::InspectorPanel::DrawSharedTextComponents(const std::vector<Entity*>& entities)
+{
+	std::vector<Text*> texts = GatherSharedComponents<Text>(entities, "Text");
+	if (texts.empty())
+		return false;
+
+	bool changed = false;
+
+	std::vector<std::string> contents;
+	std::vector<std::string> fontPaths;
+	std::vector<int> fontSizes;
+	std::vector<bool> centerXs;
+	std::vector<bool> centerYs;
+	std::vector<Color> colors;
+	std::vector<Vector2> offsets;
+
+	for (Text* text : texts)
+	{
+		contents.push_back(text->GetText());
+		fontPaths.push_back(text->GetFontPath());
+		fontSizes.push_back(*text->GetFontSizeRef());
+		centerXs.push_back(*text->GetCenterXRef());
+		centerYs.push_back(*text->GetCenterYRef());
+		colors.push_back(text->GetColor());
+		offsets.push_back(text->GetPositionOffset());
+	}
+
+	char textBuffer[512] = {};
+	if (AreAllEqualString(contents))
+		std::snprintf(textBuffer, sizeof(textBuffer), "%s", contents[0].c_str());
+	else
+		DrawMixedLabel("Content");
+	if (ImGui::InputTextMultiline(AreAllEqualString(contents) ? "Content" : "##Content", textBuffer, sizeof(textBuffer)))
+	{
+		for (Text* text : texts)
+			text->SetText(textBuffer);
+		changed = true;
+	}
+
+	char fontPathBuffer[512] = {};
+	if (AreAllEqualString(fontPaths))
+		std::snprintf(fontPathBuffer, sizeof(fontPathBuffer), "%s", fontPaths[0].c_str());
+	else
+		DrawMixedLabel("Font Path");
+	if (ImGui::InputText(AreAllEqualString(fontPaths) ? "Font Path" : "##Font Path", fontPathBuffer, sizeof(fontPathBuffer)))
+	{
+		for (Text* text : texts)
+			text->SetFontPath(fontPathBuffer);
+		changed = true;
+	}
+
+	int fontSize = fontSizes[0];
+	if (!AreAllEqualInt(fontSizes))
+		DrawMixedLabel("Font Size");
+	if (ImGui::InputInt(AreAllEqualInt(fontSizes) ? "Font Size" : "##Font Size", &fontSize))
+	{
+		for (Text* text : texts)
+			*text->GetFontSizeRef() = fontSize;
+		changed = true;
+	}
+
+	bool centerX = centerXs[0];
+	if (!AreAllEqualBool(centerXs))
+		DrawMixedLabel("Center X");
+	if (ImGui::Checkbox(AreAllEqualBool(centerXs) ? "Center X" : "##Center X", &centerX))
+	{
+		for (Text* text : texts)
+			*text->GetCenterXRef() = centerX;
+		changed = true;
+	}
+
+	bool centerY = centerYs[0];
+	if (!AreAllEqualBool(centerYs))
+		DrawMixedLabel("Center Y");
+	if (ImGui::Checkbox(AreAllEqualBool(centerYs) ? "Center Y" : "##Center Y", &centerY))
+	{
+		for (Text* text : texts)
+			*text->GetCenterYRef() = centerY;
+		changed = true;
+	}
+
+	Color color = colors[0];
+	float colorValues[4] = { color.r, color.g, color.b, color.a };
+	if (!AreAllEqualColor(colors))
+		DrawMixedLabel("Color");
+	if (ImGui::ColorEdit4(AreAllEqualColor(colors) ? "Color" : "##Color", colorValues))
+	{
+		Color newColor{ colorValues[0], colorValues[1], colorValues[2], colorValues[3] };
+		for (Text* text : texts)
+			text->SetColor(newColor);
+		changed = true;
+	}
+
+	Vector2 offset = offsets[0];
+	float offsetValues[2] = { offset.x, offset.y };
+	if (!AreAllEqualVector2(offsets))
+		DrawMixedLabel("Offset");
+	if (ImGui::InputFloat2(AreAllEqualVector2(offsets) ? "Offset" : "##Offset", offsetValues, "%.3f"))
+	{
+		Vector2 newOffset(offsetValues[0], offsetValues[1]);
+		for (Text* text : texts)
+			text->SetPositionOffset(newOffset);
+		changed = true;
+	}
+
+	return changed;
+}
+
+bool buki::InspectorPanel::DrawSharedButtonComponents(const std::vector<Entity*>& entities)
+{
+	std::vector<Button*> buttons = GatherSharedComponents<Button>(entities, "Button");
+	if (buttons.empty())
+		return false;
+
+	bool changed = false;
+
+	std::vector<std::string> texts;
+	std::vector<std::string> messages;
+	std::vector<std::string> fontPaths;
+	std::vector<int> fontSizes;
+	std::vector<bool> centerXs;
+	std::vector<bool> centerYs;
+	std::vector<bool> fitToTexts;
+	std::vector<bool> showBackgrounds;
+	std::vector<Color> backgrounds;
+	std::vector<Color> textColors;
+
+	for (Button* button : buttons)
+	{
+		texts.push_back(button->GetText());
+		messages.push_back(button->GetMessage());
+		fontPaths.push_back(button->GetFontPath());
+		fontSizes.push_back(button->GetFontSize());
+		centerXs.push_back(button->Style().centerTextX);
+		centerYs.push_back(button->Style().centerTextY);
+		fitToTexts.push_back(button->Style().fitToText);
+		showBackgrounds.push_back(button->Style().showBackground);
+		backgrounds.push_back(button->Style().backgroundColor);
+		textColors.push_back(button->Style().textColor);
+	}
+
+	char textBuffer[256] = {};
+	if (AreAllEqualString(texts))
+		std::snprintf(textBuffer, sizeof(textBuffer), "%s", texts[0].c_str());
+	else
+		DrawMixedLabel("Text");
+	if (ImGui::InputText(AreAllEqualString(texts) ? "Text" : "##Text", textBuffer, sizeof(textBuffer)))
+	{
+		for (Button* button : buttons)
+			button->SetText(textBuffer);
+		changed = true;
+	}
+
+	char messageBuffer[256] = {};
+	if (AreAllEqualString(messages))
+		std::snprintf(messageBuffer, sizeof(messageBuffer), "%s", messages[0].c_str());
+	else
+		DrawMixedLabel("Message");
+	if (ImGui::InputText(AreAllEqualString(messages) ? "Message" : "##Message", messageBuffer, sizeof(messageBuffer)))
+	{
+		for (Button* button : buttons)
+			button->SetMessage(messageBuffer);
+		changed = true;
+	}
+
+	char fontPathBuffer[512] = {};
+	if (AreAllEqualString(fontPaths))
+		std::snprintf(fontPathBuffer, sizeof(fontPathBuffer), "%s", fontPaths[0].c_str());
+	else
+		DrawMixedLabel("Font Path");
+	if (ImGui::InputText(AreAllEqualString(fontPaths) ? "Font Path" : "##Font Path", fontPathBuffer, sizeof(fontPathBuffer)))
+	{
+		for (Button* button : buttons)
+			button->SetFontPath(fontPathBuffer);
+		changed = true;
+	}
+
+	int fontSize = fontSizes[0];
+	if (!AreAllEqualInt(fontSizes))
+		DrawMixedLabel("Font Size");
+	if (ImGui::DragInt(AreAllEqualInt(fontSizes) ? "Font Size" : "##Font Size", &fontSize, 1.0f, 1, 60))
+	{
+		for (Button* button : buttons)
+			button->SetFontSize(fontSize);
+		changed = true;
+	}
+
+	bool centerX = centerXs[0];
+	if (!AreAllEqualBool(centerXs))
+		DrawMixedLabel("Center Text X");
+	if (ImGui::Checkbox(AreAllEqualBool(centerXs) ? "Center Text X" : "##Center Text X", &centerX))
+	{
+		for (Button* button : buttons)
+			button->Style().centerTextX = centerX;
+		changed = true;
+	}
+
+	bool centerY = centerYs[0];
+	if (!AreAllEqualBool(centerYs))
+		DrawMixedLabel("Center Text Y");
+	if (ImGui::Checkbox(AreAllEqualBool(centerYs) ? "Center Text Y" : "##Center Text Y", &centerY))
+	{
+		for (Button* button : buttons)
+			button->Style().centerTextY = centerY;
+		changed = true;
+	}
+
+	bool fitToText = fitToTexts[0];
+	if (!AreAllEqualBool(fitToTexts))
+		DrawMixedLabel("Fit To Text");
+	if (ImGui::Checkbox(AreAllEqualBool(fitToTexts) ? "Fit To Text" : "##Fit To Text", &fitToText))
+	{
+		for (Button* button : buttons)
+			button->Style().fitToText = fitToText;
+		changed = true;
+	}
+
+	bool showBackground = showBackgrounds[0];
+	if (!AreAllEqualBool(showBackgrounds))
+		DrawMixedLabel("Show Background");
+	if (ImGui::Checkbox(AreAllEqualBool(showBackgrounds) ? "Show Background" : "##Show Background", &showBackground))
+	{
+		for (Button* button : buttons)
+			button->Style().showBackground = showBackground;
+		changed = true;
+	}
+
+	Color bg = backgrounds[0];
+	float bgValues[4] = { bg.r, bg.g, bg.b, bg.a };
+	if (!AreAllEqualColor(backgrounds))
+		DrawMixedLabel("Background");
+	if (ImGui::ColorEdit4(AreAllEqualColor(backgrounds) ? "Background" : "##Background", bgValues))
+	{
+		Color newColor{ bgValues[0], bgValues[1], bgValues[2], bgValues[3] };
+		for (Button* button : buttons)
+			button->Style().backgroundColor = newColor;
+		changed = true;
+	}
+
+	Color textColor = textColors[0];
+	float textColorValues[4] = { textColor.r, textColor.g, textColor.b, textColor.a };
+	if (!AreAllEqualColor(textColors))
+		DrawMixedLabel("Text Color");
+	if (ImGui::ColorEdit4(AreAllEqualColor(textColors) ? "Text Color" : "##Text Color", textColorValues))
+	{
+		Color newColor{ textColorValues[0], textColorValues[1], textColorValues[2], textColorValues[3] };
+		for (Button* button : buttons)
+			button->Style().textColor = newColor;
+		changed = true;
+	}
+
+	if (changed)
+	{
+		for (Button* button : buttons)
+		{
+			button->Set();
+		}
+		Engine::Get().Log().LogMessage("Shared Button components updated.");
+	}
+
+	return changed;
+}
+
+bool buki::InspectorPanel::DrawSharedSpriteComponents(const std::vector<Entity*>& entities)
+{
+	std::vector<Sprite*> sprites = GatherSharedComponents<Sprite>(entities, "Sprite");
+	if (sprites.empty())
+		return false;
+
+	bool changed = false;
+
+	std::vector<std::string> paths;
+	std::vector<Color> colors;
+	std::vector<Vector2> positionOffsets;
+	std::vector<Vector2> sizeOffsets;
+	std::vector<bool> flipXs;
+	std::vector<bool> flipYs;
+	std::vector<bool> useSourceRects;
+	std::vector<RectF> sourceRects;
+
+	for (Sprite* sprite : sprites)
+	{
+		paths.push_back(sprite->GetPath());
+		colors.push_back(sprite->GetColor());
+		positionOffsets.push_back(sprite->GetPositionOffset());
+		sizeOffsets.push_back(sprite->GetSizeOffset());
+		flipXs.push_back(sprite->GetFlipX());
+		flipYs.push_back(sprite->GetFlipY());
+		useSourceRects.push_back(sprite->UsesSourceRect());
+		sourceRects.push_back(sprite->GetSourceRectPixels());
+	}
+
+	std::vector<std::string> pathCopies;
+	std::vector<std::string*> pathRefs;
+	for (Sprite* sprite : sprites)
+	{
+		pathCopies.push_back(sprite->GetPath());
+	}
+	for (std::string& p : pathCopies)
+	{
+		pathRefs.push_back(&p);
+	}
+
+	if (DrawSharedImageAssetPathPicker("Texture Path", pathRefs))
+	{
+		for (size_t i = 0; i < sprites.size(); ++i)
+		{
+			sprites[i]->SetPath(pathCopies[i]);
+		}
+		changed = true;
+	}
+
+	Color color = colors[0];
+	float colorValues[4] = { color.r, color.g, color.b, color.a };
+	if (!AreAllEqualColor(colors))
+		DrawMixedLabel("Color");
+	if (ImGui::ColorEdit4(AreAllEqualColor(colors) ? "Color" : "##Color", colorValues))
+	{
+		Color newColor{ colorValues[0], colorValues[1], colorValues[2], colorValues[3] };
+		for (Sprite* sprite : sprites)
+			sprite->SetColor(newColor);
+		changed = true;
+	}
+
+	Vector2 posOffset = positionOffsets[0];
+	float posOffsetValues[2] = { posOffset.x, posOffset.y };
+	if (!AreAllEqualVector2(positionOffsets))
+		DrawMixedLabel("Position Offset");
+	if (ImGui::InputFloat2(AreAllEqualVector2(positionOffsets) ? "Position Offset" : "##Position Offset", posOffsetValues, "%.3f"))
+	{
+		Vector2 newOffset{ posOffsetValues[0], posOffsetValues[1] };
+		for (Sprite* sprite : sprites)
+			sprite->SetPositionOffset(newOffset);
+		changed = true;
+	}
+
+	Vector2 sizeOffset = sizeOffsets[0];
+	float sizeOffsetValues[2] = { sizeOffset.x, sizeOffset.y };
+	if (!AreAllEqualVector2(sizeOffsets))
+		DrawMixedLabel("Size Offset");
+	if (ImGui::InputFloat2(AreAllEqualVector2(sizeOffsets) ? "Size Offset" : "##Size Offset", sizeOffsetValues, "%.3f"))
+	{
+		Vector2 newOffset{ sizeOffsetValues[0], sizeOffsetValues[1] };
+		for (Sprite* sprite : sprites)
+			sprite->SetSizeOffset(newOffset);
+		changed = true;
+	}
+
+	bool flipX = flipXs[0];
+	if (!AreAllEqualBool(flipXs))
+		DrawMixedLabel("Flip X");
+	if (ImGui::Checkbox(AreAllEqualBool(flipXs) ? "Flip X" : "##Flip X", &flipX))
+	{
+		for (Sprite* sprite : sprites)
+			sprite->SetFlipX(flipX);
+		changed = true;
+	}
+
+	bool flipY = flipYs[0];
+	if (!AreAllEqualBool(flipYs))
+		DrawMixedLabel("Flip Y");
+	if (ImGui::Checkbox(AreAllEqualBool(flipYs) ? "Flip Y" : "##Flip Y", &flipY))
+	{
+		for (Sprite* sprite : sprites)
+			sprite->SetFlipY(flipY);
+		changed = true;
+	}
+
+	bool useSourceRect = useSourceRects[0];
+	if (!AreAllEqualBool(useSourceRects))
+		DrawMixedLabel("Use Source Rect");
+	if (ImGui::Checkbox(AreAllEqualBool(useSourceRects) ? "Use Source Rect" : "##Use Source Rect", &useSourceRect))
+	{
+		for (Sprite* sprite : sprites)
+			sprite->SetUseSourceRect(useSourceRect);
+		changed = true;
+	}
+
+	RectF src = sourceRects[0];
+	float srcValues[4] = { src.x, src.y, src.w, src.h };
+	if (!AreAllEqualRectF(sourceRects))
+		DrawMixedLabel("Source Rect");
+	if (ImGui::InputFloat4(AreAllEqualRectF(sourceRects) ? "Source Rect" : "##Source Rect", srcValues, "%.3f"))
+	{
+		RectF newRect{ srcValues[0], srcValues[1], srcValues[2], srcValues[3] };
+		for (Sprite* sprite : sprites)
+			sprite->SetSourceRectPixels(newRect);
+		changed = true;
+	}
+
+	return changed;
+}
+
+bool buki::InspectorPanel::DrawSharedRigidBodyComponents(const std::vector<Entity*>& entities)
+{
+	std::vector<RigidBody*> bodies = GatherSharedComponents<RigidBody>(entities, "RigidBody");
+	if (bodies.empty())
+		return false;
+
+	bool changed = false;
+
+	std::vector<int> bodyTypes;
+	std::vector<bool> lockLinearXs;
+	std::vector<bool> lockLinearYs;
+	std::vector<bool> lockAngularZs;
+
+	for (RigidBody* body : bodies)
+	{
+		bodyTypes.push_back(static_cast<int>(body->def.type));
+		lockLinearXs.push_back(body->def.motionLocks.linearX);
+		lockLinearYs.push_back(body->def.motionLocks.linearY);
+		lockAngularZs.push_back(body->def.motionLocks.angularZ);
+	}
+
+	ImGui::TextDisabled("Applied on scene/physics rebuild.");
+	ImGui::Separator();
+
+	const char* bodyTypeItems[] = { "Static", "Kinematic", "Dynamic" };
+	int currentType = bodyTypes[0];
+	if (!AreAllEqualInt(bodyTypes))
+		DrawMixedLabel("Body Type");
+	if (ImGui::Combo(AreAllEqualInt(bodyTypes) ? "Body Type" : "##Body Type", &currentType, bodyTypeItems, IM_ARRAYSIZE(bodyTypeItems)))
+	{
+		for (RigidBody* body : bodies)
+			body->def.type = static_cast<RigidBody::BodyType>(currentType);
+		changed = true;
+	}
+
+	bool lockLinearX = lockLinearXs[0];
+	if (!AreAllEqualBool(lockLinearXs))
+		DrawMixedLabel("Lock Linear X");
+	if (ImGui::Checkbox(AreAllEqualBool(lockLinearXs) ? "Lock Linear X" : "##Lock Linear X", &lockLinearX))
+	{
+		for (RigidBody* body : bodies)
+			body->def.motionLocks.linearX = lockLinearX;
+		changed = true;
+	}
+
+	bool lockLinearY = lockLinearYs[0];
+	if (!AreAllEqualBool(lockLinearYs))
+		DrawMixedLabel("Lock Linear Y");
+	if (ImGui::Checkbox(AreAllEqualBool(lockLinearYs) ? "Lock Linear Y" : "##Lock Linear Y", &lockLinearY))
+	{
+		for (RigidBody* body : bodies)
+			body->def.motionLocks.linearY = lockLinearY;
+		changed = true;
+	}
+
+	bool lockAngularZ = lockAngularZs[0];
+	if (!AreAllEqualBool(lockAngularZs))
+		DrawMixedLabel("Lock Angular Z");
+	if (ImGui::Checkbox(AreAllEqualBool(lockAngularZs) ? "Lock Angular Z" : "##Lock Angular Z", &lockAngularZ))
+	{
+		for (RigidBody* body : bodies)
+			body->def.motionLocks.angularZ = lockAngularZ;
+		changed = true;
+	}
+
+	return changed;
+}
+
+bool buki::InspectorPanel::DrawSharedShapeCommonFields(const std::vector<ShapeDef*>& defs)
+{
+	if (defs.empty())
+		return false;
+
+	bool changed = false;
+
+	std::vector<bool> fillDraws;
+	std::vector<bool> shapeDraws;
+	std::vector<Color> shapeColors;
+	std::vector<Color> fillColors;
+	std::vector<bool> isSensors;
+	std::vector<int> filters;
+	std::vector<float> densities;
+	std::vector<float> frictions;
+	std::vector<float> restitutions;
+	std::vector<Vector2> positionOffsets;
+
+	for (ShapeDef* def : defs)
+	{
+		fillDraws.push_back(def->fillDraw);
+		shapeDraws.push_back(def->shapeDraw);
+		shapeColors.push_back(def->shapeColor);
+		fillColors.push_back(def->fillColor);
+		isSensors.push_back(def->isSensor);
+		filters.push_back(def->filter);
+		densities.push_back(def->density);
+		frictions.push_back(def->friction);
+		restitutions.push_back(def->restitution);
+		positionOffsets.push_back(def->positionOffset);
+	}
+
+	bool fillDraw = fillDraws[0];
+	if (!AreAllEqualBool(fillDraws))
+		DrawMixedLabel("Fill Draw");
+	if (ImGui::Checkbox(AreAllEqualBool(fillDraws) ? "Fill Draw" : "##Fill Draw", &fillDraw))
+	{
+		for (ShapeDef* def : defs)
+			def->fillDraw = fillDraw;
+		changed = true;
+	}
+
+	bool shapeDraw = shapeDraws[0];
+	if (!AreAllEqualBool(shapeDraws))
+		DrawMixedLabel("Shape Draw");
+	if (ImGui::Checkbox(AreAllEqualBool(shapeDraws) ? "Shape Draw" : "##Shape Draw", &shapeDraw))
+	{
+		for (ShapeDef* def : defs)
+			def->shapeDraw = shapeDraw;
+		changed = true;
+	}
+
+	Color shapeColor = shapeColors[0];
+	float shapeColorValues[4] = { shapeColor.r, shapeColor.g, shapeColor.b, shapeColor.a };
+	if (!AreAllEqualColor(shapeColors))
+		DrawMixedLabel("Shape Color");
+	if (ImGui::ColorEdit4(AreAllEqualColor(shapeColors) ? "Shape Color" : "##Shape Color", shapeColorValues))
+	{
+		Color newColor{ shapeColorValues[0], shapeColorValues[1], shapeColorValues[2], shapeColorValues[3] };
+		for (ShapeDef* def : defs)
+			def->shapeColor = newColor;
+		changed = true;
+	}
+
+	Color fillColor = fillColors[0];
+	float fillColorValues[4] = { fillColor.r, fillColor.g, fillColor.b, fillColor.a };
+	if (!AreAllEqualColor(fillColors))
+		DrawMixedLabel("Fill Color");
+	if (ImGui::ColorEdit4(AreAllEqualColor(fillColors) ? "Fill Color" : "##Fill Color", fillColorValues))
+	{
+		Color newColor{ fillColorValues[0], fillColorValues[1], fillColorValues[2], fillColorValues[3] };
+		for (ShapeDef* def : defs)
+			def->fillColor = newColor;
+		changed = true;
+	}
+
+	bool isSensor = isSensors[0];
+	if (!AreAllEqualBool(isSensors))
+		DrawMixedLabel("Is Sensor");
+	if (ImGui::Checkbox(AreAllEqualBool(isSensors) ? "Is Sensor" : "##Is Sensor", &isSensor))
+	{
+		for (ShapeDef* def : defs)
+			def->isSensor = isSensor;
+		changed = true;
+	}
+
+	int filter = filters[0];
+	if (!AreAllEqualInt(filters))
+		DrawMixedLabel("Filter");
+	if (ImGui::InputInt(AreAllEqualInt(filters) ? "Filter" : "##Filter", &filter))
+	{
+		for (ShapeDef* def : defs)
+			def->filter = filter;
+		changed = true;
+	}
+
+	float density = densities[0];
+	if (!AreAllEqualFloat(densities))
+		DrawMixedLabel("Density");
+	if (ImGui::InputFloat(AreAllEqualFloat(densities) ? "Density" : "##Density", &density, 0.0f, 0.0f, "%.3f"))
+	{
+		density = ClampMinFloat(density, 0.0f);
+		for (ShapeDef* def : defs)
+			def->density = density;
+		changed = true;
+	}
+
+	float friction = frictions[0];
+	if (!AreAllEqualFloat(frictions))
+		DrawMixedLabel("Friction");
+	if (ImGui::InputFloat(AreAllEqualFloat(frictions) ? "Friction" : "##Friction", &friction, 0.0f, 0.0f, "%.3f"))
+	{
+		friction = ClampFloat(friction, 0.0f, 1.0f);
+		for (ShapeDef* def : defs)
+			def->friction = friction;
+		changed = true;
+	}
+
+	float restitution = restitutions[0];
+	if (!AreAllEqualFloat(restitutions))
+		DrawMixedLabel("Restitution");
+	if (ImGui::InputFloat(AreAllEqualFloat(restitutions) ? "Restitution" : "##Restitution", &restitution, 0.0f, 0.0f, "%.3f"))
+	{
+		restitution = ClampFloat(restitution, 0.0f, 1.0f);
+		for (ShapeDef* def : defs)
+			def->restitution = restitution;
+		changed = true;
+	}
+
+	Vector2 positionOffset = positionOffsets[0];
+	float positionOffsetValues[2] = { positionOffset.x, positionOffset.y };
+	if (!AreAllEqualVector2(positionOffsets))
+		DrawMixedLabel("Position Offset");
+	if (ImGui::InputFloat2(AreAllEqualVector2(positionOffsets) ? "Position Offset" : "##Position Offset", positionOffsetValues, "%.3f"))
+	{
+		Vector2 newOffset{ positionOffsetValues[0], positionOffsetValues[1] };
+		for (ShapeDef* def : defs)
+			def->positionOffset = newOffset;
+		changed = true;
+	}
+
+	return changed;
+}
+
+bool buki::InspectorPanel::DrawSharedBoxComponents(const std::vector<Entity*>& entities)
+{
+	std::vector<Box*> boxes = GatherSharedComponents<Box>(entities, "Box");
+	if (boxes.empty())
+		return false;
+
+	bool changed = false;
+
+	std::vector<ShapeDef*> defs;
+	std::vector<Vector2> sizes;
+	for (Box* box : boxes)
+	{
+		defs.push_back(&box->def);
+		sizes.push_back(box->def.size);
+	}
+
+	changed |= DrawSharedShapeCommonFields(defs);
+
+	Vector2 size = sizes[0];
+	float sizeValues[2] = { size.x, size.y };
+	if (!AreAllEqualVector2(sizes))
+		DrawMixedLabel("Size");
+	if (ImGui::InputFloat2(AreAllEqualVector2(sizes) ? "Size" : "##Size", sizeValues, "%.3f"))
+	{
+		Vector2 newSize = ClampMinVector2({ sizeValues[0], sizeValues[1] }, 0.001f);
+		for (Box* box : boxes)
+			box->def.size = newSize;
+		changed = true;
+	}
+
+	return changed;
+}
+
+bool buki::InspectorPanel::DrawSharedCircleComponents(const std::vector<Entity*>& entities)
+{
+	std::vector<Circle*> circles = GatherSharedComponents<Circle>(entities, "Circle");
+	if (circles.empty())
+		return false;
+
+	bool changed = false;
+
+	std::vector<ShapeDef*> defs;
+	std::vector<float> radii;
+	for (Circle* circle : circles)
+	{
+		defs.push_back(&circle->def);
+		radii.push_back(circle->def.radius);
+	}
+
+	changed |= DrawSharedShapeCommonFields(defs);
+
+	float radius = radii[0];
+	if (!AreAllEqualFloat(radii))
+		DrawMixedLabel("Radius");
+	if (ImGui::InputFloat(AreAllEqualFloat(radii) ? "Radius" : "##Radius", &radius, 0.0f, 0.0f, "%.3f"))
+	{
+		radius = ClampMinFloat(radius, 0.001f);
+		for (Circle* circle : circles)
+			circle->def.radius = radius;
+		changed = true;
+	}
+
+	return changed;
+}
+
+bool buki::InspectorPanel::DrawSharedPolygonComponents(const std::vector<Entity*>& entities)
+{
+	std::vector<Polygon*> polygons = GatherSharedComponents<Polygon>(entities, "Polygon");
+	if (polygons.empty())
+		return false;
+
+	bool changed = false;
+
+	std::vector<ShapeDef*> defs;
+	std::vector<float> radii;
+	std::vector<int> segments;
+	for (Polygon* polygon : polygons)
+	{
+		defs.push_back(&polygon->def);
+		radii.push_back(polygon->def.radius);
+		segments.push_back(polygon->def.segments);
+	}
+
+	changed |= DrawSharedShapeCommonFields(defs);
+
+	float radius = radii[0];
+	if (!AreAllEqualFloat(radii))
+		DrawMixedLabel("Radius");
+	if (ImGui::InputFloat(AreAllEqualFloat(radii) ? "Radius" : "##Radius", &radius, 0.0f, 0.0f, "%.3f"))
+	{
+		radius = ClampMinFloat(radius, 0.001f);
+		for (Polygon* polygon : polygons)
+			polygon->def.radius = radius;
+		changed = true;
+	}
+
+	int segmentCount = segments[0];
+	if (!AreAllEqualInt(segments))
+		DrawMixedLabel("Segments");
+	if (ImGui::InputInt(AreAllEqualInt(segments) ? "Segments" : "##Segments", &segmentCount))
+	{
+		segmentCount = ClampMinInt(segmentCount, 3);
+		for (Polygon* polygon : polygons)
+			polygon->def.segments = segmentCount;
+		changed = true;
+	}
+
+	return changed;
+}
+
 std::string buki::InspectorPanel::RemoveComponent(Component* cmp)
 {
 	std::string name = ComponentFactory::GetTypeName(typeid(cmp));
 	if (!ImGui::Button(("Remove " + name).c_str()))
 		return "";
 	return name;
+}
+
+bool buki::InspectorPanel::DrawImageAssetPathPicker(const char* label, std::string& path)
+{
+	bool changed = false;
+
+	ImGui::PushID(label);
+
+	std::string displayName = path.empty() ? "" : DisplayNameForAssetPath(path);
+	char buffer[512] = {};
+	std::snprintf(buffer, sizeof(buffer), "%s", displayName.c_str());
+
+	ImGui::TextUnformatted(label);
+	ImGui::SameLine();
+
+	ImGui::SetNextItemWidth(260.0f);
+	ImGui::InputText("##Value", buffer, sizeof(buffer), ImGuiInputTextFlags_ReadOnly);
+
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("IMAGE"))
+		{
+			const char* dropped = static_cast<const char*>(payload->Data);
+			if (dropped != nullptr)
+			{
+				path = dropped;
+				changed = true;
+			}
+		}
+		ImGui::EndDragDropTarget();
+	}
+
+	ImGui::SameLine();
+	if (ImGui::Button("Pick"))
+	{
+		ImGui::OpenPopup("ImagePickerPopup");
+	}
+
+	if (ImGui::BeginPopup("ImagePickerPopup"))
+	{
+		static char filterBuffer[256] = {};
+		ImGui::InputText("Search", filterBuffer, sizeof(filterBuffer));
+
+		ImGui::Separator();
+
+		if (ImGui::Selectable("(None)"))
+		{
+			path.clear();
+			changed = true;
+			ImGui::CloseCurrentPopup();
+		}
+
+		const std::vector<std::string> assets = CollectImageAssets("../Deployment/assets");
+		const std::string filter = ToLowerCopy(filterBuffer);
+
+		for (const std::string& asset : assets)
+		{
+			const std::string filename = DisplayNameForAssetPath(asset);
+			const std::string folderSuffix = FolderSuffixForAssetPath(asset);
+
+			std::string searchable = ToLowerCopy(filename + " " + folderSuffix + " " + asset);
+			if (!filter.empty() && searchable.find(filter) == std::string::npos)
+				continue;
+
+			ImGui::PushID(asset.c_str());
+
+			bool selected = (asset == path);
+			if (ImGui::Selectable(filename.c_str(), selected))
+			{
+				path = asset;
+				changed = true;
+				ImGui::CloseCurrentPopup();
+			}
+
+			if (!folderSuffix.empty())
+			{
+				ImGui::SameLine();
+				ImGui::TextDisabled("%s", folderSuffix.c_str());
+			}
+
+			ImGui::PopID();
+		}
+
+		ImGui::EndPopup();
+	}
+
+	ImGui::PopID();
+	return changed;
+}
+
+bool buki::InspectorPanel::DrawSharedImageAssetPathPicker(const char* label, std::vector<std::string*>& paths)
+{
+	if (paths.empty())
+		return false;
+
+	bool changed = false;
+
+	bool mixed = false;
+	const std::string first = (paths[0] != nullptr) ? *paths[0] : "";
+
+	for (size_t i = 1; i < paths.size(); ++i)
+	{
+		if (paths[i] == nullptr)
+			continue;
+
+		if (*paths[i] != first)
+		{
+			mixed = true;
+			break;
+		}
+	}
+
+	std::string displayValue = mixed ? "-" : DisplayNameForAssetPath(first);
+
+	ImGui::PushID(label);
+
+	if (DrawMixedStringField(label, mixed, displayValue))
+	{
+		const std::string typed = displayValue;
+
+		if (typed.empty())
+		{
+			for (std::string* path : paths)
+			{
+				if (path != nullptr)
+					path->clear();
+			}
+			changed = true;
+		}
+		else if (typed != "-")
+		{
+			const std::vector<std::string> assets = CollectImageAssets("../Deployment/assets");
+
+			for (const std::string& asset : assets)
+			{
+				const std::string filename = DisplayNameForAssetPath(asset);
+				if (filename == typed)
+				{
+					for (std::string* path : paths)
+					{
+						if (path != nullptr)
+							*path = asset;
+					}
+					changed = true;
+					break;
+				}
+			}
+		}
+	}
+
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("IMAGE"))
+		{
+			const char* dropped = static_cast<const char*>(payload->Data);
+			if (dropped != nullptr)
+			{
+				for (std::string* path : paths)
+				{
+					if (path != nullptr)
+						*path = dropped;
+				}
+				changed = true;
+			}
+		}
+		ImGui::EndDragDropTarget();
+	}
+
+	ImGui::SameLine();
+	if (ImGui::Button("Pick"))
+	{
+		ImGui::OpenPopup("ImagePickerPopup");
+	}
+
+	if (ImGui::BeginPopup("ImagePickerPopup"))
+	{
+		static char filterBuffer[256] = {};
+		ImGui::InputText("Search", filterBuffer, sizeof(filterBuffer));
+
+		ImGui::Separator();
+
+		if (ImGui::Selectable("(None)"))
+		{
+			for (std::string* path : paths)
+			{
+				if (path != nullptr)
+					path->clear();
+			}
+			changed = true;
+			ImGui::CloseCurrentPopup();
+		}
+
+		const std::vector<std::string> assets = CollectImageAssets("../Deployment/assets");
+		const std::string filter = ToLowerCopy(filterBuffer);
+
+		for (const std::string& asset : assets)
+		{
+			const std::string filename = DisplayNameForAssetPath(asset);
+			const std::string folderSuffix = FolderSuffixForAssetPath(asset);
+
+			std::string searchable = ToLowerCopy(filename + " " + folderSuffix + " " + asset);
+			if (!filter.empty() && searchable.find(filter) == std::string::npos)
+				continue;
+
+			ImGui::PushID(asset.c_str());
+
+			bool selected = (!mixed && asset == first);
+			if (ImGui::Selectable(filename.c_str(), selected))
+			{
+				for (std::string* path : paths)
+				{
+					if (path != nullptr)
+						*path = asset;
+				}
+				changed = true;
+				ImGui::CloseCurrentPopup();
+			}
+
+			if (!folderSuffix.empty())
+			{
+				ImGui::SameLine();
+				ImGui::TextDisabled("%s", folderSuffix.c_str());
+			}
+
+			ImGui::PopID();
+		}
+
+		ImGui::EndPopup();
+	}
+
+	ImGui::PopID();
+	return changed;
+}
+
+bool buki::InspectorPanel::DrawMixedStringField(const char* label, bool mixed, std::string& value)
+{
+	bool changed = false;
+
+	ImGui::PushID(label);
+
+	char buffer[512] = {};
+	std::string displayValue = mixed ? "-" : value;
+	std::snprintf(buffer, sizeof(buffer), "%s", displayValue.c_str());
+
+	ImGui::TextUnformatted(label);
+	ImGui::SameLine();
+
+	ImGui::SetNextItemWidth(260.0f);
+	if (ImGui::InputText("##MixedStringField", buffer, sizeof(buffer)))
+	{
+		value = buffer;
+		changed = true;
+	}
+
+	ImGui::PopID();
+	return changed;
 }

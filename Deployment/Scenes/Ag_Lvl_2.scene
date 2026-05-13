@@ -2200,6 +2200,13 @@
                     "shapeDraw": false,
                     "type": "Box"
                 },
+                "BricksBehaviour": {
+                    "BreakSounds": [],
+                    "DamageSounds": [],
+                    "collisionSounds": [],
+                    "maxHealth": 100.0,
+                    "stageImages": []
+                },
                 "RigidBody": {
                     "motionLocks": {
                         "angularZ": false,
@@ -2219,7 +2226,7 @@
                         "h": false,
                         "v": false
                     },
-                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
+                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood020.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -2285,6 +2292,13 @@
                     "shapeDraw": false,
                     "type": "Box"
                 },
+                "BricksBehaviour": {
+                    "BreakSounds": [],
+                    "DamageSounds": [],
+                    "collisionSounds": [],
+                    "maxHealth": 100.0,
+                    "stageImages": []
+                },
                 "RigidBody": {
                     "motionLocks": {
                         "angularZ": false,
@@ -2304,7 +2318,7 @@
                         "h": false,
                         "v": false
                     },
-                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
+                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood020.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -2370,6 +2384,13 @@
                     "shapeDraw": false,
                     "type": "Box"
                 },
+                "BricksBehaviour": {
+                    "BreakSounds": [],
+                    "DamageSounds": [],
+                    "collisionSounds": [],
+                    "maxHealth": 100.0,
+                    "stageImages": []
+                },
                 "RigidBody": {
                     "motionLocks": {
                         "angularZ": false,
@@ -2389,7 +2410,7 @@
                         "h": false,
                         "v": false
                     },
-                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
+                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood020.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -2455,6 +2476,13 @@
                     "shapeDraw": false,
                     "type": "Box"
                 },
+                "BricksBehaviour": {
+                    "BreakSounds": [],
+                    "DamageSounds": [],
+                    "collisionSounds": [],
+                    "maxHealth": 100.0,
+                    "stageImages": []
+                },
                 "RigidBody": {
                     "motionLocks": {
                         "angularZ": false,
@@ -2474,7 +2502,7 @@
                         "h": false,
                         "v": false
                     },
-                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
+                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood020.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -2540,6 +2568,13 @@
                     "shapeDraw": false,
                     "type": "Box"
                 },
+                "BricksBehaviour": {
+                    "BreakSounds": [],
+                    "DamageSounds": [],
+                    "collisionSounds": [],
+                    "maxHealth": 100.0,
+                    "stageImages": []
+                },
                 "RigidBody": {
                     "motionLocks": {
                         "angularZ": false,
@@ -2559,7 +2594,7 @@
                         "h": false,
                         "v": false
                     },
-                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
+                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood020.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -2625,6 +2660,13 @@
                     "shapeDraw": false,
                     "type": "Box"
                 },
+                "BricksBehaviour": {
+                    "BreakSounds": [],
+                    "DamageSounds": [],
+                    "collisionSounds": [],
+                    "maxHealth": 100.0,
+                    "stageImages": []
+                },
                 "RigidBody": {
                     "motionLocks": {
                         "angularZ": false,
@@ -2644,7 +2686,7 @@
                         "h": false,
                         "v": false
                     },
-                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
+                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood020.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -2710,6 +2752,13 @@
                     "shapeDraw": false,
                     "type": "Box"
                 },
+                "BricksBehaviour": {
+                    "BreakSounds": [],
+                    "DamageSounds": [],
+                    "collisionSounds": [],
+                    "maxHealth": 100.0,
+                    "stageImages": []
+                },
                 "RigidBody": {
                     "motionLocks": {
                         "angularZ": false,
@@ -2729,7 +2778,7 @@
                         "h": false,
                         "v": false
                     },
-                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
+                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood020.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -2795,6 +2844,13 @@
                     "shapeDraw": false,
                     "type": "Box"
                 },
+                "BricksBehaviour": {
+                    "BreakSounds": [],
+                    "DamageSounds": [],
+                    "collisionSounds": [],
+                    "maxHealth": 100.0,
+                    "stageImages": []
+                },
                 "RigidBody": {
                     "motionLocks": {
                         "angularZ": false,
@@ -2814,7 +2870,7 @@
                         "h": false,
                         "v": false
                     },
-                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
+                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood020.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -2939,6 +2995,11 @@
         },
         "bird1": {
             "components": {
+                "AngryBirdController": {
+                    "forceMultiplier": 6.0,
+                    "shotLength": 4.0,
+                    "soundDamageThreshold": 5.0
+                },
                 "Circle": {
                     "circle": {
                         "positionOffset": {
@@ -2983,7 +3044,7 @@
                         "h": false,
                         "v": false
                     },
-                    "path": "/assets/Kenney/Physics Assets/PNG/Aliens/alienGreen_round.png",
+                    "path": "/assets/Kenney/Physics Assets/PNG/Aliens/alienBlue_suit.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
