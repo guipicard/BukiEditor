@@ -2205,7 +2205,9 @@
                     "DamageSounds": [],
                     "collisionSounds": [],
                     "maxHealth": 100.0,
-                    "stageImages": []
+                    "stageImages": [
+                        "assets/Kenney/Physics Assets/PNG/Wood elements/elementWood020.png"
+                    ]
                 },
                 "RigidBody": {
                     "motionLocks": {
@@ -2226,7 +2228,7 @@
                         "h": false,
                         "v": false
                     },
-                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood020.png",
+                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -2297,7 +2299,9 @@
                     "DamageSounds": [],
                     "collisionSounds": [],
                     "maxHealth": 100.0,
-                    "stageImages": []
+                    "stageImages": [
+                        "assets/Kenney/Physics Assets/PNG/Wood elements/elementWood020.png"
+                    ]
                 },
                 "RigidBody": {
                     "motionLocks": {
@@ -2318,7 +2322,7 @@
                         "h": false,
                         "v": false
                     },
-                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood020.png",
+                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -2389,7 +2393,9 @@
                     "DamageSounds": [],
                     "collisionSounds": [],
                     "maxHealth": 100.0,
-                    "stageImages": []
+                    "stageImages": [
+                        "assets/Kenney/Physics Assets/PNG/Wood elements/elementWood020.png"
+                    ]
                 },
                 "RigidBody": {
                     "motionLocks": {
@@ -2410,7 +2416,7 @@
                         "h": false,
                         "v": false
                     },
-                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood020.png",
+                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -2481,7 +2487,9 @@
                     "DamageSounds": [],
                     "collisionSounds": [],
                     "maxHealth": 100.0,
-                    "stageImages": []
+                    "stageImages": [
+                        "assets/Kenney/Physics Assets/PNG/Wood elements/elementWood020.png"
+                    ]
                 },
                 "RigidBody": {
                     "motionLocks": {
@@ -2502,7 +2510,7 @@
                         "h": false,
                         "v": false
                     },
-                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood020.png",
+                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -2573,7 +2581,9 @@
                     "DamageSounds": [],
                     "collisionSounds": [],
                     "maxHealth": 100.0,
-                    "stageImages": []
+                    "stageImages": [
+                        "assets/Kenney/Physics Assets/PNG/Wood elements/elementWood020.png"
+                    ]
                 },
                 "RigidBody": {
                     "motionLocks": {
@@ -2594,7 +2604,7 @@
                         "h": false,
                         "v": false
                     },
-                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood020.png",
+                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -2665,7 +2675,9 @@
                     "DamageSounds": [],
                     "collisionSounds": [],
                     "maxHealth": 100.0,
-                    "stageImages": []
+                    "stageImages": [
+                        "assets/Kenney/Physics Assets/PNG/Wood elements/elementWood020.png"
+                    ]
                 },
                 "RigidBody": {
                     "motionLocks": {
@@ -2686,7 +2698,7 @@
                         "h": false,
                         "v": false
                     },
-                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood020.png",
+                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -2757,7 +2769,9 @@
                     "DamageSounds": [],
                     "collisionSounds": [],
                     "maxHealth": 100.0,
-                    "stageImages": []
+                    "stageImages": [
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Wood elements\\elementWood019.png"
+                    ]
                 },
                 "RigidBody": {
                     "motionLocks": {
@@ -2778,7 +2792,7 @@
                         "h": false,
                         "v": false
                     },
-                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood020.png",
+                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -2849,7 +2863,9 @@
                     "DamageSounds": [],
                     "collisionSounds": [],
                     "maxHealth": 100.0,
-                    "stageImages": []
+                    "stageImages": [
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Wood elements\\elementWood019.png"
+                    ]
                 },
                 "RigidBody": {
                     "motionLocks": {
@@ -2870,7 +2886,7 @@
                         "h": false,
                         "v": false
                     },
-                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood020.png",
+                    "path": "/assets/Kenney/Physics Assets/PNG/Wood elements/elementWood019.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -3044,7 +3060,7 @@
                         "h": false,
                         "v": false
                     },
-                    "path": "/assets/Kenney/Physics Assets/PNG/Aliens/alienBlue_suit.png",
+                    "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Aliens\\alienGreen_round.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -3244,5 +3260,5 @@
         }
     },
     "sceneName": "Ag_Lvl_2",
-    "scenePath": "../Deployment/Scenes\\Ag_Lvl_2.scene"
+    "scenePath": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\Ag_Lvl_2.scene"
 }

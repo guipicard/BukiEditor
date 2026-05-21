@@ -49,6 +49,35 @@ namespace buki
 
 		bool DrawImageAssetPathPicker(const char* label, std::string& path);
 		bool DrawSharedImageAssetPathPicker(const char* label, std::vector<std::string*>& paths);
+		
 		bool DrawMixedStringField(const char* label, bool mixed, std::string& value);
+		bool DrawMixedIntField(const char* label, bool mixed, int& value);
+		bool DrawMixedFloatField(const char* label, bool mixed, float& value, const char* format = "%.3f");
+		bool DrawMixedBoolField(const char* label, bool mixed, bool& value);
+		bool DrawMixedFloat2Field(const char* label, bool mixed, float values[2], const char* format = "%.3f");
+		bool DrawMixedFloat4Field(const char* label, bool mixed, float values[4], const char* format = "%.3f");
+		bool DrawMixedColorField(const char* label, bool mixed, float values[4]);
+		bool DrawMixedComboField(const char* label, bool mixed, int& currentIndex, const char* const items[], int itemsCount);
+
+		bool DrawMixedVector2FieldPerAxis(
+			const char* label,
+			bool mixedX,
+			bool mixedY,
+			float& x,
+			float& y,
+			bool& changedX,
+			bool& changedY,
+			const char* format = "%.3f");
+		bool DrawMixedVector2DragDeltaFieldPerAxis(
+			const char* label,
+			bool mixedX,
+			bool mixedY,
+			float& x,
+			float& y,
+			float& deltaX,
+			float& deltaY,
+			bool& changedX,
+			bool& changedY,
+			const char* format = "%.3f");
 	};
 }

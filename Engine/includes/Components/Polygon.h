@@ -6,8 +6,9 @@
 
 namespace buki
 {
-    struct Polygon : public Shapes
+    class Polygon : public Shapes
     {
+    public:
         Polygon(Entity* entity) : Shapes(entity) {}
         ~Polygon() = default;
 

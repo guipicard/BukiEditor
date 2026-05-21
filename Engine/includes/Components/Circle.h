@@ -3,8 +3,9 @@
 
 namespace buki
 {
-	struct Circle : public Shapes
+	class Circle : public Shapes
 	{
+	public:
 		Circle(Entity* entity) : Shapes(entity) {}
 		~Circle() = default;
 

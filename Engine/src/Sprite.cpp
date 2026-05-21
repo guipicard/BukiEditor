@@ -103,7 +103,7 @@ namespace buki
 
         if (!m_Path.empty())
         {
-            m_Texture = Textures().Load(m_Path);
+            m_Texture = Textures().Load(m_Path, m_Path[1] != ':');
         }
     }
 

@@ -14,7 +14,9 @@ namespace buki
 		ImageAsset,
 		AudioAsset,
 		EntityRef,
-		PrefabRef
+		PrefabRef,
+		ImageAssetList,
+		AudioAssetList,
 	};
 
 	struct PropertyInfo
@@ -46,10 +48,10 @@ namespace buki
 	{ #FIELD, buki::PropertyType::String, offsetof(TYPE, FIELD) }
 
 #define BUKI_PROP_FLOAT_RANGE(TYPE, FIELD, SPEED, MIN, MAX) \
-	{ #FIELD, buki::PropertyType::Float, offsetof(TYPE, FIELD), SPEED, true, MIN, true, MAX }
+    { #FIELD, buki::PropertyType::Float, offsetof(TYPE, FIELD), true, true, MIN, MAX, SPEED }
 
 #define BUKI_PROP_INT_RANGE(TYPE, FIELD, SPEED, MIN, MAX) \
-	{ #FIELD, buki::PropertyType::Int, offsetof(TYPE, FIELD), SPEED, true, static_cast<float>(MIN), true, static_cast<float>(MAX) }
+    { #FIELD, buki::PropertyType::Int, offsetof(TYPE, FIELD), true, true, static_cast<float>(MIN), static_cast<float>(MAX), SPEED }
 
 #define BUKI_PROP_STRING_LIST(TYPE, FIELD) \
 	{ #FIELD, buki::PropertyType::StringList, offsetof(TYPE, FIELD) }
@@ -59,3 +61,9 @@ namespace buki
 
 #define BUKI_PROP_PREFAB(TYPE, FIELD) \
 	{ #FIELD, buki::PropertyType::PrefabRef, offsetof(TYPE, FIELD) }
+
+#define BUKI_PROP_IMAGE_LIST(TYPE, FIELD) \
+	{ #FIELD, buki::PropertyType::ImageAssetList, offsetof(TYPE, FIELD) }
+
+#define BUKI_PROP_AUDIO_LIST(TYPE, FIELD) \
+	{ #FIELD, buki::PropertyType::AudioAssetList, offsetof(TYPE, FIELD) }

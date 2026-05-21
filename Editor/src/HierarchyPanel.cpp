@@ -127,12 +127,51 @@ namespace
 
 		SyncLegacySelection(state);
 	}
+
+	static bool ContainsEntityPtr(const std::vector<buki::Entity*>& entities, buki::Entity* entity)
+	{
+		return std::find(entities.begin(), entities.end(), entity) != entities.end();
+	}
+
+	void SanitizeSelection(buki::EditorState& state, const std::vector<buki::Entity*>& allEntities)
+	{
+		std::vector<buki::Entity*> filtered;
+		filtered.reserve(state.selectedEntities.size());
+
+		for (buki::Entity* entity : state.selectedEntities)
+		{
+			if (entity != nullptr && ContainsEntityPtr(allEntities, entity))
+				filtered.push_back(entity);
+		}
+
+		state.selectedEntities = std::move(filtered);
+
+		if (state.selectedEntity != nullptr && !ContainsEntityPtr(allEntities, state.selectedEntity))
+			state.selectedEntity = nullptr;
+
+		if (state.activeEntity != nullptr && !ContainsEntityPtr(allEntities, state.activeEntity))
+			state.activeEntity = nullptr;
+
+		if (state.selectedEntities.empty())
+		{
+			state.selectedEntity = nullptr;
+			state.activeEntity = nullptr;
+		}
+		else if (state.selectedEntity == nullptr)
+		{
+			state.selectedEntity = state.selectedEntities.front();
+			state.activeEntity = state.selectedEntity;
+		}
+	}
 }
 
 void buki::HierarchyPanel::Render(EditorState& state)
 {
 	ImGui::Begin("Hierarchy", &state.showHierarchy);
 	auto& world = buki::Engine::Get().World();
+
+	const std::vector<Entity*> allEntities = world.GetEntitiesInWorld();
+	SanitizeSelection(state, allEntities);
 
 	static char search[128] = {};
 	ImGui::InputTextWithHint("##search", "Search entities...", search, sizeof(search));
@@ -180,7 +219,6 @@ void buki::HierarchyPanel::Render(EditorState& state)
 		}
 	}
 
-	const std::vector<Entity*> allEntities = world.GetEntitiesInWorld();
 	ClearInvalidSelection(state, allEntities);
 
 	std::vector<Entity*> visibleEntities;

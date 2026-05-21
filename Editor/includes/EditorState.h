@@ -2,6 +2,9 @@
 
 #include <filesystem>
 #include <vector>
+#include "imgui.h"
+#include "Texture2D.h"
+#include "Engine.h"
 
 namespace buki
 {
@@ -13,7 +16,22 @@ namespace buki
 		Fit = 1,
 		OneToOne = 2
 	};
+	static ImTextureID ToImGuiTextureID(std::uint32_t textureId)
+	{
+		return static_cast<ImTextureID>(textureId);
+	}
+	static const buki::Texture2D* GetThumbnailTexture(const std::string& assetPath)
+	{
+		auto& engine = buki::Engine::Get();
+		buki::Texture2D* texture = engine.Textures().Get(assetPath);
+		if (texture == nullptr)
+			texture = engine.Textures().Load(assetPath);
 
+		if (texture == nullptr || !texture->IsValid())
+			return nullptr;
+
+		return texture;
+	}
 	struct EditorState
 	{
 		Entity* selectedEntity = nullptr;

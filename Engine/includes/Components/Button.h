@@ -34,7 +34,7 @@ namespace buki
 		bool centerTextY = true;
 	};
 
-	struct Button final : public Component, public IUpdatable, public IDrawable
+	class Button final : public Component, public IUpdatable, public IDrawable
 	{
 	public:
 		explicit Button(Entity* entity);

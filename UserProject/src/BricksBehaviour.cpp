@@ -193,9 +193,11 @@ void buki::BricksBehaviour::TakeDamage(float damage)
 		}
 		else
 		{
-			if (damage > 1.0f)
+			if (stageImages.empty())
 			{
-				PlayCollisionSound();
+				if (damage > 1.0f)
+					PlayCollisionSound();
+				return;
 			}
 		}
 	}

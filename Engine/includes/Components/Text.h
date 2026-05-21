@@ -9,7 +9,7 @@
 
 namespace buki
 {
-    struct Text final : public Component, public IDrawable
+    class Text final : public Component, public IDrawable
     {
     public:
         explicit Text(Entity* entity);

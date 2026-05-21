@@ -16,8 +16,9 @@ namespace buki
         uint16_t generation;
     };
 
-    struct RigidBody : public Component, public IFixedUpdatable
+    class RigidBody : public Component, public IFixedUpdatable
     {
+    public:
         using BodyType = RigidBodyDef::BodyType;
 
         RigidBody(Entity* entity) { m_Entity = entity; }

@@ -9,7 +9,7 @@
 
 namespace buki
 {
-    struct Sprite final : public Component, public IDrawable
+    class Sprite final : public Component, public IDrawable
     {
     public:
         explicit Sprite(Entity* entity);

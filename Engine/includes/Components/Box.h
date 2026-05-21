@@ -6,8 +6,9 @@
 
 namespace buki
 {
-    struct Box : public Shapes
+    class Box : public Shapes
     {
+    public:
         Box(Entity* entity) : Shapes(entity) {}
         ~Box() = default;
 

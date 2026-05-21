@@ -527,25 +527,25 @@
                 "ShapesController": {
                     "boxFillDraw": true,
                     "boxRef": {
-                        "entity": "",
-                        "prefab": "../Deployment/Prefabs\\RectEntity.prefab"
+                        "entityName": "",
+                        "prefabPath": "../Deployment/Prefabs\\RectEntity.prefab"
                     },
                     "boxShapeDraw": true,
                     "circleFillDraw": true,
                     "circleRef": {
-                        "entity": "",
-                        "prefab": "../Deployment/Prefabs\\CircleEntity.prefab"
+                        "entityName": "",
+                        "prefabPath": "../Deployment/Prefabs\\CircleEntity.prefab"
                     },
                     "circleShapeDraw": true,
                     "emptyEntityRef": {
-                        "entity": "",
-                        "prefab": ""
+                        "entityName": "",
+                        "prefabPath": ""
                     },
                     "emptyPrefabRef": "",
                     "polygonFillDraw": true,
                     "polygonRef": {
-                        "entity": "",
-                        "prefab": "../Deployment/Prefabs\\PolygonEntity.prefab"
+                        "entityName": "",
+                        "prefabPath": "../Deployment/Prefabs\\PolygonEntity.prefab"
                     },
                     "polygonShapeDraw": true,
                     "polygonSides": 3

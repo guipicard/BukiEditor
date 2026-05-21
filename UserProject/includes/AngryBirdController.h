@@ -4,7 +4,7 @@
 namespace buki
 {
 	struct Spawner;
-	struct Button;
+	class Button;
 	struct AngryBirdController : public MonoBehaviour
 	{
 		AngryBirdController(Entity* _entity);

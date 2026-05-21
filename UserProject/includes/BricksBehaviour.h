@@ -30,10 +30,10 @@ namespace buki
 			{
 				static std::vector<PropertyInfo> properties = {
 					BUKI_PROP_FLOAT(BricksBehaviour, maxHealth),
-					BUKI_PROP_STRING_LIST(BricksBehaviour, stageImages),
-					BUKI_PROP_STRING_LIST(BricksBehaviour, collisionSounds),
-					BUKI_PROP_STRING_LIST(BricksBehaviour, DamageSounds),
-					BUKI_PROP_STRING_LIST(BricksBehaviour, BreakSounds),
+					BUKI_PROP_IMAGE_LIST(BricksBehaviour, stageImages),
+					BUKI_PROP_AUDIO_LIST(BricksBehaviour, collisionSounds),
+					BUKI_PROP_AUDIO_LIST(BricksBehaviour, DamageSounds),
+					BUKI_PROP_AUDIO_LIST(BricksBehaviour, BreakSounds),
 				};
 				return properties;
 			}

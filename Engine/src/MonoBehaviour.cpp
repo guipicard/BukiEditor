@@ -34,27 +34,29 @@ json buki::MonoBehaviour::Serialize()
 			break;
 
 		case PropertyType::String:
+		case PropertyType::ImageAsset:
+		case PropertyType::AudioAsset:
+		case PropertyType::PrefabRef:
 			doc[prop.name] = *reinterpret_cast<const std::string*>(fieldPtr);
 			break;
 
 		case PropertyType::StringList:
+		case PropertyType::ImageAssetList:
+		case PropertyType::AudioAssetList:
 			doc[prop.name] = *reinterpret_cast<const std::vector<std::string>*>(fieldPtr);
 			break;
 
-		case PropertyType::ImageAsset:
-			doc[prop.name] = *reinterpret_cast<const std::string*>(fieldPtr);
-			break;
-
-		case PropertyType::AudioAsset:
-			doc[prop.name] = *reinterpret_cast<const std::string*>(fieldPtr);
-			break;
-
 		case PropertyType::EntityRef:
-			doc[prop.name] = *reinterpret_cast<const EntityRef*>(fieldPtr);
+		{
+			const EntityRef& ref = *reinterpret_cast<const EntityRef*>(fieldPtr);
+			doc[prop.name] = {
+				{ "entityName", ref.entityName },
+				{ "prefabPath", ref.prefabPath }
+			};
 			break;
+		}
 
-		case PropertyType::PrefabRef:
-			doc[prop.name] = *reinterpret_cast<const std::string*>(fieldPtr);
+		default:
 			break;
 		}
 	}
@@ -77,67 +79,50 @@ void buki::MonoBehaviour::Deserialize(json doc)
 		switch (prop.type)
 		{
 		case PropertyType::Int:
-			if (doc[prop.name].is_number_integer())
-			{
+			if (doc.contains(prop.name) && doc[prop.name].is_number_integer())
 				*reinterpret_cast<int*>(fieldPtr) = doc[prop.name].get<int>();
-			}
 			break;
 
 		case PropertyType::Float:
-			if (doc[prop.name].is_number())
-			{
+			if (doc.contains(prop.name) && doc[prop.name].is_number())
 				*reinterpret_cast<float*>(fieldPtr) = doc[prop.name].get<float>();
-			}
 			break;
 
 		case PropertyType::Bool:
-			if (doc[prop.name].is_boolean())
-			{
+			if (doc.contains(prop.name) && doc[prop.name].is_boolean())
 				*reinterpret_cast<bool*>(fieldPtr) = doc[prop.name].get<bool>();
-			}
 			break;
 
 		case PropertyType::String:
-			if (doc[prop.name].is_string())
-			{
+		case PropertyType::ImageAsset:
+		case PropertyType::AudioAsset:
+		case PropertyType::PrefabRef:
+			if (doc.contains(prop.name) && doc[prop.name].is_string())
 				*reinterpret_cast<std::string*>(fieldPtr) = doc[prop.name].get<std::string>();
-			}
 			break;
 
 		case PropertyType::StringList:
-			if (doc[prop.name].is_array())
-			{
-				*reinterpret_cast<std::vector<std::string>*>(fieldPtr) =
-					doc[prop.name].get<std::vector<std::string>>();
-			}
-			break;
-
-		case PropertyType::ImageAsset:
-			if (doc[prop.name].is_string())
-			{
-				*reinterpret_cast<std::string*>(fieldPtr) = doc[prop.name].get<std::string>();
-			}
-			break;
-
-		case PropertyType::AudioAsset:
-			if (doc[prop.name].is_string())
-			{
-				*reinterpret_cast<std::string*>(fieldPtr) = doc[prop.name].get<std::string>();
-			}
+		case PropertyType::ImageAssetList:
+		case PropertyType::AudioAssetList:
+			if (doc.contains(prop.name) && doc[prop.name].is_array())
+				*reinterpret_cast<std::vector<std::string>*>(fieldPtr) = doc[prop.name].get<std::vector<std::string>>();
+			else
+				reinterpret_cast<std::vector<std::string>*>(fieldPtr)->clear();
 			break;
 
 		case PropertyType::EntityRef:
-			if (doc[prop.name].is_object())
+			if (doc.contains(prop.name) && doc[prop.name].is_object())
 			{
-				*reinterpret_cast<EntityRef*>(fieldPtr) = doc[prop.name].get<EntityRef>();
+				EntityRef& ref = *reinterpret_cast<EntityRef*>(fieldPtr);
+				const auto& refJson = doc[prop.name];
+
+				ref.entityName = refJson.value("entityName", "");
+				ref.prefabPath = refJson.value("prefabPath", "");
+				ref.cached = nullptr;
 			}
 			break;
 
-		case PropertyType::PrefabRef:
-			if (doc[prop.name].is_string())
-			{
-				*reinterpret_cast<std::string*>(fieldPtr) = doc[prop.name].get<std::string>();
-			}
+		default:
 			break;
 		}
 	}
