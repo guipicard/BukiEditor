@@ -2,14 +2,7 @@
 #define VC_EXTRALEAN
 #include<Windows.h>
 #include "Engine.h"
-#include "ShapesDemo.h"
-#include "AngryBirdDemo.h"
-#include "MenuScene.h"
-#include "AGLevel1.h"
-#include "AGLevel2.h"
-#include "AGLevel3.h"
-#include "SceneTest.h"
-#include "Platformer.h"
+#include "ComponentFactory.h"
 #include "GameComponentRegistration.h"
 #include "EngineComponentRegistration.h"
 #include <string>
@@ -17,16 +10,14 @@
 using namespace buki;
 
 void InitGameplay(void) {
-	Engine::Get().World().Register("SceneTest", new SceneTest());
-	Engine::Get().World().Register("Menu", new MenuScene());
-	Engine::Get().World().Register("Shapes", new ShapesDemo());
-	Engine::Get().World().Register("Platformer", new Platformer());
-	Engine::Get().World().Register("AngryBird", new AngryBirdDemo());
-
-	Engine::Get().World().Register("Ag_Lvl_1", new AGLevel1());
-	Engine::Get().World().Register("Ag_Lvl_2", new AGLevel2());
-	Engine::Get().World().Register("Ag_Lvl_3", new AGLevel3());
-
+	Engine::Get().World().Register("SceneTest");
+	Engine::Get().World().Register("Menu");
+	Engine::Get().World().Register("Shapes");
+	Engine::Get().World().Register("Platformer");
+	Engine::Get().World().Register("AngryBird");
+	Engine::Get().World().Register("Ag_Lvl_1");
+	Engine::Get().World().Register("Ag_Lvl_2");
+	Engine::Get().World().Register("Ag_Lvl_3");
 
 	Engine::Get().World().SetLoadScene("Menu");
 }

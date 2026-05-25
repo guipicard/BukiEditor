@@ -10,18 +10,7 @@
 #include "MonoBehaviour.h"
 #include "PropertyInfo.h"
 #include "imgui.h"
-
-#include "ContentBrowserPanel.h"
-#include "Texture2D.h"
-
-#include <algorithm>
-#include <cctype>
-#include <cstdio>
-#include <cstring>
-#include <filesystem>
-#include <string>
-#include <unordered_map>
-#include <vector>
+#include "EditorAssetEntries.h"
 
 namespace fs = std::filesystem;
 
@@ -148,104 +137,6 @@ namespace
 		sListEditStates.erase(id);
 	}
 
-	std::string ToLowerCopy(std::string value)
-	{
-		std::transform(value.begin(), value.end(), value.begin(),
-			[](unsigned char c) { return static_cast<char>(std::tolower(c)); });
-		return value;
-	}
-
-	bool IsImageAssetPath(const fs::path& path)
-	{
-		const std::string ext = ToLowerCopy(path.extension().string());
-		return ext == ".png" || ext == ".jpg" || ext == ".jpeg" || ext == ".bmp" ||
-			ext == ".tga" || ext == ".gif" || ext == ".webp";
-	}
-
-	bool IsAudioAssetPath(const fs::path& path)
-	{
-		const std::string ext = ToLowerCopy(path.extension().string());
-		return ext == ".wav" || ext == ".mp3" || ext == ".ogg" || ext == ".flac";
-	}
-
-	bool IsPrefabFile(const fs::path& path)
-	{
-		return ToLowerCopy(path.extension().string()) == ".prefab";
-	}
-
-	std::string ToAssetRelativePath(const fs::path& fullPath)
-	{
-		const std::string normalized = fullPath.lexically_normal().generic_string();
-		const std::string lower = ToLowerCopy(normalized);
-		const std::string marker = "assets/";
-		const size_t pos = lower.find(marker);
-		if (pos != std::string::npos)
-			return normalized.substr(pos);
-
-		return normalized;
-	}
-
-	std::string DisplayNameForPath(const std::string& path)
-	{
-		if (path.empty())
-			return "None";
-		return fs::path(path).filename().string();
-	}
-
-	std::string FolderSuffixForPath(const std::string& path)
-	{
-		const fs::path parent = fs::path(path).parent_path();
-		if (parent.empty())
-			return "";
-		return parent.generic_string();
-	}
-
-	std::vector<buki::BrowserEntry> CollectBrowserEntries(const fs::path& root, const char* payloadType)
-	{
-		std::vector<buki::BrowserEntry> results;
-
-		if (!fs::exists(root) || !fs::is_directory(root))
-			return results;
-
-		for (const auto& entry : fs::recursive_directory_iterator(root))
-		{
-			if (!entry.is_regular_file())
-				continue;
-
-			buki::BrowserEntry item;
-			item.fullPath = fs::absolute(entry.path()).lexically_normal();
-			item.displayName = item.fullPath.filename().string();
-			item.isDirectory = false;
-			item.isSceneFile = buki::IsSceneFile(item.fullPath);
-			item.isPrefabFile = buki::IsPrefabFile(item.fullPath);
-			item.isImageFile = buki::IsImageFile(item.fullPath);
-			item.isAudioFile = buki::IsAudioFile(item.fullPath);
-
-			bool accept = false;
-
-			if (std::strcmp(payloadType, "IMAGE") == 0)
-				accept = item.isImageFile;
-			else if (std::strcmp(payloadType, "AUDIO") == 0)
-				accept = item.isAudioFile;
-			else if (std::strcmp(payloadType, "PREFAB") == 0)
-				accept = item.isPrefabFile;
-
-			if (!accept)
-				continue;
-
-			item.payloadType = payloadType;
-			results.push_back(std::move(item));
-		}
-
-		std::sort(results.begin(), results.end(),
-			[](const buki::BrowserEntry& a, const buki::BrowserEntry& b)
-			{
-				return ToLowerCopy(a.displayName) < ToLowerCopy(b.displayName);
-			});
-
-		return results;
-	}
-
 	void DrawMixedLabel(const std::string& label)
 	{
 		ImGui::TextUnformatted(label.c_str());
@@ -319,19 +210,19 @@ namespace
 
 		const std::string cacheKey = std::string(payloadType);
 		if (sCachedEntries.find(cacheKey) == sCachedEntries.end())
-			sCachedEntries[cacheKey] = CollectBrowserEntries("../Deployment", payloadType);
+			sCachedEntries[cacheKey] = buki::CollectBrowserEntries("../Deployment", payloadType);
 
 		ImGui::SameLine();
 		if (ImGui::Button("Refresh", ImVec2(120.0f, 0.0f)))
 		{
-			sCachedEntries[cacheKey] = CollectBrowserEntries("../Deployment", payloadType);
+			sCachedEntries[cacheKey] = buki::CollectBrowserEntries("../Deployment", payloadType);
 		}
 
 		const std::vector<buki::BrowserEntry>& allEntries = sCachedEntries[cacheKey];
-		const std::string filter = ToLowerCopy(sAssetSearchBuffer);
+		const std::string filter = buki::ToLowerCopy(sAssetSearchBuffer);
 
-		const float thumbnailSize = 64.0f;
-		const float padding = 16.0f;
+		const float thumbnailSize = 80.0f;
+		const float padding = thumbnailSize/4.0f;
 		const float pickerWidth = 720.0f;
 		const float pickerHeight = 430.0f;
 		const float cellSize = thumbnailSize + padding;
@@ -345,8 +236,8 @@ namespace
 
 		for (const buki::BrowserEntry& item : allEntries)
 		{
-			const std::string full = ToLowerCopy(item.fullPath.string());
-			const std::string file = ToLowerCopy(item.displayName);
+			const std::string full = buki::ToLowerCopy(item.fullPath.string());
+			const std::string file = buki::ToLowerCopy(item.displayName);
 
 			if (!filter.empty() &&
 				full.find(filter) == std::string::npos &&
@@ -363,7 +254,7 @@ namespace
 			{
 				path = item.fullPath.string();
 				changed = true;
-				
+
 			}
 
 			if (doubleClicked)
@@ -409,7 +300,7 @@ namespace
 		{
 			ImGui::PushID(i);
 
-			std::string displayName = DisplayNameForPath(values[i]);
+			std::string displayName = buki::DisplayNameForPath(values[i]);
 			if (displayName.empty())
 				displayName = "None";
 
@@ -460,11 +351,10 @@ namespace
 
 		if (mixed)
 		{
-			if (ImGui::Button(("Apply To All##" + std::string(label)).c_str()))
+			if (changed)
 				applyRequested = true;
 
-			ImGui::SameLine();
-			if (ImGui::Button(("Clear All##" + std::string(label)).c_str()))
+			if (changed)
 				clearRequested = true;
 		}
 
@@ -746,7 +636,7 @@ namespace
 		else
 		{
 			ImGui::BeginGroup();
-			ImGui::TextUnformatted(path.empty() ? "None" : DisplayNameForPath(path).c_str());
+			ImGui::TextUnformatted(path.empty() ? "None" : buki::DisplayNameForPath(path).c_str());
 			ImGui::TextDisabled("%s", path.empty() ? "No asset selected" : fs::path(path).parent_path().generic_string().c_str());
 			ImGui::EndGroup();
 		}
@@ -937,7 +827,7 @@ namespace
 		}
 		else if (!preview.prefabPath.empty())
 		{
-			previewText = DisplayNameForPath(preview.prefabPath);
+			previewText = buki::DisplayNameForPath(preview.prefabPath);
 		}
 
 		if (ImGui::Button(previewText.c_str(), ImVec2(220.0f, 0.0f)))
@@ -1346,7 +1236,7 @@ bool buki::InspectorPropertyDrawer::DrawSpriteTexturePathField(const char* label
 	}
 
 	changed |= DrawAssetPickerPopupGrid("SpriteTexturePicker", "IMAGE", texturePath);
-	
+
 	ImGui::PopID();
 	return changed;
 }
@@ -1504,7 +1394,7 @@ bool buki::InspectorPropertyDrawer::DrawSharedComponent(const std::string& compo
 
 		case PropertyType::ImageAssetList:
 			changed |= DrawSharedTypedAssetListProperty(prop, GatherSharedFieldPtrs<std::vector<std::string>>(componentTypeName, entities, prop.offset), "IMAGE");
-			
+
 			break;
 
 		case PropertyType::AudioAssetList:

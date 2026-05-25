@@ -21,12 +21,14 @@
 #include "ComponentFactory.h"
 #include "PropertyInfo.h"
 
-#include <cstdlib>
-#include <cstring>
-#include <unordered_map>
+#include "EditorAssetEntries.h"
 
+//#include <cstdlib>
+//#include <cstring>
+//#include <unordered_map>
+//
 #include <fstream>
-#include <algorithm>
+//#include <algorithm>
 
 namespace fs = std::filesystem;
 
@@ -191,43 +193,6 @@ namespace
 		ImGui::TextDisabled("(mixed)");
 	}
 
-	std::string ToLowerCopy(std::string value)
-	{
-		std::transform(value.begin(), value.end(), value.begin(),
-			[](unsigned char c) { return static_cast<char>(std::tolower(c)); });
-		return value;
-	}
-
-	bool IsImageAssetPath(const fs::path& path)
-	{
-		std::string ext = ToLowerCopy(path.extension().string());
-		return ext == ".png" ||
-			ext == ".jpg" ||
-			ext == ".jpeg" ||
-			ext == ".bmp" ||
-			ext == ".tga" ||
-			ext == ".gif" ||
-			ext == ".webp";
-	}
-
-	std::string ToAssetRelativePath(const fs::path& fullPath)
-	{
-		std::string normalized = fullPath.lexically_normal().generic_string();
-		const std::string marker = "/assets/";
-		size_t pos = normalized.find(marker);
-		if (pos != std::string::npos)
-			return normalized.substr(pos);
-		return normalized;
-	}
-
-	std::string DisplayNameForAssetPath(const std::string& assetPath)
-	{
-		if (assetPath.empty())
-			return "";
-
-		return fs::path(assetPath).filename().string();
-	}
-
 	std::string FolderSuffixForAssetPath(const std::string& assetPath)
 	{
 		fs::path p(assetPath);
@@ -236,28 +201,6 @@ namespace
 			return "";
 
 		return "[" + parent.generic_string() + "]";
-	}
-
-	std::vector<std::string> CollectImageAssets(const fs::path& root)
-	{
-		std::vector<std::string> results;
-
-		if (!fs::exists(root) || !fs::is_directory(root))
-			return results;
-
-		for (const auto& entry : fs::recursive_directory_iterator(root))
-		{
-			if (!entry.is_regular_file())
-				continue;
-
-			if (!IsImageAssetPath(entry.path()))
-				continue;
-
-			results.push_back(ToAssetRelativePath(entry.path()));
-		}
-
-		std::sort(results.begin(), results.end());
-		return results;
 	}
 
 	struct MixedTextState
@@ -352,7 +295,53 @@ namespace
 		}
 	}
 
+	static std::vector<std::string> CollectUniqueScriptTypeNames(
+		const std::vector<buki::StaticVoidFunctionInfo>& functions)
+	{
+		std::vector<std::string> names;
 
+		for (const buki::StaticVoidFunctionInfo& fn : functions)
+		{
+			if (fn.scriptTypeName.empty())
+				continue;
+
+			if (std::find(names.begin(), names.end(), fn.scriptTypeName) == names.end())
+			{
+				names.push_back(fn.scriptTypeName);
+			}
+		}
+
+		std::sort(names.begin(), names.end());
+		return names;
+	}
+
+	bool AreAllEqualBindingScript(const std::vector<buki::StaticFunctionBinding>& bindings)
+	{
+		if (bindings.empty())
+			return true;
+
+		const std::string first = bindings.front().scriptTypeName;
+		for (size_t i = 1; i < bindings.size(); ++i)
+		{
+			if (bindings[i].scriptTypeName != first)
+				return false;
+		}
+		return true;
+	}
+
+	bool AreAllEqualBindingFunction(const std::vector<buki::StaticFunctionBinding>& bindings)
+	{
+		if (bindings.empty())
+			return true;
+
+		const std::string first = bindings.front().functionName;
+		for (size_t i = 1; i < bindings.size(); ++i)
+		{
+			if (bindings[i].functionName != first)
+				return false;
+		}
+		return true;
+	}
 }
 
 void buki::InspectorPanel::Render(EditorState& state)
@@ -966,43 +955,167 @@ bool buki::InspectorPanel::DrawTextComponent(Component* cmp)
 bool buki::InspectorPanel::DrawButtonComponent(Component* cmp)
 {
 	Button* button = dynamic_cast<Button*>(cmp);
-	if (button == nullptr) return false;
+	if (button == nullptr)
+		return false;
+
 	bool changed = false;
+
 	if (ImGui::TreeNodeEx("Button", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		char textBuffer[256] = {};
+		char textBuffer[256];
 		std::snprintf(textBuffer, sizeof(textBuffer), "%s", button->GetText().c_str());
-		if (ImGui::InputText("Text", textBuffer, sizeof(textBuffer))) { button->SetText(textBuffer); changed = true; }
+		if (ImGui::InputText("Text", textBuffer, sizeof(textBuffer)))
+		{
+			button->SetText(textBuffer);
+			changed = true;
+		}
 
-		char messageBuffer[256] = {};
-		std::snprintf(messageBuffer, sizeof(messageBuffer), "%s", button->GetMessage().c_str());
-		if (ImGui::InputText("Message", messageBuffer, sizeof(messageBuffer))) { button->SetMessage(messageBuffer); changed = true; }
+		StaticFunctionBinding binding = button->GetOnClickBinding();
 
-		char fontPathBuffer[512] = {};
+		const std::vector<StaticVoidFunctionInfo> allFns =
+			ScriptFunctionRegistry::Get().GetAllStaticVoidFunctions();
+		const std::vector<std::string> scriptNames =
+			CollectUniqueScriptTypeNames(allFns);
+
+		const char* scriptPreview =
+			binding.scriptTypeName.empty() ? "None" : binding.scriptTypeName.c_str();
+
+		if (ImGui::BeginCombo("OnClick Script", scriptPreview))
+		{
+			if (ImGui::Selectable("None", binding.scriptTypeName.empty()))
+			{
+				binding.SetEmpty();
+				changed = true;
+			}
+
+			for (const std::string& scriptName : scriptNames)
+			{
+				const bool selected = (binding.scriptTypeName == scriptName);
+				if (ImGui::Selectable(scriptName.c_str(), selected))
+				{
+					if (binding.scriptTypeName != scriptName)
+					{
+						binding.scriptTypeName = scriptName;
+						binding.functionName.clear();
+						changed = true;
+					}
+				}
+
+				if (selected)
+					ImGui::SetItemDefaultFocus();
+			}
+
+			ImGui::EndCombo();
+		}
+
+		const std::vector<StaticVoidFunctionInfo> scriptFns =
+			ScriptFunctionRegistry::Get().GetFunctionsForScript(binding.scriptTypeName);
+
+		const char* functionPreview =
+			binding.functionName.empty() ? "None" : binding.functionName.c_str();
+
+		if (ImGui::BeginCombo("OnClick Function", functionPreview))
+		{
+			if (ImGui::Selectable("None", binding.functionName.empty()))
+			{
+				binding.functionName.clear();
+				changed = true;
+			}
+
+			for (const StaticVoidFunctionInfo& fn : scriptFns)
+			{
+				const bool selected = (binding.functionName == fn.functionName);
+				if (ImGui::Selectable(fn.functionName.c_str(), selected))
+				{
+					if (binding.functionName != fn.functionName)
+					{
+						binding.functionName = fn.functionName;
+						changed = true;
+					}
+				}
+
+				if (selected)
+					ImGui::SetItemDefaultFocus();
+			}
+
+			ImGui::EndCombo();
+		}
+
+		if (changed)
+		{
+			button->SetOnClickBinding(binding);
+		}
+
+		char fontPathBuffer[512];
 		std::snprintf(fontPathBuffer, sizeof(fontPathBuffer), "%s", button->GetFontPath().c_str());
-		if (ImGui::InputText("Font Path", fontPathBuffer, sizeof(fontPathBuffer))) { button->SetFontPath(fontPathBuffer); changed = true; }
+		if (ImGui::InputText("Font Path", fontPathBuffer, sizeof(fontPathBuffer)))
+		{
+			button->SetFontPath(fontPathBuffer);
+			changed = true;
+		}
 
 		int fontSize = button->GetFontSize();
-		if (ImGui::DragInt("Font Size", &fontSize, 1.0f, 1, 60)) { button->SetFontSize(fontSize); changed = true; }
+		if (ImGui::DragInt("Font Size", &fontSize, 1.0f, 1, 60))
+		{
+			button->SetFontSize(fontSize);
+			changed = true;
+		}
 
 		bool centerX = button->Style().centerTextX;
-		if (ImGui::Checkbox("Center Text X", &centerX)) { button->Style().centerTextX = centerX; changed = true; }
+		if (ImGui::Checkbox("Center Text X", &centerX))
+		{
+			button->Style().centerTextX = centerX;
+			changed = true;
+		}
 
 		bool centerY = button->Style().centerTextY;
-		if (ImGui::Checkbox("Center Text Y", &centerY)) { button->Style().centerTextY = centerY; changed = true; }
+		if (ImGui::Checkbox("Center Text Y", &centerY))
+		{
+			button->Style().centerTextY = centerY;
+			changed = true;
+		}
 
-		if (ImGui::Checkbox("Fit To Text", &button->Style().fitToText)) changed = true;
-		if (ImGui::Checkbox("Show Background", &button->Style().showBackground)) changed = true;
+		if (ImGui::Checkbox("Fit To Text", &button->Style().fitToText))
+			changed = true;
 
-		float bg[4] = { button->Style().backgroundColor.r, button->Style().backgroundColor.g, button->Style().backgroundColor.b, button->Style().backgroundColor.a };
-		if (ImGui::ColorEdit4("Background", bg)) { button->Style().backgroundColor = { bg[0], bg[1], bg[2], bg[3] }; changed = true; }
+		if (ImGui::Checkbox("Show Background", &button->Style().showBackground))
+			changed = true;
 
-		float textColor[4] = { button->Style().textColor.r, button->Style().textColor.g, button->Style().textColor.b, button->Style().textColor.a };
-		if (ImGui::ColorEdit4("Text Color", textColor)) { button->Style().textColor = { textColor[0], textColor[1], textColor[2], textColor[3] }; changed = true; }
+		float bg[4] =
+		{
+			button->Style().backgroundColor.r,
+			button->Style().backgroundColor.g,
+			button->Style().backgroundColor.b,
+			button->Style().backgroundColor.a
+		};
+		if (ImGui::ColorEdit4("Background", bg))
+		{
+			button->Style().backgroundColor = { bg[0], bg[1], bg[2], bg[3] };
+			changed = true;
+		}
+
+		float textColor[4] =
+		{
+			button->Style().textColor.r,
+			button->Style().textColor.g,
+			button->Style().textColor.b,
+			button->Style().textColor.a
+		};
+		if (ImGui::ColorEdit4("Text Color", textColor))
+		{
+			button->Style().textColor = { textColor[0], textColor[1], textColor[2], textColor[3] };
+			changed = true;
+		}
 
 		ImGui::TreePop();
 	}
-	if (changed) { button->Set(); Engine::Get().Log().LogMessage("Button component updated."); }
+
+	if (changed)
+	{
+		button->Set();
+		Engine::Get().Log().LogMessage("Button component updated.");
+	}
+
 	return changed;
 }
 
@@ -1356,7 +1469,7 @@ bool buki::InspectorPanel::DrawSharedButtonComponents(const std::vector<Entity*>
 	bool changed = false;
 
 	std::vector<std::string> texts;
-	std::vector<std::string> messages;
+	std::vector<StaticFunctionBinding> bindings;
 	std::vector<std::string> fontPaths;
 	std::vector<int> fontSizes;
 	std::vector<bool> centerXs;
@@ -1366,10 +1479,24 @@ bool buki::InspectorPanel::DrawSharedButtonComponents(const std::vector<Entity*>
 	std::vector<Color> backgrounds;
 	std::vector<Color> textColors;
 
+	texts.reserve(buttons.size());
+	bindings.reserve(buttons.size());
+	fontPaths.reserve(buttons.size());
+	fontSizes.reserve(buttons.size());
+	centerXs.reserve(buttons.size());
+	centerYs.reserve(buttons.size());
+	fitToTexts.reserve(buttons.size());
+	showBackgrounds.reserve(buttons.size());
+	backgrounds.reserve(buttons.size());
+	textColors.reserve(buttons.size());
+
 	for (Button* button : buttons)
 	{
+		if (button == nullptr)
+			continue;
+
 		texts.push_back(button->GetText());
-		messages.push_back(button->GetMessage());
+		bindings.push_back(button->GetOnClickBinding());
 		fontPaths.push_back(button->GetFontPath());
 		fontSizes.push_back(button->GetFontSize());
 		centerXs.push_back(button->Style().centerTextX);
@@ -1380,96 +1507,208 @@ bool buki::InspectorPanel::DrawSharedButtonComponents(const std::vector<Entity*>
 		textColors.push_back(button->Style().textColor);
 	}
 
-	std::string textValue = texts[0];
-	if (DrawMixedStringField("Text", !AreAllEqualString(texts), textValue))
-	{
-		for (Button* button : buttons)
-			button->SetText(textValue);
-		changed = true;
-	}
+	if (buttons.empty())
+		return false;
 
-	std::string messageValue = messages[0];
-	if (DrawMixedStringField("Message", !AreAllEqualString(messages), messageValue))
-	{
-		for (Button* button : buttons)
-			button->SetMessage(messageValue);
-		changed = true;
-	}
+	auto applyBindingToAll = [&](const StaticFunctionBinding& bindingValue)
+		{
+			for (Button* button : buttons)
+			{
+				if (button == nullptr)
+					continue;
 
-	std::string fontPathValue = fontPaths[0];
-	if (DrawMixedStringField("Font Path", !AreAllEqualString(fontPaths), fontPathValue))
-	{
-		for (Button* button : buttons)
-			button->SetFontPath(fontPathValue);
-		changed = true;
-	}
+				button->SetOnClickBinding(bindingValue);
+				button->Set();
+			}
+			changed = true;
+		};
 
-	int fontSize = fontSizes[0];
-	if (DrawMixedIntField("Font Size", !AreAllEqualInt(fontSizes), fontSize))
+	if (ImGui::TreeNodeEx("Button", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		fontSize = ClampMinInt(fontSize, 1);
-		for (Button* button : buttons)
-			button->SetFontSize(fontSize);
-		changed = true;
-	}
+		std::string textValue = texts.empty() ? std::string() : texts.front();
+		if (DrawMixedStringField("Text", !AreAllEqualString(texts), textValue))
+		{
+			for (Button* button : buttons)
+			{
+				if (button != nullptr)
+					button->SetText(textValue);
+			}
+			changed = true;
+		}
 
-	bool centerX = centerXs[0];
-	if (DrawMixedBoolField("Center Text X", !AreAllEqualBool(centerXs), centerX))
-	{
-		for (Button* button : buttons)
-			button->Style().centerTextX = centerX;
-		changed = true;
-	}
+		StaticFunctionBinding bindingValue = bindings.empty() ? StaticFunctionBinding{} : bindings.front();
 
-	bool centerY = centerYs[0];
-	if (DrawMixedBoolField("Center Text Y", !AreAllEqualBool(centerYs), centerY))
-	{
-		for (Button* button : buttons)
-			button->Style().centerTextY = centerY;
-		changed = true;
-	}
+		const std::vector<StaticVoidFunctionInfo> allFns =
+			ScriptFunctionRegistry::Get().GetAllStaticVoidFunctions();
 
-	bool fitToText = fitToTexts[0];
-	if (DrawMixedBoolField("Fit To Text", !AreAllEqualBool(fitToTexts), fitToText))
-	{
-		for (Button* button : buttons)
-			button->Style().fitToText = fitToText;
-		changed = true;
-	}
+		const std::vector<std::string> scriptNames =
+			CollectUniqueScriptTypeNames(allFns);
 
-	bool showBackground = showBackgrounds[0];
-	if (DrawMixedBoolField("Show Background", !AreAllEqualBool(showBackgrounds), showBackground))
-	{
-		for (Button* button : buttons)
-			button->Style().showBackground = showBackground;
-		changed = true;
-	}
+		const bool mixedScript = !AreAllEqualBindingScript(bindings);
+		const bool mixedFunction = !AreAllEqualBindingFunction(bindings);
 
-	Color bg = backgrounds[0];
-	float bgValues[4] = { bg.r, bg.g, bg.b, bg.a };
-	if (DrawMixedColorField("Background", !AreAllEqualColor(backgrounds), bgValues))
-	{
-		Color newColor{ bgValues[0], bgValues[1], bgValues[2], bgValues[3] };
-		for (Button* button : buttons)
-			button->Style().backgroundColor = newColor;
-		changed = true;
-	}
+		const char* scriptPreview =
+			mixedScript ? "-" :
+			(bindingValue.scriptTypeName.empty() ? "None" : bindingValue.scriptTypeName.c_str());
 
-	Color textColor = textColors[0];
-	float textColorValues[4] = { textColor.r, textColor.g, textColor.b, textColor.a };
-	if (DrawMixedColorField("Text Color", !AreAllEqualColor(textColors), textColorValues))
-	{
-		Color newColor{ textColorValues[0], textColorValues[1], textColorValues[2], textColorValues[3] };
-		for (Button* button : buttons)
-			button->Style().textColor = newColor;
-		changed = true;
-	}
+		if (ImGui::BeginCombo("OnClick Script", scriptPreview))
+		{
+			if (ImGui::Selectable("None", bindingValue.scriptTypeName.empty() && !mixedScript))
+			{
+				bindingValue.SetEmpty();
+				applyBindingToAll(bindingValue);
+			}
 
-	if (changed)
-	{
-		for (Button* button : buttons)
-			button->Set();
-		Engine::Get().Log().LogMessage("Shared Button components updated.");
+			for (const std::string& scriptName : scriptNames)
+			{
+				const bool selected = !mixedScript && (bindingValue.scriptTypeName == scriptName);
+
+				if (ImGui::Selectable(scriptName.c_str(), selected))
+				{
+					if (bindingValue.scriptTypeName != scriptName || mixedScript)
+					{
+						bindingValue.scriptTypeName = scriptName;
+						bindingValue.functionName.clear();
+						applyBindingToAll(bindingValue);
+					}
+				}
+
+				if (selected)
+					ImGui::SetItemDefaultFocus();
+			}
+
+			ImGui::EndCombo();
+		}
+
+		const std::vector<StaticVoidFunctionInfo> scriptFns =
+			ScriptFunctionRegistry::Get().GetFunctionsForScript(bindingValue.scriptTypeName);
+
+		const char* functionPreview =
+			mixedFunction ? "-" :
+			(bindingValue.functionName.empty() ? "None" : bindingValue.functionName.c_str());
+
+		if (ImGui::BeginCombo("OnClick Function", functionPreview))
+		{
+			if (ImGui::Selectable("None", bindingValue.functionName.empty() && !mixedFunction))
+			{
+				bindingValue.functionName.clear();
+				applyBindingToAll(bindingValue);
+			}
+
+			for (const StaticVoidFunctionInfo& fn : scriptFns)
+			{
+				const bool selected = !mixedFunction && (bindingValue.functionName == fn.functionName);
+
+				if (ImGui::Selectable(fn.functionName.c_str(), selected))
+				{
+					if (bindingValue.functionName != fn.functionName || mixedFunction)
+					{
+						bindingValue.functionName = fn.functionName;
+						applyBindingToAll(bindingValue);
+					}
+				}
+
+				if (selected)
+					ImGui::SetItemDefaultFocus();
+			}
+
+			ImGui::EndCombo();
+		}
+
+		std::string fontPathValue = fontPaths.empty() ? std::string() : fontPaths.front();
+		if (DrawMixedStringField("Font Path", !AreAllEqualString(fontPaths), fontPathValue))
+		{
+			for (Button* button : buttons)
+			{
+				if (button != nullptr)
+					button->SetFontPath(fontPathValue);
+			}
+			changed = true;
+		}
+
+		int fontSizeValue = fontSizes.empty() ? 24 : fontSizes.front();
+		if (DrawMixedIntField("Font Size", !AreAllEqualInt(fontSizes), fontSizeValue))
+		{
+			for (Button* button : buttons)
+			{
+				if (button != nullptr)
+					button->SetFontSize(fontSizeValue);
+			}
+			changed = true;
+		}
+
+		bool centerXValue = centerXs.empty() ? true : centerXs.front();
+		if (DrawMixedBoolField("Center Text X", !AreAllEqualBool(centerXs), centerXValue))
+		{
+			for (Button* button : buttons)
+			{
+				if (button != nullptr)
+					button->Style().centerTextX = centerXValue;
+			}
+			changed = true;
+		}
+
+		bool centerYValue = centerYs.empty() ? true : centerYs.front();
+		if (DrawMixedBoolField("Center Text Y", !AreAllEqualBool(centerYs), centerYValue))
+		{
+			for (Button* button : buttons)
+			{
+				if (button != nullptr)
+					button->Style().centerTextY = centerYValue;
+			}
+			changed = true;
+		}
+
+		bool fitToTextValue = fitToTexts.empty() ? true : fitToTexts.front();
+		if (DrawMixedBoolField("Fit To Text", !AreAllEqualBool(fitToTexts), fitToTextValue))
+		{
+			for (Button* button : buttons)
+			{
+				if (button != nullptr)
+					button->Style().fitToText = fitToTextValue;
+				button->Set();
+			}
+			changed = true;
+		}
+
+		bool showBackgroundValue = showBackgrounds.empty() ? true : showBackgrounds.front();
+		if (DrawMixedBoolField("Show Background", !AreAllEqualBool(showBackgrounds), showBackgroundValue))
+		{
+			for (Button* button : buttons)
+			{
+				if (button != nullptr)
+					button->Style().showBackground = showBackgroundValue;
+			}
+			changed = true;
+		}
+
+		Color bgValue = backgrounds.empty() ? Color{ 1.0f,1.0f,1.0f,1.0f } : backgrounds.front();
+		float bg[4] = { bgValue.r, bgValue.g, bgValue.b, bgValue.a };
+		if (DrawMixedColorField("Background", !AreAllEqualColor(backgrounds), bg))
+		{
+			Color newColor{ bg[0], bg[1], bg[2], bg[3] };
+			for (Button* button : buttons)
+			{
+				if (button != nullptr)
+					button->Style().backgroundColor = newColor;
+			}
+			changed = true;
+		}
+
+		Color textColorValue = textColors.empty() ? Color{ 1.0f,1.0f,1.0f,1.0f } : textColors.front();
+		float text[4] = { textColorValue.r, textColorValue.g, textColorValue.b, textColorValue.a };
+		if (DrawMixedColorField("Text Color", !AreAllEqualColor(textColors), text))
+		{
+			Color newColor{ text[0], text[1], text[2], text[3] };
+			for (Button* button : buttons)
+			{
+				if (button != nullptr)
+					button->Style().textColor = newColor;
+			}
+			changed = true;
+		}
+
+		ImGui::TreePop();
 	}
 
 	return changed;
@@ -1952,7 +2191,7 @@ bool buki::InspectorPanel::DrawImageAssetPathPicker(const char* label, std::stri
 
 	ImGui::PushID(label);
 
-	std::string displayName = path.empty() ? "" : DisplayNameForAssetPath(path);
+	std::string displayName = path.empty() ? "" : DisplayNameForPath(path);
 	char buffer[512] = {};
 	std::snprintf(buffer, sizeof(buffer), "%s", displayName.c_str());
 
@@ -1996,12 +2235,12 @@ bool buki::InspectorPanel::DrawImageAssetPathPicker(const char* label, std::stri
 			ImGui::CloseCurrentPopup();
 		}
 
-		const std::vector<std::string> assets = CollectImageAssets("../Deployment/assets");
+		const std::vector<std::string> assets = CollectAssetPaths("../Deployment/assets", "IMAGE");
 		const std::string filter = ToLowerCopy(filterBuffer);
 
 		for (const std::string& asset : assets)
 		{
-			const std::string filename = DisplayNameForAssetPath(asset);
+			const std::string filename = DisplayNameForPath(asset);
 			const std::string folderSuffix = FolderSuffixForAssetPath(asset);
 
 			std::string searchable = ToLowerCopy(filename + " " + folderSuffix + " " + asset);
@@ -2056,7 +2295,7 @@ bool buki::InspectorPanel::DrawSharedImageAssetPathPicker(const char* label, std
 		}
 	}
 
-	std::string displayValue = mixed ? "-" : DisplayNameForAssetPath(first);
+	std::string displayValue = mixed ? "-" : DisplayNameForPath(first);
 
 	ImGui::PushID(label);
 
@@ -2075,11 +2314,11 @@ bool buki::InspectorPanel::DrawSharedImageAssetPathPicker(const char* label, std
 		}
 		else if (typed != "-")
 		{
-			const std::vector<std::string> assets = CollectImageAssets("../Deployment/assets");
+			const std::vector<std::string> assets = CollectAssetPaths("../Deployment/assets", "IMAGE");
 
 			for (const std::string& asset : assets)
 			{
-				const std::string filename = DisplayNameForAssetPath(asset);
+				const std::string filename = DisplayNameForPath(asset);
 				if (filename == typed)
 				{
 					for (std::string* path : paths)
@@ -2136,12 +2375,12 @@ bool buki::InspectorPanel::DrawSharedImageAssetPathPicker(const char* label, std
 			ImGui::CloseCurrentPopup();
 		}
 
-		const std::vector<std::string> assets = CollectImageAssets("../Deployment/assets");
+		const std::vector<std::string> assets = CollectAssetPaths("../Deployment/assets", "IMAGE");
 		const std::string filter = ToLowerCopy(filterBuffer);
 
 		for (const std::string& asset : assets)
 		{
-			const std::string filename = DisplayNameForAssetPath(asset);
+			const std::string filename = DisplayNameForPath(asset);
 			const std::string folderSuffix = FolderSuffixForAssetPath(asset);
 
 			std::string searchable = ToLowerCopy(filename + " " + folderSuffix + " " + asset);

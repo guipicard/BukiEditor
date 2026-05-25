@@ -21,7 +21,7 @@ namespace buki
 	{
 		std::string assetPath = std::filesystem::absolute("../Deployment").string();
 		std::string fullPath;
-		//#if _DEBUG
+
 		if (relative)
 		{
 			if(path[0] != '/')

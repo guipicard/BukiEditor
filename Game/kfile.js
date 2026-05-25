@@ -25,7 +25,7 @@ project.addIncludeDir("./Engine/includes/Utils");
 project.addIncludeDir("./vendor/json-develop/single_include");
 
 project.addFile("src/**");
-project.addFile("includes/**");
+// project.addFile("includes/**");
 
 project.addIncludeDir("./vendor/glm");
 

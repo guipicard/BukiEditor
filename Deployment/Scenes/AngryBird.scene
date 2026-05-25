@@ -15,7 +15,10 @@
                     "backgroundImagePath": "/assets/Kenney/MiniGame/Ui/miniguide5_button.png",
                     "fontPath": "/fonts/Kenney/Kenney Blocks.ttf",
                     "fontSize": 36,
-                    "message": "Ag_Lvl_1",
+                    "onClick": {
+                        "functionName": "LoadAgLevel1",
+                        "scriptTypeName": "GameComponentRegistration"
+                    },
                     "style": {
                         "backgroundColor": {
                             "a": 1.0,
@@ -91,7 +94,10 @@
                     "backgroundImagePath": "/assets/Kenney/MiniGame/Ui/miniguide5_button.png",
                     "fontPath": "/fonts/Kenney/Kenney Blocks.ttf",
                     "fontSize": 36,
-                    "message": "Ag_Lvl_2",
+                    "onClick": {
+                        "functionName": "LoadAgLevel2",
+                        "scriptTypeName": "GameComponentRegistration"
+                    },
                     "style": {
                         "backgroundColor": {
                             "a": 1.0,
@@ -167,7 +173,10 @@
                     "backgroundImagePath": "/assets/Kenney/MiniGame/Ui/miniguide5_button.png",
                     "fontPath": "/fonts/Kenney/Kenney Blocks.ttf",
                     "fontSize": 36,
-                    "message": "Ag_Lvl_3",
+                    "onClick": {
+                        "functionName": "LoadAgLevel3",
+                        "scriptTypeName": "GameComponentRegistration"
+                    },
                     "style": {
                         "backgroundColor": {
                             "a": 1.0,
@@ -243,7 +252,10 @@
                     "backgroundImagePath": "/assets/Kenney/MiniGame/Ui/miniguide5_button.png",
                     "fontPath": "/fonts/Kenney/Kenney Blocks.ttf",
                     "fontSize": 36,
-                    "message": "menu",
+                    "onClick": {
+                        "functionName": "LoadMenu",
+                        "scriptTypeName": "GameComponentRegistration"
+                    },
                     "style": {
                         "backgroundColor": {
                             "a": 1.0,
@@ -312,26 +324,8 @@
                 "y": 1.380000114440918
             },
             "z": 10
-        },
-        "spawner": {
-            "components": {
-                "Spawner": null
-            },
-            "enable": true,
-            "layer": "",
-            "physics": false,
-            "position": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "rotation": 0.0,
-            "size": {
-                "x": 1.0,
-                "y": 1.0
-            },
-            "z": 0
         }
     },
     "sceneName": "AngryBird",
-    "scenePath": "../Deployment/Scenes/AngryBird.json"
+    "scenePath": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\AngryBird.scene"
 }

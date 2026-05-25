@@ -197,18 +197,18 @@ void buki::HierarchyPanel::Render(EditorState& state)
 		}
 	}
 
+	std::vector<Entity*> toDelete;
 	if (!state.selectedEntities.empty())
 	{
 		ImGui::SameLine();
 		if (ImGui::Button("Delete Selected"))
 		{
-			std::vector<Entity*> toDelete = state.selectedEntities;
 
-			for (Entity* entity : toDelete)
+			for (Entity* entity : state.selectedEntities)
 			{
 				if (entity != nullptr)
 				{
-					world.RemoveFromScene(entity);
+					toDelete.push_back(entity);
 				}
 			}
 
@@ -308,6 +308,14 @@ void buki::HierarchyPanel::Render(EditorState& state)
 			}
 		}
 		ImGui::EndDragDropTarget();
+	}
+
+	for (Entity* entity : toDelete)
+	{
+		if (entity != nullptr)
+		{
+			world.RemoveFromScene(entity);
+		}
 	}
 
 	ImGui::End();

@@ -1,11 +1,10 @@
-#pragma once
 #include "Button.h"
 
 #include "BukiContainers.h"
 #include "Texture2D.h"
 #include "Engine.h"
 #include "Entity.h"
-#include "BukiScene.h"
+#include "ScriptFunctionRegistry.h"
 
 namespace buki
 {
@@ -25,20 +24,14 @@ namespace buki
 	void Button::Destroy()
 	{
 		m_OnClick = nullptr;
+		m_PressedInside = false;
 	}
 
 	void Button::Set()
 	{
 		RefreshResources();
 		RefreshLayout();
-		SetOnClick([this]()
-		{
-			BukiScene* currentScene = dynamic_cast<BukiScene*>(Engine::Get().World().GetCurrentScene());
-			if (currentScene)
-			{
-				currentScene->OnNotify(message);
-			}
-		});
+		ResolveOnClickBinding();
 	}
 
 	void Button::RefreshResources()
@@ -85,6 +78,28 @@ namespace buki
 
 			m_Entity->T()->SetSize(finalSize);
 		}
+	}
+
+	void Button::ResolveOnClickBinding()
+	{
+		m_OnClick = nullptr;
+
+		if (m_OnClickBinding.IsEmpty())
+		{
+			return;
+		}
+
+		const StaticVoidFunctionInfo* fn =
+			ScriptFunctionRegistry::Get().FindStaticVoidFunction(
+				m_OnClickBinding.scriptTypeName,
+				m_OnClickBinding.functionName);
+
+		if (fn == nullptr)
+		{
+			return;
+		}
+
+		m_OnClick = fn->callback;
 	}
 
 	Vector2 Button::GetPosition() const
@@ -140,15 +155,24 @@ namespace buki
 
 		m_Hovered = ContainsPoint(mousePos);
 
-		bool pressedNow = m_Hovered && Input().IsMouseButtonDown(0);
-		m_Pressed = pressedNow;
+		const bool mousePressedThisFrame = Input().IsMouseButtonPressed(0);
+		const bool mouseReleasedThisFrame = Input().IsMouseButtonUp(0);
 
-		if (pressedNow && !m_ClickedLastFrame && m_OnClick)
+		if (mousePressedThisFrame && m_Hovered)
 		{
-			m_OnClick();
+			m_PressedInside = true;
 		}
 
-		m_ClickedLastFrame = pressedNow;
+		if (mouseReleasedThisFrame)
+		{
+			const bool shouldClick = m_PressedInside && m_Hovered && static_cast<bool>(m_OnClick);
+			m_PressedInside = false;
+
+			if (shouldClick)
+			{
+				m_OnClick();
+			}
+		}
 	}
 
 	void Button::Draw(float alpha)
@@ -162,7 +186,6 @@ namespace buki
 
 		const Vector2 pos = m_Entity->T()->GetPosition();
 		const Vector2 size = m_Entity->T()->GetSize();
-		float rotation = m_Entity->T()->GetRotation().GetRadians();
 
 		const Color bgColor = m_Hovered ? m_Style.backgroundHoverColor : m_Style.backgroundColor;
 		const Color textColor = m_Hovered ? m_Style.textHoverColor : m_Style.textColor;
@@ -172,12 +195,14 @@ namespace buki
 		{
 			if (m_BackgroundTexture != nullptr)
 			{
-				RectF source = RectF{
+				RectF source =
+				{
 					0.0f,
 					0.0f,
 					static_cast<float>(m_BackgroundTexture->width),
 					static_cast<float>(m_BackgroundTexture->height)
 				};
+
 				Graphics().DrawSprite(
 					*m_BackgroundTexture,
 					Camera(),
@@ -188,8 +213,7 @@ namespace buki
 					m_Entity->T()->GetRotation().GetRadians(),
 					false,
 					false,
-					bgColor
-				);
+					bgColor);
 			}
 			else
 			{
@@ -208,8 +232,7 @@ namespace buki
 				glm::vec2{ textPos.x, textPos.y },
 				textColor,
 				m_Style.centerTextX,
-				m_Style.centerTextY
-			);
+				m_Style.centerTextY);
 		}
 
 		const bool drawOutline =
@@ -230,6 +253,9 @@ namespace buki
 		doc["fontPath"] = m_FontPath;
 		doc["fontSize"] = m_FontSize;
 		doc["backgroundImagePath"] = m_BackgroundImagePath;
+
+		doc["onClick"]["scriptTypeName"] = m_OnClickBinding.scriptTypeName;
+		doc["onClick"]["functionName"] = m_OnClickBinding.functionName;
 
 		doc["style"]["textColor"]["r"] = m_Style.textColor.r;
 		doc["style"]["textColor"]["g"] = m_Style.textColor.g;
@@ -274,8 +300,6 @@ namespace buki
 		doc["style"]["centerTextX"] = m_Style.centerTextX;
 		doc["style"]["centerTextY"] = m_Style.centerTextY;
 
-		doc["message"] = message;
-
 		return doc;
 	}
 
@@ -285,6 +309,17 @@ namespace buki
 		m_FontPath = doc.value("fontPath", std::string("./fonts/Kenney/Kenney Blocks.ttf"));
 		m_FontSize = doc.value("fontSize", 24);
 		m_BackgroundImagePath = doc.value("backgroundImagePath", std::string(""));
+
+		if (doc.contains("onClick"))
+		{
+			const json& onClick = doc["onClick"];
+			m_OnClickBinding.scriptTypeName = onClick.value("scriptTypeName", std::string(""));
+			m_OnClickBinding.functionName = onClick.value("functionName", std::string(""));
+		}
+		else
+		{
+			m_OnClickBinding.SetEmpty();
+		}
 
 		if (doc.contains("style"))
 		{
@@ -356,8 +391,6 @@ namespace buki
 			m_Style.drawOutlineOnHoverOnly = style.value("drawOutlineOnHoverOnly", m_Style.drawOutlineOnHoverOnly);
 			m_Style.centerTextX = style.value("centerTextX", m_Style.centerTextX);
 			m_Style.centerTextY = style.value("centerTextY", m_Style.centerTextY);
-
-			message = doc.value("message", std::string(""));
 		}
 	}
 }

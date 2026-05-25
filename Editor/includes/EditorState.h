@@ -69,5 +69,9 @@ namespace buki
 		std::filesystem::path selectedScenePath;
 
 		bool setTilesDefaults = true;
+
+		std::filesystem::path selectedPrefabPath;
+		std::filesystem::path previewPrefabPath;
+		bool showPrefabPreview = false;
 	};
 }

@@ -14,19 +14,6 @@
 
 using json = nlohmann::json;
 
-buki::BukiScene::BukiScene()
-{
-}
-
-buki::BukiScene::~BukiScene()
-{
-}
-
-buki::Entity* buki::BukiScene::Instantiate(const std::string _name)
-{
-	return buki::Engine::Get().World().CreateEntity(_name);
-}
-
 void buki::BukiScene::OnStart()
 {
 	for (auto entity : buki::Engine::Get().World().GetEntitiesInWorld())
@@ -40,13 +27,20 @@ void buki::BukiScene::OnStart()
 
 void buki::BukiScene::OnStop()
 {
+	for (auto entity : buki::Engine::Get().World().GetEntitiesInWorld())
+	{
+		if (entity != nullptr)
+		{
+			//Implementer une méthode Stop() dans Entity si nécessaire pour gérer les actions à effectuer lors de l'arrêt de la scène.
+		}
+	}
 }
 
-void buki::BukiScene::Load()
+bool buki::BukiScene::Load()
 {
 	if (name.empty())
 	{
-		return;
+		return false;
 	}
 
 	const std::string path = "../Deployment/Scenes/" + name + ".scene";
@@ -55,15 +49,13 @@ void buki::BukiScene::Load()
 	{
 		FileLoad(path);
 		SetScene();
-		buki::Engine::Get().Log().LogMessage("Scene loaded: " + name);
 	}
 	else
 	{
-		CodeLoad();
-		SetScene();
-		SaveScene();
-		buki::Engine::Get().Log().LogMessage("Scene saved: " + name);
+		buki::Engine::Get().Log().LogError("Scene not found: " + path);
+		return false;
 	}
+	return true;
 }
 
 void buki::BukiScene::Initialize()
@@ -190,4 +182,8 @@ void buki::BukiScene::SetScene()
 		}
 		(*it)->Set();
 	}
+}
+
+void buki::BukiScene::OnWindowResize()
+{
 }

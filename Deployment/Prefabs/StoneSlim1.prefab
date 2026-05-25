@@ -1,0 +1,110 @@
+{
+    "components": {
+        "Box": {
+            "box": {
+                "size": {
+                    "x": 0.75,
+                    "y": 2.25
+                }
+            },
+            "density": 8.0,
+            "fillColor": {
+                "a": 0.30000001192092896,
+                "b": 1.0,
+                "g": 1.0,
+                "r": 0.0
+            },
+            "fillDraw": false,
+            "filter": 0,
+            "friction": 0.800000011920929,
+            "isSensor": false,
+            "positionOffset": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "restitution": 0.30000001192092896,
+            "shapeColor": {
+                "a": 1.0,
+                "b": 0.0,
+                "g": 0.0,
+                "r": 1.0
+            },
+            "shapeDraw": false,
+            "type": "Box"
+        },
+        "BricksBehaviour": {
+            "BreakSounds": [
+                "./audio/AngryBird/Sfx - Rock Destroyed A1.mp3",
+                "./audio/AngryBird/Sfx - Rock Destroyed A2.mp3",
+                "./audio/AngryBird/Sfx - Rock Destroyed A3.mp3"
+            ],
+            "DamageSounds": [
+                "./audio/AngryBird/Sfx - Rock Damage A1.mp3",
+                "./audio/AngryBird/Sfx - Rock Damage A2.mp3",
+                "./audio/AngryBird/Sfx - Rock Damage A3.mp3"
+            ],
+            "collisionSounds": [
+                "./audio/AngryBird/Sfx - Rock Collision A1.mp3",
+                "./audio/AngryBird/Sfx - Rock Collision A2.mp3",
+                "./audio/AngryBird/Sfx - Rock Collision A3.mp3",
+                "./audio/AngryBird/Sfx - Rock Collision A4.mp3",
+                "./audio/AngryBird/Sfx - Rock Collision A5.mp3"
+            ],
+            "maxHealth": 300.0,
+            "stageImages": [
+                "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone020.png",
+                "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone025.png",
+                "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone052.png"
+            ]
+        },
+        "RigidBody": {
+            "motionLocks": {
+                "angularZ": false,
+                "linearX": false,
+                "linearY": false
+            },
+            "type": 2
+        },
+        "Sprite": {
+            "color": {
+                "a": 1.0,
+                "b": 1.0,
+                "g": 1.0,
+                "r": 1.0
+            },
+            "flip": {
+                "h": false,
+                "v": false
+            },
+            "path": "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone020.png",
+            "positionOffset": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "size": {
+                "x": 0.75,
+                "y": 2.25
+            },
+            "sourceRect": {
+                "h": 0.0,
+                "w": 0.0,
+                "x": 0.0,
+                "y": 0.0
+            },
+            "useSourceRect": false
+        }
+    },
+    "enable": true,
+    "layer": "",
+    "physics": true,
+    "position": {
+        "x": 13.19999885559082,
+        "y": 8.675000190734863
+    },
+    "rotation": 0.0,
+    "size": {
+        "x": 0.75,
+        "y": 2.25
+    },
+    "z": 0
+}

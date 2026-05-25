@@ -7,21 +7,21 @@ namespace buki
 	struct BukiScene : public IScene
 	{
 	public:
-		BukiScene();
-		~BukiScene();
-		virtual Entity* Instantiate(const std::string _name) override;
+		BukiScene() = default;
+		~BukiScene() = default;
 		virtual void OnStart() override;
 		virtual void OnStop() override;
-		virtual void OnNotify(const std::string& button) = 0;
-		virtual void Load() override;
-		void SetName(const std::string& _name) { name = _name; }
-		std::string GetName() const { return name; }
+		virtual bool Load() override;
 		void Initialize();
 		void SaveScene() const;
 		void SaveScene(std::string fileName) const;
-		virtual void CodeLoad() = 0;
 		void FileLoad(std::string _path) const;
 		void SetScene() override;
+
+		virtual void OnWindowResize() override;
+
+		void SetName(const std::string& _name) { name = _name; }
+		std::string GetName() const { return name; }
 	protected:
 		std::string name;
 	};

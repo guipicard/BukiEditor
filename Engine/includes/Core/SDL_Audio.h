@@ -17,8 +17,8 @@ namespace buki
 		SDL_Audio();
 		~SDL_Audio() override;
 
-		virtual size_t LoadMusic(const std::string& filename) override;
-		virtual size_t LoadSound(const std::string& filename) override;
+		virtual size_t LoadMusic(const std::string& filename, bool relative = true) override;
+		virtual size_t LoadSound(const std::string& filename, bool relative = true) override;
 
 		virtual void PlayMusic(size_t id) override;
 		virtual void PlayMusic(size_t id, int loop) override;

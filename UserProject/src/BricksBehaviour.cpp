@@ -93,17 +93,17 @@ void buki::BricksBehaviour::OnSet()
 	}
 	for (auto& sound : collisionSounds)
 	{
-		size_t id = buki::Engine::Get().Audio().LoadSound(sound);
+		size_t id = buki::Engine::Get().Audio().LoadSound(sound, false);
 		soundMap[sound] = id;
 	}
 	for (auto& sound : DamageSounds)
 	{
-		size_t id = buki::Engine::Get().Audio().LoadSound(sound);
+		size_t id = buki::Engine::Get().Audio().LoadSound(sound, false);
 		soundMap[sound] = id;
 	}
 	for (auto& sound : BreakSounds)
 	{
-		size_t id = buki::Engine::Get().Audio().LoadSound(sound);
+		size_t id = buki::Engine::Get().Audio().LoadSound(sound, false);
 		soundMap[sound] = id;
 	}
 }
@@ -120,21 +120,21 @@ void buki::BricksBehaviour::AddImage(const std::string& image)
 
 void buki::BricksBehaviour::AddCollisionSound(const std::string& sound)
 {
-	size_t id = buki::Engine::Get().Audio().LoadSound(sound);
+	size_t id = buki::Engine::Get().Audio().LoadSound(sound, false);
 	collisionSounds.push_back(sound);
 	soundMap[sound] = id;
 }
 
 void buki::BricksBehaviour::AddDamageSound(const std::string& sound)
 {
-	size_t id = buki::Engine::Get().Audio().LoadSound(sound);
+	size_t id = buki::Engine::Get().Audio().LoadSound(sound, false);
 	DamageSounds.push_back(sound);
 	soundMap[sound] = id;
 }
 
 void buki::BricksBehaviour::AddBreakSound(const std::string& sound)
 {
-	size_t id = buki::Engine::Get().Audio().LoadSound(sound);
+	size_t id = buki::Engine::Get().Audio().LoadSound(sound, false);
 	BreakSounds.push_back(sound);
 	soundMap[sound] = id;
 }
@@ -193,7 +193,7 @@ void buki::BricksBehaviour::TakeDamage(float damage)
 		}
 		else
 		{
-			if (stageImages.empty())
+			if (!stageImages.empty())
 			{
 				if (damage > 1.0f)
 					PlayCollisionSound();
@@ -203,6 +203,11 @@ void buki::BricksBehaviour::TakeDamage(float damage)
 	}
 	else
 	{
-		buki::Engine::Get().Log().LogError("Stage Out of Bounds: " + std::to_string(static_cast<int>(dmgDone / stageHealth)));
+		buki::Engine::Get().Log().LogError("Stage Out of Bounds");
+		//buki::Engine::Get().Log().LogMessage("StageIndex: " + std::to_string(stageIndex));
+		//buki::Engine::Get().Log().LogMessage("StageImagesSize: " + std::to_string(stageImages.size()));
+		//buki::Engine::Get().Log().LogMessage("Damage: " + std::to_string(damage));
+		//buki::Engine::Get().Log().LogMessage("DmgDone: " + std::to_string(dmgDone));
+		//buki::Engine::Get().Log().LogMessage("Stage Health: " + std::to_string(stageHealth));
 	}
 }

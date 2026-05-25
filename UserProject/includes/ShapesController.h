@@ -1,6 +1,7 @@
 #pragma once
 #include "MonoBehaviour.h"
 #include "EntityRef.h"
+#include "ScriptFunctionRegistry.h"
 
 namespace buki
 {
@@ -9,7 +10,7 @@ namespace buki
 	struct Collider;
 	struct RigidBody;
 	struct Text;
-	struct Button;
+	class Button;
 
 	struct ShapesController : public MonoBehaviour
 	{
@@ -40,11 +41,9 @@ namespace buki
 				BUKI_PROP_BOOL(ShapesController, boxShapeDraw),
 				BUKI_PROP_BOOL(ShapesController, polygonFillDraw),
 				BUKI_PROP_BOOL(ShapesController, polygonShapeDraw),
-				BUKI_PROP_ENTITY(ShapesController, boxRef),
-				BUKI_PROP_ENTITY(ShapesController, circleRef),
-				BUKI_PROP_ENTITY(ShapesController, polygonRef),
-				BUKI_PROP_ENTITY(ShapesController, emptyEntityRef),
-				BUKI_PROP_PREFAB(ShapesController, emptyPrefabRef),
+				BUKI_PROP_PREFAB(ShapesController, boxRef),
+				BUKI_PROP_PREFAB(ShapesController, circleRef),
+				BUKI_PROP_PREFAB(ShapesController, polygonRef),
 				BUKI_PROP_INT(ShapesController, polygonSides),
 
 			};
@@ -57,27 +56,38 @@ namespace buki
 		bool polygonFillDraw = true;
 		bool polygonShapeDraw = true;
 		int polygonSides = 3;
+
 		EntityRef boxRef;
 		EntityRef circleRef;
 		EntityRef polygonRef;
-		EntityRef emptyEntityRef;
-		EntityRef emptyPrefabRef;
 	public:
-		inline void DrawCircleFill(const bool state) { circleFillDraw = state; }
-		inline void DrawCircleShape(const bool state) { circleShapeDraw = state; }
+		inline void SetDrawCircleFill(const bool state) { circleFillDraw = state; }
+		inline void SetDrawCircleShape(const bool state) { circleShapeDraw = state; }
 
-		inline void DrawBoxFill(const bool state) { boxFillDraw = state; }
-		inline void DrawBoxShape(const bool state) { boxShapeDraw = state; }
+		inline void SetDrawBoxFill(const bool state) { boxFillDraw = state; }
+		inline void SetDrawBoxShape(const bool state) { boxShapeDraw = state; }
 
-		inline void DrawPolygonFill(const bool state) { polygonFillDraw = state; }
-		inline void DrawPolygonShape(const bool state) { polygonShapeDraw = state; }
+		inline void SetDrawPolygonFill(const bool state) { polygonFillDraw = state; }
+		inline void SetDrawPolygonShape(const bool state) { polygonShapeDraw = state; }
 	private:
 		Vector2 firstMousePos = { 0.0f,0.0f };
 
-		//Spawner* spawner;
-
-
 		std::vector<Button*> buttonsInScene;
 		bool UIHovered = false;
+	
+	public:
+		static void DrawBoxFill();
+		static void DrawBoxShape();
+		static void DrawBoxBoth();
+
+		static void DrawCircleFill();
+		static void DrawCircleShape();
+		static void DrawCircleBoth();
+
+		static void DrawPolygonFill();
+		static void DrawPolygonShape();
+		static void DrawPolygonBoth();
 	};
 }
+
+

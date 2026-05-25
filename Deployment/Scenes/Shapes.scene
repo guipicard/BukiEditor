@@ -15,7 +15,10 @@
                     "backgroundImagePath": "",
                     "fontPath": "./fonts/droid_sans.ttf",
                     "fontSize": 18,
-                    "message": "BoxBoth",
+                    "onClick": {
+                        "functionName": "DrawBoxShape",
+                        "scriptTypeName": "ShapesController"
+                    },
                     "style": {
                         "backgroundColor": {
                             "a": 1.0,
@@ -91,7 +94,10 @@
                     "backgroundImagePath": "",
                     "fontPath": "./fonts/droid_sans.ttf",
                     "fontSize": 18,
-                    "message": "BoxDraw",
+                    "onClick": {
+                        "functionName": "DrawBoxShape",
+                        "scriptTypeName": "ShapesController"
+                    },
                     "style": {
                         "backgroundColor": {
                             "a": 1.0,
@@ -167,7 +173,10 @@
                     "backgroundImagePath": "",
                     "fontPath": "./fonts/droid_sans.ttf",
                     "fontSize": 18,
-                    "message": "BoxFill",
+                    "onClick": {
+                        "functionName": "DrawBoxShape",
+                        "scriptTypeName": "ShapesController"
+                    },
                     "style": {
                         "backgroundColor": {
                             "a": 1.0,
@@ -243,7 +252,10 @@
                     "backgroundImagePath": "",
                     "fontPath": "./fonts/droid_sans.ttf",
                     "fontSize": 18,
-                    "message": "CircleBoth",
+                    "onClick": {
+                        "functionName": "DrawBoxBoth",
+                        "scriptTypeName": "ShapesController"
+                    },
                     "style": {
                         "backgroundColor": {
                             "a": 1.0,
@@ -319,7 +331,10 @@
                     "backgroundImagePath": "",
                     "fontPath": "./fonts/droid_sans.ttf",
                     "fontSize": 18,
-                    "message": "CircleDraw",
+                    "onClick": {
+                        "functionName": "DrawBoxBoth",
+                        "scriptTypeName": "ShapesController"
+                    },
                     "style": {
                         "backgroundColor": {
                             "a": 1.0,
@@ -395,7 +410,10 @@
                     "backgroundImagePath": "",
                     "fontPath": "./fonts/droid_sans.ttf",
                     "fontSize": 18,
-                    "message": "CircleFill",
+                    "onClick": {
+                        "functionName": "DrawBoxBoth",
+                        "scriptTypeName": "ShapesController"
+                    },
                     "style": {
                         "backgroundColor": {
                             "a": 1.0,
@@ -567,5 +585,5 @@
         }
     },
     "sceneName": "Shapes",
-    "scenePath": "../Deployment/Scenes\\Shapes.scene"
+    "scenePath": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\Shapes.scene"
 }

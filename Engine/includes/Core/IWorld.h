@@ -8,7 +8,6 @@ namespace buki
 {
     class Entity;
     class IScene;
-    class Vector2;
 
     class IWorld
     {
@@ -47,7 +46,7 @@ namespace buki
 
         virtual void Unload() = 0; // Décharge la scène actuelle.
 
-        virtual void Register(const std::string& name, IScene* scene) = 0; // Enregistre une scène avec un nom spécifique dans le monde du jeu.
+        virtual void Register(const std::string& name) = 0; // Enregistre une scène avec un nom spécifique dans le monde du jeu.
 
         virtual void SetCurrentSceneName(std::string _name) = 0; // Définit le nom de la scène actuelle.
 

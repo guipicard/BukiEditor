@@ -27,7 +27,7 @@ namespace buki
 		virtual bool SaveScene(const std::string& path) const override;
 		virtual void SetLoadScene(const std::string& scene) override;
 		virtual void Unload() override;
-		virtual void Register(const std::string& name, IScene* scene) override;
+		virtual void Register(const std::string& name) override;
 		virtual IScene* GetCurrentScene() override { return m_CurrentScene; }
 		virtual void SetCurrentSceneName(std::string _name) override { m_Name = _name; }
 		virtual std::string GetCurrentSceneName() override { return m_Name; }

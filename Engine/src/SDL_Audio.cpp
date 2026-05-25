@@ -82,7 +82,7 @@ MIX_Audio* buki::SDL_Audio::FindSFX(size_t id) const
     return it != m_SfxCache.end() ? it->second : nullptr;
 }
 
-size_t buki::SDL_Audio::LoadMusic(const std::string& filename)
+size_t buki::SDL_Audio::LoadMusic(const std::string& filename, bool relative)
 {
     if (!m_Initialized || m_Mixer == nullptr)
     {
@@ -105,29 +105,39 @@ size_t buki::SDL_Audio::LoadMusic(const std::string& filename)
     return id;
 }
 
-size_t buki::SDL_Audio::LoadSound(const std::string& filename)
+size_t buki::SDL_Audio::LoadSound(const std::string& filename, bool relative)
 {
-    std::string assetPath = "";
-#if _DEBUG
-    assetPath = std::filesystem::absolute("../Deployment").string();
-#else
-    assetPath = std::filesystem::absolute(".").string();
-#endif
-	const std::string path = assetPath + filename;
+    std::string assetPath = std::filesystem::absolute("../Deployment").string();
+    std::string fullPath;
+
+    if (relative)
+        {
+        if(filename[0] != '/')
+            fullPath = assetPath + "/" + filename;
+        else
+            fullPath = assetPath + filename;
+    }
+    else
+    {
+        fullPath = filename;
+	}
+
     if (!m_Initialized || m_Mixer == nullptr)
     {
+		Engine::Get().Log().LogError("Audio system not initialized. Cannot load sound: " + fullPath);
         return INVALID_AUDIO_ID;
     }
 
-    const size_t id = MakeId(path);
+    const size_t id = MakeId(fullPath);
     if (m_SfxCache.find(id) != m_SfxCache.end())
     {
         return id;
     }
 
-    MIX_Audio* audio = MIX_LoadAudio(m_Mixer, path.c_str(), false);
+    MIX_Audio* audio = MIX_LoadAudio(m_Mixer, fullPath.c_str(), false);
     if (audio == nullptr)
     {
+		Engine::Get().Log().LogError("Failed to load sound: " + fullPath);
         return INVALID_AUDIO_ID;
     }
 

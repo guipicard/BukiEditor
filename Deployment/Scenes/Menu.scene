@@ -15,7 +15,10 @@
                     "backgroundImagePath": "",
                     "fontPath": "./fonts/Kenney/Kenney Blocks.ttf",
                     "fontSize": 36,
-                    "message": "AngryBird",
+                    "onClick": {
+                        "functionName": "LoadAgMenu",
+                        "scriptTypeName": "GameComponentRegistration"
+                    },
                     "style": {
                         "backgroundColor": {
                             "a": 1.0,
@@ -91,7 +94,10 @@
                     "backgroundImagePath": "",
                     "fontPath": "./fonts/Kenney/Kenney Blocks.ttf",
                     "fontSize": 36,
-                    "message": "Platformer",
+                    "onClick": {
+                        "functionName": "LoadPlatformer",
+                        "scriptTypeName": "GameComponentRegistration"
+                    },
                     "style": {
                         "backgroundColor": {
                             "a": 1.0,
@@ -167,7 +173,10 @@
                     "backgroundImagePath": "",
                     "fontPath": "./fonts/Kenney/Kenney Blocks.ttf",
                     "fontSize": 36,
-                    "message": "Quit",
+                    "onClick": {
+                        "functionName": "Quit",
+                        "scriptTypeName": "GameComponentRegistration"
+                    },
                     "style": {
                         "backgroundColor": {
                             "a": 1.0,
@@ -243,7 +252,10 @@
                     "backgroundImagePath": "",
                     "fontPath": "./fonts/Kenney/Kenney Blocks.ttf",
                     "fontSize": 36,
-                    "message": "SceneTest",
+                    "onClick": {
+                        "functionName": "LoadSceneTest",
+                        "scriptTypeName": "GameComponentRegistration"
+                    },
                     "style": {
                         "backgroundColor": {
                             "a": 1.0,
@@ -319,7 +331,10 @@
                     "backgroundImagePath": "",
                     "fontPath": "./fonts/Kenney/Kenney Blocks.ttf",
                     "fontSize": 36,
-                    "message": "Shapes",
+                    "onClick": {
+                        "functionName": "LoadShapesDemo",
+                        "scriptTypeName": "GameComponentRegistration"
+                    },
                     "style": {
                         "backgroundColor": {
                             "a": 1.0,
@@ -425,5 +440,5 @@
         }
     },
     "sceneName": "Menu",
-    "scenePath": "../Deployment/Scenes\\Menu.scene"
+    "scenePath": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\Menu.scene"
 }

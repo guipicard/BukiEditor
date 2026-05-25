@@ -34,6 +34,23 @@ namespace buki
 		bool centerTextY = true;
 	};
 
+	struct StaticFunctionBinding
+	{
+		std::string scriptTypeName;
+		std::string functionName;
+
+		bool IsEmpty() const
+		{
+			return scriptTypeName.empty() || functionName.empty();
+		}
+
+		void SetEmpty()
+		{
+			scriptTypeName.clear();
+			functionName.clear();
+		}
+	};
+
 	class Button final : public Component, public IUpdatable, public IDrawable
 	{
 	public:
@@ -70,17 +87,19 @@ namespace buki
 		Vector2 GetTextSize() const;
 		RectF GetBounds() const;
 
-		std::string GetMessage() const { return message; }	
-
 		bool IsHovered() const { return m_Hovered; }
-		bool IsPressed() const { return m_Pressed; }
+		bool IsPressed() const { return m_PressedInside; }
 
 		void SetOnClick(const std::function<void()>& callback) { m_OnClick = callback; }
 
-		void SetMessage(const std::string& msg) { message = msg; }
+		void SetOnClickBinding(const StaticFunctionBinding& binding) { m_OnClickBinding = binding; }
+		StaticFunctionBinding& GetOnClickBinding() { return m_OnClickBinding; }
+		const StaticFunctionBinding& GetOnClickBinding() const { return m_OnClickBinding; }
+
 	private:
 		void RefreshResources();
 		void RefreshLayout();
+		void ResolveOnClickBinding();
 		bool ContainsPoint(const Vector2& point) const;
 
 	private:
@@ -96,10 +115,9 @@ namespace buki
 		ButtonStyle m_Style{};
 
 		bool m_Hovered = false;
-		bool m_Pressed = false;
-		bool m_ClickedLastFrame = false;
+		bool m_PressedInside = false;
 
+		StaticFunctionBinding m_OnClickBinding;
 		std::function<void()> m_OnClick;
-		std::string message;
 	};
 }

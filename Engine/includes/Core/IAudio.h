@@ -10,10 +10,10 @@ namespace buki
 		virtual ~IAudio() = default; // Destructeur virtuel par défaut.
 
 		// Charge un fichier de musique et retourne un identifiant pour référencer la musique.
-		virtual size_t LoadMusic(const std::string& filename) = 0;
+		virtual size_t LoadMusic(const std::string& filename, bool relative = true) = 0;
 
 		// Charge un fichier de son (effet sonore) et retourne un identifiant pour le référencer.
-		virtual size_t LoadSound(const std::string& filename) = 0;
+		virtual size_t LoadSound(const std::string& filename, bool relative = true) = 0;
 
 		// Joue la musique référencée par l'identifiant id.
 		virtual void PlayMusic(size_t id) = 0;

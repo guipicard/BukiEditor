@@ -4,8 +4,6 @@
 #include "Engine.h"
 #include "RigidBody.h"
 #include "Circle.h"
-#include "Prefabs.h"
-#include "Spawner.h"
 #include "Camera2D.h"
 #include "BukiContainers.h"
 #include "Button.h"
@@ -20,12 +18,6 @@ buki::AngryBirdController::AngryBirdController(Entity* _entity)
 
 void buki::AngryBirdController::Start()
 {
-	Spawner* spawner = m_Entity->GetComponent<Spawner>();
-	if (spawner == nullptr)
-	{
-		spawner = m_Entity->AddComponent<Spawner>();
-	}
-	spawner->AddPrototype("StoneSlim", new StoneSlim());
 	anchor = World().FindEntityByName("anchor");
 	anchorPos = anchor->T()->GetPosition();
 	aimingSoundHandle = Audio().LoadSound("./Audio/AngryBird/Sfx - Slingshot Streched.mp3");
@@ -132,7 +124,7 @@ void buki::AngryBirdController::OnCollisionExit(Entity* other)
 
 void buki::AngryBirdController::OnCollisionHit(Entity* other)
 {
-	Log().LogMessage("Collision HIT with: " + other->GetName());
+
 }
 
 void buki::AngryBirdController::OnSensorEnter(Entity* other)

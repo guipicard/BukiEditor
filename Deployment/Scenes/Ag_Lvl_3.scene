@@ -11,7 +11,6 @@
     "entities": {
         "Background": {
             "components": {
-                "Spawner": null,
                 "TileLayer": {
                     "atlasPath": "/assets/Kenney/Physics Assets/PNG/Backgrounds/colored_desert.png",
                     "defaultFlipX": false,
@@ -2096,7 +2095,10 @@
                     "backgroundImagePath": "",
                     "fontPath": "./fonts/Kenney/Kenney Blocks.ttf",
                     "fontSize": 24,
-                    "message": "save",
+                    "onClick": {
+                        "functionName": "",
+                        "scriptTypeName": ""
+                    },
                     "style": {
                         "backgroundColor": {
                             "a": 1.0,
@@ -2175,7 +2177,7 @@
                             "y": 2.25
                         }
                     },
-                    "density": 5.0,
+                    "density": 3.0,
                     "fillColor": {
                         "a": 0.30000001192092896,
                         "b": 1.0,
@@ -2190,7 +2192,7 @@
                         "x": 0.0,
                         "y": 0.0
                     },
-                    "restitution": 0.30000001192092896,
+                    "restitution": 0.10000000149011612,
                     "shapeColor": {
                         "a": 1.0,
                         "b": 0.0,
@@ -2202,23 +2204,23 @@
                 },
                 "BricksBehaviour": {
                     "BreakSounds": [
-                        "./audio/AngryBird/Sfx - Rock Destroyed A1.mp3",
-                        "./audio/AngryBird/Sfx - Rock Destroyed A2.mp3",
-                        "./audio/AngryBird/Sfx - Rock Destroyed A3.mp3"
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Destroyed A1.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Destroyed A2.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Destroyed A3.mp3"
                     ],
                     "DamageSounds": [
-                        "./audio/AngryBird/Sfx - Rock Damage A1.mp3",
-                        "./audio/AngryBird/Sfx - Rock Damage A2.mp3",
-                        "./audio/AngryBird/Sfx - Rock Damage A3.mp3"
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Damage A1.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Damage A2.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Damage A3.mp3"
                     ],
                     "collisionSounds": [
-                        "./audio/AngryBird/Sfx - Rock Collision A1.mp3",
-                        "./audio/AngryBird/Sfx - Rock Collision A2.mp3",
-                        "./audio/AngryBird/Sfx - Rock Collision A3.mp3",
-                        "./audio/AngryBird/Sfx - Rock Collision A4.mp3",
-                        "./audio/AngryBird/Sfx - Rock Collision A5.mp3"
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A1.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A2.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A3.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A4.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A5.mp3"
                     ],
-                    "maxHealth": 100.0,
+                    "maxHealth": 300.0,
                     "stageImages": [
                         "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone020.png",
                         "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone025.png",
@@ -2285,7 +2287,7 @@
                             "y": 2.25
                         }
                     },
-                    "density": 5.0,
+                    "density": 3.0,
                     "fillColor": {
                         "a": 0.30000001192092896,
                         "b": 1.0,
@@ -2300,7 +2302,7 @@
                         "x": 0.0,
                         "y": 0.0
                     },
-                    "restitution": 0.30000001192092896,
+                    "restitution": 0.10000000149011612,
                     "shapeColor": {
                         "a": 1.0,
                         "b": 0.0,
@@ -2312,23 +2314,23 @@
                 },
                 "BricksBehaviour": {
                     "BreakSounds": [
-                        "./audio/AngryBird/Sfx - Rock Destroyed A1.mp3",
-                        "./audio/AngryBird/Sfx - Rock Destroyed A2.mp3",
-                        "./audio/AngryBird/Sfx - Rock Destroyed A3.mp3"
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Destroyed A1.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Destroyed A2.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Destroyed A3.mp3"
                     ],
                     "DamageSounds": [
-                        "./audio/AngryBird/Sfx - Rock Damage A1.mp3",
-                        "./audio/AngryBird/Sfx - Rock Damage A2.mp3",
-                        "./audio/AngryBird/Sfx - Rock Damage A3.mp3"
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Damage A1.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Damage A2.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Damage A3.mp3"
                     ],
                     "collisionSounds": [
-                        "./audio/AngryBird/Sfx - Rock Collision A1.mp3",
-                        "./audio/AngryBird/Sfx - Rock Collision A2.mp3",
-                        "./audio/AngryBird/Sfx - Rock Collision A3.mp3",
-                        "./audio/AngryBird/Sfx - Rock Collision A4.mp3",
-                        "./audio/AngryBird/Sfx - Rock Collision A5.mp3"
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A1.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A2.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A3.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A4.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A5.mp3"
                     ],
-                    "maxHealth": 100.0,
+                    "maxHealth": 300.0,
                     "stageImages": [
                         "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone020.png",
                         "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone025.png",
@@ -2395,7 +2397,7 @@
                             "y": 2.25
                         }
                     },
-                    "density": 5.0,
+                    "density": 3.0,
                     "fillColor": {
                         "a": 0.30000001192092896,
                         "b": 1.0,
@@ -2410,7 +2412,7 @@
                         "x": 0.0,
                         "y": 0.0
                     },
-                    "restitution": 0.30000001192092896,
+                    "restitution": 0.10000000149011612,
                     "shapeColor": {
                         "a": 1.0,
                         "b": 0.0,
@@ -2422,23 +2424,23 @@
                 },
                 "BricksBehaviour": {
                     "BreakSounds": [
-                        "./audio/AngryBird/Sfx - Rock Destroyed A1.mp3",
-                        "./audio/AngryBird/Sfx - Rock Destroyed A2.mp3",
-                        "./audio/AngryBird/Sfx - Rock Destroyed A3.mp3"
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Destroyed A1.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Destroyed A2.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Destroyed A3.mp3"
                     ],
                     "DamageSounds": [
-                        "./audio/AngryBird/Sfx - Rock Damage A1.mp3",
-                        "./audio/AngryBird/Sfx - Rock Damage A2.mp3",
-                        "./audio/AngryBird/Sfx - Rock Damage A3.mp3"
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Damage A1.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Damage A2.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Damage A3.mp3"
                     ],
                     "collisionSounds": [
-                        "./audio/AngryBird/Sfx - Rock Collision A1.mp3",
-                        "./audio/AngryBird/Sfx - Rock Collision A2.mp3",
-                        "./audio/AngryBird/Sfx - Rock Collision A3.mp3",
-                        "./audio/AngryBird/Sfx - Rock Collision A4.mp3",
-                        "./audio/AngryBird/Sfx - Rock Collision A5.mp3"
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A1.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A2.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A3.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A4.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A5.mp3"
                     ],
-                    "maxHealth": 100.0,
+                    "maxHealth": 300.0,
                     "stageImages": [
                         "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone020.png",
                         "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone025.png",
@@ -2505,7 +2507,7 @@
                             "y": 2.25
                         }
                     },
-                    "density": 5.0,
+                    "density": 3.0,
                     "fillColor": {
                         "a": 0.30000001192092896,
                         "b": 1.0,
@@ -2520,7 +2522,7 @@
                         "x": 0.0,
                         "y": 0.0
                     },
-                    "restitution": 0.30000001192092896,
+                    "restitution": 0.10000000149011612,
                     "shapeColor": {
                         "a": 1.0,
                         "b": 0.0,
@@ -2532,23 +2534,23 @@
                 },
                 "BricksBehaviour": {
                     "BreakSounds": [
-                        "./audio/AngryBird/Sfx - Rock Destroyed A1.mp3",
-                        "./audio/AngryBird/Sfx - Rock Destroyed A2.mp3",
-                        "./audio/AngryBird/Sfx - Rock Destroyed A3.mp3"
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Destroyed A1.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Destroyed A2.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Destroyed A3.mp3"
                     ],
                     "DamageSounds": [
-                        "./audio/AngryBird/Sfx - Rock Damage A1.mp3",
-                        "./audio/AngryBird/Sfx - Rock Damage A2.mp3",
-                        "./audio/AngryBird/Sfx - Rock Damage A3.mp3"
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Damage A1.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Damage A2.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Damage A3.mp3"
                     ],
                     "collisionSounds": [
-                        "./audio/AngryBird/Sfx - Rock Collision A1.mp3",
-                        "./audio/AngryBird/Sfx - Rock Collision A2.mp3",
-                        "./audio/AngryBird/Sfx - Rock Collision A3.mp3",
-                        "./audio/AngryBird/Sfx - Rock Collision A4.mp3",
-                        "./audio/AngryBird/Sfx - Rock Collision A5.mp3"
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A1.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A2.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A3.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A4.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A5.mp3"
                     ],
-                    "maxHealth": 100.0,
+                    "maxHealth": 300.0,
                     "stageImages": [
                         "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone020.png",
                         "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone025.png",
@@ -2615,7 +2617,7 @@
                             "y": 2.25
                         }
                     },
-                    "density": 5.0,
+                    "density": 3.0,
                     "fillColor": {
                         "a": 0.30000001192092896,
                         "b": 1.0,
@@ -2630,7 +2632,7 @@
                         "x": 0.0,
                         "y": 0.0
                     },
-                    "restitution": 0.30000001192092896,
+                    "restitution": 0.10000000149011612,
                     "shapeColor": {
                         "a": 1.0,
                         "b": 0.0,
@@ -2642,23 +2644,23 @@
                 },
                 "BricksBehaviour": {
                     "BreakSounds": [
-                        "./audio/AngryBird/Sfx - Rock Destroyed A1.mp3",
-                        "./audio/AngryBird/Sfx - Rock Destroyed A2.mp3",
-                        "./audio/AngryBird/Sfx - Rock Destroyed A3.mp3"
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Destroyed A1.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Destroyed A2.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Destroyed A3.mp3"
                     ],
                     "DamageSounds": [
-                        "./audio/AngryBird/Sfx - Rock Damage A1.mp3",
-                        "./audio/AngryBird/Sfx - Rock Damage A2.mp3",
-                        "./audio/AngryBird/Sfx - Rock Damage A3.mp3"
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Damage A1.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Damage A2.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Damage A3.mp3"
                     ],
                     "collisionSounds": [
-                        "./audio/AngryBird/Sfx - Rock Collision A1.mp3",
-                        "./audio/AngryBird/Sfx - Rock Collision A2.mp3",
-                        "./audio/AngryBird/Sfx - Rock Collision A3.mp3",
-                        "./audio/AngryBird/Sfx - Rock Collision A4.mp3",
-                        "./audio/AngryBird/Sfx - Rock Collision A5.mp3"
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A1.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A2.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A3.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A4.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A5.mp3"
                     ],
-                    "maxHealth": 100.0,
+                    "maxHealth": 300.0,
                     "stageImages": [
                         "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone020.png",
                         "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone025.png",
@@ -2725,7 +2727,7 @@
                             "y": 2.25
                         }
                     },
-                    "density": 5.0,
+                    "density": 3.0,
                     "fillColor": {
                         "a": 0.30000001192092896,
                         "b": 1.0,
@@ -2740,7 +2742,7 @@
                         "x": 0.0,
                         "y": 0.0
                     },
-                    "restitution": 0.30000001192092896,
+                    "restitution": 0.10000000149011612,
                     "shapeColor": {
                         "a": 1.0,
                         "b": 0.0,
@@ -2752,23 +2754,23 @@
                 },
                 "BricksBehaviour": {
                     "BreakSounds": [
-                        "./audio/AngryBird/Sfx - Rock Destroyed A1.mp3",
-                        "./audio/AngryBird/Sfx - Rock Destroyed A2.mp3",
-                        "./audio/AngryBird/Sfx - Rock Destroyed A3.mp3"
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Destroyed A1.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Destroyed A2.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Destroyed A3.mp3"
                     ],
                     "DamageSounds": [
-                        "./audio/AngryBird/Sfx - Rock Damage A1.mp3",
-                        "./audio/AngryBird/Sfx - Rock Damage A2.mp3",
-                        "./audio/AngryBird/Sfx - Rock Damage A3.mp3"
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Damage A1.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Damage A2.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Damage A3.mp3"
                     ],
                     "collisionSounds": [
-                        "./audio/AngryBird/Sfx - Rock Collision A1.mp3",
-                        "./audio/AngryBird/Sfx - Rock Collision A2.mp3",
-                        "./audio/AngryBird/Sfx - Rock Collision A3.mp3",
-                        "./audio/AngryBird/Sfx - Rock Collision A4.mp3",
-                        "./audio/AngryBird/Sfx - Rock Collision A5.mp3"
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A1.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A2.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A3.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A4.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A5.mp3"
                     ],
-                    "maxHealth": 100.0,
+                    "maxHealth": 300.0,
                     "stageImages": [
                         "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone020.png",
                         "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone025.png",
@@ -2835,7 +2837,7 @@
                             "y": 2.25
                         }
                     },
-                    "density": 5.0,
+                    "density": 3.0,
                     "fillColor": {
                         "a": 0.30000001192092896,
                         "b": 1.0,
@@ -2850,7 +2852,7 @@
                         "x": 0.0,
                         "y": 0.0
                     },
-                    "restitution": 0.30000001192092896,
+                    "restitution": 0.10000000149011612,
                     "shapeColor": {
                         "a": 1.0,
                         "b": 0.0,
@@ -2862,23 +2864,23 @@
                 },
                 "BricksBehaviour": {
                     "BreakSounds": [
-                        "./audio/AngryBird/Sfx - Rock Destroyed A1.mp3",
-                        "./audio/AngryBird/Sfx - Rock Destroyed A2.mp3",
-                        "./audio/AngryBird/Sfx - Rock Destroyed A3.mp3"
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Destroyed A1.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Destroyed A2.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Destroyed A3.mp3"
                     ],
                     "DamageSounds": [
-                        "./audio/AngryBird/Sfx - Rock Damage A1.mp3",
-                        "./audio/AngryBird/Sfx - Rock Damage A2.mp3",
-                        "./audio/AngryBird/Sfx - Rock Damage A3.mp3"
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Damage A1.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Damage A2.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Damage A3.mp3"
                     ],
                     "collisionSounds": [
-                        "./audio/AngryBird/Sfx - Rock Collision A1.mp3",
-                        "./audio/AngryBird/Sfx - Rock Collision A2.mp3",
-                        "./audio/AngryBird/Sfx - Rock Collision A3.mp3",
-                        "./audio/AngryBird/Sfx - Rock Collision A4.mp3",
-                        "./audio/AngryBird/Sfx - Rock Collision A5.mp3"
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A1.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A2.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A3.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A4.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A5.mp3"
                     ],
-                    "maxHealth": 100.0,
+                    "maxHealth": 300.0,
                     "stageImages": [
                         "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone020.png",
                         "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone025.png",
@@ -2945,7 +2947,7 @@
                             "y": 2.25
                         }
                     },
-                    "density": 5.0,
+                    "density": 3.0,
                     "fillColor": {
                         "a": 0.30000001192092896,
                         "b": 1.0,
@@ -2960,7 +2962,7 @@
                         "x": 0.0,
                         "y": 0.0
                     },
-                    "restitution": 0.30000001192092896,
+                    "restitution": 0.10000000149011612,
                     "shapeColor": {
                         "a": 1.0,
                         "b": 0.0,
@@ -2972,23 +2974,23 @@
                 },
                 "BricksBehaviour": {
                     "BreakSounds": [
-                        "./audio/AngryBird/Sfx - Rock Destroyed A1.mp3",
-                        "./audio/AngryBird/Sfx - Rock Destroyed A2.mp3",
-                        "./audio/AngryBird/Sfx - Rock Destroyed A3.mp3"
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Destroyed A1.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Destroyed A2.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Destroyed A3.mp3"
                     ],
                     "DamageSounds": [
-                        "./audio/AngryBird/Sfx - Rock Damage A1.mp3",
-                        "./audio/AngryBird/Sfx - Rock Damage A2.mp3",
-                        "./audio/AngryBird/Sfx - Rock Damage A3.mp3"
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Damage A1.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Damage A2.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Damage A3.mp3"
                     ],
                     "collisionSounds": [
-                        "./audio/AngryBird/Sfx - Rock Collision A1.mp3",
-                        "./audio/AngryBird/Sfx - Rock Collision A2.mp3",
-                        "./audio/AngryBird/Sfx - Rock Collision A3.mp3",
-                        "./audio/AngryBird/Sfx - Rock Collision A4.mp3",
-                        "./audio/AngryBird/Sfx - Rock Collision A5.mp3"
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A1.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A2.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A3.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A4.mp3",
+                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A5.mp3"
                     ],
-                    "maxHealth": 100.0,
+                    "maxHealth": 300.0,
                     "stageImages": [
                         "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone020.png",
                         "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone025.png",
@@ -3052,7 +3054,10 @@
                     "backgroundImagePath": "",
                     "fontPath": "./fonts/Kenney/Kenney Blocks.ttf",
                     "fontSize": 24,
-                    "message": "menu",
+                    "onClick": {
+                        "functionName": "LoadAgMenu",
+                        "scriptTypeName": "GameComponentRegistration"
+                    },
                     "style": {
                         "backgroundColor": {
                             "a": 1.0,
@@ -3140,7 +3145,7 @@
         "bird1": {
             "components": {
                 "AngryBirdController": {
-                    "forceMultiplier": 6.0,
+                    "forceMultiplier": 10.0,
                     "shotLength": 4.0,
                     "soundDamageThreshold": 5.0
                 },
@@ -3152,7 +3157,7 @@
                         },
                         "radius": 0.5
                     },
-                    "density": 1.0,
+                    "density": 2.0,
                     "fillColor": {
                         "a": 0.30000001192092896,
                         "b": 0.0,
@@ -3161,13 +3166,13 @@
                     },
                     "fillDraw": false,
                     "filter": 0,
-                    "friction": 0.30000001192092896,
+                    "friction": 0.6000000238418579,
                     "isSensor": false,
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
                     },
-                    "restitution": 0.5,
+                    "restitution": 0.4000000059604645,
                     "shapeColor": {
                         "a": 1.0,
                         "b": 0.0,
@@ -3188,7 +3193,7 @@
                         "h": false,
                         "v": false
                     },
-                    "path": "/assets/Kenney/Physics Assets/PNG/Aliens/alienGreen_round.png",
+                    "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Aliens\\alienGreen_round.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -3226,7 +3231,10 @@
                     "backgroundImagePath": "",
                     "fontPath": "./fonts/Kenney/Kenney Blocks.ttf",
                     "fontSize": 24,
-                    "message": "reset",
+                    "onClick": {
+                        "functionName": "Reset",
+                        "scriptTypeName": "GameComponentRegistration"
+                    },
                     "style": {
                         "backgroundColor": {
                             "a": 1.0,
@@ -3388,5 +3396,5 @@
         }
     },
     "sceneName": "Ag_Lvl_3",
-    "scenePath": "../Deployment/Scenes\\Ag_Lvl_3.scene"
+    "scenePath": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\Ag_Lvl_3.scene"
 }

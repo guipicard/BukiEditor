@@ -13,6 +13,7 @@
 #include "Memory.h"
 #include "Graphics/Camera2D.h"
 #include "Graphics/FontManager.h"
+#include "ScriptFunctionRegistry.h"
 
 namespace buki {
     using Uint32 = std::uint32_t;
@@ -32,6 +33,7 @@ namespace buki {
             static Engine instance;
             return instance;
         }
+        
         bool Init(const std::string& title, int w, int h);
         void Start();
 

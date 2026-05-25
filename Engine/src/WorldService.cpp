@@ -144,6 +144,7 @@ void buki::WorldService::Load(const std::string& scene)
 	}
 	else
 	{
+		Engine::Get().Log().LogError("Scene " + scene + " not found, loading Menu scene instead.");
 		m_CurrentScene = m_Scenes["Menu"];
 		SetCurrentSceneName("Menu");
 		m_CurrentScenePath.clear();
@@ -296,13 +297,13 @@ void buki::WorldService::Unload()
 	m_SceneSource = SceneSource::None;
 }
 
-void buki::WorldService::Register(const std::string& name, IScene* scene)
+void buki::WorldService::Register(const std::string& name)
 {
 	if (m_Scenes.count(name) == 0)
 	{
 		m_ScenesByName.push_back(name);
-		m_Scenes[name] = scene;
-		BukiScene* bukiScene = dynamic_cast<BukiScene*>(scene);
+		m_Scenes[name] = new BukiScene();
+		BukiScene* bukiScene = dynamic_cast<BukiScene*>(m_Scenes[name]);
 		if (bukiScene != nullptr)
 		{
 			bukiScene->SetName(name);
