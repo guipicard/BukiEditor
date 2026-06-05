@@ -1,8 +1,11 @@
+#pragma once
 #include "EditorAssetEntries.h"
 
 #include "Engine.h"
 #include "Texture2D.h"
 #include "imgui.h"
+#include "EditorState.h"
+#include "EditorViewportHelpers.h"
 
 #include <algorithm>
 #include <cctype>
@@ -11,13 +14,6 @@
 
 namespace
 {
-	ImTextureID ToImGuiTextureID(std::uint32_t textureId)
-	{
-		return static_cast<ImTextureID>(textureId);
-		// If your backend wants pointer-style IDs:
-		// return (ImTextureID)(intptr_t)textureId;
-	}
-
 	bool MatchesPayloadType(const buki::BrowserEntry& entry, const char* payloadType)
 	{
 		if (payloadType == nullptr || payloadType[0] == '\0')
@@ -342,7 +338,7 @@ bool buki::DrawBrowserTile(const BrowserEntry& entry, float thumbnailSize, bool 
 	{
 		activated = ImGui::ImageButton(
 			"##thumb",
-			ToImGuiTextureID(thumbnail->id),
+			buki::ToImGuiTextureID(thumbnail->id),
 			imageSize,
 			ImVec2(0.0f, 0.0f),
 			ImVec2(1.0f, 1.0f),

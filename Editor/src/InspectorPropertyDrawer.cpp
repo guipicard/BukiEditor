@@ -12,8 +12,6 @@
 #include "imgui.h"
 #include "EditorAssetEntries.h"
 
-namespace fs = std::filesystem;
-
 namespace
 {
 	struct MixedTextState

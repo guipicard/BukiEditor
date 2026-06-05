@@ -98,7 +98,7 @@ void buki::Editor::BeginFrame()
 void buki::Editor::Render()
 {
 	ImGuiIO& io = ImGui::GetIO();
-
+	
 	editorLayer.Render();
 
 	ImGui::Render();

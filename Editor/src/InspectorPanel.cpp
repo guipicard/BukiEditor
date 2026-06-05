@@ -1,9 +1,11 @@
 #pragma once 
 #include "InspectorPanel.h"
 
+#include "imgui.h"
+#include "imgui_internal.h"
+
 #include "Entity.h"
 #include "BukiContainers.h"
-#include "imgui.h"
 #include "EditorState.h"
 #include "Text.h"
 #include "Color.h"
@@ -22,13 +24,13 @@
 #include "PropertyInfo.h"
 
 #include "EditorAssetEntries.h"
+#include "EditorViewportHelpers.h"
 
-//#include <cstdlib>
-//#include <cstring>
-//#include <unordered_map>
-//
 #include <fstream>
-//#include <algorithm>
+#include <filesystem>
+#include "nlohmann/json.hpp"
+#include <sstream>
+#include <glad/glad.h>
 
 namespace fs = std::filesystem;
 
@@ -344,28 +346,165 @@ namespace
 	}
 }
 
+namespace
+{
+	nlohmann::json LoadJsonFileSafe(const fs::path& path)
+	{
+		std::ifstream in(path);
+		if (!in.is_open())
+			return {};
+
+		nlohmann::json j;
+		try
+		{
+			in >> j;
+		}
+		catch (...)
+		{
+			return {};
+		}
+
+		return j;
+	}
+
+	std::string JsonValueToDisplayString(const nlohmann::json& value)
+	{
+		if (value.is_string())
+			return value.get<std::string>();
+
+		if (value.is_boolean())
+			return value.get<bool>() ? "true" : "false";
+
+		if (value.is_number_integer())
+			return std::to_string(value.get<int>());
+
+		if (value.is_number_unsigned())
+			return std::to_string(value.get<unsigned int>());
+
+		if (value.is_number_float())
+		{
+			std::ostringstream oss;
+			oss << value.get<double>();
+			return oss.str();
+		}
+
+		if (value.is_null())
+			return "null";
+
+		if (value.is_array())
+			return "[...]";
+
+		if (value.is_object())
+			return "{...}";
+
+		return value.dump();
+	}
+
+	void DrawJsonObjectReadonly(const nlohmann::json& object)
+	{
+		if (!object.is_object())
+			return;
+
+		for (auto it = object.begin(); it != object.end(); ++it)
+		{
+			const std::string key = it.key();
+			const nlohmann::json& value = it.value();
+
+			if (value.is_object())
+			{
+				if (ImGui::TreeNode(key.c_str()))
+				{
+					DrawJsonObjectReadonly(value);
+					ImGui::TreePop();
+				}
+			}
+			else if (value.is_array())
+			{
+				if (ImGui::TreeNode((key + "[]").c_str()))
+				{
+					for (size_t i = 0; i < value.size(); ++i)
+					{
+						const nlohmann::json& item = value[i];
+						const std::string label = "[" + std::to_string(i) + "]";
+
+						if (item.is_object())
+						{
+							if (ImGui::TreeNode(label.c_str()))
+							{
+								DrawJsonObjectReadonly(item);
+								ImGui::TreePop();
+							}
+						}
+						else
+						{
+							ImGui::BulletText("%s: %s", label.c_str(), JsonValueToDisplayString(item).c_str());
+						}
+					}
+					ImGui::TreePop();
+				}
+			}
+			else
+			{
+				ImGui::BulletText("%s: %s", key.c_str(), JsonValueToDisplayString(value).c_str());
+			}
+		}
+	}
+
+	static void DestroyPrefabPreviewFramebuffer(buki::PrefabPreviewSession& session)
+	{
+		if (session.depthRenderbuffer != 0)
+		{
+			glDeleteRenderbuffers(1, &session.depthRenderbuffer);
+			session.depthRenderbuffer = 0;
+		}
+
+		if (session.colorTexture != 0)
+		{
+			glDeleteTextures(1, &session.colorTexture);
+			session.colorTexture = 0;
+		}
+
+		if (session.framebuffer != 0)
+		{
+			glDeleteFramebuffers(1, &session.framebuffer);
+			session.framebuffer = 0;
+		}
+
+		session.framebufferWidth = 0;
+		session.framebufferHeight = 0;
+	}
+
+	
+}
+
 void buki::InspectorPanel::Render(EditorState& state)
 {
 	ImGui::Begin("Inspector", &state.showInspector);
 
 	auto& world = Engine::Get().World();
-	const std::vector<Entity*> allEntities = world.GetEntitiesInWorld();
 
+	if (state.selectedPrefabEntity != nullptr)
+	{
+		RenderPrefabInspector(state, world);
+		ImGui::End();
+		return;
+	}
+
+	const std::vector<Entity*> allEntities = world.GetEntitiesInWorld();
 	SanitizeSelection(state, allEntities);
 
 	std::vector<Entity*> selected;
 	selected.reserve(state.selectedEntities.size());
 
-
 	for (Entity* entity : state.selectedEntities)
 	{
 		if (entity != nullptr && ContainsEntityPtr(allEntities, entity))
-		{
 			selected.push_back(entity);
-		}
 	}
 
-	if (selected.empty() && state.selectedEntity != nullptr && ContainsEntityPtr(allEntities, state.selectedEntity))
+	if (selected.empty() &&
+		state.selectedEntity != nullptr &&
+		ContainsEntityPtr(allEntities, state.selectedEntity))
 	{
 		selected.push_back(state.selectedEntity);
 		state.selectedEntities = selected;
@@ -381,215 +520,12 @@ void buki::InspectorPanel::Render(EditorState& state)
 
 	if (selected.size() == 1)
 	{
-		Entity* entity = selected[0];
-		state.selectedEntity = entity;
-		state.activeEntity = entity;
-
-		bool changed = false;
-		ImGui::Text("Entity: %s", entity->GetName().c_str());
-		ImGui::Separator();
-
-		if (ImGui::Button("Save Prefab"))
-		{
-			changed |= SaveSelectedEntityAsPrefab(entity);
-		}
-
-		ImGui::Spacing();
-		changed |= DrawEntitySection(entity);
-
-		std::string componentToRemove;
-
-		if (ImGui::CollapsingHeader("Components", ImGuiTreeNodeFlags_DefaultOpen))
-		{
-			for (auto& [type, component] : entity->GetComponents())
-			{
-				if (component == nullptr)
-					continue;
-
-				std::string cmpName = ComponentFactory::GetTypeName(*type);
-				if (cmpName.empty())
-					cmpName = type->name();
-
-				bool componentChanged = false;
-
-				if (dynamic_cast<Text*>(component))
-					componentChanged = DrawTextComponent(component);
-				else if (dynamic_cast<Button*>(component))
-					componentChanged = DrawButtonComponent(component);
-				else if (dynamic_cast<Sprite*>(component))
-					componentChanged = DrawSpriteComponent(component);
-				else if (dynamic_cast<TileLayer*>(component))
-					componentChanged = DrawTileLayerComponent(component, state);
-				else if (dynamic_cast<RigidBody*>(component))
-					componentChanged = DrawRigidBodyComponent(component);
-				else if (dynamic_cast<Box*>(component))
-					componentChanged = DrawBoxComponent(component);
-				else if (dynamic_cast<Circle*>(component))
-					componentChanged = DrawCircleComponent(component);
-				else if (dynamic_cast<Polygon*>(component))
-					componentChanged = DrawPolygonComponent(component);
-				else if (dynamic_cast<MonoBehaviour*>(component))
-					componentChanged = InspectorPropertyDrawer::DrawComponent(component, &cmpName);
-				else
-					ImGui::BulletText("%s", type->name());
-
-				changed |= componentChanged;
-
-				if (ImGui::Button(("Remove " + cmpName).c_str()))
-				{
-					componentToRemove = cmpName;
-				}
-			}
-
-			if (!componentToRemove.empty())
-			{
-				changed |= entity->RemoveComponentByTypeName(componentToRemove);
-			}
-
-			ImGui::Separator();
-			changed |= InspectorPropertyDrawer::DrawAddComponentPopup(entity);
-		}
-
-		if (changed)
-		{
-			state.sceneDirty = true;
-		}
-
+		RenderSingleEntityInspector(selected[0], state, world);
 		ImGui::End();
 		return;
 	}
 
-	state.selectedEntity = state.activeEntity != nullptr ? state.activeEntity : selected.front();
-
-	bool changed = false;
-	ImGui::Text("Entities Selected: %d", static_cast<int>(selected.size()));
-	ImGui::Separator();
-
-	changed |= DrawMultiEntitySection(selected);
-
-	if (ImGui::CollapsingHeader("Shared Components", ImGuiTreeNodeFlags_DefaultOpen))
-	{
-		changed |= InspectorPropertyDrawer::DrawAddComponentPopup(selected);
-
-		std::vector<std::string> sharedComponentTypes = InspectorPropertyDrawer::GetSharedComponentTypeNames(selected);
-		std::string componentToRemove;
-
-		for (const std::string& typeName : sharedComponentTypes)
-		{
-			if (typeName == "Transform")
-			{
-				continue;
-			}
-
-			if (typeName == "Text")
-			{
-				if (ImGui::TreeNodeEx("Text", ImGuiTreeNodeFlags_DefaultOpen))
-				{
-					changed |= DrawSharedTextComponents(selected);
-					ImGui::SameLine();
-					if (ImGui::Button("Remove##Text"))
-						componentToRemove = "Text";
-					ImGui::TreePop();
-				}
-			}
-			else if (typeName == "Button")
-			{
-				if (ImGui::TreeNodeEx("Button", ImGuiTreeNodeFlags_DefaultOpen))
-				{
-					changed |= DrawSharedButtonComponents(selected);
-					ImGui::SameLine();
-					if (ImGui::Button("Remove##Button"))
-						componentToRemove = "Button";
-					ImGui::TreePop();
-				}
-			}
-			else if (typeName == "Sprite")
-			{
-				if (ImGui::TreeNodeEx("Sprite", ImGuiTreeNodeFlags_DefaultOpen))
-				{
-					changed |= DrawSharedSpriteComponents(selected);
-					ImGui::SameLine();
-					if (ImGui::Button("Remove##Sprite"))
-						componentToRemove = "Sprite";
-					ImGui::TreePop();
-				}
-			}
-			else if (typeName == "RigidBody")
-			{
-				if (ImGui::TreeNodeEx("RigidBody", ImGuiTreeNodeFlags_DefaultOpen))
-				{
-					changed |= DrawSharedRigidBodyComponents(selected);
-					ImGui::SameLine();
-					if (ImGui::Button("Remove##RigidBody"))
-						componentToRemove = "RigidBody";
-					ImGui::TreePop();
-				}
-			}
-			else if (typeName == "Box")
-			{
-				if (ImGui::TreeNodeEx("Box", ImGuiTreeNodeFlags_DefaultOpen))
-				{
-					changed |= DrawSharedBoxComponents(selected);
-					ImGui::SameLine();
-					if (ImGui::Button("Remove##Box"))
-						componentToRemove = "Box";
-					ImGui::TreePop();
-				}
-			}
-			else if (typeName == "Circle")
-			{
-				if (ImGui::TreeNodeEx("Circle", ImGuiTreeNodeFlags_DefaultOpen))
-				{
-					changed |= DrawSharedCircleComponents(selected);
-					ImGui::SameLine();
-					if (ImGui::Button("Remove##Circle"))
-						componentToRemove = "Circle";
-					ImGui::TreePop();
-				}
-			}
-			else if (typeName == "Polygon")
-			{
-				if (ImGui::TreeNodeEx("Polygon", ImGuiTreeNodeFlags_DefaultOpen))
-				{
-					changed |= DrawSharedPolygonComponents(selected);
-					ImGui::SameLine();
-					if (ImGui::Button("Remove##Polygon"))
-						componentToRemove = "Polygon";
-					ImGui::TreePop();
-				}
-			}
-			else
-			{
-				if (ImGui::TreeNodeEx(typeName.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
-				{
-					changed |= InspectorPropertyDrawer::DrawSharedComponent(typeName, selected);
-					ImGui::SameLine();
-					if (ImGui::Button(("Remove##" + typeName).c_str()))
-					{
-						componentToRemove = typeName;
-					}
-					ImGui::TreePop();
-				}
-			}
-		}
-
-		if (!componentToRemove.empty())
-		{
-			for (Entity* entity : selected)
-			{
-				if (entity != nullptr)
-				{
-					changed |= entity->RemoveComponentByTypeName(componentToRemove);
-				}
-			}
-		}
-	}
-
-	if (changed)
-	{
-		state.sceneDirty = true;
-	}
-
+	RenderMultiEntityInspector(selected, state, world);
 	ImGui::End();
 }
 
@@ -2906,4 +2842,456 @@ bool buki::InspectorPanel::DrawMixedVector2DragDeltaFieldPerAxis(
 
 	ImGui::PopID();
 	return changedX || changedY;
+}
+
+void buki::InspectorPanel::DrawPrefabPreviewWindows(EditorState& state)
+{
+	for (size_t i = 0; i < state.prefabPreviewSessions.size();)
+	{
+		auto& session = state.prefabPreviewSessions[i];
+		bool open = session.open;
+
+		std::string title =
+			session.path.filename().string() + "##PrefabPreview_" + session.windowId;
+
+		if (session.requestDockNextToScene && state.prefabDockNodeId != 0)
+		{
+			ImGui::SetNextWindowDockID(state.prefabDockNodeId, ImGuiCond_Always);
+			session.requestDockNextToScene = false;
+		}
+
+		if (session.requestFocus)
+		{
+			ImGui::SetNextWindowFocus();
+		}
+
+		if (ImGui::Begin(title.c_str(), &open))
+		{
+			if (session.requestFocus)
+			{
+				ImGui::FocusWindow(ImGui::GetCurrentWindow());
+			}
+
+			const bool focusedNow =
+				session.requestFocus ||
+				ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) ||
+				ImGui::IsWindowAppearing();
+
+			if (focusedNow)
+			{
+				for (size_t j = 0; j < state.prefabPreviewSessions.size(); ++j)
+				{
+					state.prefabPreviewSessions[j].focused = (j == i);
+				}
+
+				state.activePrefabPreviewIndex = static_cast<int>(i);
+				state.selectedPrefabPath = session.path;
+				state.selectedPrefabEntity = session.prefabEntity;
+				state.selectedEntity = nullptr;
+				state.activeEntity = nullptr;
+				state.selectedEntities.clear();
+			}
+			else
+			{
+				session.focused = false;
+			}
+
+			session.requestFocus = false;
+
+			session.cameraSettings.viewportWidth = ImGui::GetContentRegionAvail().x;
+			session.cameraSettings.viewportHeight = ImGui::GetContentRegionAvail().y;
+
+			DrawPrefabSessionTexture(session);
+		}
+		ImGui::End();
+
+		session.open = open;
+
+		if (!session.open)
+		{
+			DestroyPrefabPreviewFramebuffer(session);
+			state.prefabPreviewSessions.erase(state.prefabPreviewSessions.begin() + i);
+
+			if (state.activePrefabPreviewIndex == static_cast<int>(i))
+				state.activePrefabPreviewIndex = -1;
+			else if (state.activePrefabPreviewIndex > static_cast<int>(i))
+				--state.activePrefabPreviewIndex;
+
+			continue;
+		}
+
+		++i;
+	}
+}
+
+void buki::InspectorPanel::RenderPrefabInspector(EditorState& state, IWorld& world)
+{
+	Entity* entity = state.selectedPrefabEntity;
+	if (entity == nullptr)
+	{
+		ImGui::TextUnformatted("No prefab selected.");
+		return;
+	}
+
+	bool changed = false;
+
+	ImGui::Text("Prefab: %s", state.selectedPrefabPath.filename().string().c_str());
+	ImGui::Separator();
+
+	if (ImGui::Button("Save Prefab"))
+	{
+		if (world.SavePrefabAsset(state.selectedPrefabPath))
+		{
+			const std::string key = fs::absolute(state.selectedPrefabPath).lexically_normal().string();
+			auto& prefabAssets = world.GetPrefabAssets();
+			auto it = prefabAssets.find(key);
+			if (it != prefabAssets.end())
+				it->second.dirty = false;
+		}
+	}
+
+	ImGui::Spacing();
+	changed |= DrawPrefabEntitySection(entity);
+
+	std::string componentToRemove;
+
+	if (ImGui::CollapsingHeader("Components", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		for (auto& [type, component] : entity->GetComponents())
+		{
+			if (component == nullptr)
+				continue;
+
+			std::string cmpName = ComponentFactory::GetTypeName(*type);
+			if (cmpName.empty())
+				cmpName = type->name();
+
+			bool componentChanged = false;
+
+			if (dynamic_cast<Text*>(component))
+				componentChanged = DrawTextComponent(component);
+			else if (dynamic_cast<Button*>(component))
+				componentChanged = DrawButtonComponent(component);
+			else if (dynamic_cast<Sprite*>(component))
+				componentChanged = DrawSpriteComponent(component);
+			else if (dynamic_cast<TileLayer*>(component))
+				componentChanged = DrawTileLayerComponent(component, state);
+			else if (dynamic_cast<RigidBody*>(component))
+				componentChanged = DrawRigidBodyComponent(component);
+			else if (dynamic_cast<Box*>(component))
+				componentChanged = DrawBoxComponent(component);
+			else if (dynamic_cast<Circle*>(component))
+				componentChanged = DrawCircleComponent(component);
+			else if (dynamic_cast<Polygon*>(component))
+				componentChanged = DrawPolygonComponent(component);
+			else if (dynamic_cast<MonoBehaviour*>(component))
+				componentChanged = InspectorPropertyDrawer::DrawComponent(component, &cmpName);
+			else
+				ImGui::BulletText("%s", type->name());
+
+			changed |= componentChanged;
+
+			if (ImGui::Button(("Remove##" + cmpName).c_str()))
+				componentToRemove = cmpName;
+		}
+	}
+
+	if (!componentToRemove.empty())
+		changed |= entity->RemoveComponentByTypeName(componentToRemove);
+
+	changed |= InspectorPropertyDrawer::DrawAddComponentPopup(entity);
+
+	if (changed)
+	{
+		entity->Set();
+
+		const std::string key = fs::absolute(state.selectedPrefabPath).lexically_normal().string();
+		auto& prefabAssets = world.GetPrefabAssets();
+		auto it = prefabAssets.find(key);
+		if (it != prefabAssets.end())
+			it->second.dirty = true;
+	}
+}
+
+void buki::InspectorPanel::RenderSingleEntityInspector(Entity* entity, EditorState& state, IWorld& world)
+{
+	if (entity == nullptr)
+	{
+		ImGui::TextUnformatted("No entity selected.");
+		return;
+	}
+
+	state.selectedEntity = entity;
+	state.activeEntity = entity;
+
+	bool changed = false;
+
+	ImGui::Text("Entity: %s", entity->GetName().c_str());
+	ImGui::Separator();
+
+	if (ImGui::Button("Save Prefab"))
+	{
+		changed |= SaveSelectedEntityAsPrefab(entity);
+	}
+
+	ImGui::Spacing();
+	changed |= DrawEntitySection(entity);
+
+	std::string componentToRemove;
+
+	if (ImGui::CollapsingHeader("Components", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		for (auto& [type, component] : entity->GetComponents())
+		{
+			if (component == nullptr)
+				continue;
+
+			std::string cmpName = ComponentFactory::GetTypeName(*type);
+			if (cmpName.empty())
+				cmpName = type->name();
+
+			bool componentChanged = false;
+
+			if (dynamic_cast<Text*>(component))
+				componentChanged = DrawTextComponent(component);
+			else if (dynamic_cast<Button*>(component))
+				componentChanged = DrawButtonComponent(component);
+			else if (dynamic_cast<Sprite*>(component))
+				componentChanged = DrawSpriteComponent(component);
+			else if (dynamic_cast<TileLayer*>(component))
+				componentChanged = DrawTileLayerComponent(component, state);
+			else if (dynamic_cast<RigidBody*>(component))
+				componentChanged = DrawRigidBodyComponent(component);
+			else if (dynamic_cast<Box*>(component))
+				componentChanged = DrawBoxComponent(component);
+			else if (dynamic_cast<Circle*>(component))
+				componentChanged = DrawCircleComponent(component);
+			else if (dynamic_cast<Polygon*>(component))
+				componentChanged = DrawPolygonComponent(component);
+			else if (dynamic_cast<MonoBehaviour*>(component))
+				componentChanged = InspectorPropertyDrawer::DrawComponent(component, &cmpName);
+			else
+				ImGui::BulletText("%s", type->name());
+
+			changed |= componentChanged;
+
+			if (ImGui::Button(("Remove##" + cmpName).c_str()))
+				componentToRemove = cmpName;
+		}
+
+		if (!componentToRemove.empty())
+			changed |= entity->RemoveComponentByTypeName(componentToRemove);
+
+		ImGui::Separator();
+		changed |= InspectorPropertyDrawer::DrawAddComponentPopup(entity);
+	}
+
+	if (changed)
+	{
+		state.sceneDirty = true;
+	}
+}
+
+void buki::InspectorPanel::RenderMultiEntityInspector(const std::vector<Entity*>& selected, EditorState& state, IWorld& world)
+{
+	if (selected.empty())
+	{
+		ImGui::TextUnformatted("No entity selected.");
+		return;
+	}
+
+	state.selectedEntity = state.activeEntity != nullptr ? state.activeEntity : selected.front();
+
+	bool changed = false;
+
+	ImGui::Text("Entities Selected: %d", static_cast<int>(selected.size()));
+	ImGui::Separator();
+
+	changed |= DrawMultiEntitySection(selected);
+
+	if (ImGui::CollapsingHeader("Shared Components", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		changed |= InspectorPropertyDrawer::DrawAddComponentPopup(selected);
+
+		std::vector<std::string> sharedComponentTypes = InspectorPropertyDrawer::GetSharedComponentTypeNames(selected);
+		std::string componentToRemove;
+
+		for (const std::string& typeName : sharedComponentTypes)
+		{
+			if (typeName == "Transform")
+				continue;
+
+			if (typeName == "Text")
+			{
+				if (ImGui::TreeNodeEx("Text", ImGuiTreeNodeFlags_DefaultOpen))
+				{
+					changed |= DrawSharedTextComponents(selected);
+					ImGui::SameLine();
+					if (ImGui::Button("Remove##Text"))
+						componentToRemove = "Text";
+					ImGui::TreePop();
+				}
+			}
+			else if (typeName == "Button")
+			{
+				if (ImGui::TreeNodeEx("Button", ImGuiTreeNodeFlags_DefaultOpen))
+				{
+					changed |= DrawSharedButtonComponents(selected);
+					ImGui::SameLine();
+					if (ImGui::Button("Remove##Button"))
+						componentToRemove = "Button";
+					ImGui::TreePop();
+				}
+			}
+			else if (typeName == "Sprite")
+			{
+				if (ImGui::TreeNodeEx("Sprite", ImGuiTreeNodeFlags_DefaultOpen))
+				{
+					changed |= DrawSharedSpriteComponents(selected);
+					ImGui::SameLine();
+					if (ImGui::Button("Remove##Sprite"))
+						componentToRemove = "Sprite";
+					ImGui::TreePop();
+				}
+			}
+			else if (typeName == "RigidBody")
+			{
+				if (ImGui::TreeNodeEx("RigidBody", ImGuiTreeNodeFlags_DefaultOpen))
+				{
+					changed |= DrawSharedRigidBodyComponents(selected);
+					ImGui::SameLine();
+					if (ImGui::Button("Remove##RigidBody"))
+						componentToRemove = "RigidBody";
+					ImGui::TreePop();
+				}
+			}
+			else if (typeName == "Box")
+			{
+				if (ImGui::TreeNodeEx("Box", ImGuiTreeNodeFlags_DefaultOpen))
+				{
+					changed |= DrawSharedBoxComponents(selected);
+					ImGui::SameLine();
+					if (ImGui::Button("Remove##Box"))
+						componentToRemove = "Box";
+					ImGui::TreePop();
+				}
+			}
+			else if (typeName == "Circle")
+			{
+				if (ImGui::TreeNodeEx("Circle", ImGuiTreeNodeFlags_DefaultOpen))
+				{
+					changed |= DrawSharedCircleComponents(selected);
+					ImGui::SameLine();
+					if (ImGui::Button("Remove##Circle"))
+						componentToRemove = "Circle";
+					ImGui::TreePop();
+				}
+			}
+			else if (typeName == "Polygon")
+			{
+				if (ImGui::TreeNodeEx("Polygon", ImGuiTreeNodeFlags_DefaultOpen))
+				{
+					changed |= DrawSharedPolygonComponents(selected);
+					ImGui::SameLine();
+					if (ImGui::Button("Remove##Polygon"))
+						componentToRemove = "Polygon";
+					ImGui::TreePop();
+				}
+			}
+			else
+			{
+				if (ImGui::TreeNodeEx(typeName.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+				{
+					changed |= InspectorPropertyDrawer::DrawSharedComponent(typeName, selected);
+					ImGui::SameLine();
+					if (ImGui::Button(("Remove##" + typeName).c_str()))
+						componentToRemove = typeName;
+					ImGui::TreePop();
+				}
+			}
+		}
+
+		if (!componentToRemove.empty())
+		{
+			for (Entity* entity : selected)
+			{
+				if (entity != nullptr)
+					changed |= entity->RemoveComponentByTypeName(componentToRemove);
+			}
+		}
+	}
+
+	if (changed)
+	{
+		state.sceneDirty = true;
+	}
+}
+
+bool buki::InspectorPanel::DrawPrefabEntitySection(Entity* entity)
+{
+	bool changed = false;
+
+	if (ImGui::CollapsingHeader("Entity", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		char nameBuffer[256];
+		std::snprintf(nameBuffer, sizeof(nameBuffer), "%s", entity->GetName().c_str());
+		if (ImGui::InputText("Name", nameBuffer, sizeof(nameBuffer)))
+		{
+			entity->SetName(nameBuffer);
+			changed = true;
+		}
+
+		bool enabled = entity->IsEnabled();
+		if (ImGui::Checkbox("Enabled", &enabled))
+		{
+			entity->SetEnable(enabled);
+			changed = true;
+		}
+
+		if (ImGui::TreeNodeEx("Transform", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			Vector2 position = entity->T()->GetPosition();
+			float pos[2] = { position.x, position.y };
+			if (ImGui::DragFloat2("Position", pos, 0.1f, 0.0f, 0.0f, "%.3f"))
+			{
+				entity->T()->SetPosition(Vector2{ pos[0], pos[1] });
+				changed = true;
+			}
+
+			Vector2 size = entity->T()->GetSize();
+			float sizeValues[2] = { size.x, size.y };
+			if (ImGui::DragFloat2("Size", sizeValues, 0.1f, 0.0f, 0.0f, "%.3f"))
+			{
+				entity->T()->SetSize(Vector2{ sizeValues[0], sizeValues[1] });
+				changed = true;
+			}
+
+			float rotation = entity->T()->GetRotation().GetRadians();
+			if (ImGui::DragFloat("Rotation", &rotation, 0.1f, 0.0f, 0.0f, "%.3f"))
+			{
+				entity->T()->SetRotation(rotation);
+				changed = true;
+			}
+
+			ImGui::TreePop();
+		}
+
+		int z = entity->GetZ();
+		if (ImGui::InputInt("Z", &z))
+		{
+			entity->SetZ(z);
+			changed = true;
+		}
+
+		std::string layer = entity->GetLayer();
+		char layerBuffer[256];
+		std::snprintf(layerBuffer, sizeof(layerBuffer), "%s", layer.c_str());
+		if (ImGui::InputText("Layer", layerBuffer, sizeof(layerBuffer)))
+		{
+			entity->SetLayer(layerBuffer);
+			changed = true;
+		}
+	}
+
+	return changed;
 }

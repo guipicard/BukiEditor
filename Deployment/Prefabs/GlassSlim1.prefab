@@ -34,24 +34,24 @@
         },
         "BricksBehaviour": {
             "BreakSounds": [
-                "./audio/AngryBird/Sfx - Jewel Break 01.mp3",
-                "./audio/AngryBird/Sfx - Jewel Break 02.mp3",
-                "./audio/AngryBird/Sfx - Jewel Break 03.mp3"
+                "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Jewel Break 01.mp3",
+                "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Jewel Break 02.mp3",
+                "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Jewel Break 03.mp3"
             ],
             "DamageSounds": [
-                "./audio/AngryBird/Sfx - Jewel Break 01b.mp3",
-                "./audio/AngryBird/Sfx - Jewel Break 02b.mp3",
-                "./audio/AngryBird/Sfx - Jewel Break 03b.mp3"
+                "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Jewel Break 01b.mp3",
+                "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Jewel Break 02b.mp3",
+                "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Jewel Break 03b.mp3"
             ],
             "collisionSounds": [
-                "./audio/AngryBird/Sfx - Ice Light Collision A1.mp3",
-                "./audio/AngryBird/Sfx - Ice Light Collision A2.mp3",
-                "./audio/AngryBird/Sfx - Ice Light Collision A3.mp3",
-                "./audio/AngryBird/Sfx - Ice Light Collision A4.mp3",
-                "./audio/AngryBird/Sfx - Ice Light Collision A5.mp3",
-                "./audio/AngryBird/Sfx - Ice Light Collision A6.mp3",
-                "./audio/AngryBird/Sfx - Ice Light Collision A7.mp3",
-                "./audio/AngryBird/Sfx - Ice Light Collision A8.mp3"
+                "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Ice Light Collision A1.mp3",
+                "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Ice Light Collision A2.mp3",
+                "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Ice Light Collision A3.mp3",
+                "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Ice Light Collision A4.mp3",
+                "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Ice Light Collision A5.mp3",
+                "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Ice Light Collision A6.mp3",
+                "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Ice Light Collision A7.mp3",
+                "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Ice Light Collision A8.mp3"
             ],
             "maxHealth": 100.0,
             "stageImages": [

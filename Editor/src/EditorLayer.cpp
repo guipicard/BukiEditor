@@ -6,38 +6,38 @@
 #include "imgui_internal.h"
 
 #include "EditorViewportFramebuffer.h"
+#include "EditorViewportHelpers.h"
 #include <glad/glad.h>
+
+buki::EditorLayer::~EditorLayer()
+{
+	for (auto& session : state.prefabPreviewSessions)
+		DestroyPrefabPreviewFramebuffer(session);
+}
 
 void buki::EditorLayer::Render()
 {
 	DrawDockspace();
 
 	if (state.showHierarchy)
-	{
 		hierarchyPanel.Render(state);
-	}
 
 	if (state.showInspector)
-	{
 		inspectorPanel.Render(state);
-	}
 
 	if (state.showSceneView)
-	{
 		sceneViewPanel.Render(state);
-	}
+
+	RenderPrefabPanels();
+	RenderSceneViewport();
+	RenderPrefabPreviewViewports();
 
 	if (state.showContentBrowser)
-	{
 		contentBrowserPanel.Render(state);
-	}
 
-	RenderSceneViewport();
 
 	if (state.showDemoWindow)
-	{
 		ImGui::ShowDemoWindow(&state.showDemoWindow);
-	}
 }
 
 void buki::EditorLayer::RenderSceneViewport()
@@ -86,7 +86,8 @@ void buki::EditorLayer::RenderSceneViewport()
 	glClearColor(0.12f, 0.12f, 0.14f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-	Engine::Get().World().Render(1.0f);
+		Engine::Get().World().Render(1.0f);
+	
 
 	if (depthTestWasEnabled)
 	{
@@ -159,12 +160,12 @@ void buki::EditorLayer::BuildDefaultLayout(ImGuiID dockspaceId)
 	ImGuiID dock_left_id = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Left, 0.22f, nullptr, &dock_main_id);
 	ImGuiID dock_right_id = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Right, 0.28f, nullptr, &dock_main_id);
 	ImGuiID dock_bottom_id = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Down, 0.25f, nullptr, &dock_main_id);
-	ImGuiID dock_demo_id = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Right, 0.35f, nullptr, &dock_main_id);
+
+	state.prefabDockNodeId = dock_main_id;
 
 	ImGui::DockBuilderDockWindow("Hierarchy", dock_left_id);
 	ImGui::DockBuilderDockWindow("Inspector", dock_right_id);
 	ImGui::DockBuilderDockWindow("Scene", dock_main_id);
-	ImGui::DockBuilderDockWindow("ImGui Demo", dock_demo_id);
 	ImGui::DockBuilderDockWindow("Content Browser", dock_bottom_id);
 
 	ImGui::DockBuilderFinish(dockspaceId);
@@ -226,4 +227,229 @@ void buki::EditorLayer::DrawMenuBar()
 	ImGui::TextUnformatted(state.sceneDirty ? "Modified" : "Saved");
 
 	ImGui::EndMenuBar();
+}
+
+void buki::EditorLayer::RenderPrefabPreviewViewports()
+{
+	for (auto& session : state.prefabPreviewSessions)
+	{
+		if (!session.open)
+			continue;
+
+		if (session.cameraSettings.viewportWidth <= 0.0f || session.cameraSettings.viewportHeight <= 0.0f)
+			continue;
+
+		RenderPrefabSessionToFramebuffer(session);
+	}
+}
+
+void buki::EditorLayer::RenderPrefabSessionToFramebuffer(buki::PrefabPreviewSession& session)
+{
+	session.prefabEntity = Engine::Get().World().GetOrLoadPrefabEntity(session.path);
+	const int targetWidth = std::max(1, static_cast<int>(session.cameraSettings.viewportWidth));
+	const int targetHeight = std::max(1, static_cast<int>(session.cameraSettings.viewportHeight));
+
+	EnsurePrefabPreviewFramebuffer(session, targetWidth, targetHeight);
+	if (session.framebuffer == 0)
+		return;
+
+	GLint previousFramebuffer = 0;
+	GLint previousViewport[4] = {};
+	GLboolean depthTestWasEnabled = glIsEnabled(GL_DEPTH_TEST);
+	GLboolean blendWasEnabled = glIsEnabled(GL_BLEND);
+	GLboolean previousDepthMask = GL_TRUE;
+
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &previousFramebuffer);
+	glGetIntegerv(GL_VIEWPORT, previousViewport);
+	glGetBooleanv(GL_DEPTH_WRITEMASK, &previousDepthMask);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, session.framebuffer);
+	glViewport(0, 0, session.framebufferWidth, session.framebufferHeight);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+
+	glClearColor(0.08f, 0.08f, 0.10f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+	if (session.prefabEntity != nullptr)
+	{
+		session.prefabEntity->Draw(0.0f);
+
+	}
+
+	if (depthTestWasEnabled) glEnable(GL_DEPTH_TEST); else glDisable(GL_DEPTH_TEST);
+	if (blendWasEnabled) glEnable(GL_BLEND); else glDisable(GL_BLEND);
+	glDepthMask(previousDepthMask);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, static_cast<GLuint>(previousFramebuffer));
+	glViewport(previousViewport[0], previousViewport[1], previousViewport[2], previousViewport[3]);
+}
+
+void buki::EditorLayer::EnsurePrefabPreviewFramebuffer(PrefabPreviewSession& session, int width, int height)
+{
+	width = std::max(1, width);
+	height = std::max(1, height);
+
+	if (session.framebuffer != 0 &&
+		session.framebufferWidth == width &&
+		session.framebufferHeight == height)
+	{
+		return;
+	}
+
+	DestroyPrefabPreviewFramebuffer(session);
+
+	glGenFramebuffers(1, &session.framebuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, session.framebuffer);
+
+	glGenTextures(1, &session.colorTexture);
+	glBindTexture(GL_TEXTURE_2D, session.colorTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, session.colorTexture, 0);
+
+	glGenRenderbuffers(1, &session.depthRenderbuffer);
+	glBindRenderbuffer(GL_RENDERBUFFER, session.depthRenderbuffer);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, session.depthRenderbuffer);
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	{
+		DestroyPrefabPreviewFramebuffer(session);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		return;
+	}
+
+	session.framebufferWidth = width;
+	session.framebufferHeight = height;
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void buki::EditorLayer::DestroyPrefabPreviewFramebuffer(PrefabPreviewSession& session)
+{
+	if (session.depthRenderbuffer != 0)
+	{
+		glDeleteRenderbuffers(1, &session.depthRenderbuffer);
+		session.depthRenderbuffer = 0;
+	}
+
+	if (session.colorTexture != 0)
+	{
+		glDeleteTextures(1, &session.colorTexture);
+		session.colorTexture = 0;
+	}
+
+	if (session.framebuffer != 0)
+	{
+		glDeleteFramebuffers(1, &session.framebuffer);
+		session.framebuffer = 0;
+	}
+
+	session.framebufferWidth = 0;
+	session.framebufferHeight = 0;
+}
+
+void buki::EditorLayer::RenderPrefabPanels()
+{
+	for (size_t i = 0; i < state.prefabPreviewSessions.size();)
+	{
+		PrefabPreviewSession& session = state.prefabPreviewSessions[i];
+
+		if (!session.open)
+		{
+			DestroyPrefabPreviewFramebuffer(session);
+			state.prefabPreviewSessions.erase(state.prefabPreviewSessions.begin() + i);
+
+			if (state.activePrefabPreviewIndex == static_cast<int>(i))
+				state.activePrefabPreviewIndex = -1;
+			else if (state.activePrefabPreviewIndex > static_cast<int>(i))
+				--state.activePrefabPreviewIndex;
+
+			continue;
+		}
+
+		std::string title =
+			"Prefab: " + session.path.filename().string() + "###" + session.windowId;
+
+		bool open = session.open;
+
+		if (session.requestDockNextToScene && state.prefabDockNodeId != 0)
+		{
+			ImGui::SetNextWindowDockID(state.prefabDockNodeId, ImGuiCond_Always);
+		}
+
+		if (session.requestFocus)
+		{
+			ImGui::SetNextWindowFocus();
+		}
+
+		if (ImGui::Begin(title.c_str(), &open))
+		{
+			if (session.requestFocus)
+			{
+				ImGui::FocusWindow(ImGui::GetCurrentWindow());
+			}
+
+			const bool focusedNow =
+				session.requestFocus ||
+				ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) ||
+				ImGui::IsWindowAppearing();
+
+			session.hovered = ImGui::IsWindowHovered(ImGuiHoveredFlags_RootAndChildWindows);
+
+			if (focusedNow)
+			{
+				for (size_t j = 0; j < state.prefabPreviewSessions.size(); ++j)
+				{
+					state.prefabPreviewSessions[j].focused = (j == i);
+				}
+
+				state.activePrefabPreviewIndex = static_cast<int>(i);
+				state.selectedPrefabPath = session.path;
+				state.selectedPrefabEntity = session.prefabEntity;
+				state.selectedEntity = nullptr;
+				state.activeEntity = nullptr;
+				state.selectedEntities.clear();
+
+				session.cameraSettings.Deserialize(session.path);
+			}
+			else
+			{
+				session.focused = false;
+			}
+
+			session.requestFocus = false;
+			session.requestDockNextToScene = false;
+
+			ImVec2 avail = ImGui::GetContentRegionAvail();
+			session.cameraSettings.viewportWidth = std::max(1.0f, avail.x);
+			session.cameraSettings.viewportHeight = std::max(1.0f, avail.y);
+
+			DrawPrefabSessionTexture(session);
+
+			if (focusedNow)
+			{
+				auto pos = Engine::Get().GetActiveCameraPtr()->position;
+				session.cameraSettings.position = { pos.x, pos.y };
+				session.cameraSettings.zoom = Engine::Get().GetActiveCameraPtr()->zoom;
+				session.cameraSettings.Serialize(session.path);
+			}
+		}
+		ImGui::End();
+
+		session.open = open;
+		if (!session.open)
+		{
+			session.cameraSettings.Serialize(session.path);
+		}
+
+		++i;
+	}
 }

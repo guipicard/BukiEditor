@@ -79,7 +79,7 @@ void buki::BukiScene::SaveScene(std::string fileName) const
 		return;
 	}
 
-	const std::string path = "../Deployment/Scenes/" + fileName + ".json";
+	const std::string path = "../Deployment/Scenes/" + fileName + ".scene";
 	std::filesystem::create_directories("../Deployment/Scenes");
 
 	json doc;

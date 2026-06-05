@@ -7,7 +7,7 @@
                     "y": 2.25
                 }
             },
-            "density": 6.0,
+            "density": 2.0,
             "fillColor": {
                 "a": 0.30000001192092896,
                 "b": 1.0,
@@ -16,13 +16,13 @@
             },
             "fillDraw": false,
             "filter": 0,
-            "friction": 0.4000000059604645,
+            "friction": 0.6000000238418579,
             "isSensor": false,
             "positionOffset": {
                 "x": 0.0,
                 "y": 0.0
             },
-            "restitution": 0.30000001192092896,
+            "restitution": 0.20000000298023224,
             "shapeColor": {
                 "a": 1.0,
                 "b": 0.0,

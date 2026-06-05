@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <filesystem>
 
 namespace buki
 {
@@ -15,6 +16,7 @@ namespace buki
 	class Polygon;
 	struct ShapeDef;
 	struct EditorState;
+	struct IWorld;
 
 	struct InspectorPanel
 	{
@@ -79,5 +81,12 @@ namespace buki
 			bool& changedX,
 			bool& changedY,
 			const char* format = "%.3f");
+
+		void DrawPrefabPreviewWindows(EditorState& state);
+
+		void RenderPrefabInspector(EditorState& state, IWorld& world);
+		void RenderSingleEntityInspector(Entity* entity, EditorState& state, IWorld& world);
+		void RenderMultiEntityInspector(const std::vector<Entity*>& selected, EditorState& state, IWorld& world);
+		bool DrawPrefabEntitySection(Entity* entity);
 	};
 }

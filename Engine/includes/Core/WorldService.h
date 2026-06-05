@@ -1,5 +1,8 @@
 #pragma once
 #include "IWorld.h"
+#include <fstream>
+#include <filesystem>
+
 namespace buki
 {
 	enum class SceneSource
@@ -8,7 +11,7 @@ namespace buki
 		Registered,
 		File
 	};
-
+	
 	struct WorldService : public IWorld
 	{
 		WorldService();
@@ -33,15 +36,20 @@ namespace buki
 		virtual std::string GetCurrentSceneName() override { return m_Name; }
 		virtual Entity* CreateEntity(const std::string& name) override;
 		virtual void LoadNextScene() override;
-		virtual std::vector<Entity*> GetEntitiesInWorld() override { return m_EntityInWorld; }
+		virtual const std::vector<Entity*>& GetEntitiesInWorld() override;
 		virtual void SortEntities() override;
 		virtual const std::string& GetCurrentScenePath() const override { return m_CurrentScenePath; }
 		virtual bool HasCurrentScenePath() const override { return !m_CurrentScenePath.empty(); }
 		virtual bool SaveCurrentScene() const override;
 		virtual bool RenameEntity(Entity* entity, const std::string& newName) override;
 		std::string MakeUniqueEntityName(const std::string& baseName) const;
+
 		virtual Entity* InstantiatePrefab(const std::string& path) override;
-		
+		virtual Entity* ClonePrefabEntity(Entity* source) override;
+		virtual std::unordered_map<std::string, PrefabAssetInstance>& GetPrefabAssets() override;
+		virtual Entity* GetOrLoadPrefabEntity(const std::filesystem::path& path) override;
+		virtual bool SavePrefabAsset(const std::filesystem::path& path) override;
+		virtual void UnloadPrefabAssets() override;
 	private:
 		void CleanEntities();
 		std::string m_Name;
@@ -54,5 +62,6 @@ namespace buki
 		IScene* m_CurrentScene = nullptr;
 		SceneSource m_SceneSource = SceneSource::None;
 		std::string m_CurrentScenePath = "";
+		std::unordered_map<std::string, PrefabAssetInstance> prefabAssets;
 	};
 }

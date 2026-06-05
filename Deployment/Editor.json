@@ -1,0 +1,110 @@
+{
+    "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Prefabs\\CircleEntity.prefab": {
+        "displayMode": 1,
+        "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Prefabs\\CircleEntity.prefab",
+        "position": {
+            "x": 0.0,
+            "y": 0.0
+        },
+        "type": ".prefab",
+        "viewportHeight": 754.0,
+        "viewportWidth": 1060.0,
+        "zoom": 1.0
+    },
+    "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Prefabs\\GlassSlim1.prefab": {
+        "displayMode": 1,
+        "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Prefabs\\GlassSlim1.prefab",
+        "position": {
+            "x": 0.0,
+            "y": 0.0
+        },
+        "type": ".prefab",
+        "viewportHeight": 754.0,
+        "viewportWidth": 1060.0,
+        "zoom": 1.0
+    },
+    "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Prefabs\\PolygonEntity.prefab": {
+        "displayMode": 1,
+        "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Prefabs\\PolygonEntity.prefab",
+        "position": {
+            "x": 0.0,
+            "y": 0.0
+        },
+        "type": ".prefab",
+        "viewportHeight": 754.0,
+        "viewportWidth": 1060.0,
+        "zoom": 1.0
+    },
+    "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Prefabs\\RectEntity.prefab": {
+        "displayMode": 1,
+        "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Prefabs\\RectEntity.prefab",
+        "position": {
+            "x": 0.0,
+            "y": 0.0
+        },
+        "type": ".prefab",
+        "viewportHeight": 754.0,
+        "viewportWidth": 1060.0,
+        "zoom": 1.0
+    },
+    "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Prefabs\\StoneSlim1.prefab": {
+        "displayMode": 1,
+        "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Prefabs\\StoneSlim1.prefab",
+        "position": {
+            "x": 0.0,
+            "y": 0.0
+        },
+        "type": ".prefab",
+        "viewportHeight": 754.0,
+        "viewportWidth": 1060.0,
+        "zoom": 1.0
+    },
+    "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Prefabs\\WoodSlim1.prefab": {
+        "displayMode": 1,
+        "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Prefabs\\WoodSlim1.prefab",
+        "position": {
+            "x": 0.0,
+            "y": 0.0
+        },
+        "type": ".prefab",
+        "viewportHeight": 754.0,
+        "viewportWidth": 1060.0,
+        "zoom": 1.0
+    },
+    "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Prefabs\\bird1.prefab": {
+        "displayMode": 1,
+        "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Prefabs\\bird1.prefab",
+        "position": {
+            "x": 0.0,
+            "y": 0.0
+        },
+        "type": ".prefab",
+        "viewportHeight": 754.0,
+        "viewportWidth": 1060.0,
+        "zoom": 1.0
+    },
+    "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\Ag_Lvl_1.scene": {
+        "displayMode": 1,
+        "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\Ag_Lvl_1.scene",
+        "position": {
+            "x": 0.0,
+            "y": 0.0
+        },
+        "type": ".scene",
+        "viewportHeight": 0.0,
+        "viewportWidth": 0.0,
+        "zoom": 1.0
+    },
+    "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\Platformer.scene": {
+        "displayMode": 1,
+        "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\Platformer.scene",
+        "position": {
+            "x": 0.0,
+            "y": 0.0
+        },
+        "type": ".scene",
+        "viewportHeight": 0.0,
+        "viewportWidth": 0.0,
+        "zoom": 1.0
+    }
+}

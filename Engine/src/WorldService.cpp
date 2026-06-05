@@ -63,6 +63,7 @@ void buki::WorldService::Destroy()
 {
 	Unload();
 
+	UnloadPrefabAssets();
 	for (std::map<std::string, IScene*>::iterator it = m_Scenes.begin(); it != m_Scenes.end(); ++it)
 	{
 		if (it->second != nullptr)
@@ -348,11 +349,17 @@ void buki::WorldService::LoadNextScene()
 	SetLoadScene(m_ScenesByName[nextIndex]);
 }
 
+const std::vector<buki::Entity*>& buki::WorldService::GetEntitiesInWorld()
+{
+	return m_EntityInWorld;
+}
+
+
 void buki::WorldService::SortEntities()
 {
 	std::vector<int> layerList = std::vector<int>();
 	std::map<int, std::vector<Entity*>> zMap = std::map<int, std::vector<Entity*>>();
-	for (Entity * entity : m_EntityInWorld)
+	for (Entity* entity : m_EntityInWorld)
 	{
 		int z = entity->GetZ();
 		zMap[z].push_back(entity);
@@ -436,29 +443,162 @@ buki::Entity* buki::WorldService::InstantiatePrefab(const std::string& prefabPat
 		return nullptr;
 	}
 
-	std::ifstream in(prefabPath);
+	Entity* prefabEntity = GetOrLoadPrefabEntity(prefabPath);
+	if (prefabEntity == nullptr)
+	{
+		return nullptr;
+	}
+
+	Entity* entity = ClonePrefabEntity(prefabEntity);
+	if (entity == nullptr)
+	{
+		return nullptr;
+	}
+
+	fs::path path(prefabPath);
+	const std::string baseName = path.stem().string();
+	const std::string uniqueName = MakeUniqueEntityName(baseName);
+
+	entity->SetName(uniqueName);
+	Add(entity);
+	return entity;
+}
+
+buki::Entity* buki::WorldService::ClonePrefabEntity(Entity* source)
+{
+	if (source == nullptr)
+	{
+		return nullptr;
+	}
+
+	Entity* clone = new Entity();
+	clone->Deserialize(source->Serialize());
+	clone->Set();
+	return clone;
+}
+
+std::unordered_map<std::string, buki::PrefabAssetInstance>& buki::WorldService::GetPrefabAssets()
+{
+	return prefabAssets;
+}
+
+buki::Entity* buki::WorldService::GetOrLoadPrefabEntity(const std::filesystem::path& path)
+{
+	if (path.empty())
+	{
+		return nullptr;
+	}
+
+	const fs::path absolutePath = fs::absolute(path).lexically_normal();
+	const std::string key = absolutePath.string();
+
+	std::error_code ec;
+	const bool exists = fs::exists(absolutePath, ec);
+	if (ec || !exists)
+	{
+		return nullptr;
+	}
+
+	const auto writeTime = fs::last_write_time(absolutePath, ec);
+	if (ec)
+	{
+		return nullptr;
+	}
+
+	auto it = prefabAssets.find(key);
+	if (it != prefabAssets.end())
+	{
+		PrefabAssetInstance& asset = it->second;
+
+		if (asset.entity != nullptr && asset.lastWriteTime == writeTime && !asset.dirty)
+		{
+			return asset.entity;
+		}
+
+		if (!asset.dirty)
+		{
+			if (asset.entity != nullptr)
+			{
+				delete asset.entity;
+				asset.entity = nullptr;
+			}
+		}
+		else
+		{
+			return asset.entity;
+		}
+	}
+
+	std::ifstream in(absolutePath);
 	if (!in.is_open())
 	{
 		return nullptr;
 	}
 
 	json doc;
-	in >> doc;
-
-	fs::path path(prefabPath);
-	std::string baseName = path.stem().string();
-	std::string uniqueName = MakeUniqueEntityName(baseName);
-
-	Entity* entity = CreateEntity(uniqueName);
-	if (entity == nullptr)
+	try
+	{
+		in >> doc;
+	}
+	catch (const std::exception&)
 	{
 		return nullptr;
 	}
 
+	Entity* entity = new Entity();
 	entity->Deserialize(doc);
-	entity->SetName(uniqueName);
+	entity->Set();
+
+	PrefabAssetInstance& slot = prefabAssets[key];
+	slot.path = absolutePath;
+	slot.entity = entity;
+	slot.lastWriteTime = writeTime;
+	slot.dirty = false;
 	return entity;
 }
+
+bool buki::WorldService::SavePrefabAsset(const std::filesystem::path& path)
+{
+	const fs::path absolutePath = fs::absolute(path).lexically_normal();
+	const std::string key = absolutePath.string();
+
+	auto it = prefabAssets.find(key);
+	if (it == prefabAssets.end() || it->second.entity == nullptr)
+	{
+		return false;
+	}
+
+	std::error_code ec;
+	fs::create_directories(absolutePath.parent_path(), ec);
+
+	std::ofstream out(absolutePath);
+	if (!out.is_open())
+	{
+		return false;
+	}
+
+	out << it->second.entity->Serialize().dump(4);
+	out.close();
+
+	it->second.path = absolutePath;
+	it->second.lastWriteTime = fs::last_write_time(absolutePath, ec);
+	it->second.dirty = false;
+	return true;
+}
+
+void buki::WorldService::UnloadPrefabAssets()
+{
+	for (auto& [key, asset] : prefabAssets)
+	{
+		if (asset.entity != nullptr)
+		{
+			delete asset.entity;
+			asset.entity = nullptr;
+		}
+	}
+	prefabAssets.clear();
+}
+
 void buki::WorldService::CleanEntities()
 {
 	if (m_EntityToRemove.size() > 0)
