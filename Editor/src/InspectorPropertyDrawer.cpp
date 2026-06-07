@@ -235,6 +235,15 @@ namespace
 		for (const buki::BrowserEntry& item : allEntries)
 		{
 			const std::string full = buki::ToLowerCopy(item.fullPath.string());
+			const std::string word = "deployment";
+			std::string relativePath = "";
+
+			size_t pos = full.find(word);
+			
+			if (pos != std::string::npos) {
+				relativePath = full.substr(pos + word.length());
+			}
+
 			const std::string file = buki::ToLowerCopy(item.displayName);
 
 			if (!filter.empty() &&
@@ -250,14 +259,14 @@ namespace
 
 			if (clicked)
 			{
-				path = item.fullPath.string();
+				path = relativePath;
 				changed = true;
 
 			}
 
 			if (doubleClicked)
 			{
-				path = item.fullPath.string();
+				path = relativePath;
 				changed = true;
 				ImGui::CloseCurrentPopup();
 			}

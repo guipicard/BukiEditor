@@ -95,9 +95,81 @@
         "viewportWidth": 0.0,
         "zoom": 1.0
     },
+    "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\Ag_Lvl_2.scene": {
+        "displayMode": 1,
+        "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\Ag_Lvl_2.scene",
+        "position": {
+            "x": 0.0,
+            "y": 0.0
+        },
+        "type": ".scene",
+        "viewportHeight": 0.0,
+        "viewportWidth": 0.0,
+        "zoom": 1.0
+    },
+    "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\Ag_Lvl_3.scene": {
+        "displayMode": 1,
+        "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\Ag_Lvl_3.scene",
+        "position": {
+            "x": 0.0,
+            "y": 0.0
+        },
+        "type": ".scene",
+        "viewportHeight": 0.0,
+        "viewportWidth": 0.0,
+        "zoom": 1.0
+    },
+    "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\AngryBird.scene": {
+        "displayMode": 1,
+        "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\AngryBird.scene",
+        "position": {
+            "x": 0.0,
+            "y": 0.0
+        },
+        "type": ".scene",
+        "viewportHeight": 0.0,
+        "viewportWidth": 0.0,
+        "zoom": 1.0
+    },
+    "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\Menu.scene": {
+        "displayMode": 1,
+        "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\Menu.scene",
+        "position": {
+            "x": 0.0,
+            "y": 0.0
+        },
+        "type": ".scene",
+        "viewportHeight": 0.0,
+        "viewportWidth": 0.0,
+        "zoom": 1.0
+    },
     "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\Platformer.scene": {
         "displayMode": 1,
         "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\Platformer.scene",
+        "position": {
+            "x": 0.0,
+            "y": 0.0
+        },
+        "type": ".scene",
+        "viewportHeight": 0.0,
+        "viewportWidth": 0.0,
+        "zoom": 1.0
+    },
+    "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\SceneTest.scene": {
+        "displayMode": 1,
+        "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\SceneTest.scene",
+        "position": {
+            "x": 0.0,
+            "y": 0.0
+        },
+        "type": ".scene",
+        "viewportHeight": 0.0,
+        "viewportWidth": 0.0,
+        "zoom": 1.0
+    },
+    "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\Shapes.scene": {
+        "displayMode": 1,
+        "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\Shapes.scene",
         "position": {
             "x": 0.0,
             "y": 0.0

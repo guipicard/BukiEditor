@@ -2089,85 +2089,6 @@
             },
             "z": 0
         },
-        "SaveButton": {
-            "components": {
-                "Button": {
-                    "backgroundImagePath": "",
-                    "fontPath": "./fonts/Kenney/Kenney Blocks.ttf",
-                    "fontSize": 24,
-                    "onClick": {
-                        "functionName": "Reset",
-                        "scriptTypeName": "GameComponentRegistration"
-                    },
-                    "style": {
-                        "backgroundColor": {
-                            "a": 1.0,
-                            "b": 0.20000000298023224,
-                            "g": 0.20000000298023224,
-                            "r": 0.20000000298023224
-                        },
-                        "backgroundHoverColor": {
-                            "a": 1.0,
-                            "b": 0.30000001192092896,
-                            "g": 0.30000001192092896,
-                            "r": 0.30000001192092896
-                        },
-                        "centerTextX": true,
-                        "centerTextY": true,
-                        "drawOutline": false,
-                        "drawOutlineOnHoverOnly": true,
-                        "fitToText": true,
-                        "outlineColor": {
-                            "a": 1.0,
-                            "b": 0.0,
-                            "g": 1.0,
-                            "r": 0.0
-                        },
-                        "outlineHoverColor": {
-                            "a": 1.0,
-                            "b": 0.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "padding": {
-                            "x": 0.25,
-                            "y": 0.15000000596046448
-                        },
-                        "showBackground": true,
-                        "textColor": {
-                            "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "textHoverColor": {
-                            "a": 1.0,
-                            "b": 0.6000000238418579,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "textOffset": {
-                            "x": 0.0,
-                            "y": 0.0
-                        }
-                    },
-                    "text": "save"
-                }
-            },
-            "enable": true,
-            "layer": "",
-            "physics": false,
-            "position": {
-                "x": 0.0,
-                "y": -8.5
-            },
-            "rotation": 0.0,
-            "size": {
-                "x": 1.940000057220459,
-                "y": 1.0199999809265137
-            },
-            "z": 10
-        },
         "WoodSlim1": {
             "components": {
                 "Box": {
@@ -2204,28 +2125,28 @@
                 },
                 "BricksBehaviour": {
                     "BreakSounds": [
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Destroyed A1.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Destroyed A2.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Destroyed A3.mp3"
+                        "\\audio\\angrybird\\sfx - wood destroyed a1.mp3",
+                        "\\audio\\angrybird\\sfx - wood destroyed a2.mp3",
+                        "\\audio\\angrybird\\sfx - wood destroyed a3.mp3"
                     ],
                     "DamageSounds": [
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Damage A1.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Damage A2.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Damage A3.mp3"
+                        "\\audio\\angrybird\\sfx - wood damage a1.mp3",
+                        "\\audio\\angrybird\\sfx - wood damage a2.mp3",
+                        "\\audio\\angrybird\\sfx - wood damage a3.mp3"
                     ],
                     "collisionSounds": [
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A1.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A2.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A3.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A4.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A5.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A6.mp3"
+                        "\\audio\\angrybird\\sfx - wood collision a1.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a2.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a3.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a4.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a5.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a6.mp3"
                     ],
                     "maxHealth": 200.0,
                     "stageImages": [
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Wood elements\\elementWood019.png",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Wood elements\\elementWood024.png",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Wood elements\\elementWood051.png"
+                        "\\assets\\kenney\\physics assets\\png\\wood elements\\elementwood019.png",
+                        "\\assets\\kenney\\physics assets\\png\\wood elements\\elementwood024.png",
+                        "\\assets\\kenney\\physics assets\\png\\wood elements\\elementwood051.png"
                     ]
                 },
                 "RigidBody": {
@@ -2247,7 +2168,7 @@
                         "h": false,
                         "v": false
                     },
-                    "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Wood elements\\elementWood019.png",
+                    "path": "\\assets\\kenney\\physics assets\\png\\wood elements\\elementwood019.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -2315,28 +2236,28 @@
                 },
                 "BricksBehaviour": {
                     "BreakSounds": [
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Destroyed A1.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Destroyed A2.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Destroyed A3.mp3"
+                        "\\audio\\angrybird\\sfx - wood destroyed a1.mp3",
+                        "\\audio\\angrybird\\sfx - wood destroyed a2.mp3",
+                        "\\audio\\angrybird\\sfx - wood destroyed a3.mp3"
                     ],
                     "DamageSounds": [
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Damage A1.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Damage A2.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Damage A3.mp3"
+                        "\\audio\\angrybird\\sfx - wood damage a1.mp3",
+                        "\\audio\\angrybird\\sfx - wood damage a2.mp3",
+                        "\\audio\\angrybird\\sfx - wood damage a3.mp3"
                     ],
                     "collisionSounds": [
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A1.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A2.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A3.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A4.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A5.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A6.mp3"
+                        "\\audio\\angrybird\\sfx - wood collision a1.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a2.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a3.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a4.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a5.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a6.mp3"
                     ],
                     "maxHealth": 200.0,
                     "stageImages": [
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Wood elements\\elementWood019.png",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Wood elements\\elementWood024.png",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Wood elements\\elementWood051.png"
+                        "\\assets\\kenney\\physics assets\\png\\wood elements\\elementwood019.png",
+                        "\\assets\\kenney\\physics assets\\png\\wood elements\\elementwood024.png",
+                        "\\assets\\kenney\\physics assets\\png\\wood elements\\elementwood051.png"
                     ]
                 },
                 "RigidBody": {
@@ -2358,7 +2279,7 @@
                         "h": false,
                         "v": false
                     },
-                    "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Wood elements\\elementWood019.png",
+                    "path": "\\assets\\kenney\\physics assets\\png\\wood elements\\elementwood019.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -2426,28 +2347,28 @@
                 },
                 "BricksBehaviour": {
                     "BreakSounds": [
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Destroyed A1.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Destroyed A2.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Destroyed A3.mp3"
+                        "\\audio\\angrybird\\sfx - wood destroyed a1.mp3",
+                        "\\audio\\angrybird\\sfx - wood destroyed a2.mp3",
+                        "\\audio\\angrybird\\sfx - wood destroyed a3.mp3"
                     ],
                     "DamageSounds": [
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Damage A1.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Damage A2.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Damage A3.mp3"
+                        "\\audio\\angrybird\\sfx - wood damage a1.mp3",
+                        "\\audio\\angrybird\\sfx - wood damage a2.mp3",
+                        "\\audio\\angrybird\\sfx - wood damage a3.mp3"
                     ],
                     "collisionSounds": [
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A1.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A2.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A3.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A4.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A5.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A6.mp3"
+                        "\\audio\\angrybird\\sfx - wood collision a1.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a2.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a3.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a4.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a5.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a6.mp3"
                     ],
                     "maxHealth": 200.0,
                     "stageImages": [
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Wood elements\\elementWood019.png",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Wood elements\\elementWood024.png",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Wood elements\\elementWood051.png"
+                        "\\assets\\kenney\\physics assets\\png\\wood elements\\elementwood019.png",
+                        "\\assets\\kenney\\physics assets\\png\\wood elements\\elementwood024.png",
+                        "\\assets\\kenney\\physics assets\\png\\wood elements\\elementwood051.png"
                     ]
                 },
                 "RigidBody": {
@@ -2469,7 +2390,7 @@
                         "h": false,
                         "v": false
                     },
-                    "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Wood elements\\elementWood019.png",
+                    "path": "\\assets\\kenney\\physics assets\\png\\wood elements\\elementwood019.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -2537,28 +2458,28 @@
                 },
                 "BricksBehaviour": {
                     "BreakSounds": [
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Destroyed A1.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Destroyed A2.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Destroyed A3.mp3"
+                        "\\audio\\angrybird\\sfx - wood destroyed a1.mp3",
+                        "\\audio\\angrybird\\sfx - wood destroyed a2.mp3",
+                        "\\audio\\angrybird\\sfx - wood destroyed a3.mp3"
                     ],
                     "DamageSounds": [
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Damage A1.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Damage A2.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Damage A3.mp3"
+                        "\\audio\\angrybird\\sfx - wood damage a1.mp3",
+                        "\\audio\\angrybird\\sfx - wood damage a2.mp3",
+                        "\\audio\\angrybird\\sfx - wood damage a3.mp3"
                     ],
                     "collisionSounds": [
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A1.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A2.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A3.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A4.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A5.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A6.mp3"
+                        "\\audio\\angrybird\\sfx - wood collision a1.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a2.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a3.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a4.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a5.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a6.mp3"
                     ],
                     "maxHealth": 200.0,
                     "stageImages": [
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Wood elements\\elementWood019.png",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Wood elements\\elementWood024.png",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Wood elements\\elementWood051.png"
+                        "\\assets\\kenney\\physics assets\\png\\wood elements\\elementwood019.png",
+                        "\\assets\\kenney\\physics assets\\png\\wood elements\\elementwood024.png",
+                        "\\assets\\kenney\\physics assets\\png\\wood elements\\elementwood051.png"
                     ]
                 },
                 "RigidBody": {
@@ -2580,7 +2501,7 @@
                         "h": false,
                         "v": false
                     },
-                    "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Wood elements\\elementWood019.png",
+                    "path": "\\assets\\kenney\\physics assets\\png\\wood elements\\elementwood019.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -2648,28 +2569,28 @@
                 },
                 "BricksBehaviour": {
                     "BreakSounds": [
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Destroyed A1.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Destroyed A2.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Destroyed A3.mp3"
+                        "\\audio\\angrybird\\sfx - wood destroyed a1.mp3",
+                        "\\audio\\angrybird\\sfx - wood destroyed a2.mp3",
+                        "\\audio\\angrybird\\sfx - wood destroyed a3.mp3"
                     ],
                     "DamageSounds": [
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Damage A1.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Damage A2.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Damage A3.mp3"
+                        "\\audio\\angrybird\\sfx - wood damage a1.mp3",
+                        "\\audio\\angrybird\\sfx - wood damage a2.mp3",
+                        "\\audio\\angrybird\\sfx - wood damage a3.mp3"
                     ],
                     "collisionSounds": [
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A1.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A2.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A3.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A4.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A5.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A6.mp3"
+                        "\\audio\\angrybird\\sfx - wood collision a1.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a2.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a3.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a4.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a5.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a6.mp3"
                     ],
                     "maxHealth": 200.0,
                     "stageImages": [
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Wood elements\\elementWood019.png",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Wood elements\\elementWood024.png",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Wood elements\\elementWood051.png"
+                        "\\assets\\kenney\\physics assets\\png\\wood elements\\elementwood019.png",
+                        "\\assets\\kenney\\physics assets\\png\\wood elements\\elementwood024.png",
+                        "\\assets\\kenney\\physics assets\\png\\wood elements\\elementwood051.png"
                     ]
                 },
                 "RigidBody": {
@@ -2691,7 +2612,7 @@
                         "h": false,
                         "v": false
                     },
-                    "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Wood elements\\elementWood019.png",
+                    "path": "\\assets\\kenney\\physics assets\\png\\wood elements\\elementwood019.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -2759,28 +2680,28 @@
                 },
                 "BricksBehaviour": {
                     "BreakSounds": [
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Destroyed A1.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Destroyed A2.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Destroyed A3.mp3"
+                        "\\audio\\angrybird\\sfx - wood destroyed a1.mp3",
+                        "\\audio\\angrybird\\sfx - wood destroyed a2.mp3",
+                        "\\audio\\angrybird\\sfx - wood destroyed a3.mp3"
                     ],
                     "DamageSounds": [
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Damage A1.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Damage A2.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Damage A3.mp3"
+                        "\\audio\\angrybird\\sfx - wood damage a1.mp3",
+                        "\\audio\\angrybird\\sfx - wood damage a2.mp3",
+                        "\\audio\\angrybird\\sfx - wood damage a3.mp3"
                     ],
                     "collisionSounds": [
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A1.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A2.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A3.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A4.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A5.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A6.mp3"
+                        "\\audio\\angrybird\\sfx - wood collision a1.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a2.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a3.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a4.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a5.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a6.mp3"
                     ],
                     "maxHealth": 200.0,
                     "stageImages": [
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Wood elements\\elementWood019.png",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Wood elements\\elementWood024.png",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Wood elements\\elementWood051.png"
+                        "\\assets\\kenney\\physics assets\\png\\wood elements\\elementwood019.png",
+                        "\\assets\\kenney\\physics assets\\png\\wood elements\\elementwood024.png",
+                        "\\assets\\kenney\\physics assets\\png\\wood elements\\elementwood051.png"
                     ]
                 },
                 "RigidBody": {
@@ -2802,7 +2723,7 @@
                         "h": false,
                         "v": false
                     },
-                    "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Wood elements\\elementWood019.png",
+                    "path": "\\assets\\kenney\\physics assets\\png\\wood elements\\elementwood019.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -2870,28 +2791,28 @@
                 },
                 "BricksBehaviour": {
                     "BreakSounds": [
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Destroyed A1.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Destroyed A2.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Destroyed A3.mp3"
+                        "\\audio\\angrybird\\sfx - wood destroyed a1.mp3",
+                        "\\audio\\angrybird\\sfx - wood destroyed a2.mp3",
+                        "\\audio\\angrybird\\sfx - wood destroyed a3.mp3"
                     ],
                     "DamageSounds": [
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Damage A1.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Damage A2.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Damage A3.mp3"
+                        "\\audio\\angrybird\\sfx - wood damage a1.mp3",
+                        "\\audio\\angrybird\\sfx - wood damage a2.mp3",
+                        "\\audio\\angrybird\\sfx - wood damage a3.mp3"
                     ],
                     "collisionSounds": [
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A1.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A2.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A3.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A4.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A5.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A6.mp3"
+                        "\\audio\\angrybird\\sfx - wood collision a1.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a2.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a3.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a4.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a5.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a6.mp3"
                     ],
                     "maxHealth": 200.0,
                     "stageImages": [
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Wood elements\\elementWood019.png",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Wood elements\\elementWood024.png",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Wood elements\\elementWood051.png"
+                        "\\assets\\kenney\\physics assets\\png\\wood elements\\elementwood019.png",
+                        "\\assets\\kenney\\physics assets\\png\\wood elements\\elementwood024.png",
+                        "\\assets\\kenney\\physics assets\\png\\wood elements\\elementwood051.png"
                     ]
                 },
                 "RigidBody": {
@@ -2913,7 +2834,7 @@
                         "h": false,
                         "v": false
                     },
-                    "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Wood elements\\elementWood019.png",
+                    "path": "\\assets\\kenney\\physics assets\\png\\wood elements\\elementwood019.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -2981,28 +2902,28 @@
                 },
                 "BricksBehaviour": {
                     "BreakSounds": [
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Destroyed A1.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Destroyed A2.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Destroyed A3.mp3"
+                        "\\audio\\angrybird\\sfx - wood destroyed a1.mp3",
+                        "\\audio\\angrybird\\sfx - wood destroyed a2.mp3",
+                        "\\audio\\angrybird\\sfx - wood destroyed a3.mp3"
                     ],
                     "DamageSounds": [
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Damage A1.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Damage A2.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Damage A3.mp3"
+                        "\\audio\\angrybird\\sfx - wood damage a1.mp3",
+                        "\\audio\\angrybird\\sfx - wood damage a2.mp3",
+                        "\\audio\\angrybird\\sfx - wood damage a3.mp3"
                     ],
                     "collisionSounds": [
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A1.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A2.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A3.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A4.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A5.mp3",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Wood Collision A6.mp3"
+                        "\\audio\\angrybird\\sfx - wood collision a1.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a2.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a3.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a4.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a5.mp3",
+                        "\\audio\\angrybird\\sfx - wood collision a6.mp3"
                     ],
                     "maxHealth": 200.0,
                     "stageImages": [
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Wood elements\\elementWood019.png",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Wood elements\\elementWood024.png",
-                        "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Wood elements\\elementWood051.png"
+                        "\\assets\\kenney\\physics assets\\png\\wood elements\\elementwood019.png",
+                        "\\assets\\kenney\\physics assets\\png\\wood elements\\elementwood024.png",
+                        "\\assets\\kenney\\physics assets\\png\\wood elements\\elementwood051.png"
                     ]
                 },
                 "RigidBody": {
@@ -3024,7 +2945,7 @@
                         "h": false,
                         "v": false
                     },
-                    "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Wood elements\\elementWood019.png",
+                    "path": "\\assets\\kenney\\physics assets\\png\\wood elements\\elementwood019.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -3201,7 +3122,7 @@
                         "h": false,
                         "v": false
                     },
-                    "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Aliens\\alienGreen_round.png",
+                    "path": "\\assets\\kenney\\physics assets\\png\\aliens\\aliengreen_round.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
