@@ -8,8 +8,9 @@
 
 void buki::Circle::Draw(float alpha)
 {
-	Vector2 pos = m_Entity->T()->GetPosition();
-	float rotation = m_Entity->T()->GetRotation().GetRadians();
+	const auto& t = m_Entity->T();
+	const Vector2 pos = t.GetPosition();
+	const float rotation = t.GetRotation().GetRadians();
 
 	if (def.fillDraw)
 	{

@@ -11,6 +11,7 @@
 #include "PropertyInfo.h"
 #include "imgui.h"
 #include "EditorAssetEntries.h"
+#include "EditorViewportHelpers.h"
 
 namespace
 {
@@ -234,7 +235,7 @@ namespace
 
 		for (const buki::BrowserEntry& item : allEntries)
 		{
-			const std::string full = buki::ToLowerCopy(item.fullPath.string());
+			const std::string full = buki::ToLowerCopy(item.path);
 			const std::string word = "deployment";
 			std::string relativePath = "";
 
@@ -253,7 +254,7 @@ namespace
 				continue;
 			}
 
-			const bool selected = (!path.empty() && fs::path(path).lexically_normal() == item.fullPath);
+			const bool selected = (!path.empty() && fs::path(path).lexically_normal() == fs::path(item.path).lexically_normal());
 			const bool clicked = buki::DrawBrowserTile(item, thumbnailSize, selected);
 			const bool doubleClicked = ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left);
 
@@ -519,7 +520,6 @@ namespace
 
 	bool DrawInlineAssetPreview(const std::string& path, const char* payloadType, float thumbnailSize = 48.0f)
 	{
-		fs::path previewPath = path.empty() ? fs::path{} : fs::path(path);
 		bool isDirectory = false;
 
 		const buki::Texture2D* texture = nullptr;
@@ -528,17 +528,17 @@ namespace
 		{
 			if (std::strcmp(payloadType, "IMAGE") == 0)
 			{
-				texture = buki::GetBrowserThumbnail(previewPath, false);
+				texture = buki::GetBrowserThumbnail(path, false);
 			}
 			else if (std::strcmp(payloadType, "AUDIO") == 0 ||
 				std::strcmp(payloadType, "PREFAB") == 0)
 			{
-				texture = buki::GetBrowserThumbnail(previewPath, false);
+				texture = buki::GetBrowserThumbnail(path, false);
 			}
 		}
 
 		if (texture == nullptr || !texture->IsValid())
-			texture = buki::GetBrowserThumbnail(fs::path{}, true); // fallback folder only if you want, otherwise just no draw
+			texture = buki::GetBrowserThumbnail("", false); // fallback folder only if you want, otherwise just no draw
 
 		ImGui::PushID(("Preview_" + path + payloadType).c_str());
 

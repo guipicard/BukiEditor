@@ -3,14 +3,13 @@
 
 #include "Engine.h"
 #include "Texture2D.h"
-#include "imgui.h"
 #include "EditorState.h"
 #include "EditorViewportHelpers.h"
 
-#include <algorithm>
-#include <cctype>
-#include <cstdint>
-#include <cstring>
+//#include <algorithm>
+//#include <cctype>
+//#include <cstdint>
+//#include <cstring>
 
 namespace
 {
@@ -37,13 +36,14 @@ namespace
 	buki::BrowserEntry MakeBrowserEntry(const fs::directory_entry& dirEntry)
 	{
 		buki::BrowserEntry item;
-		item.fullPath = fs::absolute(dirEntry.path()).lexically_normal();
-		item.displayName = item.fullPath.filename().string();
+		fs::path fullPath = fs::absolute(dirEntry.path()).lexically_normal();
+		item.path = buki::ToAssetRelativePath(fullPath);
+		item.displayName = fullPath.filename().string();
 		item.isDirectory = dirEntry.is_directory();
-		item.isSceneFile = !item.isDirectory && buki::IsSceneFile(item.fullPath);
-		item.isPrefabFile = !item.isDirectory && buki::IsPrefabFile(item.fullPath);
-		item.isImageFile = !item.isDirectory && buki::IsImageFile(item.fullPath);
-		item.isAudioFile = !item.isDirectory && buki::IsAudioFile(item.fullPath);
+		item.isSceneFile = !item.isDirectory && buki::IsSceneFile(item.path);
+		item.isPrefabFile = !item.isDirectory && buki::IsPrefabFile(item.path);
+		item.isImageFile = !item.isDirectory && buki::IsImageFile(item.path);
+		item.isAudioFile = !item.isDirectory && buki::IsAudioFile(item.path);
 
 		if (item.isPrefabFile) item.payloadType = "PREFAB";
 		else if (item.isImageFile) item.payloadType = "IMAGE";
@@ -66,34 +66,31 @@ namespace
 	}
 }
 
-std::string buki::ToLowerCopy(std::string value)
+bool buki::IsPrefabFile(const std::string& path)
 {
-	std::transform(value.begin(), value.end(), value.begin(),
-		[](unsigned char c) { return static_cast<char>(std::tolower(c)); });
-	return value;
+	fs::path aspath = buki::ToAbsolutePath(path);
+	return ToLowerCopy(aspath.extension().string()) == ".prefab";
 }
 
-bool buki::IsPrefabFile(const fs::path& path)
+bool buki::IsImageFile(const std::string& path)
 {
-	return ToLowerCopy(path.extension().string()) == ".prefab";
-}
-
-bool buki::IsImageFile(const fs::path& path)
-{
-	const std::string ext = ToLowerCopy(path.extension().string());
+	fs::path aspath = buki::ToAbsolutePath(path);
+	const std::string ext = ToLowerCopy(aspath.extension().string());
 	return ext == ".png" || ext == ".jpg" || ext == ".jpeg" || ext == ".bmp" ||
 		ext == ".tga" || ext == ".gif" || ext == ".webp";
 }
 
-bool buki::IsAudioFile(const fs::path& path)
+bool buki::IsAudioFile(const std::string& path)
 {
-	const std::string ext = ToLowerCopy(path.extension().string());
+	fs::path aspath = buki::ToAbsolutePath(path);
+	const std::string ext = ToLowerCopy(aspath.extension().string());
 	return ext == ".wav" || ext == ".mp3" || ext == ".ogg" || ext == ".flac";
 }
 
-bool buki::IsSceneFile(const fs::path& path)
+bool buki::IsSceneFile(const std::string& path)
 {
-	const std::string ext = ToLowerCopy(path.extension().string());
+	fs::path aspath = buki::ToAbsolutePath(path);
+	const std::string ext = aspath.extension().string();
 	return ext == ".json" || ext == ".scene";
 }
 
@@ -115,6 +112,11 @@ std::string buki::ToAssetRelativePath(const fs::path& fullPath)
 	return normalized;
 }
 
+fs::path buki::ToAbsolutePath(const std::string& assetRelativePath)
+{
+	return fs::absolute(fs::path("../Deployment") / assetRelativePath).lexically_normal();
+}
+
 std::string buki::DisplayNameForPath(const std::string& path)
 {
 	if (path.empty())
@@ -132,7 +134,19 @@ std::string buki::FolderSuffixForPath(const std::string& path)
 	return parent.generic_string();
 }
 
-buki::BrowserVisualType buki::GetBrowserVisualType(const fs::path& path, bool isDirectory)
+std::string buki::GetFileName(const std::string& path)
+{
+	return fs::absolute("../Deployment/" + path).filename().string();
+}
+
+std::string buki::ToLowerCopy(std::string value)
+{
+	std::transform(value.begin(), value.end(), value.begin(),
+		[](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+	return value;
+}
+
+buki::BrowserVisualType buki::GetBrowserVisualType(const std::string& path, bool isDirectory)
 {
 	if (isDirectory)
 		return BrowserVisualType::Folder;
@@ -166,6 +180,7 @@ buki::EditorBrowserIcons& buki::GetEditorBrowserIcons()
 		icons.audio = textures.Load("EditorImg/Audio.png");
 		icons.file = textures.Load("EditorImg/File.png");
 		icons.prefab = textures.Load("EditorImg/Portrait.png");
+		icons.image = textures.Load("EditorImg/Landscape.png");
 
 		loaded = true;
 	}
@@ -173,25 +188,19 @@ buki::EditorBrowserIcons& buki::GetEditorBrowserIcons()
 	return icons;
 }
 
-const buki::Texture2D* buki::TryGetPreviewTexture(const fs::path& path)
+const buki::Texture2D* buki::TryGetPreviewTexture(const std::string& path)
 {
 	if (!IsImageFile(path))
 		return nullptr;
 
 	auto& textures = Engine::Get().Textures();
-
-	const std::string fullPath = path.lexically_normal().string();
-	const std::string assetRelativePath = ToAssetRelativePath(path);
-
-	Texture2D* texture = textures.Get(fullPath);
-	if (texture == nullptr)
-		texture = textures.Get(assetRelativePath);
+	Texture2D* texture = textures.Get(path);
 
 	if (texture == nullptr)
-		texture = textures.Load(assetRelativePath);
+		texture = textures.Load(path);
 
 	if (texture == nullptr)
-		texture = textures.Load(fullPath, false);
+		texture = textures.Load(path, true);
 
 	if (texture == nullptr || !texture->IsValid())
 		return nullptr;
@@ -199,7 +208,7 @@ const buki::Texture2D* buki::TryGetPreviewTexture(const fs::path& path)
 	return texture;
 }
 
-const buki::Texture2D* buki::GetBrowserThumbnail(const fs::path& path, bool isDirectory)
+const buki::Texture2D* buki::GetBrowserThumbnail(const std::string& path, bool isDirectory)
 {
 	const BrowserVisualType type = GetBrowserVisualType(path, isDirectory);
 
@@ -281,20 +290,40 @@ std::vector<std::string> buki::CollectAssetPaths(const fs::path& root, const cha
 	results.reserve(entries.size());
 	for (const BrowserEntry& entry : entries)
 	{
-		results.push_back(ToAssetRelativePath(entry.fullPath));
+		results.push_back(ToAssetRelativePath(entry.path));
 	}
 
 	return results;
+}
+
+bool buki::ClearSceneSelection(EditorState& state)
+{
+	state.selectedEntity = nullptr;
+	state.activeEntity = nullptr;
+	state.selectedEntities.clear();
+	return true;
+}
+
+bool buki::ClearPrefabSelection(EditorState& state)
+{
+	state.selectedPrefabEntity = nullptr;
+	state.selectedPrefabPath.clear();
+	return true;
+}
+
+ImTextureID buki::ToImGuiTextureID(std::uint32_t textureId)
+{
+	return static_cast<ImTextureID>(textureId);
 }
 
 bool buki::DrawBrowserTile(const BrowserEntry& entry, float thumbnailSize, bool selected)
 {
 	bool activated = false;
 
-	ImGui::PushID(entry.fullPath.string().c_str());
+	ImGui::PushID(entry.path.c_str());
 	ImGui::BeginGroup();
 
-	const Texture2D* thumbnail = GetBrowserThumbnail(entry.fullPath, entry.isDirectory);
+	const Texture2D* thumbnail = GetBrowserThumbnail(entry.path, entry.isDirectory);
 
 	ImVec2 buttonSize(thumbnailSize, thumbnailSize);
 	ImVec2 imageSize(thumbnailSize, thumbnailSize);
@@ -354,7 +383,7 @@ bool buki::DrawBrowserTile(const BrowserEntry& entry, float thumbnailSize, bool 
 	{
 		if (!entry.payloadType.empty())
 		{
-			const std::string pathStr = entry.fullPath.string();
+			const std::string pathStr = buki::ToAbsolutePath(entry.path).string();
 			ImGui::SetDragDropPayload(entry.payloadType.c_str(), pathStr.c_str(), pathStr.size() + 1);
 			ImGui::TextUnformatted(entry.displayName.c_str());
 		}

@@ -7,10 +7,10 @@
 #include "imgui_internal.h"
 
 #include "Engine.h"
+#include "Entity.h"
 
 #include <cstdint>
 #include <algorithm>
-
 #include <fstream>
 
 namespace fs = std::filesystem;
@@ -76,6 +76,9 @@ void buki::SceneViewPanel::Render(EditorState& state)
 			ImGui::Text("Selected scene: %s", state.selectedScenePath.filename().string().c_str());
 			if (state.scenePreviewSession.focused)
 			{
+				state.scenePreviewSession.cameraSettings.displayMode = state.viewportDisplayMode;
+				state.scenePreviewSession.cameraSettings.viewportWidth = state.viewportWidth;
+				state.scenePreviewSession.cameraSettings.viewportHeight = state.viewportHeight;
 				state.scenePreviewSession.cameraSettings.Serialize(state.scenePreviewSession.path);
 			}
 		}
@@ -203,6 +206,12 @@ void buki::SceneViewPanel::Render(EditorState& state)
 					Entity* entity = buki::Engine::Get().World().InstantiatePrefab(fs::path(droppedPath).string());
 					if (entity != nullptr)
 					{
+						entity->Set();
+						state.selectedEntity = entity;
+						state.activeEntity = entity;
+						state.selectedEntities.clear();
+						state.selectedEntities.push_back(entity);
+						state.sceneDirty = true;
 					}
 				}
 			}

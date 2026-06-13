@@ -5,6 +5,7 @@
 void buki::CameraFollow::Update(float dt)
 {
 }
+
 void buki::CameraFollow::FixedUpdate(float dt) 
 {
 	if (target.Empty()) return;
@@ -12,7 +13,7 @@ void buki::CameraFollow::FixedUpdate(float dt)
 	if (targetEntity != nullptr)
 	{
 		Camera2D* camera = buki::Engine::Get().GetActiveCameraPtr();
-		Vector2 targetPos = targetEntity->T()->GetPosition();
+		Vector2 targetPos = targetEntity->T().GetPosition();
 		camera->position.x = targetPos.x;
 		camera->position.y = targetPos.y;
 	}
@@ -20,7 +21,6 @@ void buki::CameraFollow::FixedUpdate(float dt)
 }
 
 buki::CameraFollow::CameraFollow(Entity* entity) : MonoBehaviour(entity) {}
-
 
 void buki::CameraFollow::Start() {}
 void buki::CameraFollow::Destroy() {}

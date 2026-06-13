@@ -140,6 +140,9 @@ void buki::MonoBehaviour::Set()
 		case PropertyType::EntityRef:
 			ResolveEntityRef(*reinterpret_cast<EntityRef*>(fieldPtr));
 			break;
+		case PropertyType::PrefabRef:
+			ResolvePrefabRef(*reinterpret_cast<PrefabAssetInstance*>(fieldPtr));
+			break;
 
 		default:
 			break;

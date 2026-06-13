@@ -16,7 +16,7 @@ namespace buki
 	class Polygon;
 	struct ShapeDef;
 	struct EditorState;
-	struct IWorld;
+	class IWorld;
 
 	struct InspectorPanel
 	{

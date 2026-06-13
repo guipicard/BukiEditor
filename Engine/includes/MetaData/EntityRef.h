@@ -2,6 +2,7 @@
 #include <string>
 #include "nlohmann/json.hpp"
 #include "Engine.h"
+#include "IWorld.h"
 #include "Entity.h"
 
 namespace buki
@@ -61,10 +62,27 @@ namespace buki
 			//ref.cached = world.InstantiatePrefab(ref.prefabPath);
 			if (ref.cached != nullptr && ref.entityName.empty())
 			{
-				
+
 			}
 		}
 
 		return ref.cached;
+	}
+
+	inline Entity* ResolvePrefabRef(PrefabAssetInstance& ref)
+	{
+		if (ref.entity != nullptr)
+			return ref.entity;
+
+		if (!ref.path.empty())
+		{
+			//ref.entity = Engine::Get().World().InstantiatePrefab(ref.path);
+			if (ref.entity != nullptr && ref.entity->GetName().empty())
+			{
+
+			}
+		}
+
+		return ref.entity;
 	}
 }

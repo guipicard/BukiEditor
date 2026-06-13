@@ -535,7 +535,7 @@
             },
             "rotation": 0.0,
             "size": {
-                "x": 32.0,
+                "x": 1.0,
                 "y": 1.0
             },
             "z": 0
@@ -544,27 +544,13 @@
             "components": {
                 "ShapesController": {
                     "boxFillDraw": true,
-                    "boxRef": {
-                        "entityName": "",
-                        "prefabPath": "../Deployment/Prefabs\\RectEntity.prefab"
-                    },
+                    "boxRef": "\\prefabs\\rectentity.prefab",
                     "boxShapeDraw": true,
                     "circleFillDraw": true,
-                    "circleRef": {
-                        "entityName": "",
-                        "prefabPath": "../Deployment/Prefabs\\CircleEntity.prefab"
-                    },
+                    "circleRef": "\\prefabs\\circleentity.prefab",
                     "circleShapeDraw": true,
-                    "emptyEntityRef": {
-                        "entityName": "",
-                        "prefabPath": ""
-                    },
-                    "emptyPrefabRef": "",
                     "polygonFillDraw": true,
-                    "polygonRef": {
-                        "entityName": "",
-                        "prefabPath": "../Deployment/Prefabs\\PolygonEntity.prefab"
-                    },
+                    "polygonRef": "\\prefabs\\polygonentity.prefab",
                     "polygonShapeDraw": true,
                     "polygonSides": 3
                 }
@@ -583,7 +569,5 @@
             },
             "z": 0
         }
-    },
-    "sceneName": "Shapes",
-    "scenePath": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\Shapes.scene"
+    }
 }

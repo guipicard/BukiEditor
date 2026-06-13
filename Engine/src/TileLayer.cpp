@@ -12,14 +12,14 @@ namespace buki
 
     void TileLayer::Draw(float alpha)
     {
-        if (m_Atlas == nullptr || !m_Atlas->IsValid() || m_Entity == nullptr || m_Entity->T() == nullptr)
+        if (m_Atlas == nullptr || !m_Atlas->IsValid() || m_Entity == nullptr)
         {
             return;
         }
 
-        Transform* t = m_Entity->T();
-        const Vector2 entityPosition = t->GetPosition();
-        const float rotation = t->GetRotation().GetRadians();
+        const auto& t = m_Entity->T();
+        const Vector2 entityPosition = t.GetPosition();
+        const float rotation = t.GetRotation().GetRadians();
 
         for (const TileDrawData& tile : m_Tiles)
         {

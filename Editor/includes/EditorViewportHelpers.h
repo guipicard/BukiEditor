@@ -1,16 +1,11 @@
 #include "imgui.h"
+#include "imgui_internal.h"
 #include "EditorState.h"
+#include "EditorAssetEntries.h"
 
 namespace buki
 {
-	typedef unsigned int ImTextureID;
-
-	static ImTextureID ToImGuiTextureID(uint32_t textureId)
-	{
-		return static_cast<ImTextureID>(textureId);
-	}
-
-	static void DrawViewportTexture(unsigned int texture, int framebufferWidth, int framebufferHeight, buki::ViewportDisplayMode mode, float& outViewportWidth, float& outViewportHeight)
+	static void DrawViewportTexture(unsigned int texture, int framebufferWidth, int framebufferHeight, ViewportDisplayMode mode, float& outViewportWidth, float& outViewportHeight)
 	{
 		const ImVec2 imageRegionStart = ImGui::GetCursorPos();
 		const ImVec2 imageAvail = ImGui::GetContentRegionAvail();
@@ -31,7 +26,7 @@ namespace buki
 		ImVec2 imageSize = imageAvail;
 		ImVec2 cursor = imageRegionStart;
 
-		if (mode == buki::ViewportDisplayMode::Fit)
+		if (mode == ViewportDisplayMode::Fit)
 		{
 			const float textureAspect = texW / texH;
 			const float availAspect = imageAvail.x / imageAvail.y;
@@ -49,7 +44,7 @@ namespace buki
 				cursor.y += (imageAvail.y - imageSize.y) * 0.5f;
 			}
 		}
-		else if (mode == buki::ViewportDisplayMode::OneToOne)
+		else if (mode == ViewportDisplayMode::OneToOne)
 		{
 			imageSize.x = texW;
 			imageSize.y = texH;
@@ -83,13 +78,13 @@ namespace buki
 
 		ImGui::SetCursorPos(cursor);
 		ImGui::Image(
-			buki::ToImGuiTextureID(texture),
+			ToImGuiTextureID(texture),
 			imageSize,
 			ImVec2(0, 1),
 			ImVec2(1, 0)
 		);
 
-		if (mode != buki::ViewportDisplayMode::Stretch)
+		if (mode != ViewportDisplayMode::Stretch)
 		{
 			drawList->AddRect(
 				ImGui::GetItemRectMin(),
@@ -99,9 +94,9 @@ namespace buki
 		}
 	}
 
-	static void DrawPrefabSessionTexture(buki::PrefabPreviewSession& session)
+	static void DrawPrefabSessionTexture(PrefabPreviewSession& session)
 	{
-		buki::DrawViewportTexture(
+		DrawViewportTexture(
 			session.colorTexture,
 			session.framebufferWidth,
 			session.framebufferHeight,

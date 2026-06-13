@@ -9,6 +9,7 @@
 #include "PhysicsService.h"
 #include "Component.h"
 #include "ComponentFactory.h"
+#include "Memory.h"
 #include "nlohmann/json.hpp"
 
 using json = nlohmann::json;
@@ -27,8 +28,7 @@ namespace buki
 		void Update(float dt);
 		void Destroy();
 
-		Transform* T() { return transform; }
-		void Initialize(Vector2 position, float rotation, Vector2 size);
+		Transform& T() const;
 		std::string GetName() { return m_Name; }
 		inline void SetName(std::string name) { m_Name = name; }
 
@@ -197,7 +197,7 @@ namespace buki
 	private:
 		std::string m_Name;
 
-		Transform* transform;
+		Scope<Transform> transform;
 
 		std::map<const type_info*, Component*> m_ComponentByType;
 		std::vector<IDrawable*> m_Drawable;

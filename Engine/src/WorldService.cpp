@@ -159,7 +159,8 @@ void buki::WorldService::Load(const std::string& scene)
 
 bool buki::WorldService::LoadScene(const std::string& path)
 {
-	std::ifstream file(path);
+	fs::path scenePath = fs::absolute(fs::path("../Deployment") / path);
+	std::ifstream file(scenePath);
 	if (!file.is_open())
 	{
 		return false;
@@ -315,7 +316,7 @@ void buki::WorldService::Register(const std::string& name)
 
 buki::Entity* buki::WorldService::CreateEntity(const std::string& name)
 {
-	Entity* _e = new Entity(name);
+	Entity* _e = new Entity(MakeUniqueEntityName(name));
 	Add(_e);
 	return _e;
 }
@@ -442,7 +443,15 @@ buki::Entity* buki::WorldService::InstantiatePrefab(const std::string& prefabPat
 	{
 		return nullptr;
 	}
-
+	fs::path path;
+	if (prefabPath[0] == '.')
+	{
+		path = prefabPath;
+	}
+	else
+	{
+		path = fs::path(("../Deployment/" + prefabPath));
+	}
 	Entity* prefabEntity = GetOrLoadPrefabEntity(prefabPath);
 	if (prefabEntity == nullptr)
 	{
@@ -455,7 +464,6 @@ buki::Entity* buki::WorldService::InstantiatePrefab(const std::string& prefabPat
 		return nullptr;
 	}
 
-	fs::path path(prefabPath);
 	const std::string baseName = path.stem().string();
 	const std::string uniqueName = MakeUniqueEntityName(baseName);
 
@@ -473,7 +481,6 @@ buki::Entity* buki::WorldService::ClonePrefabEntity(Entity* source)
 
 	Entity* clone = new Entity();
 	clone->Deserialize(source->Serialize());
-	clone->Set();
 	return clone;
 }
 
@@ -482,14 +489,14 @@ std::unordered_map<std::string, buki::PrefabAssetInstance>& buki::WorldService::
 	return prefabAssets;
 }
 
-buki::Entity* buki::WorldService::GetOrLoadPrefabEntity(const std::filesystem::path& path)
+buki::Entity* buki::WorldService::GetOrLoadPrefabEntity(const std::string& path)
 {
 	if (path.empty())
 	{
 		return nullptr;
 	}
 
-	const fs::path absolutePath = fs::absolute(path).lexically_normal();
+	const fs::path absolutePath = fs::absolute("../Deployment/" +  path).lexically_normal();
 	const std::string key = absolutePath.string();
 
 	std::error_code ec;
@@ -545,21 +552,21 @@ buki::Entity* buki::WorldService::GetOrLoadPrefabEntity(const std::filesystem::p
 		return nullptr;
 	}
 
-	Entity* entity = new Entity();
+	Entity* entity = new Entity(MakeUniqueEntityName(absolutePath.stem().string()));
 	entity->Deserialize(doc);
 	entity->Set();
 
 	PrefabAssetInstance& slot = prefabAssets[key];
-	slot.path = absolutePath;
+	slot.path = path;
 	slot.entity = entity;
 	slot.lastWriteTime = writeTime;
 	slot.dirty = false;
 	return entity;
 }
 
-bool buki::WorldService::SavePrefabAsset(const std::filesystem::path& path)
+bool buki::WorldService::SavePrefabAsset(const std::string& path)
 {
-	const fs::path absolutePath = fs::absolute(path).lexically_normal();
+	const fs::path absolutePath = fs::absolute("../Deployment/" + path).lexically_normal();
 	const std::string key = absolutePath.string();
 
 	auto it = prefabAssets.find(key);
@@ -580,7 +587,7 @@ bool buki::WorldService::SavePrefabAsset(const std::filesystem::path& path)
 	out << it->second.entity->Serialize().dump(4);
 	out.close();
 
-	it->second.path = absolutePath;
+	it->second.path = path;
 	it->second.lastWriteTime = fs::last_write_time(absolutePath, ec);
 	it->second.dirty = false;
 	return true;

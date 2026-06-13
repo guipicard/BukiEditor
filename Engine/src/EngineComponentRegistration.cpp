@@ -23,6 +23,5 @@ void buki::RegisterEngineComponents()
 	REGISTER_COMPONENT_EXPLICIT(Polygon, "Polygon");
 	REGISTER_COMPONENT_EXPLICIT(Circle, "Circle");
 	REGISTER_COMPONENT_EXPLICIT(Button, "Button");
-	REGISTER_COMPONENT_EXPLICIT(Spawner, "Spawner");
 	REGISTER_COMPONENT_EXPLICIT(Animation, "Animation");
 }

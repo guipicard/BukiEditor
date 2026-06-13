@@ -3,7 +3,6 @@
 
 namespace buki
 {
-	struct Spawner;
 	class Button;
 	struct AngryBirdController : public MonoBehaviour
 	{

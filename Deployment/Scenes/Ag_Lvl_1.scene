@@ -11,7 +11,6 @@
     "entities": {
         "Background": {
             "components": {
-                "Spawner": null,
                 "TileLayer": {
                     "atlasPath": "/assets/Kenney/Physics Assets/PNG/Backgrounds/colored_desert.png",
                     "defaultFlipX": false,
@@ -100,8 +99,8 @@
             },
             "rotation": 0.0,
             "size": {
-                "x": 43.20000076293945,
-                "y": 21.600000381469727
+                "x": 1.0,
+                "y": 1.0
             },
             "z": 0
         },
@@ -213,8 +212,8 @@
             },
             "rotation": 0.0,
             "size": {
-                "x": 0.75,
-                "y": 2.25
+                "x": 1.0,
+                "y": 1.0
             },
             "z": 0
         },
@@ -326,8 +325,8 @@
             },
             "rotation": 0.0,
             "size": {
-                "x": 0.75,
-                "y": 2.25
+                "x": 1.0,
+                "y": 1.0
             },
             "z": 0
         },
@@ -439,8 +438,8 @@
             },
             "rotation": 0.0,
             "size": {
-                "x": 0.75,
-                "y": 2.25
+                "x": 1.0,
+                "y": 1.0
             },
             "z": 0
         },
@@ -552,8 +551,8 @@
             },
             "rotation": 1.5707963705062866,
             "size": {
-                "x": 0.75,
-                "y": 2.25
+                "x": 1.0,
+                "y": 1.0
             },
             "z": 0
         },
@@ -665,8 +664,8 @@
             },
             "rotation": 1.5707963705062866,
             "size": {
-                "x": 0.75,
-                "y": 2.25
+                "x": 1.0,
+                "y": 1.0
             },
             "z": 0
         },
@@ -778,8 +777,8 @@
             },
             "rotation": 0.0,
             "size": {
-                "x": 0.75,
-                "y": 2.25
+                "x": 1.0,
+                "y": 1.0
             },
             "z": 0
         },
@@ -891,8 +890,8 @@
             },
             "rotation": 0.0,
             "size": {
-                "x": 0.75,
-                "y": 2.25
+                "x": 1.0,
+                "y": 1.0
             },
             "z": 0
         },
@@ -1004,8 +1003,8 @@
             },
             "rotation": 1.5707963705062866,
             "size": {
-                "x": 0.75,
-                "y": 2.25
+                "x": 1.0,
+                "y": 1.0
             },
             "z": 0
         },
@@ -3017,7 +3016,7 @@
             },
             "rotation": 0.0,
             "size": {
-                "x": 76.0,
+                "x": 1.0,
                 "y": 1.0
             },
             "z": 0
@@ -3167,7 +3166,7 @@
                         "h": false,
                         "v": false
                     },
-                    "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Aliens\\alienGreen_round.png",
+                    "path": "\\assets\\kenney\\physics assets\\png\\aliens\\aliengreen_round.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -3197,7 +3196,7 @@
                 "x": 1.0,
                 "y": 1.0
             },
-            "z": 2
+            "z": 1
         },
         "resetButton": {
             "components": {
@@ -3318,8 +3317,8 @@
             },
             "rotation": 0.0,
             "size": {
-                "x": 2.0,
-                "y": 4.0
+                "x": 1.0,
+                "y": 1.0
             },
             "z": 1
         },
@@ -3363,12 +3362,10 @@
             },
             "rotation": 0.0,
             "size": {
-                "x": 2.0,
-                "y": 4.0
+                "x": 1.0,
+                "y": 1.0
             },
             "z": 3
         }
-    },
-    "sceneName": "Ag_Lvl_1",
-    "scenePath": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\Ag_Lvl_1.scene"
+    }
 }

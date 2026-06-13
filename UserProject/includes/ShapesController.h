@@ -2,14 +2,13 @@
 #include "MonoBehaviour.h"
 #include "EntityRef.h"
 #include "ScriptFunctionRegistry.h"
+#include "IWorld.h"
 
 namespace buki
 {
-	struct Spawner;
-	struct Sprite;
-	struct Collider;
-	struct RigidBody;
-	struct Text;
+	class Sprite;
+	class RigidBody;
+	class Text;
 	class Button;
 
 	struct ShapesController : public MonoBehaviour
@@ -57,9 +56,9 @@ namespace buki
 		bool polygonShapeDraw = true;
 		int polygonSides = 3;
 
-		EntityRef boxRef;
-		EntityRef circleRef;
-		EntityRef polygonRef;
+		PrefabAssetInstance boxRef;
+		PrefabAssetInstance circleRef;
+		PrefabAssetInstance polygonRef;
 	public:
 		inline void SetDrawCircleFill(const bool state) { circleFillDraw = state; }
 		inline void SetDrawCircleShape(const bool state) { circleShapeDraw = state; }

@@ -1260,7 +1260,5 @@
             },
             "z": 1
         }
-    },
-    "sceneName": "Platformer",
-    "scenePath": "../Deployment/Scenes\\Platformer.scene"
+    }
 }

@@ -12,12 +12,12 @@ namespace buki
 
     void Text::Draw(float alpha)
     {
-        if (m_Font == nullptr || !m_Font->IsValid() || m_Entity == nullptr || m_Entity->T() == nullptr)
+        if (m_Font == nullptr || !m_Font->IsValid() || m_Entity == nullptr)
         {
             return;
         }
 
-        const Vector2 pos = m_Entity->T()->GetPosition() + m_PositionOffset;
+        const Vector2 pos = m_Entity->T().GetPosition() + m_PositionOffset;
 
         Graphics().DrawTextToCamera(
             *m_Font,

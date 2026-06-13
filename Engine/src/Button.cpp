@@ -62,7 +62,7 @@ namespace buki
 
 	void Button::RefreshLayout()
 	{
-		if (m_Entity == nullptr || m_Entity->T() == nullptr)
+		if (m_Entity == nullptr)
 		{
 			return;
 		}
@@ -76,7 +76,7 @@ namespace buki
 				textSize.y + m_Style.padding.y * 2.0f
 			};
 
-			m_Entity->T()->SetSize(finalSize);
+			m_Entity->T().SetSize(finalSize);
 		}
 	}
 
@@ -104,22 +104,22 @@ namespace buki
 
 	Vector2 Button::GetPosition() const
 	{
-		if (m_Entity == nullptr || m_Entity->T() == nullptr)
+		if (m_Entity == nullptr)
 		{
 			return Vector2{};
 		}
 
-		return m_Entity->T()->GetPosition();
+		return m_Entity->T().GetPosition();
 	}
 
 	Vector2 Button::GetSize() const
 	{
-		if (m_Entity == nullptr || m_Entity->T() == nullptr)
+		if (m_Entity == nullptr)
 		{
 			return Vector2{};
 		}
 
-		return m_Entity->T()->GetSize();
+		return m_Entity->T().GetSize();
 	}
 
 	RectF Button::GetBounds() const
@@ -179,13 +179,14 @@ namespace buki
 	{
 		(void)alpha;
 
-		if (m_Entity == nullptr || m_Entity->T() == nullptr)
+		if (m_Entity == nullptr )
 		{
 			return;
 		}
 
-		const Vector2 pos = m_Entity->T()->GetPosition();
-		const Vector2 size = m_Entity->T()->GetSize();
+		const auto& t = m_Entity->T();
+		const Vector2 pos = t.GetPosition();
+		const Vector2 size = t.GetSize();
 
 		const Color bgColor = m_Hovered ? m_Style.backgroundHoverColor : m_Style.backgroundColor;
 		const Color textColor = m_Hovered ? m_Style.textHoverColor : m_Style.textColor;
@@ -210,7 +211,7 @@ namespace buki
 					size.x,
 					size.y,
 					source,
-					m_Entity->T()->GetRotation().GetRadians(),
+					t.GetRotation().GetRadians(),
 					false,
 					false,
 					bgColor);

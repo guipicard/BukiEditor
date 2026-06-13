@@ -60,8 +60,6 @@ void buki::ShapesController::Update(const float dt)
 	Vector2 pos = mousePos;
 	float timeScale = Engine::Get().GetTimeScale();
 
-	
-
 	if (!UIHovered && timeScale != 0.0f)
 	{
 		if (Input().IsMouseButtonUp(0))
@@ -71,14 +69,18 @@ void buki::ShapesController::Update(const float dt)
 			float rot = static_cast<float>((rand() % 7000) / 1000.0f);
 			Vector2 randomSize = Vector2(sizeX, sizeY) / 5;
 
-			Entity* e = World().InstantiatePrefab(boxRef.prefabPath);
+			Entity* e = World().InstantiatePrefab(boxRef.path);
+			auto& t = e->T();
 			
 			Box* s = e->GetComponent<Box>();
 			s->def.fillDraw = boxFillDraw;
 			s->def.shapeDraw = boxShapeDraw;
 			s->def.size = randomSize;
 
-			e->Initialize(pos, rot, randomSize);
+			Rot rotation = Rot();
+			rotation.SetRadians(rot);
+			t.UpdateState(pos, rotation, randomSize);
+
 			e->Set();
 		}
 		if (Input().IsMouseButtonUp(1))
@@ -90,14 +92,18 @@ void buki::ShapesController::Update(const float dt)
 			float rot = static_cast<float>((rand() % 7000) / 1000.0f);
 			Vector2 randomSize = Vector2(r, r);
 
-			Entity* e = World().InstantiatePrefab(polygonRef.prefabPath);
+			Entity* e = World().InstantiatePrefab(polygonRef.path);
+			auto& t = e->T();
+
 			Polygon* s = e->GetComponent<Polygon>();
 			s->def.fillDraw = boxFillDraw;
 			s->def.shapeDraw = boxShapeDraw;
 			s->def.radius = r;
 			s->def.segments = polygonSides;
 
-			e->Initialize(pos, rot, randomSize);
+			Rot rotation = Rot();
+			rotation.SetRadians(rot);
+			t.UpdateState(pos, rotation, randomSize);
 			e->Set();
 		}
 		if (Input().IsMouseButtonUp(2))
@@ -108,13 +114,17 @@ void buki::ShapesController::Update(const float dt)
 			float rot = static_cast<float>((rand() % 7000) / 1000.0f);
 			Vector2 randomSize = Vector2(r, r);
 
-			Entity* e = World().InstantiatePrefab(circleRef.prefabPath);
+			Entity* e = World().InstantiatePrefab(circleRef.path);
+			auto& t = e->T();
+
 			Circle* s = e->GetComponent<Circle>();
 			s->def.fillDraw = circleFillDraw;
 			s->def.shapeDraw = circleShapeDraw;
 			s->def.radius = r;
 
-			e->Initialize(pos, rot, randomSize);
+			Rot rotation = Rot();
+			rotation.SetRadians(rot);
+			t.UpdateState(pos, rotation, randomSize);
 			e->Set();
 		}
 	}
@@ -122,9 +132,7 @@ void buki::ShapesController::Update(const float dt)
 	for (auto e : World().GetEntitiesInWorld())
 	{
 		if (e == nullptr) return;
-		Transform* tm = e->T();
-		Vector2 pos = tm->GetPosition();
-		if (pos.y > 30.0f)
+		if (e->T().GetPosition().y > 30.0f)
 		{
 			World().Remove(e);
 		}

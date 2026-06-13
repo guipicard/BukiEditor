@@ -13,8 +13,9 @@
 
 void buki::Polygon::Draw(float alpha)
 {
-    const Vector2 pos = m_Entity->T()->GetPosition();
-    const float angle = m_Entity->T()->GetRotation().GetRadians();
+	const auto& t = m_Entity->T();
+    const Vector2 pos = t.GetPosition();
+    const float angle = t.GetRotation().GetRadians();
 
     if (def.fillDraw)
     {
@@ -58,7 +59,7 @@ void buki::Polygon::SetPhysics()
         def.segments = 8;
 		Log().LogMessage("Polygon segments must be less than or equal to 8. Defaulting to 8.");
 	}
-	Transform* t = m_Entity->T();
+
     glm::vec2 center;
     center.x = 0.0f;
     center.y = 0.0f;

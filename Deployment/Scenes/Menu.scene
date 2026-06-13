@@ -438,7 +438,5 @@
             },
             "z": 0
         }
-    },
-    "sceneName": "Menu",
-    "scenePath": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\Menu.scene"
+    }
 }

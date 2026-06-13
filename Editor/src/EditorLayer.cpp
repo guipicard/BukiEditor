@@ -4,6 +4,7 @@
 #include "Entity.h"
 #include "imgui.h"
 #include "imgui_internal.h"
+#include "EditorAssetEntries.h"
 
 #include "EditorViewportFramebuffer.h"
 #include "EditorViewportHelpers.h"
@@ -376,7 +377,7 @@ void buki::EditorLayer::RenderPrefabPanels()
 		}
 
 		std::string title =
-			"Prefab: " + session.path.filename().string() + "###" + session.windowId;
+			"Prefab: " + fs::path(session.path).filename().string() + "###" + session.windowId;
 
 		bool open = session.open;
 
@@ -412,7 +413,7 @@ void buki::EditorLayer::RenderPrefabPanels()
 				}
 
 				state.activePrefabPreviewIndex = static_cast<int>(i);
-				state.selectedPrefabPath = session.path;
+				state.selectedPrefabPath = buki::ToAssetRelativePath(session.path);
 				state.selectedPrefabEntity = session.prefabEntity;
 				state.selectedEntity = nullptr;
 				state.activeEntity = nullptr;
@@ -439,16 +440,12 @@ void buki::EditorLayer::RenderPrefabPanels()
 				auto pos = Engine::Get().GetActiveCameraPtr()->position;
 				session.cameraSettings.position = { pos.x, pos.y };
 				session.cameraSettings.zoom = Engine::Get().GetActiveCameraPtr()->zoom;
-				session.cameraSettings.Serialize(session.path);
+				session.cameraSettings.Serialize(buki::ToAssetRelativePath(session.path));
 			}
 		}
 		ImGui::End();
 
 		session.open = open;
-		if (!session.open)
-		{
-			session.cameraSettings.Serialize(session.path);
-		}
 
 		++i;
 	}

@@ -99,8 +99,8 @@
             },
             "rotation": 0.0,
             "size": {
-                "x": 43.20000076293945,
-                "y": 21.600000381469727
+                "x": 1.0,
+                "y": 1.0
             },
             "z": 0
         },
@@ -2084,89 +2084,10 @@
             },
             "rotation": 0.0,
             "size": {
-                "x": 76.0,
+                "x": 1.0,
                 "y": 1.0
             },
             "z": 0
-        },
-        "SaveButton": {
-            "components": {
-                "Button": {
-                    "backgroundImagePath": "",
-                    "fontPath": "./fonts/Kenney/Kenney Blocks.ttf",
-                    "fontSize": 24,
-                    "onClick": {
-                        "functionName": "",
-                        "scriptTypeName": ""
-                    },
-                    "style": {
-                        "backgroundColor": {
-                            "a": 1.0,
-                            "b": 0.20000000298023224,
-                            "g": 0.20000000298023224,
-                            "r": 0.20000000298023224
-                        },
-                        "backgroundHoverColor": {
-                            "a": 1.0,
-                            "b": 0.30000001192092896,
-                            "g": 0.30000001192092896,
-                            "r": 0.30000001192092896
-                        },
-                        "centerTextX": true,
-                        "centerTextY": true,
-                        "drawOutline": false,
-                        "drawOutlineOnHoverOnly": true,
-                        "fitToText": true,
-                        "outlineColor": {
-                            "a": 1.0,
-                            "b": 0.0,
-                            "g": 1.0,
-                            "r": 0.0
-                        },
-                        "outlineHoverColor": {
-                            "a": 1.0,
-                            "b": 0.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "padding": {
-                            "x": 0.25,
-                            "y": 0.15000000596046448
-                        },
-                        "showBackground": true,
-                        "textColor": {
-                            "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "textHoverColor": {
-                            "a": 1.0,
-                            "b": 0.6000000238418579,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "textOffset": {
-                            "x": 0.0,
-                            "y": 0.0
-                        }
-                    },
-                    "text": "save"
-                }
-            },
-            "enable": true,
-            "layer": "",
-            "physics": false,
-            "position": {
-                "x": 0.0,
-                "y": -8.5
-            },
-            "rotation": 0.0,
-            "size": {
-                "x": 1.940000057220459,
-                "y": 1.0199999809265137
-            },
-            "z": 10
         },
         "StoneSlim1": {
             "components": {
@@ -2246,7 +2167,7 @@
                         "h": false,
                         "v": false
                     },
-                    "path": "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone020.png",
+                    "path": "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone020.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -2356,7 +2277,7 @@
                         "h": false,
                         "v": false
                     },
-                    "path": "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone020.png",
+                    "path": "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone020.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -2466,7 +2387,7 @@
                         "h": false,
                         "v": false
                     },
-                    "path": "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone020.png",
+                    "path": "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone020.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -2576,7 +2497,7 @@
                         "h": false,
                         "v": false
                     },
-                    "path": "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone020.png",
+                    "path": "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone020.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -2686,7 +2607,7 @@
                         "h": false,
                         "v": false
                     },
-                    "path": "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone020.png",
+                    "path": "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone020.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -2796,7 +2717,7 @@
                         "h": false,
                         "v": false
                     },
-                    "path": "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone020.png",
+                    "path": "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone020.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -2906,7 +2827,7 @@
                         "h": false,
                         "v": false
                     },
-                    "path": "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone020.png",
+                    "path": "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone020.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -3016,7 +2937,7 @@
                         "h": false,
                         "v": false
                     },
-                    "path": "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone020.png",
+                    "path": "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone020.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -3193,7 +3114,7 @@
                         "h": false,
                         "v": false
                     },
-                    "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\assets\\Kenney\\Physics Assets\\PNG\\Aliens\\alienGreen_round.png",
+                    "path": "\\assets\\kenney\\physics assets\\png\\aliens\\aliengreen_round.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -3344,8 +3265,8 @@
             },
             "rotation": 0.0,
             "size": {
-                "x": 2.0,
-                "y": 4.0
+                "x": 1.0,
+                "y": 1.0
             },
             "z": 0
         },
@@ -3389,12 +3310,10 @@
             },
             "rotation": 0.0,
             "size": {
-                "x": 2.0,
-                "y": 4.0
+                "x": 1.0,
+                "y": 1.0
             },
             "z": 2
         }
-    },
-    "sceneName": "Ag_Lvl_3",
-    "scenePath": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\Ag_Lvl_3.scene"
+    }
 }

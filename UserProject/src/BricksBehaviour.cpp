@@ -4,22 +4,16 @@
 #include "Engine.h"
 #include "Entity.h"
 #include "Sprite.h"
-//#include "ComponentRegistration.h"
-//
-//REGISTER_COMPONENT(BricksBehaviour, "BricksBehaviour");
 
-buki::BricksBehaviour::BricksBehaviour(Entity* _entity)
-	: MonoBehaviour(_entity)
+buki::BricksBehaviour::BricksBehaviour(Entity* _entity) : MonoBehaviour(_entity) {}
+
+void buki::BricksBehaviour::Start()
 {
 	spriteComponent = m_Entity->GetComponent<Sprite>();
 	if (!spriteComponent)
 	{
 		spriteComponent = m_Entity->AddComponent<Sprite>();
 	}
-}
-
-void buki::BricksBehaviour::Start()
-{
 	SetMaxHealth(maxHealth);
 	health = maxHealth;
 }

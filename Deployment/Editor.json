@@ -1,182 +1,98 @@
 {
-    "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Prefabs\\CircleEntity.prefab": {
-        "displayMode": 1,
-        "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Prefabs\\CircleEntity.prefab",
+    "Scenes/Ag_Lvl_1.scene": {
+        "displayMode": 2,
+        "path": "Scenes/Ag_Lvl_1.scene",
         "position": {
             "x": 0.0,
             "y": 0.0
         },
-        "type": ".prefab",
-        "viewportHeight": 754.0,
+        "type": ".scene",
+        "viewportHeight": 658.0,
         "viewportWidth": 1060.0,
         "zoom": 1.0
     },
-    "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Prefabs\\GlassSlim1.prefab": {
-        "displayMode": 1,
-        "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Prefabs\\GlassSlim1.prefab",
+    "Scenes/Ag_Lvl_2.scene": {
+        "displayMode": 2,
+        "path": "Scenes/Ag_Lvl_2.scene",
         "position": {
             "x": 0.0,
             "y": 0.0
         },
-        "type": ".prefab",
-        "viewportHeight": 754.0,
+        "type": ".scene",
+        "viewportHeight": 658.0,
         "viewportWidth": 1060.0,
         "zoom": 1.0
     },
-    "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Prefabs\\PolygonEntity.prefab": {
-        "displayMode": 1,
-        "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Prefabs\\PolygonEntity.prefab",
+    "Scenes/Ag_Lvl_3.scene": {
+        "displayMode": 2,
+        "path": "Scenes/Ag_Lvl_3.scene",
         "position": {
             "x": 0.0,
             "y": 0.0
         },
-        "type": ".prefab",
-        "viewportHeight": 754.0,
+        "type": ".scene",
+        "viewportHeight": 658.0,
         "viewportWidth": 1060.0,
         "zoom": 1.0
     },
-    "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Prefabs\\RectEntity.prefab": {
-        "displayMode": 1,
-        "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Prefabs\\RectEntity.prefab",
+    "Scenes/AngryBird.scene": {
+        "displayMode": 2,
+        "path": "Scenes/AngryBird.scene",
         "position": {
             "x": 0.0,
             "y": 0.0
         },
-        "type": ".prefab",
-        "viewportHeight": 754.0,
+        "type": ".scene",
+        "viewportHeight": 658.0,
         "viewportWidth": 1060.0,
         "zoom": 1.0
     },
-    "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Prefabs\\StoneSlim1.prefab": {
-        "displayMode": 1,
-        "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Prefabs\\StoneSlim1.prefab",
+    "Scenes/Menu.scene": {
+        "displayMode": 2,
+        "path": "Scenes/Menu.scene",
         "position": {
             "x": 0.0,
             "y": 0.0
         },
-        "type": ".prefab",
-        "viewportHeight": 754.0,
+        "type": ".scene",
+        "viewportHeight": 658.0,
         "viewportWidth": 1060.0,
         "zoom": 1.0
     },
-    "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Prefabs\\WoodSlim1.prefab": {
-        "displayMode": 1,
-        "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Prefabs\\WoodSlim1.prefab",
+    "Scenes/Platformer.scene": {
+        "displayMode": 2,
+        "path": "Scenes/Platformer.scene",
         "position": {
             "x": 0.0,
             "y": 0.0
         },
-        "type": ".prefab",
-        "viewportHeight": 754.0,
+        "type": ".scene",
+        "viewportHeight": 658.0,
         "viewportWidth": 1060.0,
         "zoom": 1.0
     },
-    "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Prefabs\\bird1.prefab": {
-        "displayMode": 1,
-        "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Prefabs\\bird1.prefab",
+    "Scenes/SceneTest.scene": {
+        "displayMode": 2,
+        "path": "Scenes/SceneTest.scene",
         "position": {
             "x": 0.0,
             "y": 0.0
         },
-        "type": ".prefab",
-        "viewportHeight": 754.0,
+        "type": ".scene",
+        "viewportHeight": 658.0,
         "viewportWidth": 1060.0,
         "zoom": 1.0
     },
-    "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\Ag_Lvl_1.scene": {
-        "displayMode": 1,
-        "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\Ag_Lvl_1.scene",
+    "Scenes/Shapes.scene": {
+        "displayMode": 2,
+        "path": "Scenes/Shapes.scene",
         "position": {
             "x": 0.0,
             "y": 0.0
         },
         "type": ".scene",
-        "viewportHeight": 0.0,
-        "viewportWidth": 0.0,
-        "zoom": 1.0
-    },
-    "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\Ag_Lvl_2.scene": {
-        "displayMode": 1,
-        "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\Ag_Lvl_2.scene",
-        "position": {
-            "x": 0.0,
-            "y": 0.0
-        },
-        "type": ".scene",
-        "viewportHeight": 0.0,
-        "viewportWidth": 0.0,
-        "zoom": 1.0
-    },
-    "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\Ag_Lvl_3.scene": {
-        "displayMode": 1,
-        "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\Ag_Lvl_3.scene",
-        "position": {
-            "x": 0.0,
-            "y": 0.0
-        },
-        "type": ".scene",
-        "viewportHeight": 0.0,
-        "viewportWidth": 0.0,
-        "zoom": 1.0
-    },
-    "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\AngryBird.scene": {
-        "displayMode": 1,
-        "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\AngryBird.scene",
-        "position": {
-            "x": 0.0,
-            "y": 0.0
-        },
-        "type": ".scene",
-        "viewportHeight": 0.0,
-        "viewportWidth": 0.0,
-        "zoom": 1.0
-    },
-    "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\Menu.scene": {
-        "displayMode": 1,
-        "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\Menu.scene",
-        "position": {
-            "x": 0.0,
-            "y": 0.0
-        },
-        "type": ".scene",
-        "viewportHeight": 0.0,
-        "viewportWidth": 0.0,
-        "zoom": 1.0
-    },
-    "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\Platformer.scene": {
-        "displayMode": 1,
-        "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\Platformer.scene",
-        "position": {
-            "x": 0.0,
-            "y": 0.0
-        },
-        "type": ".scene",
-        "viewportHeight": 0.0,
-        "viewportWidth": 0.0,
-        "zoom": 1.0
-    },
-    "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\SceneTest.scene": {
-        "displayMode": 1,
-        "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\SceneTest.scene",
-        "position": {
-            "x": 0.0,
-            "y": 0.0
-        },
-        "type": ".scene",
-        "viewportHeight": 0.0,
-        "viewportWidth": 0.0,
-        "zoom": 1.0
-    },
-    "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\Shapes.scene": {
-        "displayMode": 1,
-        "path": "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\Scenes\\Shapes.scene",
-        "position": {
-            "x": 0.0,
-            "y": 0.0
-        },
-        "type": ".scene",
-        "viewportHeight": 0.0,
-        "viewportWidth": 0.0,
+        "viewportHeight": 658.0,
+        "viewportWidth": 1060.0,
         "zoom": 1.0
     }
 }

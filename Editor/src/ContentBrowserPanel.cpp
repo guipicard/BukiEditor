@@ -15,28 +15,6 @@
 #include <vector>
 #include <fstream>
 
-namespace
-{
-
-	void ClearSceneSelection(buki::EditorState& state)
-	{
-		state.selectedEntity = nullptr;
-		state.activeEntity = nullptr;
-		state.selectedEntities.clear();
-	}
-
-	void ClearPrefabSelection(buki::EditorState& state)
-	{
-		state.selectedPrefabEntity = nullptr;
-		state.selectedPrefabPath.clear();
-	}
-
-	ImTextureID ToImGuiTextureID(std::uint32_t textureId)
-	{
-		return static_cast<ImTextureID>(textureId);
-	}
-}
-
 void buki::ContentBrowserPanel::Render(EditorState& state)
 {
 	ImGui::Begin("Content Browser", &state.showContentBrowser);
@@ -88,7 +66,7 @@ void buki::ContentBrowserPanel::Render(EditorState& state)
 	}
 
 
-	std::vector<BrowserEntry> entries = buki::CollectBrowserEntries(state.currentContentPath, false);
+	std::vector<BrowserEntry> entries = CollectBrowserEntries(state.currentContentPath, false);
 
 	std::sort(entries.begin(), entries.end(),
 		[](const BrowserEntry& a, const BrowserEntry& b)
@@ -112,8 +90,8 @@ void buki::ContentBrowserPanel::Render(EditorState& state)
 	for (const BrowserEntry& item : entries)
 	{
 		const bool selected =
-			(item.isSceneFile && state.selectedScenePath == item.fullPath) ||
-			(item.isPrefabFile && state.selectedPrefabPath == item.fullPath);
+			(item.isSceneFile && state.selectedScenePath == item.path) ||
+			(item.isPrefabFile && state.selectedPrefabPath == item.path);
 
 		const bool clicked = DrawBrowserTile(item, thumbnailSize, selected);
 		const bool hovered = ImGui::IsItemHovered();
@@ -123,17 +101,17 @@ void buki::ContentBrowserPanel::Render(EditorState& state)
 		{
 			if (item.isDirectory)
 			{
-				state.currentContentPath = item.fullPath;
+				state.currentContentPath = item.path;
 			}
 			else if (item.isSceneFile)
 			{
-				state.selectedScenePath = item.fullPath;
+				state.selectedScenePath = item.path;
 				state.selectedPrefabPath.clear();
 				state.selectedPrefabEntity = nullptr;
 			}
 			else if (item.isPrefabFile)
 			{
-				SelectPrefab(item.fullPath, state);
+				SelectPrefab(item.path, state);
 			}
 		}
 
@@ -141,37 +119,36 @@ void buki::ContentBrowserPanel::Render(EditorState& state)
 		{
 			if (item.isDirectory)
 			{
-				state.currentContentPath = item.fullPath;
+				state.currentContentPath = item.path;
 			}
 			else if (item.isSceneFile)
 			{
-				state.selectedScenePath = item.fullPath.string();
+				state.selectedScenePath = item.path;
 				state.requestSceneWindowFocus = true;
-				if (world != nullptr && world->LoadScene(item.fullPath.string()))
+				if (world != nullptr && world->LoadScene(item.path))
 				{
 					ClearSceneSelection(state);
 					state.activePrefabPreviewIndex = -1;
 					state.selectedPrefabPath.clear();
 					state.selectedPrefabEntity = nullptr;
 					state.sceneDirty = false;
-					state.scenePreviewSession.cameraSettings.Deserialize(item.fullPath);
-					state.scenePreviewSession.path = item.fullPath;
-					state.selectedScenePath = item.fullPath;
+					state.scenePreviewSession.cameraSettings.Deserialize(item.path);
+					state.scenePreviewSession.path = item.path;
+					state.selectedScenePath = item.path;
 					Vector2 camPos = state.scenePreviewSession.cameraSettings.position;
 					Engine::Get().GetActiveCameraPtr()->position = { camPos.x, camPos.y };
-
-					for (auto entity : world->GetEntitiesInWorld())
+					std::vector<Entity*> entities = world->GetEntitiesInWorld();
+					for (Entity* entity : entities)
 					{
-						if (entity != nullptr)
-							entity->Set();
+						if (entity != nullptr) entity->Set();
 					}
 				}
 			}
 			else if (item.isPrefabFile)
 			{
-				SelectPrefab(item.fullPath, state);
-				OpenPrefabPreview(item.fullPath, state);
-				state.prefabPreviewSessions[state.activePrefabPreviewIndex].cameraSettings.Deserialize(item.fullPath);
+				SelectPrefab(item.path, state);
+				OpenPrefabPreview(item.path, state);
+				state.prefabPreviewSessions[state.activePrefabPreviewIndex].cameraSettings.Deserialize(item.path);
 				Vector2 camPos = state.prefabPreviewSessions[state.activePrefabPreviewIndex].cameraSettings.position;
 				Engine::Get().GetActiveCameraPtr()->position = { camPos.x, camPos.y };
 			}
@@ -182,27 +159,27 @@ void buki::ContentBrowserPanel::Render(EditorState& state)
 
 			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID))
 			{
-				const std::string pathStr = item.fullPath.string();
+				const std::string& pathStr = item.path;
 				ImGui::SetDragDropPayload("PREFAB", pathStr.c_str(), pathStr.size() + 1);
 				ImGui::TextUnformatted(item.displayName.c_str());
 				ImGui::EndDragDropSource();
 			}
 
 			if (hovered && ImGui::IsMouseReleased(ImGuiMouseButton_Right))
-				ImGui::OpenPopup(item.fullPath.string().c_str());
+				ImGui::OpenPopup(item.path.c_str());
 
-			if (ImGui::BeginPopup(item.fullPath.string().c_str()))
+			if (ImGui::BeginPopup(item.path.c_str()))
 			{
 				if (ImGui::MenuItem("Instantiate"))
 				{
 					if (world != nullptr)
-						world->InstantiatePrefab(item.fullPath.string());
+						world->InstantiatePrefab(item.path);
 				}
 
 				if (ImGui::MenuItem("Preview"))
 				{
-					SelectPrefab(item.fullPath, state);
-					OpenPrefabPreview(item.fullPath, state);
+					SelectPrefab(item.path, state);
+					OpenPrefabPreview(item.path, state);
 				}
 
 				ImGui::EndPopup();
@@ -228,21 +205,21 @@ void buki::ContentBrowserPanel::Render(EditorState& state)
 	ImGui::End();
 }
 
-void buki::ContentBrowserPanel::SelectPrefab(const std::filesystem::path& path, EditorState& state)
+void buki::ContentBrowserPanel::SelectPrefab(const std::string& path, EditorState& state)
 {
 	state.selectedEntity = nullptr;
 	state.activeEntity = nullptr;
 	state.selectedEntities.clear();
 
-	state.selectedPrefabPath = fs::absolute(path).lexically_normal();
+	state.selectedPrefabPath = path;
 
 	IWorld* world = Engine::Get().GetWorldPtr();
 	state.selectedPrefabEntity = (world != nullptr)
-		? world->GetOrLoadPrefabEntity(state.selectedPrefabPath)
+		? world->GetOrLoadPrefabEntity(path)
 		: nullptr;
 }
 
-bool buki::ContentBrowserPanel::OpenPrefabPreview(const std::filesystem::path& path, EditorState& state)
+bool buki::ContentBrowserPanel::OpenPrefabPreview(const std::string& path, EditorState& state)
 {
 	IWorld* world = Engine::Get().GetWorldPtr();
 	if (world == nullptr)
@@ -250,7 +227,8 @@ bool buki::ContentBrowserPanel::OpenPrefabPreview(const std::filesystem::path& p
 		return false;
 	}
 
-	const auto normalized = fs::absolute(path).lexically_normal();
+	const fs::path absNormalized = fs::absolute("../Deployment/" + path).lexically_normal();
+	const std::string& normalized = path;
 
 	if (state.activePrefabPreviewIndex >= 0 &&
 		state.activePrefabPreviewIndex < static_cast<int>(state.prefabPreviewSessions.size()))
@@ -266,7 +244,7 @@ bool buki::ContentBrowserPanel::OpenPrefabPreview(const std::filesystem::path& p
 			session.open = true;
 			session.focused = true;
 			session.requestFocus = true;
-			session.prefabEntity = world->GetOrLoadPrefabEntity(normalized);
+			session.prefabEntity = world->GetOrLoadPrefabEntity(path);
 
 			state.activePrefabPreviewIndex = static_cast<int>(i);
 			state.selectedPrefabPath = normalized;
@@ -277,12 +255,12 @@ bool buki::ContentBrowserPanel::OpenPrefabPreview(const std::filesystem::path& p
 
 	PrefabPreviewSession session;
 	session.path = normalized;
-	session.prefabEntity = world->GetOrLoadPrefabEntity(normalized);
+	session.prefabEntity = world->GetOrLoadPrefabEntity(path);
 	session.open = (session.prefabEntity != nullptr);
 	session.focused = session.open;
 	session.requestFocus = session.open;
 	session.requestDockNextToScene = session.open;
-	session.windowId = normalized.string();
+	session.windowId = absNormalized.string();
 
 	if (!session.open)
 	{

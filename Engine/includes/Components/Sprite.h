@@ -32,8 +32,8 @@ namespace buki
         void SetPositionOffset(const Vector2& value) { m_PositionOffset = value; }
         Vector2 GetPositionOffset() const { return m_PositionOffset; }
 
-        void SetSizeOffset(const Vector2& value) { m_SizeOffset = value; }
-        Vector2 GetSizeOffset() const { return m_SizeOffset; }
+        void SetImageSize(Vector2 value);
+        Vector2 GetImageSize() const { return m_ImageSize; }
 
         bool GetFlipX() const { return m_Flip.h; }
         bool GetFlipY() const { return m_Flip.v; }
@@ -51,7 +51,7 @@ namespace buki
 
         Color m_Color{ 1.f, 1.f, 1.f, 1.f };
         Vector2 m_PositionOffset{ 0.f, 0.f };
-        Vector2 m_SizeOffset{ 0.f, 0.f };
+        Vector2 m_ImageSize;
 
         Flip m_Flip{};
         RectF m_SourceRectPixels{};

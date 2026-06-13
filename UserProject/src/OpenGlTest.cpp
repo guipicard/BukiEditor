@@ -6,13 +6,6 @@
 #include "Graphics/Texture2D.h"
 #include "Units.h"
 
-//#include <Windows.h>
-//#include <glm/glm.hpp>
-//#include <glm/gtc/constants.hpp>
-//#include "ComponentRegistration.h"
-//
-//REGISTER_COMPONENT(OpenGlTest, "OpenGlTest");
-
 namespace
 {
     buki::UVRect MakeUV(const std::array<float, 4>& a)

@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <string>
+#include "BukiContainers.h"
 
 namespace buki
 {
@@ -17,6 +18,15 @@ namespace buki
         [[nodiscard]] bool IsValid() const
         {
             return valid && id != 0 && width > 0 && height > 0;
+        }
+        Vector2 SizePixels() const
+        {
+            return { static_cast<float>(width), static_cast<float>(height) };
+        }
+
+        Vector2 SizeMeters() const
+        {
+            return { width / METRES_TO_PIXELS, height / METRES_TO_PIXELS };
         }
     };
 

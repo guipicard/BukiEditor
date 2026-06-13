@@ -70,9 +70,9 @@ void buki::PhysicsService::Step(float dt)
 		const b2Vec2 pos = ev.transform.p;
 		const b2Rot rot = ev.transform.q;
 
-		Transform* t = e->T();
-		t->SetPosition({ pos.x, pos.y });
-		t->SetRotation({ rot.c, rot.s });
+		auto& t = e->T();
+		t.SetPosition({ pos.x, pos.y });
+		t.SetRotation({ rot.c, rot.s });
 	}
 
 	b2ContactEvents b2ContactEvents = b2World_GetContactEvents(b2wId);
@@ -109,6 +109,7 @@ buki::BodyId buki::PhysicsService::CreatePhysicsBody(Entity* entity)
 	{
 		return {};
 	}
+	auto& t = entity->T();
 
 	RigidBody* rb = entity->GetComponent<RigidBody>();
 	if (rb == nullptr)
@@ -127,17 +128,14 @@ buki::BodyId buki::PhysicsService::CreatePhysicsBody(Entity* entity)
 		def.motionLocks.angularZ
 	};
 
-	const Vector2 pos = entity->T()->GetPosition();
+	const Vector2 pos = t.GetPosition();
 	bodyDef.position = { pos.x, pos.y };
 
-	const Rot rot = entity->T()->GetRotation();
+	const Rot rot = t.GetRotation();
 	bodyDef.rotation = { rot.c, rot.s };
-
 
 	const b2WorldId b2World = { worldId.index, worldId.generation };
 	const b2BodyId b2Body = b2CreateBody(b2World, &bodyDef);
-
-
 
 	return { b2Body.index1, b2Body.world0, b2Body.generation };
 }

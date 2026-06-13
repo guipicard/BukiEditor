@@ -18,8 +18,7 @@ buki::Entity::Entity()
 buki::Entity::Entity(std::string _name)
 	: m_Name(_name)
 {
-	transform = new Transform();
-	Initialize(Vector2(), 0.0f, Vector2(1.0f, 1.0f));
+	transform = MakeScope<Transform>();
 }
 
 void buki::Entity::Start()
@@ -68,15 +67,12 @@ void buki::Entity::Destroy()
 	m_ComponentByType.clear();
 	m_Drawable.clear();
 	m_Updatable.clear();
-	delete transform;
-	transform = nullptr;
+	transform.reset();
 }
 
-void buki::Entity::Initialize(Vector2 position, float rotation, Vector2 size)
+buki::Transform& buki::Entity::T() const
 {
-	transform->SetPosition(position);
-	transform->SetRotation(rotation);
-	transform->SetSize(size);
+	return *transform;
 }
 
 void buki::Entity::ActivatePhysics()
@@ -143,23 +139,12 @@ void buki::Entity::DeactivatePhysics()
 json buki::Entity::Serialize() const
 {
 	json doc;
-
-	if (transform != nullptr)
-	{
-		doc["position"]["x"] = transform->GetPosition().x;
-		doc["position"]["y"] = transform->GetPosition().y;
-		doc["rotation"] = transform->GetRotation().GetRadians();
-		doc["size"]["x"] = transform->GetSize().x;
-		doc["size"]["y"] = transform->GetSize().y;
-	}
-	else
-	{
-		doc["position"]["x"] = 0.0f;
-		doc["position"]["y"] = 0.0f;
-		doc["rotation"] = 0.0f;
-		doc["size"]["x"] = 0.0f;
-		doc["size"]["y"] = 0.0f;
-	}
+	auto t = T();
+	doc["position"]["x"] = t.GetPosition().x;
+	doc["position"]["y"] = t.GetPosition().y;
+	doc["rotation"] = t.GetRotation().GetRadians();
+	doc["size"]["x"] = t.GetSize().x;
+	doc["size"]["y"] = t.GetSize().y;
 
 	doc["z"] = zAxis;
 	doc["layer"] = layer;
@@ -184,6 +169,8 @@ void buki::Entity::Deserialize(json _doc)
 	Vector2 size{ 0.0f, 0.0f };
 	float rotation = 0.0f;
 
+
+
 	if (_doc.contains("position"))
 	{
 		position.x = _doc["position"].value("x", 0.0f);
@@ -197,8 +184,9 @@ void buki::Entity::Deserialize(json _doc)
 		size.x = _doc["size"].value("x", 0.0f);
 		size.y = _doc["size"].value("y", 0.0f);
 	}
-
-	Initialize(position, rotation, size);
+	Rot r = Rot();
+	r.SetRadians(rotation);
+	transform->UpdateState(position, r, size);
 
 	zAxis = _doc.value("z", 0);
 	layer = _doc.value("layer", std::string{});
@@ -225,7 +213,7 @@ void buki::Entity::Set()
 {
 	for (const auto& [typeInfo, component] : m_ComponentByType)
 	{
-		if (component != nullptr)
+		if (this != nullptr && component != nullptr)
 		{
 			component->Set();
 		}

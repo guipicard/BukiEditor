@@ -7,19 +7,13 @@
 #include "Camera2D.h"
 #include "BukiContainers.h"
 #include "Button.h"
-//#include "ComponentRegistration.h"
-//
-//REGISTER_COMPONENT(AngryBirdController, "AngryBirdController");
 
-buki::AngryBirdController::AngryBirdController(Entity* _entity)
-	: MonoBehaviour(_entity)
-{
-}
+buki::AngryBirdController::AngryBirdController(Entity* _entity) : MonoBehaviour(_entity) {}
 
 void buki::AngryBirdController::Start()
 {
 	anchor = World().FindEntityByName("anchor");
-	anchorPos = anchor->T()->GetPosition();
+	anchorPos = anchor->T().GetPosition();
 	aimingSoundHandle = Audio().LoadSound("./Audio/AngryBird/Sfx - Slingshot Streched.mp3");
 	launchingSoundHandle = Audio().LoadSound("./Audio/AngryBird/Sfx - Globe Bird Launch 3.mp3");
 	AddCollisionSound("./Audio/AngryBird/Sfx - Globe Bird Hit 1.mp3");
@@ -58,8 +52,9 @@ void buki::AngryBirdController::Update(const float dt)
 	if (Engine::Get().GetTimeScale() == 0.0f) return;
 	Vector2 mousePos;
 	Input().GetMousePositionWorld(&mousePos.x, &mousePos.y);
-	Vector2 birdPos = m_Entity->T()->GetPosition();
-	float birdRadius = m_Entity->T()->GetSize().x;
+	auto& t = m_Entity->T();
+	Vector2 birdPos = t.GetPosition();
+	float birdRadius = t.GetSize().x;
 	std::vector<Entity*> entities;
 	if (Input().IsMouseButtonDown(0) && !UIHovered)
 	{
@@ -84,7 +79,7 @@ void buki::AngryBirdController::Update(const float dt)
 			{
 				aiming = false;
 				clickPos = { 0.0f,0.0f };
-				Throw(anchorPos - m_Entity->T()->GetPosition());
+				Throw(anchorPos - birdPos);
 			}
 		}
 		else
@@ -92,7 +87,7 @@ void buki::AngryBirdController::Update(const float dt)
 			Vector2 offset = clickPos - mousePos;
 			if (offset.Length() > shotLength) offset = offset.GetNormalized() * shotLength;
 			Vector2 slignPos = anchorPos - offset;
-			m_Entity->T()->SetPosition(slignPos);
+			t.SetPosition(slignPos);
 		}
 	}
 }
@@ -149,8 +144,9 @@ void buki::AngryBirdController::Throw(const Vector2 _v)
 void buki::AngryBirdController::Reset()
 {
 	m_Entity->DeactivatePhysics();
-	m_Entity->T()->SetPosition(anchorPos);
-	m_Entity->T()->SetRotation(0.0f);
+	auto& t = m_Entity->T();
+	t.SetPosition(anchorPos);
+	t.SetRotation(0.0f);
 }
 
 void buki::AngryBirdController::AddCollisionSound(const std::string& sound)

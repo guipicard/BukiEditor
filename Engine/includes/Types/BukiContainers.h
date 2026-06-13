@@ -64,7 +64,7 @@ namespace buki
 		Rot(float _c, float _s) : c(_c), s(_s) {}
 		float c, s;
 		inline float GetRadians() const { return b2Atan2(s, c); }
-		inline void SetRadians(float radians) 
+		inline void SetRadians(float radians)
 		{
 			float x = b2UnwindLargeAngle(radians);
 			float pi2 = PI * PI;
@@ -106,8 +106,8 @@ namespace buki
 			c = _c * invMag;
 			s = _s * invMag;
 		}
-			
-		
+
+
 	private:
 		inline float b2UnwindLargeAngle(float radians) const
 		{
@@ -174,53 +174,52 @@ namespace buki
 		float x;
 		float y;
 
-		inline Vector2() : Vector2(0.0f, 0.0f) {}
-		inline Vector2(const int& _x, const int& _y) : x(static_cast<float>(_x)), y(static_cast<float>(_y)) {};
-		inline Vector2(const float& _x, const float& _y) : x(_x), y(_y) {};
+		Vector2() : Vector2(0.0f, 0.0f) {}
+		Vector2(const int& _x, const int& _y) : x(static_cast<float>(_x)), y(static_cast<float>(_y)) {};
+		Vector2(const float& _x, const float& _y) : x(_x), y(_y) {};
 
 		bool operator==(const Vector2& other) const { return x == other.x && y == other.y; }
 		bool operator!=(const Vector2& other) const { return x != other.x || y != other.y; }
-		inline Vector2 operator+(const Vector2& other) const { return Vector2(x + other.x, y + other.y); }
-		inline Vector2& operator+=(const Vector2& other) { x += other.x, y += other.y; return *this; }
-		inline Vector2 operator-(const Vector2& other) const { return Vector2(x - other.x, y - other.y); }
-		inline Vector2 operator-() const { return Vector2(-x, -y); }
-		inline Vector2& operator-=(const Vector2& other) { x = x - other.x, y = y - other.y; return *this; }
-		inline Vector2 operator*(const float& other) const { return Vector2(x * other, y * other); }
-		inline Vector2& operator*=(const float& other) { x *= other; y *= other; return *this; }
-		inline Vector2 operator/(const float& other) const { return Vector2(x / other, y / other); }
-		inline Vector2& operator/=(const float& other) { x /= other; y /= other; return *this; }
-		inline Vector2& Abs() { x = x < 0 ? -x : x; y = y < 0 ? -y : y; return *this; }
-		inline Vector2 GetAbs() const { return Vector2(x < 0 ? -x : x, y < 0 ? -y : y); }
-		inline float Length() const { return sqrtf(x * x + y * y); }
-		inline float LengthSquared() const { return x * x + y * y; }
-		inline const Vector2 GetNormalized() {
+		Vector2 operator+(const Vector2& other) const { return Vector2(x + other.x, y + other.y); }
+		Vector2& operator+=(const Vector2& other) { x += other.x, y += other.y; return *this; }
+		Vector2 operator-(const Vector2& other) const { return Vector2(x - other.x, y - other.y); }
+		Vector2 operator-() const { return Vector2(-x, -y); }
+		Vector2& operator-=(const Vector2& other) { x = x - other.x, y = y - other.y; return *this; }
+		Vector2 operator*(const float& other) const { return Vector2(x * other, y * other); }
+		Vector2& operator*=(const float& other) { x *= other; y *= other; return *this; }
+		Vector2 operator/(const float& other) const { return Vector2(x / other, y / other); }
+		Vector2& operator/=(const float& other) { x /= other; y /= other; return *this; }
+		Vector2& Abs() { x = x < 0 ? -x : x; y = y < 0 ? -y : y; return *this; }
+		Vector2 GetAbs() const { return Vector2(x < 0 ? -x : x, y < 0 ? -y : y); }
+		float Length() const { return sqrtf(x * x + y * y); }
+		float LengthSquared() const { return x * x + y * y; }
+		Vector2 GetNormalized() const {
 			float length = sqrtf(x * x + y * y);
 			if (length < FLT_EPSILON)
 			{
-				return {0.0f,0.0f};
+				return { 0.0f,0.0f };
 			}
 
 			float invLength = 1.0f / length;
 			Vector2 n = { invLength * x, invLength * y };
 			return n;
 		}
-		inline static const float Distance(const Vector2& a, const Vector2& b) {
+		static const float Distance(const Vector2& a, const Vector2& b) {
 			float dx = b.x - a.x;
 			float dy = b.y - a.y;
 			return sqrtf(dx * dx + dy * dy);
 		}
-		inline static const float DistanceSquared(const Vector2& a, const Vector2& b) {
+		static const float DistanceSquared(const Vector2& a, const Vector2& b) {
 			float dx = b.x - a.x;
 			float dy = b.y - a.y;
 			return dx * dx + dy * dy;
 		}
-		inline static const float Dot(const Vector2& A, const Vector2& B) { return (A.x * B.x) + (A.y * B.y); }
-		inline static const float Cross(const Vector2& a, const Vector2& b) { return a.x * b.y - a.y * b.x; }
-		inline static const Vector2 CrossVS(const Vector2& v, float s) { return { s * v.y, -s * v.x }; }
-		inline static const Vector2 CrossSV(float s, const Vector2& v) { return { -s * v.y, s * v.x }; }
-		inline static const double GetRotationDegree(double angle) { return angle * 57.2958; }
-		inline static const Vector2 Lerp(const Vector2& a, const Vector2& b, float t) { return { (1.0f - t) * a.x + t * b.x, (1.0f - t) * a.y + t * b.y }; }
-
+		static const float Dot(const Vector2& A, const Vector2& B) { return (A.x * B.x) + (A.y * B.y); }
+		static const float Cross(const Vector2& a, const Vector2& b) { return a.x * b.y - a.y * b.x; }
+		static const Vector2 CrossVS(const Vector2& v, float s) { return { s * v.y, -s * v.x }; }
+		static const Vector2 CrossSV(float s, const Vector2& v) { return { -s * v.y, s * v.x }; }
+		static const double GetRotationDegree(double angle) { return angle * 57.2958; }
+		static const Vector2 Lerp(const Vector2& a, const Vector2& b, float t) { return { (1.0f - t) * a.x + t * b.x, (1.0f - t) * a.y + t * b.y }; }
 		//static const Vector2& ZERO;
 		//static const Vector2& RIGHT;
 		//static const Vector2& UP;
@@ -232,7 +231,7 @@ namespace buki
 		const buki::Vector2& buki::Vector2::DOWN = buki::Vector2(0.0f, -1.0f);
 		const buki::Vector2& buki::Vector2::LEFT = buki::Vector2(-1.0f, 0.0f);*/
 	};
-	
+
 	struct AABB
 	{
 		Vector2 min, max;
@@ -243,27 +242,26 @@ namespace buki
 		Vector2 cx, cy;
 	};
 
-	struct Transform {
-		inline Transform() : Transform(Vector2(), Rot(), Vector2(10.0f, 10.0f)) {}
-		inline Transform(const Vector2& _pos, Rot _rot, Vector2 _size) : position(_pos), rotation(_rot) {}
-
-		Vector2 position;
-		Rot rotation;
-		Vector2 size;
-
+	class Transform {
+	public:
+		Transform() = default;
+		~Transform() = default;
 		// Add move/copy constructors if needed
-		Transform(const Transform&) = default;
+		//Transform(const Transform&) = default;
 
-		inline void UpdateState(const Vector2& _pos, Rot _rot, const Vector2& _size) { position = _pos; rotation = _rot; }
+		void UpdateState(const Vector2& _pos, Rot _rot, const Vector2& _size) { position = _pos; rotation = _rot; }
 
-		inline Vector2 GetPosition() const { return position; }
-		inline Rot GetRotation() const { return rotation; }
-		inline Vector2 GetSize() const { return size; }
-
+		Vector2 GetPosition() const { return position; }
+		Rot GetRotation() const { return rotation; }
+		Vector2 GetSize() const { return size; }
 		// Setters
-		inline void SetPosition(const Vector2& _pos) { position = _pos; }
-		inline void SetRotation(Rot _rot) { rotation = _rot; }
-		inline void SetRotation(float _rot) { rotation.SetRadians(_rot); }
-		inline void SetSize(const Vector2& _size) { size = _size; }
+		void SetPosition(const Vector2& _pos) { position = _pos; }
+		void SetRotation(Rot _rot) { rotation = _rot; }
+		void SetRotation(float _rot) { rotation.SetRadians(_rot); }
+		void SetSize(const Vector2& _size) { size = _size; }
+	private:
+		Vector2 position = { 0.0f,0.0f };
+		Rot rotation = Rot();
+		Vector2 size = { 1.0f,1.f };
 	};
 }

@@ -35,10 +35,10 @@ namespace buki
 		float viewportWidth = 0.0f;
 		float viewportHeight = 0.0f;
 		ViewportDisplayMode displayMode = ViewportDisplayMode::Fit;
+
 		void Serialize(std::filesystem::path path)
 		{
-			const std::string savePath = "../Deployment/Editor.json";
-			std::filesystem::path asPath(std::filesystem::absolute(savePath));
+			std::filesystem::path asPath(std::filesystem::absolute("../Deployment/Editor.json"));
 			std::string fileName = path.stem().string();
 			std::string extension = path.extension().string();
 
@@ -50,19 +50,46 @@ namespace buki
 				catch (...) { doc = json::object(); }
 			}
 
-			const std::string key = fs::absolute(path).lexically_normal().string();
-			doc[key]["position"]["x"] = position.x;
-			doc[key]["position"]["y"] = position.y;
+			const std::string key = path.string();
+			const bool firstPass = !doc.contains(key);
+			if (firstPass)
+			{
+				if (extension == ".scene")
+				{
+					json sceneDoc = json::object();
+					std::ifstream sceneIn(std::filesystem::absolute("../Deployment/" + path.string()));
+					sceneIn >> sceneDoc;
+					doc[key]["position"]["x"] = sceneDoc["camera"]["position"]["x"];
+					doc[key]["position"]["y"] = sceneDoc["camera"]["position"]["y"];
+				}
+				else if (extension == ".prefab")
+				{
+					json prefabDoc = json::object();
+					std::ifstream prefabIn(std::filesystem::absolute("../Deployment/" + path.string()));
+					prefabIn >> prefabDoc;
+					doc[key]["position"]["x"] = prefabDoc["position"]["x"];
+					doc[key]["position"]["y"] = prefabDoc["position"]["y"];
+				}
+			}
+			else
+			{
+				doc[key]["position"]["x"] = position.x;
+				doc[key]["position"]["y"] = position.y;
+			}
 			doc[key]["zoom"] = zoom;
 			doc[key]["viewportWidth"] = viewportWidth;
 			doc[key]["viewportHeight"] = viewportHeight;
 			doc[key]["displayMode"] = static_cast<int>(displayMode);
-			doc[key]["type"] = path.extension().string();
-			doc[key]["path"] = fs::absolute(path).lexically_normal().string();
+			doc[key]["type"] = extension;
+			doc[key]["path"] = key;
 
 			std::ofstream out(asPath, std::ios::out | std::ios::trunc);
 			if (out.is_open())
 				out << doc.dump(4);
+			if (firstPass)
+			{
+				Deserialize(path);
+			}
 		}
 		void Deserialize(std::filesystem::path path)
 		{
@@ -76,14 +103,14 @@ namespace buki
 			try { in >> doc; }
 			catch (...) { return; }
 
-			const std::string key = fs::absolute(path).lexically_normal().string();
+			const std::string key = path.string();
 			if (!doc.contains(key))
 				return;
 
 			const json& node = doc[key];
 
-			position.x = node.value("position", json::object()).value("x", 0.0f);
-			position.y = node.value("position", json::object()).value("y", 0.0f);
+			position.x = node["position"].value("x", 0.0f);
+			position.y = node["position"].value("y", 0.0f);
 			zoom = node.value("zoom", 1.0f);
 			viewportWidth = node.value("viewportWidth", 0.0f);
 			viewportHeight = node.value("viewportHeight", 0.0f);
@@ -96,7 +123,7 @@ namespace buki
 
 	struct PrefabPreviewSession
 	{
-		std::filesystem::path path;
+		std::string path = std::string();
 		Entity* prefabEntity = nullptr;
 		bool open = true;
 		bool focused = false;
@@ -111,7 +138,7 @@ namespace buki
 		int framebufferWidth = 0;
 		int framebufferHeight = 0;
 
-		CameraSettings cameraSettings;
+		CameraSettings cameraSettings = {};
 	};
 
 	struct ScenePreviewSession
@@ -183,7 +210,7 @@ namespace buki
 
 		bool setTilesDefaults = true;
 
-		std::filesystem::path selectedPrefabPath;
+		std::string selectedPrefabPath = "";
 		Entity* selectedPrefabEntity = nullptr;
 
 		std::vector<PrefabPreviewSession> prefabPreviewSessions;

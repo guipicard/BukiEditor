@@ -205,11 +205,9 @@ namespace buki
 			return;
 		}
 
-		Transform* transform = m_Entity->T();
-		if (transform == nullptr)
-		{
-			return;
-		}
+		auto t = m_Entity->T();
+		Vector2 pos = t.GetPosition();
+		Vector2 size = t.GetSize();
 
 		Color tint{};
 		tint.r = 1.0f;
@@ -225,13 +223,13 @@ namespace buki
 			*frame->texture,
 			Engine::Get().GetActiveCamera(),
 			{
-				transform->position.x,
-				transform->position.y
+				pos.x,
+				pos.y
 			},
-			transform->GetSize().x,
-			transform->GetSize().y,
+			size.x,
+			size.y,
 			frame->sourceRect,
-			transform->GetRotation().GetRadians(),
+			t.GetRotation().GetRadians(),
 			flipX,
 			flipY,
 			tint

@@ -7,21 +7,20 @@
 #include "ContentBrowserPanel.h"
 #include "ImGui.h"
 #include "Camera2D.h"
+#include "IWorld.h"
 #include <vector>
 
 namespace buki
 {
-	class Entity;
+	//class Entity;
 
-	
-
-	class RenderService
-	{
-	public:
-		void RenderEntities(const std::vector<Entity*>& entities,
-			const CameraSettings& camera,
-			float dt);
-	};
+	//class RenderService
+	//{
+	//public:
+	//	void RenderEntities(const std::vector<Entity*>& entities,
+	//		const CameraSettings& camera,
+	//		float dt);
+	//};
 
 	class EditorLayer
 	{

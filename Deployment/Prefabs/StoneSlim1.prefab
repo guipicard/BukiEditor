@@ -34,21 +34,21 @@
         },
         "BricksBehaviour": {
             "BreakSounds": [
-                "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Destroyed A1.mp3",
-                "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Destroyed A2.mp3",
-                "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Destroyed A3.mp3"
+                "\\audio\\angrybird\\sfx - rock destroyed a1.mp3",
+                "\\audio\\angrybird\\sfx - rock destroyed a2.mp3",
+                "\\audio\\angrybird\\sfx - rock destroyed a3.mp3"
             ],
             "DamageSounds": [
-                "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Damage A1.mp3",
-                "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Damage A2.mp3",
-                "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Damage A3.mp3"
+                "\\audio\\angrybird\\sfx - rock damage a1.mp3",
+                "\\audio\\angrybird\\sfx - rock damage a2.mp3",
+                "\\audio\\angrybird\\sfx - rock damage a3.mp3"
             ],
             "collisionSounds": [
-                "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A1.mp3",
-                "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A2.mp3",
-                "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A3.mp3",
-                "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A4.mp3",
-                "C:\\Users\\guill\\OneDrive\\Desktop\\Engine\\BukiEngine\\Deployment\\audio\\AngryBird\\Sfx - Rock Collision A5.mp3"
+                "\\audio\\angrybird\\sfx - rock collision a1.mp3",
+                "\\audio\\angrybird\\sfx - rock collision a2.mp3",
+                "\\audio\\angrybird\\sfx - rock collision a3.mp3",
+                "\\audio\\angrybird\\sfx - rock collision a4.mp3",
+                "\\audio\\angrybird\\sfx - rock collision a5.mp3"
             ],
             "maxHealth": 300.0,
             "stageImages": [

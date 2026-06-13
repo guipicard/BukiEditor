@@ -21,7 +21,7 @@ namespace buki
 	public:
 		void Render(EditorState& state);
 	private:
-		void SelectPrefab(const std::filesystem::path& path, EditorState& state);
-		bool OpenPrefabPreview(const std::filesystem::path& path, EditorState& state);
+		void SelectPrefab(const std::string& path, EditorState& state);
+		bool OpenPrefabPreview(const std::string& path, EditorState& state);
 	};
 }

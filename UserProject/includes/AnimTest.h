@@ -3,13 +3,13 @@
 
 namespace buki
 {
-	struct RigidBody;
+	class RigidBody;
 	struct Animation;
 	class SpriteAnimator;
-	struct Box;
-	struct Circle;
-	struct Polygon;
-	struct Text;
+	class Box;
+	class Circle;
+	class Polygon;
+	class Text;
 
 	struct AnimTest : public MonoBehaviour
 	{

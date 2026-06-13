@@ -608,9 +608,9 @@ bool buki::InspectorPanel::DrawMultiTransformSection(const std::vector<Entity*>&
 
 	if (ImGui::TreeNodeEx("Transform", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		Vector2 firstPosition = entities.front()->T()->GetPosition();
-		Vector2 firstSize = entities.front()->T()->GetSize();
-		float firstRotation = entities.front()->T()->GetRotation().GetRadians();
+		Vector2 firstPosition = entities.front()->T().GetPosition();
+		Vector2 firstSize = entities.front()->T().GetSize();
+		float firstRotation = entities.front()->T().GetRotation().GetRadians();
 
 		std::vector<Vector2> positions;
 		std::vector<Vector2> sizes;
@@ -621,14 +621,14 @@ bool buki::InspectorPanel::DrawMultiTransformSection(const std::vector<Entity*>&
 
 		for (Entity* entity : entities)
 		{
-			if (entity == nullptr || entity->T() == nullptr)
+			if (entity == nullptr)
 			{
 				continue;
 			}
 
-			Vector2 position = entity->T()->GetPosition();
-			Vector2 size = entity->T()->GetSize();
-			float rotation = entity->T()->GetRotation().GetRadians();
+			Vector2 position = entity->T().GetPosition();
+			Vector2 size = entity->T().GetSize();
+			float rotation = entity->T().GetRotation().GetRadians();
 
 			positions.push_back(position);
 			sizes.push_back(size);
@@ -661,10 +661,10 @@ bool buki::InspectorPanel::DrawMultiTransformSection(const std::vector<Entity*>&
 		{
 			for (Entity* entity : entities)
 			{
-				if (entity == nullptr || entity->T() == nullptr)
-					continue;
+				if (entity == nullptr) continue;
 
-				Vector2 value = entity->T()->GetPosition();
+				auto& t = entity->T();
+				Vector2 value = t.GetPosition();
 
 				if (changedPosX)
 				{
@@ -682,7 +682,7 @@ bool buki::InspectorPanel::DrawMultiTransformSection(const std::vector<Entity*>&
 						value.y = posY;
 				}
 
-				entity->T()->SetPosition(value);
+				t.SetPosition(value);
 			}
 			changed = true;
 		}
@@ -703,12 +703,13 @@ bool buki::InspectorPanel::DrawMultiTransformSection(const std::vector<Entity*>&
 		{
 			for (Entity* entity : entities)
 			{
-				if (entity != nullptr && entity->T() != nullptr)
+				if (entity != nullptr)
 				{
-					Vector2 value = entity->T()->GetSize();
+					auto& t = entity->T();
+					Vector2 value = t.GetSize();
 					if (changedSizeX) value.x = sizeX;
 					if (changedSizeY) value.y = sizeY;
-					entity->T()->SetSize(value);
+					t.SetSize(value);
 				}
 			}
 			changed = true;
@@ -726,10 +727,11 @@ bool buki::InspectorPanel::DrawMultiTransformSection(const std::vector<Entity*>&
 
 				for (Entity* entity : entities)
 				{
-					if (entity != nullptr && entity->T() != nullptr)
+					if (entity != nullptr)
 					{
-						float currentRotation = entity->T()->GetRotation().GetRadians();
-						entity->T()->SetRotation(currentRotation + deltaRotation);
+						auto& t = entity->T();
+						float currentRotation = t.GetRotation().GetRadians();
+						t.SetRotation(currentRotation + deltaRotation);
 					}
 				}
 
@@ -742,9 +744,9 @@ bool buki::InspectorPanel::DrawMultiTransformSection(const std::vector<Entity*>&
 			{
 				for (Entity* entity : entities)
 				{
-					if (entity != nullptr && entity->T() != nullptr)
+					if (entity != nullptr)
 					{
-						entity->T()->SetRotation(rotation);
+						entity->T().SetRotation(rotation);
 					}
 				}
 
@@ -810,26 +812,27 @@ bool buki::InspectorPanel::DrawEntitySection(Entity* entity)
 
 		if (ImGui::TreeNodeEx("Transform", ImGuiTreeNodeFlags_DefaultOpen))
 		{
-			Vector2 position = entity->T()->GetPosition();
+			auto& t = entity->T();
+			Vector2 position = t.GetPosition();
 			float pos[2] = { position.x, position.y };
 			if (ImGui::DragFloat2("Position", pos, 0.1f, 0.0f, 0.0f, "%.3f"))
 			{
-				entity->T()->SetPosition(Vector2(pos[0], pos[1]));
+				t.SetPosition(Vector2(pos[0], pos[1]));
 				changed = true;
 			}
 
-			Vector2 size = entity->T()->GetSize();
+			Vector2 size = t.GetSize();
 			float sizeValues[2] = { size.x, size.y };
 			if (ImGui::DragFloat2("Size", sizeValues, 0.1f, 0.0f, 0.0f, "%.3f"))
 			{
-				entity->T()->SetSize(Vector2(sizeValues[0], sizeValues[1]));
+				t.SetSize(Vector2(sizeValues[0], sizeValues[1]));
 				changed = true;
 			}
 
-			float rotation = entity->T()->GetRotation().GetRadians();
+			float rotation = t.GetRotation().GetRadians();
 			if (ImGui::DragFloat("Rotation", &rotation, 0.1f, 0.0f, 0.0f, "%.3f"))
 			{
-				entity->T()->SetRotation(rotation);
+				t.SetRotation(rotation);
 				changed = true;
 			}
 
@@ -1080,9 +1083,9 @@ bool buki::InspectorPanel::DrawSpriteComponent(Component* cmp)
 		float posOffsetValues[2] = { posOffset.x, posOffset.y };
 		if (ImGui::InputFloat2("Position Offset", posOffsetValues, "%.3f")) { sprite->SetPositionOffset({ posOffsetValues[0], posOffsetValues[1] }); changed = true; }
 
-		Vector2 sizeOffset = sprite->GetSizeOffset();
+		Vector2 sizeOffset = sprite->GetImageSize();
 		float sizeOffsetValues[2] = { sizeOffset.x, sizeOffset.y };
-		if (ImGui::InputFloat2("Size Offset", sizeOffsetValues, "%.3f")) { sprite->SetSizeOffset({ sizeOffsetValues[0], sizeOffsetValues[1] }); changed = true; }
+		if (ImGui::InputFloat2("Size Offset", sizeOffsetValues, "%.3f")) { sprite->SetImageSize({ sizeOffsetValues[0], sizeOffsetValues[1] }); changed = true; }
 
 		bool flipX = sprite->GetFlipX();
 		if (ImGui::Checkbox("Flip X", &flipX)) { sprite->SetFlipX(flipX); changed = true; }
@@ -1672,7 +1675,7 @@ bool buki::InspectorPanel::DrawSharedSpriteComponents(const std::vector<Entity*>
 		paths.push_back(sprite->GetPath());
 		colors.push_back(sprite->GetColor());
 		positionOffsets.push_back(sprite->GetPositionOffset());
-		sizeOffsets.push_back(sprite->GetSizeOffset());
+		sizeOffsets.push_back(sprite->GetImageSize());
 		flipXs.push_back(sprite->GetFlipX());
 		flipYs.push_back(sprite->GetFlipY());
 		useSourceRects.push_back(sprite->UsesSourceRect());
@@ -1749,10 +1752,10 @@ bool buki::InspectorPanel::DrawSharedSpriteComponents(const std::vector<Entity*>
 	{
 		for (Sprite* sprite : sprites)
 		{
-			Vector2 value = sprite->GetSizeOffset();
+			Vector2 value = sprite->GetImageSize();
 			if (changedSizeOffsetX) value.x = sizeOffsetX;
 			if (changedSizeOffsetY) value.y = sizeOffsetY;
-			sprite->SetSizeOffset(value);
+			sprite->SetImageSize(value);
 		}
 		changed = true;
 	}
@@ -2852,7 +2855,7 @@ void buki::InspectorPanel::DrawPrefabPreviewWindows(EditorState& state)
 		bool open = session.open;
 
 		std::string title =
-			session.path.filename().string() + "##PrefabPreview_" + session.windowId;
+			buki::GetFileName(session.path) + "##PrefabPreview_" + session.windowId;
 
 		if (session.requestDockNextToScene && state.prefabDockNodeId != 0)
 		{
@@ -2935,7 +2938,7 @@ void buki::InspectorPanel::RenderPrefabInspector(EditorState& state, IWorld& wor
 
 	bool changed = false;
 
-	ImGui::Text("Prefab: %s", state.selectedPrefabPath.filename().string().c_str());
+	ImGui::Text("Prefab: %s", buki::GetFileName(state.selectedPrefabPath).c_str());
 	ImGui::Separator();
 
 	if (ImGui::Button("Save Prefab"))
@@ -3078,13 +3081,12 @@ void buki::InspectorPanel::RenderSingleEntityInspector(Entity* entity, EditorSta
 			if (ImGui::Button(("Remove##" + cmpName).c_str()))
 				componentToRemove = cmpName;
 		}
-
-		if (!componentToRemove.empty())
-			changed |= entity->RemoveComponentByTypeName(componentToRemove);
-
-		ImGui::Separator();
-		changed |= InspectorPropertyDrawer::DrawAddComponentPopup(entity);
 	}
+
+	if (!componentToRemove.empty())
+		changed |= entity->RemoveComponentByTypeName(componentToRemove);
+
+	changed |= InspectorPropertyDrawer::DrawAddComponentPopup(entity);
 
 	if (changed)
 	{
@@ -3250,26 +3252,27 @@ bool buki::InspectorPanel::DrawPrefabEntitySection(Entity* entity)
 
 		if (ImGui::TreeNodeEx("Transform", ImGuiTreeNodeFlags_DefaultOpen))
 		{
-			Vector2 position = entity->T()->GetPosition();
+			auto t = entity->T();
+			Vector2 position = t.GetPosition();
 			float pos[2] = { position.x, position.y };
 			if (ImGui::DragFloat2("Position", pos, 0.1f, 0.0f, 0.0f, "%.3f"))
 			{
-				entity->T()->SetPosition(Vector2{ pos[0], pos[1] });
+				t.SetPosition(Vector2{ pos[0], pos[1] });
 				changed = true;
 			}
 
-			Vector2 size = entity->T()->GetSize();
+			Vector2 size = t.GetSize();
 			float sizeValues[2] = { size.x, size.y };
 			if (ImGui::DragFloat2("Size", sizeValues, 0.1f, 0.0f, 0.0f, "%.3f"))
 			{
-				entity->T()->SetSize(Vector2{ sizeValues[0], sizeValues[1] });
+				t.SetSize(Vector2{ sizeValues[0], sizeValues[1] });
 				changed = true;
 			}
 
-			float rotation = entity->T()->GetRotation().GetRadians();
+			float rotation = t.GetRotation().GetRadians();
 			if (ImGui::DragFloat("Rotation", &rotation, 0.1f, 0.0f, 0.0f, "%.3f"))
 			{
-				entity->T()->SetRotation(rotation);
+				t.SetRotation(rotation);
 				changed = true;
 			}
 

@@ -181,7 +181,7 @@ void buki::HierarchyPanel::Render(EditorState& state)
 
 		if (prefab != nullptr)
 		{
-			const std::string fileLabel = session.path.stem().string();
+			const std::string fileLabel = fs::path(session.path).stem().string();
 			const std::string entityLabel = prefab->GetName().empty() ? "Unnamed Entity" : prefab->GetName();
 
 			bool selected = (state.selectedPrefabEntity == prefab);
@@ -215,12 +215,10 @@ void buki::HierarchyPanel::Render(EditorState& state)
 		Entity* entity = world.CreateEntity("New Entity");
 		if (entity != nullptr)
 		{
-			if (entity->T() != nullptr)
-			{
-				entity->T()->SetPosition({ 0.0f, 0.0f });
-				entity->T()->SetSize({ 1.0f, 1.0f });
-				entity->T()->SetRotation(0.0f);
-			}
+			auto& t = entity->T();
+			t.SetPosition({ 0.0f, 0.0f });
+			t.SetSize({ 1.0f, 1.0f });
+			t.SetRotation(0.0f);
 
 			state.selectedPrefabPath.clear();
 			state.selectedPrefabEntity = nullptr;

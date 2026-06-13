@@ -3,7 +3,7 @@
 
 namespace buki
 {
-	struct Sprite;
+	class Sprite;
 	struct BricksBehaviour : public MonoBehaviour
 	{
 

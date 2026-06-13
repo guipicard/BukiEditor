@@ -79,12 +79,9 @@ void buki::BukiScene::SaveScene(std::string fileName) const
 		return;
 	}
 
-	const std::string path = "../Deployment/Scenes/" + fileName + ".scene";
 	std::filesystem::create_directories("../Deployment/Scenes");
 
 	json doc;
-	doc["sceneName"] = fileName;
-	doc["scenePath"] = path;
 
 	if (auto* camera = buki::Engine::Get().GetActiveCameraPtr(); camera != nullptr)
 	{
@@ -120,6 +117,7 @@ void buki::BukiScene::SaveScene(std::string fileName) const
 		doc["entities"][uniqueName] = entity->Serialize();
 	}
 
+	const std::string path = "../Deployment/Scenes/" + fileName + ".scene";
 	std::ofstream out(path, std::ios::out | std::ios::trunc);
 	if (!out.is_open())
 	{

@@ -10,9 +10,9 @@
 
 void buki::Box::Draw(float alpha)
 {
-
-	Vector2 pos = m_Entity->T()->GetPosition();
-	float angle = m_Entity->T()->GetRotation().GetRadians();
+	const auto& t = m_Entity->T();
+	const Vector2 pos = t.GetPosition();
+	const float angle = t.GetRotation().GetRadians();
 	
 	if (def.size.x <= 0.0f || def.size.y <= 0.0f)
 	{

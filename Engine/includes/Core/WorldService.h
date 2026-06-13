@@ -47,8 +47,8 @@ namespace buki
 		virtual Entity* InstantiatePrefab(const std::string& path) override;
 		virtual Entity* ClonePrefabEntity(Entity* source) override;
 		virtual std::unordered_map<std::string, PrefabAssetInstance>& GetPrefabAssets() override;
-		virtual Entity* GetOrLoadPrefabEntity(const std::filesystem::path& path) override;
-		virtual bool SavePrefabAsset(const std::filesystem::path& path) override;
+		virtual Entity* GetOrLoadPrefabEntity(const std::string& path) override;
+		virtual bool SavePrefabAsset(const std::string& path) override;
 		virtual void UnloadPrefabAssets() override;
 	private:
 		void CleanEntities();

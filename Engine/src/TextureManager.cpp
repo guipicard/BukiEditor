@@ -58,7 +58,8 @@ namespace buki
 
 	Texture2D* TextureManager::Get(const std::string& path)
 	{
-		auto it = m_Textures.find(path);
+		std::string assetPath = std::filesystem::absolute("../Deployment").string() + "/" + path;
+		auto it = m_Textures.find(assetPath);
 		if (it == m_Textures.end())
 		{
 			return nullptr;

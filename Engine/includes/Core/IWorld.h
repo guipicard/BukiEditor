@@ -14,7 +14,7 @@ namespace buki
 	
 	struct PrefabAssetInstance
 	{
-		std::filesystem::path path;
+		std::string path = "";
 		Entity* entity = nullptr;
 		std::filesystem::file_time_type lastWriteTime{};
 		bool dirty = false;
@@ -77,10 +77,10 @@ namespace buki
 		virtual bool RenameEntity(Entity* entity, const std::string& newName) = 0;
 		virtual std::string MakeUniqueEntityName(const std::string& baseName) const = 0;
 
-		virtual Entity* GetOrLoadPrefabEntity(const std::filesystem::path& path) = 0;
+		virtual Entity* GetOrLoadPrefabEntity(const std::string& path) = 0;
 		virtual Entity* InstantiatePrefab(const std::string& prefabPath) = 0;
 		virtual Entity* ClonePrefabEntity(Entity* source) = 0;
-		virtual bool SavePrefabAsset(const std::filesystem::path& path) = 0;
+		virtual bool SavePrefabAsset(const std::string& path) = 0;
 		virtual void UnloadPrefabAssets() = 0;
 		virtual std::unordered_map<std::string, PrefabAssetInstance>& GetPrefabAssets() = 0;
 	};
