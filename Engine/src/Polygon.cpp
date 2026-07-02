@@ -13,7 +13,7 @@
 
 void buki::Polygon::Draw(float alpha)
 {
-	const auto& t = m_Entity->T();
+	const auto& t = m_Entity->Tm();
     const Vector2 pos = t.GetPosition();
     const float angle = t.GetRotation().GetRadians();
 
@@ -93,27 +93,6 @@ void buki::Polygon::SetPhysics()
 
     SetShapeId(sId);
     Physics().Listen(m_Entity);
-}
-
-json buki::Polygon::Serialize()
-{
-    json doc = SerializeShapeDef(def);
-    doc["type"] = "Polygon";
-    doc["polygon"]["radius"] = def.radius;
-    doc["polygon"]["segments"] = def.segments;
-    return doc;
-}
-
-void buki::Polygon::Deserialize(json _doc)
-{
-    def = DefaultPolygonShapeDef();
-    DeserializeShapeDef(_doc, def);
-
-    if (_doc.contains("polygon"))
-    {
-        def.radius = _doc["polygon"].value("radius", def.radius);
-        def.segments = _doc["polygon"].value("segments", def.segments);
-    }
 }
 
 void buki::Polygon::Set()

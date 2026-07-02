@@ -2,14 +2,16 @@
 #include <string>
 #include <map>
 #include <vector>
-#include <IFixedUpdatable.h>
-#include <IUpdatable.h>
-#include <IDrawable.h>
+#include "IFixedUpdatable.h"
+#include "IUpdatable.h"
+#include "IDrawable.h"
 #include "Subject.h"
 #include "PhysicsService.h"
-#include "Component.h"
 #include "ComponentFactory.h"
 #include "Memory.h"
+#include "ComponentRegistration.h"
+
+#include "Component.h"
 #include "nlohmann/json.hpp"
 
 using json = nlohmann::json;
@@ -28,7 +30,7 @@ namespace buki
 		void Update(float dt);
 		void Destroy();
 
-		Transform& T() const;
+		Transform& Tm() const;
 		std::string GetName() { return m_Name; }
 		inline void SetName(std::string name) { m_Name = name; }
 
@@ -49,8 +51,7 @@ namespace buki
 		void Deserialize(json _doc);
 		void Set();
 
-		bool RemoveComponentByTypeName(const std::string& typeName);
-		bool CanRemoveComponent(const std::string& typeName) const;
+		
 
 		template<typename T>
 		T* AddComponent()
@@ -78,40 +79,6 @@ namespace buki
 
 			return cmp;
 		}
-
-		bool AddComponentByTypeName(const std::string& name)
-		{
-			if (name.empty())
-			{
-				return false;
-			}
-
-			buki::Component* cmp = buki::ComponentFactory::CreateCmp(this, name, json{});
-			if (cmp == nullptr)
-			{
-				return false;
-			}
-
-			m_ComponentByType.emplace(&typeid(*cmp), cmp);
-
-			if (IDrawable* drawable = dynamic_cast<IDrawable*>(cmp))
-			{
-				m_Drawable.push_back(drawable);
-			}
-
-			if (IUpdatable* updatable = dynamic_cast<IUpdatable*>(cmp))
-			{
-				m_Updatable.push_back(updatable);
-			}
-
-			if (IFixedUpdatable* fixedUpdatable = dynamic_cast<IFixedUpdatable*>(cmp))
-			{
-				m_FixedUpdatable.push_back(fixedUpdatable);
-			}
-
-			return true;
-		}
-
 		template<typename T>
 		T* GetComponent()
 		{
@@ -123,7 +90,6 @@ namespace buki
 			}
 			return nullptr;
 		}
-
 		template<typename T>
 		T* GetComponentOfType()
 		{
@@ -137,7 +103,6 @@ namespace buki
 			}
 			return nullptr;
 		}
-
 		template<typename T>
 		std::vector<T*> GetAllComponentsOfType()
 		{
@@ -152,7 +117,6 @@ namespace buki
 			}
 			return components;
 		}
-
 		template<typename T>
 		bool HasComponent()
 		{
@@ -160,40 +124,12 @@ namespace buki
 			return m_ComponentByType.find(type) != m_ComponentByType.end();
 		}
 
-		bool HasComponent(std::string name)
-		{
-			for (std::pair<const type_info*, Component*> cmp : m_ComponentByType)
-			{
-				std::string cmpTypeName = buki::ComponentFactory::GetTypeName(*cmp.first);
-
-				if (cmpTypeName == name)
-				{
-					return true;
-				}
-			}
-
-			return false;
-		}
-
-		Component* GetComponentByTypeName(const std::string& typeName)
-		{
-			for (auto& [type, component] : m_ComponentByType)
-			{
-				if (component == nullptr)
-					continue;
-
-				std::string current = ComponentFactory::GetTypeName(*type);
-				if (current.empty())
-					current = type->name();
-
-				if (current == typeName)
-					return component;
-			}
-
-			return nullptr;
-		}
-
+		bool HasComponent(std::string name);
+		Component* GetComponentByTypeName(const std::string& typeName);
 		std::map<const type_info*, Component*> GetComponents() const { return m_ComponentByType; }
+		bool AddComponentByTypeName(const std::string& name);
+		bool RemoveComponentByTypeName(const std::string& typeName);
+		bool CanRemoveComponent(const std::string& typeName) const;
 	private:
 		std::string m_Name;
 

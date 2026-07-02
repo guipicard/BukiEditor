@@ -1,61 +1,101 @@
-//#pragma once
+#pragma once
 
 #include <unordered_map>
 #include <variant>
 #include <string>
+#include <type_traits>
 
 namespace buki
 {
     using AnimValue = std::variant<bool, int, float, std::string>;
 
-    class AnimationParams
+    struct AnimationParams
     {
-    public:
-        AnimationParams() = default;
+        std::string defaultClip;
+        bool playOnStart = false;
+        float speed = 1.0f;
+        bool loop = true;
 
-        // Custom params (flexible)
         std::unordered_map<std::string, AnimValue> params;
 
-        // Safe getters with defaults
         template<typename T>
         T Get(const std::string& key, T defaultValue = T{}) const
         {
-            static_assert(std::is_same_v<T, bool> || std::is_same_v<T, int> ||
-                std::is_same_v<T, float> || std::is_same_v<T, std::string>,
+            static_assert(
+                std::is_same_v<T, bool> ||
+                std::is_same_v<T, int> ||
+                std::is_same_v<T, float> ||
+                std::is_same_v<T, std::string>,
                 "Only bool, int, float, std::string supported");
+
+            if (key == "defaultClip")
+            {
+                if constexpr (std::is_same_v<T, std::string>)
+                    return defaultClip;
+            }
+            else if (key == "playOnStart")
+            {
+                if constexpr (std::is_same_v<T, bool>)
+                    return playOnStart;
+            }
+            else if (key == "speed")
+            {
+                if constexpr (std::is_same_v<T, float>)
+                    return speed;
+            }
+            else if (key == "loop")
+            {
+                if constexpr (std::is_same_v<T, bool>)
+                    return loop;
+            }
 
             auto it = params.find(key);
             if (it == params.end())
                 return defaultValue;
 
-            if constexpr (std::is_same_v<T, bool>)
-            {
-                if (auto p = std::get_if<bool>(&it->second); p)
-                    return *p;
-            }
-            else if constexpr (std::is_same_v<T, int>)
-            {
-                if (auto p = std::get_if<int>(&it->second); p)
-                    return *p;
-            }
-            else if constexpr (std::is_same_v<T, float>)
-            {
-                if (auto p = std::get_if<float>(&it->second); p)
-                    return *p;
-            }
-            else if constexpr (std::is_same_v<T, std::string>)
-            {
-                if (auto p = std::get_if<std::string>(&it->second); p)
-                    return *p;
-            }
+            if (auto p = std::get_if<T>(&it->second))
+                return *p;
 
             return defaultValue;
         }
 
-        // Setters
-        void Set(const std::string& key, bool value) { params[key] = value; }
-        void Set(const std::string& key, int value) { params[key] = value; }
-        void Set(const std::string& key, float value) { params[key] = value; }
-        void Set(const std::string& key, std::string value) { params[key] = value; }
+        void Set(const std::string& key, bool value)
+        {
+            if (key == "playOnStart")
+                playOnStart = value;
+            else if (key == "loop")
+                loop = value;
+            else
+                params[key] = value;
+        }
+
+        void Set(const std::string& key, int value)
+        {
+            params[key] = value;
+        }
+
+        void Set(const std::string& key, float value)
+        {
+            if (key == "speed")
+                speed = value;
+            else
+                params[key] = value;
+        }
+
+        void Set(const std::string& key, const std::string& value)
+        {
+            if (key == "defaultClip")
+                defaultClip = value;
+            else
+                params[key] = value;
+        }
+
+        void Set(const std::string& key, std::string&& value)
+        {
+            if (key == "defaultClip")
+                defaultClip = std::move(value);
+            else
+                params[key] = std::move(value);
+        }
     };
 }

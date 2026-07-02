@@ -257,7 +257,7 @@ bool buki::WorldService::SaveScene(const std::string& path) const
 		doc["entities"][uniqueName] = entity->Serialize();
 	}
 
-	std::ofstream file(path);
+	std::ofstream file(fs::absolute(fs::path("../Deployment") / path));
 	if (!file.is_open())
 	{
 		return false;

@@ -1,0 +1,79 @@
+{
+    "components": {
+        "Button": {
+            "backgroundImagePath": "",
+            "fontPath": "./fonts/droid_sans.ttf",
+            "fontSize": 18,
+            "onClick": {
+                "functionName": "DrawBoxBoth",
+                "scriptTypeName": "ShapesController"
+            },
+            "style": {
+                "backgroundColor": {
+                    "a": 1.0,
+                    "b": 1.0,
+                    "g": 0.33390992879867554,
+                    "r": 0.2450980544090271
+                },
+                "backgroundHoverColor": {
+                    "a": 1.0,
+                    "b": 0.30000001192092896,
+                    "g": 0.30000001192092896,
+                    "r": 0.30000001192092896
+                },
+                "centerTextX": true,
+                "centerTextY": true,
+                "drawOutline": false,
+                "drawOutlineOnHoverOnly": true,
+                "fitToText": true,
+                "outlineColor": {
+                    "a": 1.0,
+                    "b": 0.0,
+                    "g": 1.0,
+                    "r": 0.0
+                },
+                "outlineHoverColor": {
+                    "a": 1.0,
+                    "b": 0.0,
+                    "g": 1.0,
+                    "r": 1.0
+                },
+                "padding": {
+                    "x": 0.25,
+                    "y": 0.15000000596046448
+                },
+                "showBackground": true,
+                "textColor": {
+                    "a": 1.0,
+                    "b": 1.0,
+                    "g": 1.0,
+                    "r": 1.0
+                },
+                "textHoverColor": {
+                    "a": 1.0,
+                    "b": 0.6000000238418579,
+                    "g": 1.0,
+                    "r": 1.0
+                },
+                "textOffset": {
+                    "x": 0.0,
+                    "y": 0.0
+                }
+            },
+            "text": "Box Both"
+        }
+    },
+    "enable": true,
+    "layer": "",
+    "physics": false,
+    "position": {
+        "x": -18.19999885559082,
+        "y": -9.800000190734863
+    },
+    "rotation": 0.0,
+    "size": {
+        "x": 1.9600000381469727,
+        "y": 0.7200000286102295
+    },
+    "z": 10
+}

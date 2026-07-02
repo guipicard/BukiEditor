@@ -1,17 +1,12 @@
 #pragma once
 #include "ShapesController.h"
-#include "Engine.h"
-#include "Sprite.h"
-#include "RigidBody.h"
-#include "Spawner.h"
-#include "Text.h"
-#include "Camera2D.h"
-#include "Box.h"
-#include "Polygon.h"
-#include "Circle.h"
-#include "Button.h"
-#include "ScriptFunctionRegistry.h"
 
+#include "Box.h"
+#include "Button.h"
+#include "Circle.h"
+#include "Engine.h"
+#include "Entity.h"
+#include "Polygon.h"
 
 buki::ShapesController::ShapesController(Entity* entity)
 	: MonoBehaviour(entity)
@@ -70,7 +65,7 @@ void buki::ShapesController::Update(const float dt)
 			Vector2 randomSize = Vector2(sizeX, sizeY) / 5;
 
 			Entity* e = World().InstantiatePrefab(boxRef.path);
-			auto& t = e->T();
+			auto& t = e->Tm();
 			
 			Box* s = e->GetComponent<Box>();
 			s->def.fillDraw = boxFillDraw;
@@ -93,7 +88,7 @@ void buki::ShapesController::Update(const float dt)
 			Vector2 randomSize = Vector2(r, r);
 
 			Entity* e = World().InstantiatePrefab(polygonRef.path);
-			auto& t = e->T();
+			auto& t = e->Tm();
 
 			Polygon* s = e->GetComponent<Polygon>();
 			s->def.fillDraw = boxFillDraw;
@@ -115,7 +110,7 @@ void buki::ShapesController::Update(const float dt)
 			Vector2 randomSize = Vector2(r, r);
 
 			Entity* e = World().InstantiatePrefab(circleRef.path);
-			auto& t = e->T();
+			auto& t = e->Tm();
 
 			Circle* s = e->GetComponent<Circle>();
 			s->def.fillDraw = circleFillDraw;
@@ -132,7 +127,7 @@ void buki::ShapesController::Update(const float dt)
 	for (auto e : World().GetEntitiesInWorld())
 	{
 		if (e == nullptr) return;
-		if (e->T().GetPosition().y > 30.0f)
+		if (e->Tm().GetPosition().y > 30.0f)
 		{
 			World().Remove(e);
 		}

@@ -1,3 +1,4 @@
+#pragma once
 #include "Box.h"
 
 #include "box2d.h"
@@ -10,7 +11,7 @@
 
 void buki::Box::Draw(float alpha)
 {
-	const auto& t = m_Entity->T();
+	const auto& t = m_Entity->Tm();
 	const Vector2 pos = t.GetPosition();
 	const float angle = t.GetRotation().GetRadians();
 	
@@ -63,27 +64,6 @@ void buki::Box::SetPhysics()
 
 	SetShapeId(sId);
 	Physics().Listen(m_Entity);
-}
-
-json buki::Box::Serialize()
-{
-	json doc = SerializeShapeDef(def);
-	doc["type"] = "Box";
-	doc["box"]["size"]["x"] = def.size.x;
-	doc["box"]["size"]["y"] = def.size.y;
-	return doc;
-}
-
-void buki::Box::Deserialize(json _doc)
-{
-	def = DefaultBoxShapeDef();
-	DeserializeShapeDef(_doc, def);
-
-	if (_doc.contains("box") && _doc["box"].contains("size"))
-	{
-		def.size.x = _doc["box"]["size"].value("x", def.size.x);
-		def.size.y = _doc["box"]["size"].value("y", def.size.y);
-	}
 }
 
 void buki::Box::Set()

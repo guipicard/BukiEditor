@@ -84,6 +84,36 @@ namespace buki
 		return result;
 	}
 
+	std::vector<std::string> ScriptFunctionRegistry::GetFunctionsScriptsName() const
+	{
+		std::vector<std::string> result;
+
+		for (const StaticVoidFunctionInfo& info : m_Functions)
+		{
+			if (std::find(result.begin(), result.end(), info.scriptTypeName) == result.end())
+			{
+				result.push_back(info.scriptTypeName);
+			}
+		}
+
+		return result;
+	}
+
+	std::vector<std::string> ScriptFunctionRegistry::GetFunctionsForScriptName(const std::string& scriptTypeName) const
+	{
+		std::vector<std::string> result;
+
+		for (const StaticVoidFunctionInfo& info : m_Functions)
+		{
+			if (info.scriptTypeName == scriptTypeName)
+			{
+				result.push_back(info.functionName);
+			}
+		}
+
+		return result;
+	}
+
 	void ScriptFunctionRegistry::Clear()
 	{
 		m_Functions.clear();

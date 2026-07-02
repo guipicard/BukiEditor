@@ -26,6 +26,11 @@ namespace buki
 
 
 	public:
+		float maxHealth = 100.0f;
+		std::vector<std::string> stageImages;
+		std::vector<std::string> collisionSounds;
+		std::vector<std::string> DamageSounds;
+		std::vector<std::string> BreakSounds;
 			const std::vector<PropertyInfo>& GetProperties() const override
 			{
 				static std::vector<PropertyInfo> properties = {
@@ -37,12 +42,7 @@ namespace buki
 				};
 				return properties;
 			}
-		float maxHealth = 100.0f;
 
-		std::vector<std::string> stageImages;
-		std::vector<std::string> collisionSounds;
-		std::vector<std::string> DamageSounds;
-		std::vector<std::string> BreakSounds;
 	public:
 		void AddImage(const std::string& image);
 		void AddCollisionSound(const std::string& sound);
@@ -51,7 +51,6 @@ namespace buki
 		void PlayCollisionSound();
 		void PlayDamageSound();
 		void PlayBreakSound();
-		void SetMaxHealth(const float amount);
 	private:
 		void TakeDamage(float damage);
 		std::map<std::string, size_t> soundMap;

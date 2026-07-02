@@ -7,43 +7,46 @@
                     "y": 1.0
                 }
             },
-            "density": 1.0,
-            "fillColor": {
-                "a": 0.7843137383460999,
-                "b": 0.0,
-                "g": 1.0,
-                "r": 0.0
-            },
-            "fillDraw": true,
-            "filter": 0,
-            "friction": 0.6000000238418579,
-            "isSensor": false,
-            "positionOffset": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "restitution": 0.0,
-            "shapeColor": {
-                "a": 1.0,
-                "b": 0.0,
-                "g": 0.0,
-                "r": 1.0
-            },
-            "shapeDraw": true,
-            "type": "Box"
+            "def": {
+                "density": 1.0,
+                "fillColor": {
+                    "a": 0.30000001192092896,
+                    "b": 1.0,
+                    "g": 1.0,
+                    "r": 0.0
+                },
+                "fillDraw": true,
+                "filter": 0,
+                "friction": 0.6000000238418579,
+                "isSensor": false,
+                "positionOffset": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "restitution": 0.0,
+                "shapeColor": {
+                    "a": 1.0,
+                    "b": 0.0,
+                    "g": 0.0,
+                    "r": 1.0
+                },
+                "shapeDraw": true
+            }
         },
         "RigidBody": {
-            "motionLocks": {
-                "angularZ": false,
-                "linearX": false,
-                "linearY": false
+            "def": {
+                "motionLocks": {
+                    "angularZ": false,
+                    "linearX": false,
+                    "linearY": false
+                }
             },
             "type": 2
         }
     },
     "enable": true,
-    "layer": "",
-    "physics": false,
+    "layer": "Box",
+    "physics": true,
     "position": {
         "x": -4.199999809265137,
         "y": 0.0

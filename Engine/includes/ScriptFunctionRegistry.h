@@ -30,6 +30,9 @@ namespace buki
 		std::vector<StaticVoidFunctionInfo> GetAllStaticVoidFunctions() const;
 		std::vector<StaticVoidFunctionInfo> GetFunctionsForScript(const std::string& scriptTypeName) const;
 
+		std::vector<std::string> GetFunctionsScriptsName() const;
+		std::vector<std::string> GetFunctionsForScriptName(const std::string& scriptTypeName) const;
+
 		void Clear();
 
 	private:

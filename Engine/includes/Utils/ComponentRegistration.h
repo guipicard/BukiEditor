@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ComponentFactory.h"
 #include "Entity.h"
+#include "ComponentFactory.h"
 
 #define REGISTER_COMPONENT_EXPLICIT(TYPE, NAME_STRING) \
 	buki::ComponentFactory::Register( \

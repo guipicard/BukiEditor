@@ -6,7 +6,7 @@
 #include "Shapes.h"
 #include "Sprite.h"
 #include "Text.h"
-#include "ComponentRegistration.h"
+
 #include "nlohmann/json.hpp"
 
 using json = nlohmann::json;
@@ -70,7 +70,7 @@ void buki::Entity::Destroy()
 	transform.reset();
 }
 
-buki::Transform& buki::Entity::T() const
+buki::Transform& buki::Entity::Tm() const
 {
 	return *transform;
 }
@@ -139,7 +139,7 @@ void buki::Entity::DeactivatePhysics()
 json buki::Entity::Serialize() const
 {
 	json doc;
-	auto t = T();
+	auto t = Tm();
 	doc["position"]["x"] = t.GetPosition().x;
 	doc["position"]["y"] = t.GetPosition().y;
 	doc["rotation"] = t.GetRotation().GetRadians();
@@ -236,6 +236,71 @@ bool buki::Entity::CanRemoveComponent(const std::string& typeName) const
 	return true;
 }
 
+bool buki::Entity::AddComponentByTypeName(const std::string& name)
+{
+	if (name.empty())
+	{
+		return false;
+	}
+
+	buki::Component* cmp = buki::ComponentFactory::CreateCmp(this, name, json{});
+	if (cmp == nullptr)
+	{
+		return false;
+	}
+
+	m_ComponentByType.emplace(&typeid(*cmp), cmp);
+
+	if (IDrawable* drawable = dynamic_cast<IDrawable*>(cmp))
+	{
+		m_Drawable.push_back(drawable);
+	}
+
+	if (IUpdatable* updatable = dynamic_cast<IUpdatable*>(cmp))
+	{
+		m_Updatable.push_back(updatable);
+	}
+
+	if (IFixedUpdatable* fixedUpdatable = dynamic_cast<IFixedUpdatable*>(cmp))
+	{
+		m_FixedUpdatable.push_back(fixedUpdatable);
+	}
+
+	return true;
+}
+
+bool buki::Entity::HasComponent(std::string name)
+{
+	for (std::pair<const type_info*, Component*> cmp : m_ComponentByType)
+	{
+		std::string cmpTypeName = buki::ComponentFactory::GetTypeName(*cmp.first);
+
+		if (cmpTypeName == name)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+buki::Component* buki::Entity::GetComponentByTypeName(const std::string& typeName)
+{
+	for (auto& [type, component] : m_ComponentByType)
+	{
+		if (component == nullptr)
+			continue;
+
+		std::string current = ComponentFactory::GetTypeName(*type);
+		if (current.empty())
+			current = type->name();
+
+		if (current == typeName)
+			return component;
+	}
+
+	return nullptr;
+}
 bool buki::Entity::RemoveComponentByTypeName(const std::string& typeName)
 {
 	if (!CanRemoveComponent(typeName))

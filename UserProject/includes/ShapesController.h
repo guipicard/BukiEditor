@@ -1,11 +1,10 @@
 #pragma once
 #include "MonoBehaviour.h"
-#include "EntityRef.h"
-#include "ScriptFunctionRegistry.h"
 #include "IWorld.h"
 
 namespace buki
 {
+	class Entity;
 	class Sprite;
 	class RigidBody;
 	class Text;

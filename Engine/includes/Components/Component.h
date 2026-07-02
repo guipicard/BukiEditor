@@ -1,6 +1,9 @@
 #pragma once
 #include "BukiContainers.h"
 #include "nlohmann/json.hpp"
+#include "PropertyInfo.h"
+
+#include <vector>
 
 using json = nlohmann::json;
 
@@ -27,8 +30,15 @@ namespace buki
 		virtual void Start() {}
 		virtual void Destroy() {}
 
-		virtual json Serialize() = 0;
-		virtual void Deserialize(json _doc) = 0;
+		virtual const std::vector<PropertyInfo>& GetProperties() const
+		{
+			static std::vector<PropertyInfo> empty;
+			return empty;
+		}
+
+		virtual json Serialize() const;
+		virtual void Deserialize(const json& doc);
+
 		virtual void Set() = 0;
 
 		inline Entity* GetEntity() { return m_Entity; }

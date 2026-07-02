@@ -1,4 +1,100 @@
 {
+    "Prefabs/BoxBoth.prefab": {
+        "displayMode": 1,
+        "path": "Prefabs/BoxBoth.prefab",
+        "position": {
+            "x": -18.19999885559082,
+            "y": -9.800000190734863
+        },
+        "type": ".prefab",
+        "viewportHeight": 754.0,
+        "viewportWidth": 1060.0,
+        "zoom": 1.0
+    },
+    "Prefabs/CircleEntity.prefab": {
+        "displayMode": 1,
+        "path": "Prefabs/CircleEntity.prefab",
+        "position": {
+            "x": 4.5,
+            "y": 0.0
+        },
+        "type": ".prefab",
+        "viewportHeight": 754.0,
+        "viewportWidth": 1060.0,
+        "zoom": 1.0
+    },
+    "Prefabs/GlassSlim1.prefab": {
+        "displayMode": 1,
+        "path": "Prefabs/GlassSlim1.prefab",
+        "position": {
+            "x": 13.19999885559082,
+            "y": 8.675000190734863
+        },
+        "type": ".prefab",
+        "viewportHeight": 754.0,
+        "viewportWidth": 1060.0,
+        "zoom": 1.0
+    },
+    "Prefabs/PolygonEntity.prefab": {
+        "displayMode": 1,
+        "path": "Prefabs/PolygonEntity.prefab",
+        "position": {
+            "x": -2.0,
+            "y": 0.0
+        },
+        "type": ".prefab",
+        "viewportHeight": 754.0,
+        "viewportWidth": 1060.0,
+        "zoom": 1.0
+    },
+    "Prefabs/RectEntity.prefab": {
+        "displayMode": 1,
+        "path": "Prefabs/RectEntity.prefab",
+        "position": {
+            "x": -4.199999809265137,
+            "y": 0.0
+        },
+        "type": ".prefab",
+        "viewportHeight": 754.0,
+        "viewportWidth": 1060.0,
+        "zoom": 1.0
+    },
+    "Prefabs/StoneSlim1.prefab": {
+        "displayMode": 1,
+        "path": "Prefabs/StoneSlim1.prefab",
+        "position": {
+            "x": 13.19999885559082,
+            "y": 8.675000190734863
+        },
+        "type": ".prefab",
+        "viewportHeight": 754.0,
+        "viewportWidth": 1060.0,
+        "zoom": 1.0
+    },
+    "Prefabs/WoodSlim1.prefab": {
+        "displayMode": 1,
+        "path": "Prefabs/WoodSlim1.prefab",
+        "position": {
+            "x": 13.19999885559082,
+            "y": 8.675000190734863
+        },
+        "type": ".prefab",
+        "viewportHeight": 754.0,
+        "viewportWidth": 1060.0,
+        "zoom": 1.0
+    },
+    "Prefabs/bird1.prefab": {
+        "displayMode": 1,
+        "path": "Prefabs/bird1.prefab",
+        "position": {
+            "x": -11.819999694824219,
+            "y": 6.300000190734863
+        },
+        "type": ".prefab",
+        "viewportHeight": 754.0,
+        "viewportWidth": 1060.0,
+        "zoom": 1.0
+    },
     "Scenes/Ag_Lvl_1.scene": {
         "displayMode": 2,
         "path": "Scenes/Ag_Lvl_1.scene",

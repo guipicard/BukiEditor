@@ -1,6 +1,7 @@
 #pragma once
 #include <float.h>
 #include <cstdlib>
+#include <array>
 #include "math.h"
 
 constexpr auto PI = 3.14159265359f;
@@ -16,14 +17,26 @@ namespace buki
 		float g = 1.0f;
 		float b = 1.0f;
 		float a = 1.0f;
+
+		bool operator==(const Color& other) const
+		{
+			return r == other.r &&
+				g == other.g &&
+				b == other.b &&
+				a == other.a;
+		}
+
+		bool operator!=(const Color& other) const
+		{
+			return !(*this == other);
+		}
 	};
-	struct RectF
-	{
-		float x = 0.0f;
-		float y = 0.0f;
-		float w = 0.0f;
-		float h = 0.0f;
+
+	struct RectF {
+		float x, y, w, h;
+		bool operator!=(RectF other) { return x != other.x && y != other.y && w != other.w && h != other.h; }
 	};
+	
 	struct UVRect
 	{
 		float u0, v0, u1, v1;

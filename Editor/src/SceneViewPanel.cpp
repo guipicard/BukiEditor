@@ -211,7 +211,7 @@ void buki::SceneViewPanel::Render(EditorState& state)
 						state.activeEntity = entity;
 						state.selectedEntities.clear();
 						state.selectedEntities.push_back(entity);
-						state.sceneDirty = true;
+						state.MarkSceneDirty();
 					}
 				}
 			}

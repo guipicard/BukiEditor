@@ -1,3 +1,4 @@
+#pragma once
 #include "Text.h"
 
 #include "Engine.h"
@@ -17,7 +18,7 @@ namespace buki
             return;
         }
 
-        const Vector2 pos = m_Entity->T().GetPosition() + m_PositionOffset;
+        const Vector2 pos = m_Entity->Tm().GetPosition() + m_PositionOffset;
 
         Graphics().DrawTextToCamera(
             *m_Font,
@@ -29,41 +30,6 @@ namespace buki
             m_CenterY
         );
 
-    }
-
-    json Text::Serialize()
-    {
-        json doc;
-        doc["text"] = m_Text;
-        doc["fontPath"] = m_FontPath;
-        doc["fontSize"] = m_FontSize;
-        doc["positionOffset"]["x"] = m_PositionOffset.x;
-        doc["positionOffset"]["y"] = m_PositionOffset.y;
-        doc["color"]["r"] = m_Color.r;
-        doc["color"]["g"] = m_Color.g;
-        doc["color"]["b"] = m_Color.b;
-        doc["color"]["a"] = m_Color.a;
-        doc["centerX"] = m_CenterX;
-        doc["centerY"] = m_CenterY;
-        return doc;
-    }
-
-    void Text::Deserialize(json doc)
-    {
-        m_Text = doc.value("text", "");
-        m_FontPath = doc.value("fontPath", "");
-        m_FontSize = doc.value("fontSize", 24);
-
-        m_PositionOffset.x = doc["positionOffset"].value("x", 0.0f);
-        m_PositionOffset.y = doc["positionOffset"].value("y", 0.0f);
-
-        m_Color.r = doc["color"].value("r", 1.0f);
-        m_Color.g = doc["color"].value("g", 1.0f);
-        m_Color.b = doc["color"].value("b", 1.0f);
-        m_Color.a = doc["color"].value("a", 1.0f);
-
-        m_CenterX = doc.value("centerX", true);
-        m_CenterY = doc.value("centerY", true);
     }
 
     void Text::Set()

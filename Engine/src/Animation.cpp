@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Animation.h"
 
 #include "Engine.h"
@@ -205,7 +207,7 @@ namespace buki
 			return;
 		}
 
-		auto t = m_Entity->T();
+		auto t = m_Entity->Tm();
 		Vector2 pos = t.GetPosition();
 		Vector2 size = t.GetSize();
 
@@ -240,25 +242,6 @@ namespace buki
 	{
 		m_StateMachine.Update();
 		m_Animator.Update(dt);
-	}
-
-
-	// Animation component serialization
-	json Animation::Serialize()
-	{
-		json doc;
-		doc["currentState"] = m_StateMachine.GetCurrentState();
-		doc["playing"] = m_Animator.IsPlaying();
-		doc["clipName"] = m_Animator.GetCurrentClipName();
-		return doc;
-	}
-
-	void Animation::Deserialize(json doc)
-	{
-		//m_Animator.Deserialize(doc);
-		// Restore state machine
-		std::string stateName = doc.value("currentState", "idle");
-		m_StateMachine.ChangeState(stateName);
 	}
 
 	void Animation::Set()

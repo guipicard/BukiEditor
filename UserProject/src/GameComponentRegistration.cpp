@@ -1,3 +1,4 @@
+#pragma once
 #include "GameComponentRegistration.h"
 
 #include "ComponentRegistration.h"
@@ -8,6 +9,7 @@
 #include "AnimTest.h"
 #include "OpenGlTest.h"
 #include "CameraFollow.h"
+#include "Engine.h"
 
 #include "ScriptFunctionRegistry.h"
 

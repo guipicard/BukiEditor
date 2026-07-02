@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Component.h"
+#include "PropertyInfo.h"
 #include "IDrawable.h"
 #include "Graphics/Font2D.h"
 #include "BukiContainers.h"
@@ -16,9 +17,6 @@ namespace buki
         ~Text() override = default;
 
         void Draw(float alpha) override;
-
-        json Serialize() override;
-        void Deserialize(json doc) override;
         void Set() override;
 
         void SetText(const std::string& text) { m_Text = text; }
@@ -42,9 +40,22 @@ namespace buki
 		void SetPositionOffset(const Vector2& offset) { m_PositionOffset = offset; }
 
         [[nodiscard]] Vector2 GetSize() const;
-    private:
-        Font2D* m_Font = nullptr;
 
+    public:
+        const std::vector<PropertyInfo>& GetProperties() const override
+        {
+            static std::vector<PropertyInfo> properties = {
+                BUKI_PROP_STRING_N("text", Text, m_Text),
+                BUKI_PROP_STRING_N("fontPath", Text, m_FontPath),
+                BUKI_PROP_INT_N("fontSize", Text, m_FontSize),
+                BUKI_PROP_VECTOR2_N("positionOffset", Text, m_PositionOffset),
+                BUKI_PROP_COLOR_N("color", Text, m_Color),
+                BUKI_PROP_BOOL_N("centerX", Text, m_CenterX),
+                BUKI_PROP_BOOL_N("centerY", Text, m_CenterY),
+            };
+            return properties;
+        }
+    private:
         std::string m_Text;
         std::string m_FontPath;
 
@@ -54,5 +65,7 @@ namespace buki
         Vector2 m_PositionOffset{ 0.f, 0.f };
         bool m_CenterX = true;
         bool m_CenterY = true;
+        Font2D* m_Font = nullptr;
+
     };
 }

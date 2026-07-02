@@ -339,12 +339,12 @@ bool buki::DrawBrowserTile(const BrowserEntry& entry, float thumbnailSize, bool 
 		if (aspect > 1.0f)
 		{
 			imageSize.y /= aspect;
-			padding.y = (padding.y + thumbnailSize - imageSize.y) * 0.5f;
+			padding.y = (padding.y + (thumbnailSize - imageSize.y)) * 0.5f;
 		}
 		else
 		{
 			imageSize.x *= aspect;
-			padding.x = (padding.x + thumbnailSize - imageSize.x) * 0.5f;
+			padding.x = (padding.x + (thumbnailSize - imageSize.x)) * 0.5f;
 		}
 	}
 
@@ -362,9 +362,9 @@ bool buki::DrawBrowserTile(const BrowserEntry& entry, float thumbnailSize, bool 
 		ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.35f, 0.65f, 1.0f, 1.0f));
 	else
 		ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 1.0f, 1.0f, 0.10f));
-
 	if (thumbnail != nullptr && thumbnail->IsValid())
 	{
+		//ImGui::Indent(padding.x-4.0f);
 		activated = ImGui::ImageButton(
 			"##thumb",
 			buki::ToImGuiTextureID(thumbnail->id),

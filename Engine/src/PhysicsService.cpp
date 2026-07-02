@@ -70,7 +70,7 @@ void buki::PhysicsService::Step(float dt)
 		const b2Vec2 pos = ev.transform.p;
 		const b2Rot rot = ev.transform.q;
 
-		auto& t = e->T();
+		auto& t = e->Tm();
 		t.SetPosition({ pos.x, pos.y });
 		t.SetRotation({ rot.c, rot.s });
 	}
@@ -109,7 +109,7 @@ buki::BodyId buki::PhysicsService::CreatePhysicsBody(Entity* entity)
 	{
 		return {};
 	}
-	auto& t = entity->T();
+	auto& t = entity->Tm();
 
 	RigidBody* rb = entity->GetComponent<RigidBody>();
 	if (rb == nullptr)

@@ -29,5 +29,7 @@
             },
             "z": 0
         }
-    }
+    },
+    "sceneName": "SceneTest",
+    "scenePath": "Scenes/SceneTest.scene"
 }

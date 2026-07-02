@@ -3,9 +3,8 @@
 #include "Component.h"
 #include "IUpdatable.h"
 #include "IFixedUpdatable.h"
-#include "PropertyInfo.h"
 #include "nlohmann/json.hpp"
-#include <vector>
+#include "ScriptFunctionRegistry.h"
 
 namespace buki
 {
@@ -15,21 +14,8 @@ namespace buki
 		MonoBehaviour(Entity* entity);
 		virtual ~MonoBehaviour() = default;
 
-		virtual const std::vector<PropertyInfo>& GetProperties() const
-		{
-			static std::vector<PropertyInfo> empty;
-			return empty;
-		}
-
-		virtual void OnInspectorGUI()
-		{
-		}
-
 		virtual void Update(float dt) = 0;
 		virtual void FixedUpdate(float dt) = 0;
-
-		virtual json Serialize() override;
-		virtual void Deserialize(json doc) override;
 
 		virtual void Set() override;
 		virtual void OnSet() = 0;

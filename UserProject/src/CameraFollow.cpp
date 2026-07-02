@@ -1,3 +1,4 @@
+#pragma once
 #include "CameraFollow.h"
 #include "Entity.h"
 #include "Engine.h"
@@ -13,7 +14,7 @@ void buki::CameraFollow::FixedUpdate(float dt)
 	if (targetEntity != nullptr)
 	{
 		Camera2D* camera = buki::Engine::Get().GetActiveCameraPtr();
-		Vector2 targetPos = targetEntity->T().GetPosition();
+		Vector2 targetPos = targetEntity->Tm().GetPosition();
 		camera->position.x = targetPos.x;
 		camera->position.y = targetPos.y;
 	}

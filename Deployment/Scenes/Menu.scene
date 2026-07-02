@@ -438,5 +438,7 @@
             },
             "z": 0
         }
-    }
+    },
+    "sceneName": "Menu",
+    "scenePath": "Scenes/Menu.scene"
 }

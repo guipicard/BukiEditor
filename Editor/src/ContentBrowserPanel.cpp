@@ -50,7 +50,7 @@ void buki::ContentBrowserPanel::Render(EditorState& state)
 	if (ImGui::Button("Save Scene"))
 	{
 		if (world != nullptr && world->SaveCurrentScene())
-			state.sceneDirty = false;
+			state.ClearSceneDirty();
 	}
 
 	if (!canSaveScene)
@@ -131,7 +131,7 @@ void buki::ContentBrowserPanel::Render(EditorState& state)
 					state.activePrefabPreviewIndex = -1;
 					state.selectedPrefabPath.clear();
 					state.selectedPrefabEntity = nullptr;
-					state.sceneDirty = false;
+					state.ClearSceneDirty();
 					state.scenePreviewSession.cameraSettings.Deserialize(item.path);
 					state.scenePreviewSession.path = item.path;
 					state.selectedScenePath = item.path;

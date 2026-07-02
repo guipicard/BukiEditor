@@ -215,7 +215,7 @@ void buki::HierarchyPanel::Render(EditorState& state)
 		Entity* entity = world.CreateEntity("New Entity");
 		if (entity != nullptr)
 		{
-			auto& t = entity->T();
+			auto& t = entity->Tm();
 			t.SetPosition({ 0.0f, 0.0f });
 			t.SetSize({ 1.0f, 1.0f });
 			t.SetRotation(0.0f);
@@ -226,7 +226,7 @@ void buki::HierarchyPanel::Render(EditorState& state)
 			state.selectedEntities.push_back(entity);
 			state.activeEntity = entity;
 			SyncLegacySelection(state);
-			state.sceneDirty = true;
+			state.MarkSceneDirty();
 		}
 	}
 
@@ -247,7 +247,7 @@ void buki::HierarchyPanel::Render(EditorState& state)
 			state.selectedEntities.clear();
 			state.activeEntity = nullptr;
 			SyncLegacySelection(state);
-			state.sceneDirty = true;
+			state.MarkSceneDirty();
 		}
 	}
 

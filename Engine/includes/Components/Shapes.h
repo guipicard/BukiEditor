@@ -24,8 +24,6 @@ namespace buki
 
 		virtual void SetPhysics() = 0;
 
-		virtual json Serialize() =0;
-		virtual void Deserialize(json _doc) =0;
 		virtual void Set() = 0;
 
 

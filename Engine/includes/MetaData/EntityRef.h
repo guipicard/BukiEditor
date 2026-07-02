@@ -1,88 +1,29 @@
 #pragma once
 #include <string>
 #include "nlohmann/json.hpp"
-#include "Engine.h"
-#include "IWorld.h"
-#include "Entity.h"
 
+using json = nlohmann::json;
+ 
 namespace buki
 {
-
+	class Entity;
+	struct PrefabAssetInstance;
 	struct EntityRef
 	{
-		std::string entityName;
-		std::string prefabPath;
+		std::string entityName = "";
+		std::string prefabPath = "";
 		Entity* cached = nullptr;
 
-		void Clear()
-		{
-			entityName.clear();
-			prefabPath.clear();
-			cached = nullptr;
-		}
+		void Clear();
 
-		bool Empty() const
-		{
-			return entityName.empty() && prefabPath.empty() && cached == nullptr;
-		}
+		bool Empty() const;
 	};
 
-	inline void to_json(nlohmann::json& j, const EntityRef& ref)
-	{
-		j = nlohmann::json{
-			{ "entity", ref.entityName },
-			{ "prefab", ref.prefabPath }
-		};
-	}
+	void to_json(json& j, const EntityRef& ref);
 
-	inline void from_json(const nlohmann::json& j, EntityRef& ref)
-	{
-		ref.entityName = j.value("entity", "");
-		ref.prefabPath = j.value("prefab", "");
-		ref.cached = nullptr;
-	}
+	void from_json(const json& j, EntityRef& ref);
 
+	Entity* ResolveEntityRef(EntityRef& ref);
 
-	inline Entity* ResolveEntityRef(EntityRef& ref)
-	{
-		if (ref.cached != nullptr)
-			return ref.cached;
-
-		IWorld& world = Engine::Get().World();
-
-		if (!ref.entityName.empty())
-		{
-			ref.cached = world.FindEntityByName(ref.entityName);
-			if (ref.cached != nullptr)
-				return ref.cached;
-		}
-
-		if (!ref.prefabPath.empty())
-		{
-			//ref.cached = world.InstantiatePrefab(ref.prefabPath);
-			if (ref.cached != nullptr && ref.entityName.empty())
-			{
-
-			}
-		}
-
-		return ref.cached;
-	}
-
-	inline Entity* ResolvePrefabRef(PrefabAssetInstance& ref)
-	{
-		if (ref.entity != nullptr)
-			return ref.entity;
-
-		if (!ref.path.empty())
-		{
-			//ref.entity = Engine::Get().World().InstantiatePrefab(ref.path);
-			if (ref.entity != nullptr && ref.entity->GetName().empty())
-			{
-
-			}
-		}
-
-		return ref.entity;
-	}
+	Entity* ResolvePrefabRef(PrefabAssetInstance& ref);
 }

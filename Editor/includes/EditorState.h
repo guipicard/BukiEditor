@@ -186,7 +186,6 @@ namespace buki
 
 		bool requestSceneWindowFocus = false;
 
-		bool sceneDirty = false;
 
 		float viewportWidth = 0.0f;
 		float viewportHeight = 0.0f;
@@ -219,5 +218,19 @@ namespace buki
 		ScenePreviewSession scenePreviewSession;
 
 		ImGuiID prefabDockNodeId = 0;
+
+		void MarkSceneDirty() { sceneDirty = true; }
+		void ClearSceneDirty() 
+		{
+			if (sceneDirty)
+			{
+				Engine::Get().Log().LogMessage("Scene marked as clean.");
+			}
+			sceneDirty = false; 
+		}
+		bool IsSceneDirty() const { return sceneDirty; }
+	private:
+
+		bool sceneDirty = false;
 	};
 }

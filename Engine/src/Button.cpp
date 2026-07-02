@@ -1,3 +1,4 @@
+#pragma once
 #include "Button.h"
 
 #include "BukiContainers.h"
@@ -76,7 +77,7 @@ namespace buki
 				textSize.y + m_Style.padding.y * 2.0f
 			};
 
-			m_Entity->T().SetSize(finalSize);
+			m_Entity->Tm().SetSize(finalSize);
 		}
 	}
 
@@ -109,7 +110,7 @@ namespace buki
 			return Vector2{};
 		}
 
-		return m_Entity->T().GetPosition();
+		return m_Entity->Tm().GetPosition();
 	}
 
 	Vector2 Button::GetSize() const
@@ -119,7 +120,7 @@ namespace buki
 			return Vector2{};
 		}
 
-		return m_Entity->T().GetSize();
+		return m_Entity->Tm().GetSize();
 	}
 
 	RectF Button::GetBounds() const
@@ -184,7 +185,7 @@ namespace buki
 			return;
 		}
 
-		const auto& t = m_Entity->T();
+		const auto& t = m_Entity->Tm();
 		const Vector2 pos = t.GetPosition();
 		const Vector2 size = t.GetSize();
 
@@ -243,155 +244,6 @@ namespace buki
 		if (drawOutline)
 		{
 			Graphics().DrawRectOutline(pos, size, 0.0f, outlineColor);
-		}
-	}
-
-	json Button::Serialize()
-	{
-		json doc;
-
-		doc["text"] = m_Text;
-		doc["fontPath"] = m_FontPath;
-		doc["fontSize"] = m_FontSize;
-		doc["backgroundImagePath"] = m_BackgroundImagePath;
-
-		doc["onClick"]["scriptTypeName"] = m_OnClickBinding.scriptTypeName;
-		doc["onClick"]["functionName"] = m_OnClickBinding.functionName;
-
-		doc["style"]["textColor"]["r"] = m_Style.textColor.r;
-		doc["style"]["textColor"]["g"] = m_Style.textColor.g;
-		doc["style"]["textColor"]["b"] = m_Style.textColor.b;
-		doc["style"]["textColor"]["a"] = m_Style.textColor.a;
-
-		doc["style"]["textHoverColor"]["r"] = m_Style.textHoverColor.r;
-		doc["style"]["textHoverColor"]["g"] = m_Style.textHoverColor.g;
-		doc["style"]["textHoverColor"]["b"] = m_Style.textHoverColor.b;
-		doc["style"]["textHoverColor"]["a"] = m_Style.textHoverColor.a;
-
-		doc["style"]["backgroundColor"]["r"] = m_Style.backgroundColor.r;
-		doc["style"]["backgroundColor"]["g"] = m_Style.backgroundColor.g;
-		doc["style"]["backgroundColor"]["b"] = m_Style.backgroundColor.b;
-		doc["style"]["backgroundColor"]["a"] = m_Style.backgroundColor.a;
-
-		doc["style"]["backgroundHoverColor"]["r"] = m_Style.backgroundHoverColor.r;
-		doc["style"]["backgroundHoverColor"]["g"] = m_Style.backgroundHoverColor.g;
-		doc["style"]["backgroundHoverColor"]["b"] = m_Style.backgroundHoverColor.b;
-		doc["style"]["backgroundHoverColor"]["a"] = m_Style.backgroundHoverColor.a;
-
-		doc["style"]["outlineColor"]["r"] = m_Style.outlineColor.r;
-		doc["style"]["outlineColor"]["g"] = m_Style.outlineColor.g;
-		doc["style"]["outlineColor"]["b"] = m_Style.outlineColor.b;
-		doc["style"]["outlineColor"]["a"] = m_Style.outlineColor.a;
-
-		doc["style"]["outlineHoverColor"]["r"] = m_Style.outlineHoverColor.r;
-		doc["style"]["outlineHoverColor"]["g"] = m_Style.outlineHoverColor.g;
-		doc["style"]["outlineHoverColor"]["b"] = m_Style.outlineHoverColor.b;
-		doc["style"]["outlineHoverColor"]["a"] = m_Style.outlineHoverColor.a;
-
-		doc["style"]["padding"]["x"] = m_Style.padding.x;
-		doc["style"]["padding"]["y"] = m_Style.padding.y;
-
-		doc["style"]["textOffset"]["x"] = m_Style.textOffset.x;
-		doc["style"]["textOffset"]["y"] = m_Style.textOffset.y;
-
-		doc["style"]["showBackground"] = m_Style.showBackground;
-		doc["style"]["fitToText"] = m_Style.fitToText;
-		doc["style"]["drawOutline"] = m_Style.drawOutline;
-		doc["style"]["drawOutlineOnHoverOnly"] = m_Style.drawOutlineOnHoverOnly;
-		doc["style"]["centerTextX"] = m_Style.centerTextX;
-		doc["style"]["centerTextY"] = m_Style.centerTextY;
-
-		return doc;
-	}
-
-	void Button::Deserialize(json doc)
-	{
-		m_Text = doc.value("text", std::string("Button"));
-		m_FontPath = doc.value("fontPath", std::string("./fonts/Kenney/Kenney Blocks.ttf"));
-		m_FontSize = doc.value("fontSize", 24);
-		m_BackgroundImagePath = doc.value("backgroundImagePath", std::string(""));
-
-		if (doc.contains("onClick"))
-		{
-			const json& onClick = doc["onClick"];
-			m_OnClickBinding.scriptTypeName = onClick.value("scriptTypeName", std::string(""));
-			m_OnClickBinding.functionName = onClick.value("functionName", std::string(""));
-		}
-		else
-		{
-			m_OnClickBinding.SetEmpty();
-		}
-
-		if (doc.contains("style"))
-		{
-			const json& style = doc["style"];
-
-			if (style.contains("textColor"))
-			{
-				m_Style.textColor.r = style["textColor"].value("r", m_Style.textColor.r);
-				m_Style.textColor.g = style["textColor"].value("g", m_Style.textColor.g);
-				m_Style.textColor.b = style["textColor"].value("b", m_Style.textColor.b);
-				m_Style.textColor.a = style["textColor"].value("a", m_Style.textColor.a);
-			}
-
-			if (style.contains("textHoverColor"))
-			{
-				m_Style.textHoverColor.r = style["textHoverColor"].value("r", m_Style.textHoverColor.r);
-				m_Style.textHoverColor.g = style["textHoverColor"].value("g", m_Style.textHoverColor.g);
-				m_Style.textHoverColor.b = style["textHoverColor"].value("b", m_Style.textHoverColor.b);
-				m_Style.textHoverColor.a = style["textHoverColor"].value("a", m_Style.textHoverColor.a);
-			}
-
-			if (style.contains("backgroundColor"))
-			{
-				m_Style.backgroundColor.r = style["backgroundColor"].value("r", m_Style.backgroundColor.r);
-				m_Style.backgroundColor.g = style["backgroundColor"].value("g", m_Style.backgroundColor.g);
-				m_Style.backgroundColor.b = style["backgroundColor"].value("b", m_Style.backgroundColor.b);
-				m_Style.backgroundColor.a = style["backgroundColor"].value("a", m_Style.backgroundColor.a);
-			}
-
-			if (style.contains("backgroundHoverColor"))
-			{
-				m_Style.backgroundHoverColor.r = style["backgroundHoverColor"].value("r", m_Style.backgroundHoverColor.r);
-				m_Style.backgroundHoverColor.g = style["backgroundHoverColor"].value("g", m_Style.backgroundHoverColor.g);
-				m_Style.backgroundHoverColor.b = style["backgroundHoverColor"].value("b", m_Style.backgroundHoverColor.b);
-				m_Style.backgroundHoverColor.a = style["backgroundHoverColor"].value("a", m_Style.backgroundHoverColor.a);
-			}
-
-			if (style.contains("outlineColor"))
-			{
-				m_Style.outlineColor.r = style["outlineColor"].value("r", m_Style.outlineColor.r);
-				m_Style.outlineColor.g = style["outlineColor"].value("g", m_Style.outlineColor.g);
-				m_Style.outlineColor.b = style["outlineColor"].value("b", m_Style.outlineColor.b);
-				m_Style.outlineColor.a = style["outlineColor"].value("a", m_Style.outlineColor.a);
-			}
-
-			if (style.contains("outlineHoverColor"))
-			{
-				m_Style.outlineHoverColor.r = style["outlineHoverColor"].value("r", m_Style.outlineHoverColor.r);
-				m_Style.outlineHoverColor.g = style["outlineHoverColor"].value("g", m_Style.outlineHoverColor.g);
-				m_Style.outlineHoverColor.b = style["outlineHoverColor"].value("b", m_Style.outlineHoverColor.b);
-				m_Style.outlineHoverColor.a = style["outlineHoverColor"].value("a", m_Style.outlineHoverColor.a);
-			}
-
-			if (style.contains("padding"))
-			{
-				m_Style.padding.x = style["padding"].value("x", m_Style.padding.x);
-				m_Style.padding.y = style["padding"].value("y", m_Style.padding.y);
-			}
-
-			if (style.contains("textOffset"))
-			{
-				m_Style.textOffset.x = style["textOffset"].value("x", m_Style.textOffset.x);
-				m_Style.textOffset.y = style["textOffset"].value("y", m_Style.textOffset.y);
-			}
-
-			m_Style.showBackground = style.value("showBackground", m_Style.showBackground);
-			m_Style.fitToText = style.value("fitToText", m_Style.fitToText);
-			m_Style.drawOutline = style.value("drawOutline", m_Style.drawOutline);
-			m_Style.drawOutlineOnHoverOnly = style.value("drawOutlineOnHoverOnly", m_Style.drawOutlineOnHoverOnly);
-			m_Style.centerTextX = style.value("centerTextX", m_Style.centerTextX);
-			m_Style.centerTextY = style.value("centerTextY", m_Style.centerTextY);
 		}
 	}
 }

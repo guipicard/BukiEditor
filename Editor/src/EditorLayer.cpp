@@ -186,7 +186,7 @@ void buki::EditorLayer::DrawMenuBar()
 			auto* world = buki::Engine::Get().GetWorldPtr();
 			if (world != nullptr && world->LoadScene(state.selectedScenePath.string()))
 			{
-				state.sceneDirty = false;
+				state.MarkSceneDirty();
 				state.selectedEntity = nullptr;
 			}
 		}
@@ -196,7 +196,7 @@ void buki::EditorLayer::DrawMenuBar()
 			auto* world = buki::Engine::Get().GetWorldPtr();
 			if (world != nullptr && world->SaveScene(state.selectedScenePath.string()))
 			{
-				state.sceneDirty = false;
+				state.MarkSceneDirty();
 			}
 		}
 
@@ -225,7 +225,7 @@ void buki::EditorLayer::DrawMenuBar()
 	}
 
 	ImGui::Separator();
-	ImGui::TextUnformatted(state.sceneDirty ? "Modified" : "Saved");
+	ImGui::TextUnformatted(state.IsSceneDirty() ? "Modified" : "Saved");
 
 	ImGui::EndMenuBar();
 }

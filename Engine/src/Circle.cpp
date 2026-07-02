@@ -8,7 +8,7 @@
 
 void buki::Circle::Draw(float alpha)
 {
-	const auto& t = m_Entity->T();
+	const auto& t = m_Entity->Tm();
 	const Vector2 pos = t.GetPosition();
 	const float rotation = t.GetRotation().GetRadians();
 
@@ -59,33 +59,6 @@ void buki::Circle::SetPhysics()
 
 	SetShapeId(sId);
 	Physics().Listen(m_Entity);
-}
-
-json buki::Circle::Serialize()
-{
-	json doc = SerializeShapeDef(def);
-	doc["type"] = "Circle";
-	doc["circle"]["radius"] = def.radius;
-	doc["circle"]["positionOffset"]["x"] = def.positionOffset.x;
-	doc["circle"]["positionOffset"]["y"] = def.positionOffset.y;
-	return doc;
-}
-
-void buki::Circle::Deserialize(json _doc)
-{
-	def = DefaultCircleShapeDef();
-	DeserializeShapeDef(_doc, def);
-
-	if (_doc.contains("circle"))
-	{
-		def.radius = _doc["circle"].value("radius", def.radius);
-
-		if (_doc["circle"].contains("positionOffset"))
-		{
-			def.positionOffset.x = _doc["circle"]["positionOffset"].value("x", def.positionOffset.x);
-			def.positionOffset.y = _doc["circle"]["positionOffset"].value("y", def.positionOffset.y);
-		}
-	}
 }
 
 void buki::Circle::Set()

@@ -7,13 +7,14 @@
 #include "Camera2D.h"
 #include "BukiContainers.h"
 #include "Button.h"
+#include "Sprite.h"
 
 buki::AngryBirdController::AngryBirdController(Entity* _entity) : MonoBehaviour(_entity) {}
 
 void buki::AngryBirdController::Start()
 {
 	anchor = World().FindEntityByName("anchor");
-	anchorPos = anchor->T().GetPosition();
+	anchorPos = anchor->Tm().GetPosition();
 	aimingSoundHandle = Audio().LoadSound("./Audio/AngryBird/Sfx - Slingshot Streched.mp3");
 	launchingSoundHandle = Audio().LoadSound("./Audio/AngryBird/Sfx - Globe Bird Launch 3.mp3");
 	AddCollisionSound("./Audio/AngryBird/Sfx - Globe Bird Hit 1.mp3");
@@ -52,7 +53,7 @@ void buki::AngryBirdController::Update(const float dt)
 	if (Engine::Get().GetTimeScale() == 0.0f) return;
 	Vector2 mousePos;
 	Input().GetMousePositionWorld(&mousePos.x, &mousePos.y);
-	auto& t = m_Entity->T();
+	auto& t = m_Entity->Tm();
 	Vector2 birdPos = t.GetPosition();
 	float birdRadius = t.GetSize().x;
 	std::vector<Entity*> entities;
@@ -144,7 +145,7 @@ void buki::AngryBirdController::Throw(const Vector2 _v)
 void buki::AngryBirdController::Reset()
 {
 	m_Entity->DeactivatePhysics();
-	auto& t = m_Entity->T();
+	auto& t = m_Entity->Tm();
 	t.SetPosition(anchorPos);
 	t.SetRotation(0.0f);
 }

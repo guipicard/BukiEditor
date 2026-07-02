@@ -9,13 +9,42 @@ buki::BricksBehaviour::BricksBehaviour(Entity* _entity) : MonoBehaviour(_entity)
 
 void buki::BricksBehaviour::Start()
 {
+	health = maxHealth;
 	spriteComponent = m_Entity->GetComponent<Sprite>();
 	if (!spriteComponent)
 	{
 		spriteComponent = m_Entity->AddComponent<Sprite>();
 	}
-	SetMaxHealth(maxHealth);
-	health = maxHealth;
+
+	if (spriteComponent)
+	{
+		if (stageImages.size() > 0)
+		{
+
+			for (auto& img : stageImages)
+			{
+				spriteComponent->SetPath(img);
+				spriteComponent->Set();
+			}
+			spriteComponent->SetPath(stageImages[0]);
+			spriteComponent->Set();
+		}
+	}
+	for (auto& sound : collisionSounds)
+	{
+		size_t id = buki::Engine::Get().Audio().LoadSound(sound, true);
+		soundMap[sound] = id;
+	}
+	for (auto& sound : DamageSounds)
+	{
+		size_t id = buki::Engine::Get().Audio().LoadSound(sound, true);
+		soundMap[sound] = id;
+	}
+	for (auto& sound : BreakSounds)
+	{
+		size_t id = buki::Engine::Get().Audio().LoadSound(sound, true);
+		soundMap[sound] = id;
+	}
 }
 
 void buki::BricksBehaviour::Destroy()
@@ -70,36 +99,7 @@ void buki::BricksBehaviour::OnSensorExit(Entity* other)
 
 void buki::BricksBehaviour::OnSet()
 {
-	spriteComponent = m_Entity->GetComponent<Sprite>();
-	if (spriteComponent)
-	{
-		if (stageImages.size() > 0)
-		{
-
-			for (auto& img : stageImages)
-			{
-				spriteComponent->SetPath(img);
-				spriteComponent->Set();
-			}
-			spriteComponent->SetPath(stageImages[0]);
-			spriteComponent->Set();
-		}
-	}
-	for (auto& sound : collisionSounds)
-	{
-		size_t id = buki::Engine::Get().Audio().LoadSound(sound, true);
-		soundMap[sound] = id;
-	}
-	for (auto& sound : DamageSounds)
-	{
-		size_t id = buki::Engine::Get().Audio().LoadSound(sound, true);
-		soundMap[sound] = id;
-	}
-	for (auto& sound : BreakSounds)
-	{
-		size_t id = buki::Engine::Get().Audio().LoadSound(sound, true);
-		soundMap[sound] = id;
-	}
+	
 }
 
 void buki::BricksBehaviour::AddImage(const std::string& image)
@@ -155,12 +155,6 @@ void buki::BricksBehaviour::PlayBreakSound()
 
 	int index = rand() % BreakSounds.size();
 	Audio().PlaySFX(soundMap[BreakSounds[index]]);
-}
-
-void buki::BricksBehaviour::SetMaxHealth(const float amount)
-{
-	maxHealth = amount;
-	health = amount;
 }
 
 void buki::BricksBehaviour::TakeDamage(float damage)
