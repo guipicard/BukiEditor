@@ -7,6 +7,7 @@ namespace buki
 {
 	class Entity;
 	class Component;
+	class ComponentPrefab;
 	class Text;
 	class Button;
 	class Sprite;
@@ -31,10 +32,10 @@ namespace buki
 		std::string RemoveComponent(Component* cmp);
 		bool SaveSelectedEntityAsPrefab(Entity* entity);
 		bool CreateComponentPrefabFromComponent(Component* component);
-		bool ApplyComponentPrefabToEntity(Entity* entity, const std::string& path);
 
 		void DrawPrefabPreviewWindows(EditorState& state);
 		bool DrawPrefabEntitySection(Entity* entity);
+		
 		void RenderPrefabInspector(EditorState& state, IWorld& world);
 		//void DestroyPrefabPreviewFramebuffer(PrefabPreviewSession& session);
 	};

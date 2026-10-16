@@ -2,11 +2,14 @@
 
 #include <string>
 
-#include <nlohmann/json_fwd.hpp>
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
+
 
 namespace buki
 {
     class Component;
+    class Entity;
 
     struct ComponentPrefab
     {
@@ -16,10 +19,12 @@ namespace buki
         bool LoadFromFile(const std::string& path);
         bool SaveToFile(const std::string& path) const;
 
-        bool LoadIntoComponent(Component* component) const;
-        bool SaveFromComponent(const Component* component);
+        bool LoadFromComponent(const Component* component);
+        bool SaveToComponent(Component* component) const;
+
+        bool CreatePreviewComponent(Entity* entity, Component** outComponent) const;
 
     private:
-        std::string m_SerializedData;
+        json m_ComponentData;
     };
 }

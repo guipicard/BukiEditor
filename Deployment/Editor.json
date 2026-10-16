@@ -83,6 +83,18 @@
         "viewportWidth": 1060.0,
         "zoom": 1.0
     },
+    "../Deployment/Scenes/Ag_Lvl_1.scene": {
+        "displayMode": 2,
+        "path": "../Deployment/Scenes/Ag_Lvl_1.scene",
+        "position": {
+            "x": 0.0,
+            "y": 0.0
+        },
+        "type": ".scene",
+        "viewportHeight": 658.0,
+        "viewportWidth": 1060.0,
+        "zoom": 1.0
+    },
     "../Deployment/Scenes/Ag_Lvl_2.scene": {
         "displayMode": 2,
         "path": "../Deployment/Scenes/Ag_Lvl_2.scene",

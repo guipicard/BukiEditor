@@ -269,7 +269,7 @@ void buki::InspectorPanel::RenderSingleEntityInspector(Entity* entity, EditorSta
 
 			changed |= InspectorPropertyDrawer::DrawComponent(component, &cmpName);
 
-			if (ImGui::Button("Create Prefab"))
+			if (ImGui::Button(("Create Prefab##" + cmpName).c_str()))
 			{
 				CreateComponentPrefabFromComponent(component);
 			}
@@ -388,41 +388,26 @@ bool buki::InspectorPanel::SaveSelectedEntityAsPrefab(Entity* entity)
 bool buki::InspectorPanel::CreateComponentPrefabFromComponent(Component* component)
 {
 	if (!component)
+	{
+		Engine::Get().Log().LogError("component is null, canot create from prefab");
 		return false;
+	}
 
 	ComponentPrefab prefab;
 
-	if (!prefab.SaveFromComponent(component))
+	if (!prefab.LoadFromComponent(component))
+	{
+		Engine::Get().Log().LogError("Cannot Save from Component");
 		return false;
+	}
 
-	const std::string path = "ComponentPrefabs/" +
+	const std::string path = "../Deployment/ComponentPrefabs/" + component->GetEntity()->GetName() +
 		ComponentFactory::GetTypeName(typeid(*component)) + ".componentprefab";
 
-	return prefab.SaveToFile(path);
+	fs::path pathPath = ToAbsolutePath(path);
+	
+	return prefab.SaveToFile(pathPath.string());
 }
-
-bool buki::InspectorPanel::ApplyComponentPrefabToEntity(Entity* entity, const std::string& path)
-{
-	ComponentPrefab prefab;
-
-	if (!prefab.LoadFromFile(path))
-		return false;
-
-	Component* component = nullptr;
-	if (entity->AddComponentByTypeName(prefab.componentTypeName))
-	{
-		component = entity->GetComponentByTypeName(prefab.componentTypeName);
-	}
-	if (!component)
-		return false;
-
-	if (!prefab.LoadIntoComponent(component))
-		return false;
-
-	component->Start();
-	return true;
-}
-
 
 void buki::InspectorPanel::DrawPrefabPreviewWindows(EditorState& state)
 {
