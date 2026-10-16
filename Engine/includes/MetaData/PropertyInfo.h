@@ -17,6 +17,7 @@ namespace buki
 		ImageAsset,
 		AudioAsset,
 		FontAsset,
+		AnimationAsset,
 		EntityRef,
 		PrefabRef,
 		ImageAssetList,
@@ -236,6 +237,9 @@ namespace buki
 
 #define BUKI_PROP_FONT_GROUPED(NAME, TYPE, FIELD, GROUP) \
 	buki::PropertyInfo{ { { #FIELD, offsetof(TYPE, FIELD), NAME } }, buki::PropertyType::FontAsset, GROUP }	
+
+#define BUKI_PROP_ANIMATION_GROUPED(NAME, TYPE, FIELD, GROUP) \
+buki::PropertyInfo{ { { #FIELD, offsetof(TYPE, FIELD), NAME } }, buki::PropertyType::AnimationAsset, GROUP }
 		
 #define BUKI_PROP_ENTITY_GROUPED(NAME, TYPE, FIELD, GROUP) \
 	buki::PropertyInfo{ { { #FIELD, offsetof(TYPE, FIELD), NAME } }, buki::PropertyType::EntityRef, GROUP }

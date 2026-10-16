@@ -1,4 +1,124 @@
 {
+    "../Deployment/Prefabs/BoxBoth.prefab": {
+        "displayMode": 1,
+        "path": "../Deployment/Prefabs/BoxBoth.prefab",
+        "position": {
+            "x": -18.19999885559082,
+            "y": -9.800000190734863
+        },
+        "type": ".prefab",
+        "viewportHeight": 754.0,
+        "viewportWidth": 1060.0,
+        "zoom": 1.0
+    },
+    "../Deployment/Prefabs/GlassSlim1.prefab": {
+        "displayMode": 1,
+        "path": "../Deployment/Prefabs/GlassSlim1.prefab",
+        "position": {
+            "x": 13.19999885559082,
+            "y": 8.675000190734863
+        },
+        "type": ".prefab",
+        "viewportHeight": 754.0,
+        "viewportWidth": 1060.0,
+        "zoom": 1.0
+    },
+    "../Deployment/Prefabs/PolygonEntity.prefab": {
+        "displayMode": 1,
+        "path": "../Deployment/Prefabs/PolygonEntity.prefab",
+        "position": {
+            "x": -2.0,
+            "y": 0.0
+        },
+        "type": ".prefab",
+        "viewportHeight": 754.0,
+        "viewportWidth": 1060.0,
+        "zoom": 1.0
+    },
+    "../Deployment/Prefabs/RectEntity.prefab": {
+        "displayMode": 1,
+        "path": "../Deployment/Prefabs/RectEntity.prefab",
+        "position": {
+            "x": -4.199999809265137,
+            "y": 0.0
+        },
+        "type": ".prefab",
+        "viewportHeight": 754.0,
+        "viewportWidth": 1060.0,
+        "zoom": 1.0
+    },
+    "../Deployment/Prefabs/StoneSlim1.prefab": {
+        "displayMode": 1,
+        "path": "../Deployment/Prefabs/StoneSlim1.prefab",
+        "position": {
+            "x": 13.19999885559082,
+            "y": 8.675000190734863
+        },
+        "type": ".prefab",
+        "viewportHeight": 754.0,
+        "viewportWidth": 1060.0,
+        "zoom": 1.0
+    },
+    "../Deployment/Prefabs/WoodSlim1.prefab": {
+        "displayMode": 1,
+        "path": "../Deployment/Prefabs/WoodSlim1.prefab",
+        "position": {
+            "x": 13.19999885559082,
+            "y": 8.675000190734863
+        },
+        "type": ".prefab",
+        "viewportHeight": 754.0,
+        "viewportWidth": 1060.0,
+        "zoom": 1.0
+    },
+    "../Deployment/Prefabs/bird1.prefab": {
+        "displayMode": 1,
+        "path": "../Deployment/Prefabs/bird1.prefab",
+        "position": {
+            "x": -11.819999694824219,
+            "y": 6.300000190734863
+        },
+        "type": ".prefab",
+        "viewportHeight": 754.0,
+        "viewportWidth": 1060.0,
+        "zoom": 1.0
+    },
+    "../Deployment/Scenes/Ag_Lvl_2.scene": {
+        "displayMode": 2,
+        "path": "../Deployment/Scenes/Ag_Lvl_2.scene",
+        "position": {
+            "x": 0.0,
+            "y": 0.0
+        },
+        "type": ".scene",
+        "viewportHeight": 658.0,
+        "viewportWidth": 1060.0,
+        "zoom": 1.0
+    },
+    "../Deployment/Scenes/Platformer.scene": {
+        "displayMode": 2,
+        "path": "../Deployment/Scenes/Platformer.scene",
+        "position": {
+            "x": 0.0,
+            "y": 0.0
+        },
+        "type": ".scene",
+        "viewportHeight": 658.0,
+        "viewportWidth": 1060.0,
+        "zoom": 1.0
+    },
+    "../Deployment/Scenes/SceneTest.scene": {
+        "displayMode": 2,
+        "path": "../Deployment/Scenes/SceneTest.scene",
+        "position": {
+            "x": 0.0,
+            "y": 0.0
+        },
+        "type": ".scene",
+        "viewportHeight": 658.0,
+        "viewportWidth": 1060.0,
+        "zoom": 1.0
+    },
     "Prefabs/BoxBoth.prefab": {
         "displayMode": 1,
         "path": "Prefabs/BoxBoth.prefab",

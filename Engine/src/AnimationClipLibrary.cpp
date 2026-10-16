@@ -1,6 +1,6 @@
 #pragma once
 #include "AnimationClipLibrary.h"
-#include "Animation.h"
+#include "AnimationAsset.h"
 #include "AtlasMetadata.h"
 #include "Engine.h"
 #include "nlohmann/json.hpp"

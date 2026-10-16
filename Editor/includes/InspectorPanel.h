@@ -30,6 +30,8 @@ namespace buki
 
 		std::string RemoveComponent(Component* cmp);
 		bool SaveSelectedEntityAsPrefab(Entity* entity);
+		bool CreateComponentPrefabFromComponent(Component* component);
+		bool ApplyComponentPrefabToEntity(Entity* entity, const std::string& path);
 
 		void DrawPrefabPreviewWindows(EditorState& state);
 		bool DrawPrefabEntitySection(Entity* entity);

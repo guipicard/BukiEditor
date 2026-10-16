@@ -9,66 +9,6 @@
         "zoom": 1.0
     },
     "entities": {
-        "AnimTestEntity": {
-            "components": {
-                "AnimTest": {
-                    "jumpSFXPath": "/audio/AngryBird/Sfx - Wood Collision A1.mp3"
-                },
-                "Box": {
-                    "box": {
-                        "size": {
-                            "x": 4.0,
-                            "y": 4.0
-                        }
-                    },
-                    "density": 0.5,
-                    "fillColor": {
-                        "a": 0.30000001192092896,
-                        "b": 1.0,
-                        "g": 1.0,
-                        "r": 0.0
-                    },
-                    "fillDraw": false,
-                    "filter": 0,
-                    "friction": 0.6000000238418579,
-                    "isSensor": false,
-                    "positionOffset": {
-                        "x": 0.0,
-                        "y": 0.0
-                    },
-                    "restitution": 0.0,
-                    "shapeColor": {
-                        "a": 1.0,
-                        "b": 0.0,
-                        "g": 0.0,
-                        "r": 1.0
-                    },
-                    "shapeDraw": true,
-                    "type": "Box"
-                },
-                "RigidBody": {
-                    "motionLocks": {
-                        "angularZ": false,
-                        "linearX": false,
-                        "linearY": false
-                    },
-                    "type": 2
-                }
-            },
-            "enable": true,
-            "layer": "",
-            "physics": true,
-            "position": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "rotation": 0.0,
-            "size": {
-                "x": 8.0,
-                "y": 8.0
-            },
-            "z": 1
-        },
         "Background": {
             "components": {
                 "TileLayer": {
@@ -85,7 +25,6 @@
                         "x": 21.600000381469727,
                         "y": 21.600000381469727
                     },
-                    "defaultVisible": true,
                     "layerOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -119,8 +58,7 @@
                                 "w": 1024.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -144,8 +82,7 @@
                                 "w": 1024.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         }
                     ]
                 }
@@ -159,8 +96,8 @@
             },
             "rotation": 0.0,
             "size": {
-                "x": 43.20000076293945,
-                "y": 21.600000381469727
+                "x": 1.0,
+                "y": 1.0
             },
             "z": 0
         },
@@ -173,36 +110,39 @@
                             "y": 1.0
                         }
                     },
-                    "density": 1.0,
-                    "fillColor": {
-                        "a": 0.30000001192092896,
-                        "b": 1.0,
-                        "g": 1.0,
-                        "r": 0.0
-                    },
-                    "fillDraw": false,
-                    "filter": 0,
-                    "friction": 1.0,
-                    "isSensor": false,
-                    "positionOffset": {
-                        "x": 0.0,
-                        "y": 0.0
-                    },
-                    "restitution": 0.0,
-                    "shapeColor": {
-                        "a": 1.0,
-                        "b": 0.0,
-                        "g": 0.0,
-                        "r": 1.0
-                    },
-                    "shapeDraw": true,
-                    "type": "Box"
+                    "def": {
+                        "density": 1.0,
+                        "fillColor": {
+                            "a": 0.30000001192092896,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 0.0
+                        },
+                        "fillDraw": false,
+                        "filter": 0,
+                        "friction": 1.0,
+                        "isSensor": false,
+                        "positionOffset": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "restitution": 0.0,
+                        "shapeColor": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 0.0,
+                            "r": 1.0
+                        },
+                        "shapeDraw": true
+                    }
                 },
                 "RigidBody": {
-                    "motionLocks": {
-                        "angularZ": true,
-                        "linearX": true,
-                        "linearY": true
+                    "def": {
+                        "motionLocks": {
+                            "angularZ": true,
+                            "linearX": true,
+                            "linearY": true
+                        }
                     },
                     "type": 0
                 },
@@ -220,7 +160,6 @@
                         "x": 1.0,
                         "y": 1.0
                     },
-                    "defaultVisible": true,
                     "layerOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -254,8 +193,7 @@
                                 "w": 70.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -279,8 +217,7 @@
                                 "w": 70.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -304,8 +241,7 @@
                                 "w": 70.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -329,8 +265,7 @@
                                 "w": 70.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -354,8 +289,7 @@
                                 "w": 70.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -379,8 +313,7 @@
                                 "w": 70.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -404,8 +337,7 @@
                                 "w": 70.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -429,8 +361,7 @@
                                 "w": 70.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -454,8 +385,7 @@
                                 "w": 70.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -479,8 +409,7 @@
                                 "w": 70.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -504,8 +433,7 @@
                                 "w": 70.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -529,8 +457,7 @@
                                 "w": 70.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -554,8 +481,7 @@
                                 "w": 70.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -579,8 +505,7 @@
                                 "w": 70.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -604,8 +529,7 @@
                                 "w": 70.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -629,8 +553,7 @@
                                 "w": 70.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -654,8 +577,7 @@
                                 "w": 70.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -679,8 +601,7 @@
                                 "w": 70.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -704,8 +625,7 @@
                                 "w": 70.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -729,8 +649,7 @@
                                 "w": 70.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -754,8 +673,7 @@
                                 "w": 70.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -779,8 +697,7 @@
                                 "w": 70.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -804,8 +721,7 @@
                                 "w": 70.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -829,8 +745,7 @@
                                 "w": 70.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -854,8 +769,7 @@
                                 "w": 70.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -879,8 +793,7 @@
                                 "w": 70.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -904,8 +817,7 @@
                                 "w": 70.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -929,8 +841,7 @@
                                 "w": 70.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -954,8 +865,7 @@
                                 "w": 70.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -979,8 +889,7 @@
                                 "w": 70.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1004,8 +913,7 @@
                                 "w": 70.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1029,8 +937,7 @@
                                 "w": 70.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1054,8 +961,7 @@
                                 "w": 70.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1079,8 +985,7 @@
                                 "w": 70.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1104,8 +1009,7 @@
                                 "w": 70.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1129,8 +1033,7 @@
                                 "w": 70.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1154,8 +1057,7 @@
                                 "w": 70.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1179,8 +1081,7 @@
                                 "w": 70.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         }
                     ]
                 }
@@ -1194,54 +1095,121 @@
             },
             "rotation": 0.0,
             "size": {
-                "x": 38.0,
+                "x": 1.0,
                 "y": 1.0
             },
             "z": 1
+        },
+        "Player": {
+            "components": {
+                "Animator": {
+                    "params": {
+                        "playOnStart": false,
+                        "speed": 1.0
+                    }
+                },
+                "Box": {
+                    "box": {
+                        "size": {
+                            "x": 1.0,
+                            "y": 1.0
+                        }
+                    },
+                    "def": {
+                        "density": 1.0,
+                        "fillColor": {
+                            "a": 0.30000001192092896,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 0.0
+                        },
+                        "fillDraw": false,
+                        "filter": 0,
+                        "friction": 0.6000000238418579,
+                        "isSensor": false,
+                        "positionOffset": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "restitution": 0.0,
+                        "shapeColor": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 0.0,
+                            "r": 1.0
+                        },
+                        "shapeDraw": true
+                    }
+                },
+                "RigidBody": {
+                    "def": {
+                        "motionLocks": {
+                            "angularZ": true,
+                            "linearX": true,
+                            "linearY": true
+                        }
+                    },
+                    "type": 2
+                }
+            },
+            "enable": true,
+            "layer": "",
+            "physics": true,
+            "position": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 1.0,
+                "y": 1.0
+            },
+            "z": 0
         },
         "PolygonEntity": {
             "components": {
                 "CameraFollow": {
                     "target": {
-                        "entity": "AnimTestEntity",
-                        "prefab": ""
+                        "entityName": "",
+                        "prefabPath": ""
                     }
                 },
                 "Polygon": {
-                    "density": 1.0,
-                    "fillColor": {
-                        "a": 0.886274516582489,
-                        "b": 0.0,
-                        "g": 1.0,
-                        "r": 1.0
-                    },
-                    "fillDraw": true,
-                    "filter": 0,
-                    "friction": 0.6000000238418579,
-                    "isSensor": false,
                     "polygon": {
+                        "density": 1.0,
+                        "fillColor": {
+                            "a": 0.886274516582489,
+                            "b": 0.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "fillDraw": true,
+                        "filter": 0,
+                        "friction": 0.6000000238418579,
+                        "isSensor": false,
+                        "positionOffset": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
                         "radius": 1.0,
-                        "segments": 8
-                    },
-                    "positionOffset": {
-                        "x": 0.0,
-                        "y": 0.0
-                    },
-                    "restitution": 0.0,
-                    "shapeColor": {
-                        "a": 1.0,
-                        "b": 1.0,
-                        "g": 0.0,
-                        "r": 0.0
-                    },
-                    "shapeDraw": true,
-                    "type": "Polygon"
+                        "restitution": 0.0,
+                        "segments": 8,
+                        "shapeColor": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 0.0,
+                            "r": 0.0
+                        },
+                        "shapeDraw": true
+                    }
                 },
                 "RigidBody": {
-                    "motionLocks": {
-                        "angularZ": false,
-                        "linearX": false,
-                        "linearY": false
+                    "def": {
+                        "motionLocks": {
+                            "angularZ": false,
+                            "linearX": false,
+                            "linearY": false
+                        }
                     },
                     "type": 2
                 }
@@ -1260,5 +1228,7 @@
             },
             "z": 1
         }
-    }
+    },
+    "sceneName": "Platformer",
+    "scenePath": "../Deployment/Scenes/Platformer.scene"
 }

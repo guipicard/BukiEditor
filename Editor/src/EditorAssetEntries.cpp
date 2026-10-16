@@ -30,6 +30,9 @@ namespace
 		if (std::strcmp(payloadType, "SCENE") == 0)
 			return entry.isSceneFile;
 
+		if (std::strcmp(payloadType, "ANIM") == 0)
+			return entry.isAnimFile;
+
 		return false;
 	}
 
@@ -44,11 +47,13 @@ namespace
 		item.isPrefabFile = !item.isDirectory && buki::IsPrefabFile(item.path);
 		item.isImageFile = !item.isDirectory && buki::IsImageFile(item.path);
 		item.isAudioFile = !item.isDirectory && buki::IsAudioFile(item.path);
+		item.isAnimFile = !item.isDirectory && buki::IsAnimFile(item.path);
 
 		if (item.isPrefabFile) item.payloadType = "PREFAB";
 		else if (item.isImageFile) item.payloadType = "IMAGE";
 		else if (item.isAudioFile) item.payloadType = "AUDIO";
 		else if (item.isSceneFile) item.payloadType = "SCENE";
+		else if (item.isAnimFile) item.payloadType = "ANIM";
 
 		return item;
 	}
@@ -80,6 +85,12 @@ bool buki::IsImageFile(const std::string& path)
 		ext == ".tga" || ext == ".gif" || ext == ".webp";
 }
 
+bool buki::IsAnimFile(const std::string& path)
+{
+	fs::path aspath = buki::ToAbsolutePath(path);
+	return ToLowerCopy(aspath.extension().string()) == ".anim";
+}
+
 bool buki::IsAudioFile(const std::string& path)
 {
 	fs::path aspath = buki::ToAbsolutePath(path);
@@ -102,12 +113,12 @@ std::string buki::ToAssetRelativePath(const fs::path& fullPath)
 	const std::string assetsMarker = "assets/";
 	const size_t assetsPos = lower.find(assetsMarker);
 	if (assetsPos != std::string::npos)
-		return normalized.substr(assetsPos);
+		return "../Deployment/" + normalized.substr(assetsPos);
 
 	const std::string deploymentMarker = "deployment/";
 	const size_t deploymentPos = lower.find(deploymentMarker);
 	if (deploymentPos != std::string::npos)
-		return normalized.substr(deploymentPos + deploymentMarker.size());
+		return "../Deployment/" + normalized.substr(deploymentPos + deploymentMarker.size());
 
 	return normalized;
 }
@@ -157,6 +168,9 @@ buki::BrowserVisualType buki::GetBrowserVisualType(const std::string& path, bool
 	if (IsPrefabFile(path))
 		return BrowserVisualType::Prefab;
 
+	if (IsAnimFile(path))
+		return BrowserVisualType::Anim;
+
 	if (IsAudioFile(path))
 		return BrowserVisualType::Audio;
 
@@ -181,6 +195,7 @@ buki::EditorBrowserIcons& buki::GetEditorBrowserIcons()
 		icons.file = textures.Load("EditorImg/File.png");
 		icons.prefab = textures.Load("EditorImg/Portrait.png");
 		icons.image = textures.Load("EditorImg/Landscape.png");
+		icons.anim = textures.Load("assets/Kenney/Game Icons/PNG/Black/2x/video.png");
 
 		loaded = true;
 	}
@@ -226,7 +241,8 @@ const buki::Texture2D* buki::GetBrowserThumbnail(const std::string& path, bool i
 	case BrowserVisualType::Scene:  return icons.scene;
 	case BrowserVisualType::Prefab: return icons.prefab;
 	case BrowserVisualType::Audio:  return icons.audio;
-	case BrowserVisualType::Image:  return icons.file;
+	case BrowserVisualType::Image:  return icons.image;
+	case BrowserVisualType::Anim:   return icons.anim;
 	case BrowserVisualType::File:   return icons.file;
 	default:                        return icons.file;
 	}

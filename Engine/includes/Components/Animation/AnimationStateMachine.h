@@ -1,47 +1,41 @@
 #pragma once
 
+#include "AnimationTypes.h"
+#include "AnimationAsset.h"
+
 #include <string>
-#include <vector>
-#include <map>
-#include <functional>
+#include <unordered_map>
 
 namespace buki
 {
-    class SpriteAnimator;
+	class SpriteAnimator;
 
-    struct AnimationTransition
-    {
-        std::string to;
-        std::function<bool()> condition;
-        bool forceRestart = false;
-    };
+	class AnimationStateMachine
+	{
+	public:
+		AnimationStateMachine() = default;
 
-    struct AnimationState
-    {
-        std::string name;
-        std::string clipName;
-        std::vector<AnimationTransition> transitions;
-        std::function<void()> onEnter;
-        std::function<void()> onExit;
-    };
+		void SetAsset(const AnimationAsset* asset);
+		void SetPlayer(SpriteAnimator* player);
 
-    class AnimationStateMachine
-    {
-    public:
-        explicit AnimationStateMachine(SpriteAnimator* animator);
-        ~AnimationStateMachine() = default;
+		void SetBool(const std::string& name, bool value);
+		void SetInt(const std::string& name, int value);
+		void SetFloat(const std::string& name, float value);
+		void SetString(const std::string& name, const std::string& value);
 
-        void AddState(const AnimationState& state);
-        void SetInitialState(const std::string& name);
-        void Update();
+		void Start();
+		void Update();
 
-        void ChangeState(const std::string& name, bool forceRestart = false);
+		[[nodiscard]] const std::string& GetCurrentState() const { return m_CurrentState; }
 
-        [[nodiscard]] const std::string& GetCurrentState() const { return m_CurrentState; }
+	private:
+		bool EvaluateCondition(const AnimCondition& condition) const;
+		bool EvaluateTransition(const AnimationTransition& transition) const;
+		void ChangeState(const std::string& name, bool forceRestart = false);
 
-    private:
-        SpriteAnimator* m_Animator = nullptr;
-        std::map<std::string, AnimationState> m_States = std::map<std::string, AnimationState>();
-        std::string m_CurrentState;
-    };
+		const AnimationAsset* m_Asset = nullptr;
+		SpriteAnimator* m_Player = nullptr;
+		std::unordered_map<std::string, AnimParameterValue> m_Parameters;
+		std::string m_CurrentState;
+	};
 }

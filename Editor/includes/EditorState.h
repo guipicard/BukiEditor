@@ -17,6 +17,7 @@ using json = nlohmann::json;
 namespace buki
 {
 	class Entity;
+	class Component;
 
 	enum class ViewportDisplayMode
 	{
@@ -178,6 +179,10 @@ namespace buki
 		std::vector<Entity*> selectedEntities;
 		Entity* activeEntity = nullptr;
 
+		Component* selectedComponent = nullptr;	
+		std::vector<Component*> selectedComponents;
+		Component* activeComponent = nullptr;
+
 		bool showHierarchy = true;
 		bool showInspector = true;
 		bool showSceneView = true;
@@ -211,6 +216,8 @@ namespace buki
 
 		std::string selectedPrefabPath = "";
 		Entity* selectedPrefabEntity = nullptr;
+
+		std::string selectedComponentPath = "";
 
 		std::vector<PrefabPreviewSession> prefabPreviewSessions;
 		int activePrefabPreviewIndex = -1;

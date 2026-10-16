@@ -1,6 +1,7 @@
 #pragma once
 #include "InspectorPropertyDrawer.h"
 
+#include <string>
 #include "ComponentFactory.h"
 #include "Engine.h"
 #include "IWorld.h"
@@ -16,6 +17,7 @@
 #include "ScriptFunctionRegistry.h"
 #include "TileLayer.h"
 #include "BukiContainers.h"
+#include "AnimationAsset.h"
 
 namespace
 {
@@ -545,7 +547,8 @@ namespace
 		{
 			if (std::strcmp(payloadType, "IMAGE") == 0 ||
 				std::strcmp(payloadType, "AUDIO") == 0 ||
-				std::strcmp(payloadType, "PREFAB") == 0)
+				std::strcmp(payloadType, "PREFAB") == 0 ||
+				std::strcmp(payloadType, "ANIM") == 0)
 			{
 				texture = buki::GetBrowserThumbnail(path, false);
 			}
@@ -763,13 +766,7 @@ namespace
 		return changed;
 	}
 
-	bool DrawAssetListEditor(
-		const char* label,
-		std::vector<std::string>& values,
-		const char* payloadType,
-		bool mixed,
-		bool& applyRequested,
-		bool& clearRequested)
+	bool DrawAssetListEditor(const char* label, std::vector<std::string>& values, const char* payloadType, bool mixed, bool& applyRequested, bool& clearRequested)
 	{
 		bool changed = false;
 		applyRequested = false;
@@ -834,6 +831,61 @@ namespace
 		return changed;
 	}
 
+	bool DrawAnimationAssetInspector(buki::AnimationAsset& asset, std::string assetPath)
+	{
+		char nameBuffer[256];
+		std::snprintf(nameBuffer, sizeof(nameBuffer), "%s", asset.name.c_str());
+
+		if (ImGui::InputText("Name", nameBuffer, sizeof(nameBuffer)))
+			asset.name = nameBuffer;
+
+		char initialStateBuffer[256];
+		std::snprintf(initialStateBuffer, sizeof(initialStateBuffer), "%s", asset.initialState.c_str());
+
+		if (ImGui::InputText("Initial State", initialStateBuffer, sizeof(initialStateBuffer)))
+			asset.initialState = initialStateBuffer;
+
+		if (ImGui::Button("Add State"))
+		{
+			buki::AnimationState state;
+			state.name = "NewState";
+			asset.states.push_back(state);
+		}
+
+		int stateToRemove = -1;
+
+		for (int i = 0; i < static_cast<int>(asset.states.size()); ++i)
+		{
+			buki::AnimationState& state = asset.states[i];
+
+			ImGui::PushID(i);
+
+			char stateNameBuffer[256];
+			std::snprintf(stateNameBuffer, sizeof(stateNameBuffer), "%s", state.name.c_str());
+
+			if (ImGui::InputText("State Name", stateNameBuffer, sizeof(stateNameBuffer)))
+				state.name = stateNameBuffer;
+
+			char clipNameBuffer[256];
+			std::snprintf(clipNameBuffer, sizeof(clipNameBuffer), "%s", state.clipName.c_str());
+
+			if (ImGui::InputText("Clip Name", clipNameBuffer, sizeof(clipNameBuffer)))
+				state.clipName = clipNameBuffer;
+
+			if (ImGui::Button("Remove State"))
+				stateToRemove = i;
+
+			ImGui::PopID();
+			ImGui::Separator();
+		}
+
+		if (stateToRemove >= 0)
+			asset.states.erase(asset.states.begin() + stateToRemove);
+
+		if (ImGui::Button("Save"))
+			asset.SaveToFile(assetPath);
+		return true;
+	}
 	// ------ Mixed Fields
 	
 	bool DrawMixedBoolField(const char* id, bool mixed, bool& value)
@@ -2263,6 +2315,7 @@ bool buki::InspectorPropertyDrawer::DrawProperty(const PropertyInfo& propInfo, v
 	case PropertyType::EntityRef:         ImGui::SameLine(); return DrawEntityPicker(propInfo, fieldPtr);
 	case PropertyType::PrefabRef:         ImGui::SameLine(); return DrawPrefabPicker(propInfo, fieldPtr);
 	case PropertyType::FontAsset:         ImGui::SameLine(); return DrawStringAssetPicker(propInfo, fieldPtr, "FONT");
+	case PropertyType::AnimationAsset:    return DrawStringAssetPicker(propInfo, fieldPtr, "ANIM");
 	case PropertyType::FontAssetList:     return DrawStringAssetListPicker(propInfo, fieldPtr, "FONT");
 	case PropertyType::Vector2:           ImGui::SameLine(); return DrawVector2Property(propInfo, fieldPtr);
 	case PropertyType::Color:             ImGui::SameLine(); return DrawColorProperty(propInfo, fieldPtr);

@@ -3,7 +3,7 @@
 #include "ComponentRegistration.h"
 
 #include "Polygon.h"
-#include "Animation.h"
+#include "Animator.h"
 #include "Spawner.h"
 #include "Box.h"
 #include "Circle.h"
@@ -23,5 +23,5 @@ void buki::RegisterEngineComponents()
 	REGISTER_COMPONENT_EXPLICIT(Polygon, "Polygon");
 	REGISTER_COMPONENT_EXPLICIT(Circle, "Circle");
 	REGISTER_COMPONENT_EXPLICIT(Button, "Button");
-	REGISTER_COMPONENT_EXPLICIT(Animation, "Animation");
+	REGISTER_COMPONENT_EXPLICIT(Animator, "Animator");
 }

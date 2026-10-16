@@ -22,6 +22,7 @@
 #include "InspectorPropertyDrawer.h"
 #include "ComponentFactory.h"
 #include "PropertyInfo.h"
+#include "ComponentPrefab.h"
 
 #include "EditorAssetEntries.h"
 #include "EditorViewportHelpers.h"
@@ -268,6 +269,10 @@ void buki::InspectorPanel::RenderSingleEntityInspector(Entity* entity, EditorSta
 
 			changed |= InspectorPropertyDrawer::DrawComponent(component, &cmpName);
 
+			if (ImGui::Button("Create Prefab"))
+			{
+				CreateComponentPrefabFromComponent(component);
+			}
 			if (ImGui::Button(("Remove##" + cmpName).c_str())) componentToRemove = cmpName;
 		}
 	}
@@ -377,6 +382,44 @@ bool buki::InspectorPanel::SaveSelectedEntityAsPrefab(Entity* entity)
 		return false;
 
 	out << entity->Serialize().dump(4);
+	return true;
+}
+
+bool buki::InspectorPanel::CreateComponentPrefabFromComponent(Component* component)
+{
+	if (!component)
+		return false;
+
+	ComponentPrefab prefab;
+
+	if (!prefab.SaveFromComponent(component))
+		return false;
+
+	const std::string path = "ComponentPrefabs/" +
+		ComponentFactory::GetTypeName(typeid(*component)) + ".componentprefab";
+
+	return prefab.SaveToFile(path);
+}
+
+bool buki::InspectorPanel::ApplyComponentPrefabToEntity(Entity* entity, const std::string& path)
+{
+	ComponentPrefab prefab;
+
+	if (!prefab.LoadFromFile(path))
+		return false;
+
+	Component* component = nullptr;
+	if (entity->AddComponentByTypeName(prefab.componentTypeName))
+	{
+		component = entity->GetComponentByTypeName(prefab.componentTypeName);
+	}
+	if (!component)
+		return false;
+
+	if (!prefab.LoadIntoComponent(component))
+		return false;
+
+	component->Start();
 	return true;
 }
 
