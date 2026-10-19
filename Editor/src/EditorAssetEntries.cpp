@@ -71,6 +71,10 @@ namespace
 	}
 }
 
+
+
+
+
 bool buki::IsPrefabFile(const std::string& path)
 {
 	fs::path aspath = buki::ToAbsolutePath(path);

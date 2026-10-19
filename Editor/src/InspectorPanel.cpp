@@ -22,7 +22,6 @@
 #include "InspectorPropertyDrawer.h"
 #include "ComponentFactory.h"
 #include "PropertyInfo.h"
-#include "ComponentPrefab.h"
 
 #include "EditorAssetEntries.h"
 #include "EditorViewportHelpers.h"
@@ -186,6 +185,12 @@ void buki::InspectorPanel::Render(EditorState& state)
 
 	auto& world = Engine::Get().World();
 
+	if (state.animationAssetEditor->open)
+	{
+		state.animationAssetEditor->DrawInspector();
+		ImGui::End();
+		return;
+	}
 	if (state.selectedPrefabEntity != nullptr)
 	{
 		RenderPrefabInspector(state, world);
@@ -220,6 +225,7 @@ void buki::InspectorPanel::Render(EditorState& state)
 		ImGui::End();
 		return;
 	}
+
 
 	if (selected.size() == 1)
 	{
@@ -269,10 +275,6 @@ void buki::InspectorPanel::RenderSingleEntityInspector(Entity* entity, EditorSta
 
 			changed |= InspectorPropertyDrawer::DrawComponent(component, &cmpName);
 
-			if (ImGui::Button(("Create Prefab##" + cmpName).c_str()))
-			{
-				CreateComponentPrefabFromComponent(component);
-			}
 			if (ImGui::Button(("Remove##" + cmpName).c_str())) componentToRemove = cmpName;
 		}
 	}
@@ -383,30 +385,6 @@ bool buki::InspectorPanel::SaveSelectedEntityAsPrefab(Entity* entity)
 
 	out << entity->Serialize().dump(4);
 	return true;
-}
-
-bool buki::InspectorPanel::CreateComponentPrefabFromComponent(Component* component)
-{
-	if (!component)
-	{
-		Engine::Get().Log().LogError("component is null, canot create from prefab");
-		return false;
-	}
-
-	ComponentPrefab prefab;
-
-	if (!prefab.LoadFromComponent(component))
-	{
-		Engine::Get().Log().LogError("Cannot Save from Component");
-		return false;
-	}
-
-	const std::string path = "../Deployment/ComponentPrefabs/" + component->GetEntity()->GetName() +
-		ComponentFactory::GetTypeName(typeid(*component)) + ".componentprefab";
-
-	fs::path pathPath = ToAbsolutePath(path);
-	
-	return prefab.SaveToFile(pathPath.string());
 }
 
 void buki::InspectorPanel::DrawPrefabPreviewWindows(EditorState& state)

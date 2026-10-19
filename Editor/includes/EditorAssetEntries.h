@@ -5,6 +5,7 @@
 #include <vector>
 #include "EditorState.h"
 #include "imgui.h"
+#include "AnimationAsset.h"
 
 namespace fs = std::filesystem;
 namespace buki

@@ -8,6 +8,7 @@
 #include "nlohmann/json.hpp"
 #include "BukiContainers.h"
 #include "Engine.h"
+#include "AnimationAssetEditor.h"
 #include "ImGui.h"
 
 namespace fs = std::filesystem;
@@ -182,6 +183,8 @@ namespace buki
 		Component* selectedComponent = nullptr;	
 		std::vector<Component*> selectedComponents;
 		Component* activeComponent = nullptr;
+
+		AnimationAssetEditor* animationAssetEditor = new AnimationAssetEditor();
 
 		bool showHierarchy = true;
 		bool showInspector = true;

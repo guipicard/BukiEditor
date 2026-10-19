@@ -157,6 +157,7 @@ void buki::WorldService::Load(const std::string& scene)
 	m_SceneToLoad.clear();
 }
 
+
 bool buki::WorldService::LoadScene(const std::string& path)
 {
 	fs::path scenePath = fs::absolute(fs::path("../Deployment") / path);

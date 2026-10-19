@@ -1,0 +1,19 @@
+{
+    "clips": {},
+    "initialState": "Idle",
+    "name": "testanimfile",
+    "parameters": [],
+    "states": [
+        {
+            "clipName": "Idle",
+            "name": "Idle",
+            "transitions": []
+        },
+        {
+            "clipName": "Walk",
+            "name": "Walk",
+            "transitions": []
+        }
+    ],
+    "version": 1
+}

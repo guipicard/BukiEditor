@@ -11,6 +11,18 @@
         "viewportWidth": 1060.0,
         "zoom": 1.0
     },
+    "../Deployment/Prefabs/CircleEntity.prefab": {
+        "displayMode": 1,
+        "path": "../Deployment/Prefabs/CircleEntity.prefab",
+        "position": {
+            "x": 4.5,
+            "y": 0.0
+        },
+        "type": ".prefab",
+        "viewportHeight": 754.0,
+        "viewportWidth": 1060.0,
+        "zoom": 1.0
+    },
     "../Deployment/Prefabs/GlassSlim1.prefab": {
         "displayMode": 1,
         "path": "../Deployment/Prefabs/GlassSlim1.prefab",

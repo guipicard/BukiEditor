@@ -18,7 +18,6 @@
 #include "TileLayer.h"
 #include "BukiContainers.h"
 #include "AnimationAsset.h"
-#include "ComponentPrefab.h"
 
 namespace
 {
@@ -1413,30 +1412,6 @@ namespace
 
 		return changedR || changedG || changedB || changedA;
 	}
-
-
-	bool ApplyComponentPrefabToEntity(buki::Entity* entity, const std::string& path)
-	{
-		buki::ComponentPrefab prefab;
-
-		if (!prefab.LoadFromFile(path))
-			return false;
-
-		buki::Component* component = nullptr;
-		if (entity->AddComponentByTypeName(prefab.componentTypeName))
-		{
-			component = entity->GetComponentByTypeName(prefab.componentTypeName);
-		}
-		if (!component)
-			return false;
-
-		if (!prefab.SaveToComponent(component))
-			return false;
-
-		component->Start();
-		return true;
-	}
-
 	
 	// ------ Shared Fields
 
@@ -2276,18 +2251,6 @@ namespace
 						ref->cached = nullptr;
 					}
 					changed = true;
-				}
-			}
-
-			if (const ImGuiPayload* payload =
-				ImGui::AcceptDragDropPayload("COMPONENT_PREFAB"))
-			{
-				const char* droppedPath =
-					static_cast<const char*>(payload->Data);
-
-				for (buki::EntityRef* ref : refs)
-				{
-					ApplyComponentPrefabToEntity(ResolveEntityRef(*ref), droppedPath);
 				}
 			}
 

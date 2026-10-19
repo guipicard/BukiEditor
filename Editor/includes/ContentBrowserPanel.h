@@ -2,6 +2,7 @@
 
 #include "EditorState.h"
 #include "Engine.h"
+#include "AnimationAssetEditor.h"
 
 #include <algorithm>
 #include <filesystem>
@@ -23,5 +24,6 @@ namespace buki
 	private:
 		void SelectPrefab(const std::string& path, EditorState& state);
 		bool OpenPrefabPreview(const std::string& path, EditorState& state);
+		
 	};
 }
