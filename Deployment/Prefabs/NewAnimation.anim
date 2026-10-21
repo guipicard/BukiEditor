@@ -1,17 +1,18 @@
 {
-    "clips": {},
+    "clips": {
+        "NewClip": {
+            "frames": [],
+            "loop": true,
+            "name": "NewClip"
+        }
+    },
     "initialState": "Idle",
     "name": "testanimfile",
     "parameters": [],
     "states": [
         {
-            "clipName": "Idle",
-            "name": "Idle",
-            "transitions": []
-        },
-        {
-            "clipName": "Walk",
-            "name": "Walk",
+            "clipName": "IdleState",
+            "name": "IdleState",
             "transitions": []
         }
     ],

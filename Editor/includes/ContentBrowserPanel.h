@@ -15,15 +15,12 @@ namespace fs = std::filesystem;
 namespace buki
 {
 	struct Texture2D;
+	struct BrowserEntry;
 	class Entity;
 
 	class ContentBrowserPanel
 	{
 	public:
 		void Render(EditorState& state);
-	private:
-		void SelectPrefab(const std::string& path, EditorState& state);
-		bool OpenPrefabPreview(const std::string& path, EditorState& state);
-		
 	};
 }

@@ -12,19 +12,6 @@ namespace buki
 {
 	struct Texture2D;
 
-	struct BrowserEntry
-	{
-		std::string path;
-		std::string displayName;
-		std::string payloadType;
-		bool isDirectory = false;
-		bool isSceneFile = false;
-		bool isPrefabFile = false;
-		bool isImageFile = false;
-		bool isAnimFile = false;
-		bool isAudioFile = false;
-	};
-
 	enum class BrowserVisualType
 	{
 		Folder,
@@ -33,7 +20,24 @@ namespace buki
 		Anim,
 		Audio,
 		Image,
-		File
+		File,
+		Count
+	};
+
+	struct BrowserEntry
+	{
+		std::string path;
+		std::string displayName;
+		std::string payloadType;
+		BrowserVisualType type;
+
+		// dumbest shit ive seen
+		//bool isDirectory = false;
+		//bool isSceneFile = false;
+		//bool isPrefabFile = false;
+		//bool isImageFile = false;
+		//bool isAnimFile = false;
+		//bool isAudioFile = false;
 	};
 
 	struct EditorBrowserIcons
@@ -53,6 +57,7 @@ namespace buki
 	bool IsAudioFile(const std::string& path);
 	bool IsSceneFile(const std::string& path);
 
+	void SortBrowserEntries(std::vector<buki::BrowserEntry>& entries);
 	std::string ToAssetRelativePath(const fs::path& fullPath);
 	fs::path ToAbsolutePath(const std::string& assetRelativePath);
 	std::string DisplayNameForPath(const std::string& path);
@@ -75,4 +80,11 @@ namespace buki
 	ImTextureID ToImGuiTextureID(std::uint32_t textureId);
 
 	bool DrawBrowserTile(const BrowserEntry& entry, float thumbnailSize, bool selected);
+
+	void OnClick(EditorState& state, const BrowserEntry item);
+	void OnDoubleClick(EditorState& state, const BrowserEntry item);
+	void OnRightClick(EditorState& state, const BrowserEntry item);
+
+	void SelectPrefab(EditorState& state, const std::string& path);
+	bool OpenPrefabPreview(EditorState& state, const std::string& path);
 }

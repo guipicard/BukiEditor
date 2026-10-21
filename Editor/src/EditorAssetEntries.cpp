@@ -2,6 +2,7 @@
 #include "EditorAssetEntries.h"
 
 #include "Engine.h"
+#include "Entity.h"
 #include "Texture2D.h"
 #include "EditorState.h"
 #include "EditorViewportHelpers.h"
@@ -18,20 +19,22 @@ namespace
 		if (payloadType == nullptr || payloadType[0] == '\0')
 			return true;
 
+
+
 		if (std::strcmp(payloadType, "IMAGE") == 0)
-			return entry.isImageFile;
+			return entry.type == buki::BrowserVisualType::Image;
 
 		if (std::strcmp(payloadType, "AUDIO") == 0)
-			return entry.isAudioFile;
+			return entry.type == buki::BrowserVisualType::Audio;
 
 		if (std::strcmp(payloadType, "PREFAB") == 0)
-			return entry.isPrefabFile;
+			return entry.type == buki::BrowserVisualType::Prefab;
 
 		if (std::strcmp(payloadType, "SCENE") == 0)
-			return entry.isSceneFile;
+			return entry.type == buki::BrowserVisualType::Scene;
 
 		if (std::strcmp(payloadType, "ANIM") == 0)
-			return entry.isAnimFile;
+			return entry.type == buki::BrowserVisualType::Anim;
 
 		return false;
 	}
@@ -42,37 +45,51 @@ namespace
 		fs::path fullPath = fs::absolute(dirEntry.path()).lexically_normal();
 		item.path = buki::ToAssetRelativePath(fullPath);
 		item.displayName = fullPath.filename().string();
-		item.isDirectory = dirEntry.is_directory();
-		item.isSceneFile = !item.isDirectory && buki::IsSceneFile(item.path);
-		item.isPrefabFile = !item.isDirectory && buki::IsPrefabFile(item.path);
-		item.isImageFile = !item.isDirectory && buki::IsImageFile(item.path);
-		item.isAudioFile = !item.isDirectory && buki::IsAudioFile(item.path);
-		item.isAnimFile = !item.isDirectory && buki::IsAnimFile(item.path);
-
-		if (item.isPrefabFile) item.payloadType = "PREFAB";
-		else if (item.isImageFile) item.payloadType = "IMAGE";
-		else if (item.isAudioFile) item.payloadType = "AUDIO";
-		else if (item.isSceneFile) item.payloadType = "SCENE";
-		else if (item.isAnimFile) item.payloadType = "ANIM";
+		if (dirEntry.is_directory())
+		{
+			item.type = buki::BrowserVisualType::Folder;
+		}
+		else if (buki::IsSceneFile(item.path))
+		{
+			item.type = buki::BrowserVisualType::Scene;
+		}
+		else if (buki::IsPrefabFile(item.path))
+		{
+			item.type = buki::BrowserVisualType::Prefab;
+		}
+		else if (buki::IsImageFile(item.path))
+		{
+			item.type = buki::BrowserVisualType::Image;
+		}
+		else if (buki::IsAudioFile(item.path))
+		{
+			item.type = buki::BrowserVisualType::Audio;
+		}
+		else if (buki::IsAnimFile(item.path))
+		{
+			item.type = buki::BrowserVisualType::Anim;
+		}
 
 		return item;
 	}
 
-	void SortBrowserEntries(std::vector<buki::BrowserEntry>& entries)
-	{
-		std::sort(entries.begin(), entries.end(),
-			[](const buki::BrowserEntry& a, const buki::BrowserEntry& b)
-			{
-				if (a.isDirectory != b.isDirectory)
-					return a.isDirectory > b.isDirectory;
-
-				return buki::ToLowerCopy(a.displayName) < buki::ToLowerCopy(b.displayName);
-			});
-	}
 }
 
 
 
+void buki::SortBrowserEntries(std::vector<buki::BrowserEntry>& entries)
+{
+	std::sort(entries.begin(), entries.end(),
+		[](const buki::BrowserEntry& a, const buki::BrowserEntry& b)
+		{
+			bool aDir = a.type == buki::BrowserVisualType::Folder;
+			bool bDir = b.type == buki::BrowserVisualType::Folder;
+			if (aDir != bDir)
+				return aDir > bDir;
+
+			return buki::ToLowerCopy(a.displayName) < buki::ToLowerCopy(b.displayName);
+		});
+}
 
 
 bool buki::IsPrefabFile(const std::string& path)
@@ -343,14 +360,14 @@ bool buki::DrawBrowserTile(const BrowserEntry& entry, float thumbnailSize, bool 
 	ImGui::PushID(entry.path.c_str());
 	ImGui::BeginGroup();
 
-	const Texture2D* thumbnail = GetBrowserThumbnail(entry.path, entry.isDirectory);
+	const Texture2D* thumbnail = GetBrowserThumbnail(entry.path, entry.type == buki::BrowserVisualType::Folder);
 
 	ImVec2 buttonSize(thumbnailSize, thumbnailSize);
 	ImVec2 imageSize(thumbnailSize, thumbnailSize);
 	ImVec2 padding(thumbnailSize / 8.0f, thumbnailSize / 8.0f);
 
-	imageSize.x -= padding.x*2;
-	imageSize.y -= padding.y*2;
+	imageSize.x -= padding.x * 2;
+	imageSize.y -= padding.y * 2;
 
 	if (thumbnail != nullptr && thumbnail->height != 0 && thumbnail->width != 0 &&
 		thumbnail->height != thumbnail->width)
@@ -421,4 +438,195 @@ bool buki::DrawBrowserTile(const BrowserEntry& entry, float thumbnailSize, bool 
 	ImGui::PopID();
 
 	return activated;
+}
+
+void buki::OnClick(EditorState& state, const BrowserEntry item)
+{
+	state.selectedItem = item.path;
+	switch (item.type)
+	{
+	case BrowserVisualType::Folder:
+		state.currentContentPath = item.path;
+		break;
+	case BrowserVisualType::Scene:
+		state.selectedScenePath = item.path;
+		state.selectedPrefabPath.clear();
+		state.selectedPrefabEntity = nullptr;
+		break;
+	case BrowserVisualType::Prefab:
+		SelectPrefab(state, item.path);
+		break;
+	case BrowserVisualType::Anim:
+		if (state.animationAssetEditor->Load(item.path))
+		{
+		}
+		break;
+	default:
+		break;
+	}
+}
+
+void buki::OnDoubleClick(EditorState& state, const BrowserEntry item)
+{
+	IWorld* world = Engine::Get().GetWorldPtr();
+	Vector2 camPos = state.prefabPreviewSessions[state.activePrefabPreviewIndex].cameraSettings.position;
+	switch (item.type)
+	{
+	case BrowserVisualType::Folder:
+		state.currentContentPath = item.path;
+		break;
+	case BrowserVisualType::Scene:
+		state.selectedScenePath = item.path;
+		state.requestSceneWindowFocus = true;
+		if (world != nullptr && world->LoadScene(item.path))
+		{
+			ClearSceneSelection(state);
+			state.activePrefabPreviewIndex = -1;
+			state.selectedPrefabPath.clear();
+			state.selectedPrefabEntity = nullptr;
+			state.ClearSceneDirty();
+			state.scenePreviewSession.cameraSettings.Deserialize(item.path);
+			state.scenePreviewSession.path = item.path;
+			state.selectedScenePath = item.path;
+			Vector2 camPos = state.scenePreviewSession.cameraSettings.position;
+			Engine::Get().GetActiveCameraPtr()->position = { camPos.x, camPos.y };
+			std::vector<Entity*> entities = world->GetEntitiesInWorld();
+			for (Entity* entity : entities)
+			{
+				if (entity != nullptr) entity->Set();
+			}
+		}
+		break;
+	case BrowserVisualType::Prefab:
+		SelectPrefab(state, item.path);
+		OpenPrefabPreview(state, item.path);
+		state.prefabPreviewSessions[state.activePrefabPreviewIndex].cameraSettings.Deserialize(item.path);
+
+		Engine::Get().GetActiveCameraPtr()->position = { camPos.x, camPos.y };
+		break;
+	case BrowserVisualType::Anim:
+		if (state.animationAssetEditor->Load(item.path))
+		{
+
+		}
+		break;
+	default:
+		break;
+	}
+}
+
+void buki::OnRightClick(EditorState& state, const BrowserEntry item)
+{
+	switch (item.type)
+	{
+
+	case BrowserVisualType::Folder:
+	{
+		break;
+	}
+	case BrowserVisualType::Scene:
+	{
+		break;
+	}
+	case BrowserVisualType::Prefab:
+	{
+
+		if (ImGui::MenuItem("Instantiate"))
+		{
+			auto* world = Engine::Get().GetWorldPtr();
+			if (world != nullptr)
+			{
+				world->InstantiatePrefab(item.path);
+			}
+		}
+		if (ImGui::MenuItem("Preview"))
+		{
+			SelectPrefab(state, item.path);
+			OpenPrefabPreview(state, item.path);
+		}
+		break;
+	}
+	case BrowserVisualType::Anim:
+	{
+		if (ImGui::MenuItem("Delete"))
+		{
+			// TODO 
+			// INCLUDE IN UNIVERSAL RIGHT CLICK MENU 
+		}
+		break;
+	}
+	default:
+		break;
+	}
+}
+
+
+void buki::SelectPrefab(EditorState& state, const std::string& path)
+{
+	state.selectedEntity = nullptr;
+	state.activeEntity = nullptr;
+	state.selectedEntities.clear();
+	state.animationAssetEditor->open = false;
+
+	state.selectedPrefabPath = path;
+
+	IWorld* world = Engine::Get().GetWorldPtr();
+	state.selectedPrefabEntity = (world != nullptr)
+		? world->GetOrLoadPrefabEntity(path)
+		: nullptr;
+}
+
+bool buki::OpenPrefabPreview(EditorState& state, const std::string& path)
+{
+	IWorld* world = Engine::Get().GetWorldPtr();
+	if (world == nullptr)
+	{
+		return false;
+	}
+
+	const fs::path absNormalized = fs::absolute("../Deployment/" + path).lexically_normal();
+	const std::string& normalized = path;
+
+	if (state.activePrefabPreviewIndex >= 0 &&
+		state.activePrefabPreviewIndex < static_cast<int>(state.prefabPreviewSessions.size()))
+	{
+		state.prefabPreviewSessions[state.activePrefabPreviewIndex].focused = false;
+	}
+
+	for (size_t i = 0; i < state.prefabPreviewSessions.size(); ++i)
+	{
+		PrefabPreviewSession& session = state.prefabPreviewSessions[i];
+		if (session.path == normalized)
+		{
+			session.open = true;
+			session.focused = true;
+			session.requestFocus = true;
+			session.prefabEntity = world->GetOrLoadPrefabEntity(path);
+
+			state.activePrefabPreviewIndex = static_cast<int>(i);
+			state.selectedPrefabPath = normalized;
+			state.selectedPrefabEntity = session.prefabEntity;
+			return session.prefabEntity != nullptr;
+		}
+	}
+
+	PrefabPreviewSession session;
+	session.path = normalized;
+	session.prefabEntity = world->GetOrLoadPrefabEntity(path);
+	session.open = (session.prefabEntity != nullptr);
+	session.focused = session.open;
+	session.requestFocus = session.open;
+	session.requestDockNextToScene = session.open;
+	session.windowId = absNormalized.string();
+
+	if (!session.open)
+	{
+		return false;
+	}
+
+	state.prefabPreviewSessions.push_back(session);
+	state.activePrefabPreviewIndex = static_cast<int>(state.prefabPreviewSessions.size() - 1);
+	state.selectedPrefabPath = normalized;
+	state.selectedPrefabEntity = session.prefabEntity;
+	return true;
 }

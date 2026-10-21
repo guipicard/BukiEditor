@@ -220,7 +220,7 @@ namespace buki
 		std::string selectedPrefabPath = "";
 		Entity* selectedPrefabEntity = nullptr;
 
-		std::string selectedComponentPath = "";
+		std::string selectedItem = "";
 
 		std::vector<PrefabPreviewSession> prefabPreviewSessions;
 		int activePrefabPreviewIndex = -1;
