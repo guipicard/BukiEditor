@@ -1,6 +1,8 @@
 #pragma once
 #include "AnimationassetEditor.h"
+#include "InspectorPropertyDrawer.h"
 #include "imgui.h"
+#include "PropertyInfo.h"
 
 bool buki::AnimationAssetEditor::Load(const std::string& path)
 {
@@ -103,12 +105,6 @@ void buki::AnimationAssetEditor::DrawInspector()
 
             ImGui::Checkbox("Loop", &clip.loop);
 
-            if (ImGui::Button("Add Frame"))
-            {
-                SpriteFrame frame;
-                frame.duration = 0.1f;
-                clip.frames.push_back(frame);
-            }
 
             int frameToRemove = -1;
 
@@ -117,7 +113,8 @@ void buki::AnimationAssetEditor::DrawInspector()
                 SpriteFrame& frame = clip.frames[frameIndex];
 
                 ImGui::PushID(frameIndex);
-
+                PropertyInfo prop = BUKI_PROP_STRING(SpriteFrame, texturePath);
+                InspectorPropertyDrawer::DrawStringAssetPicker(prop, &frame.texturePath, "IMAGE");
                 ImGui::DragFloat("Duration", &frame.duration, 0.01f, 0.01f, 10.0f);
                 ImGui::Checkbox("Flip X", &frame.flipX);
                 ImGui::Checkbox("Flip Y", &frame.flipY);
@@ -134,6 +131,13 @@ void buki::AnimationAssetEditor::DrawInspector()
             ImGui::TreePop();
         }
 
+            if (ImGui::Button("Add Frame"))
+            {
+                SpriteFrame frame;
+                frame.texturePath = "";
+                frame.duration = 0.1f;
+                clip.frames.push_back(frame);
+            }
         ImGui::PopID();
     }
 

@@ -1,18 +1,31 @@
 {
     "clips": {
         "NewClip": {
-            "frames": [],
+            "frames": [
+                {
+                    "duration": 0.10000000149011612,
+                    "flipX": false,
+                    "flipY": false,
+                    "path": "../deployment/assets/kenney/abstract platformer/png/players/player blue/playerblue_stand.png",
+                    "sourceRect": {
+                        "h": 0.0,
+                        "w": 0.0,
+                        "x": 0.0,
+                        "y": 0.0
+                    }
+                }
+            ],
             "loop": true,
-            "name": "NewClip"
+            "name": "IdleClip"
         }
     },
     "initialState": "Idle",
-    "name": "testanimfile",
+    "name": "IdleAnimTest",
     "parameters": [],
     "states": [
         {
-            "clipName": "IdleState",
-            "name": "IdleState",
+            "clipName": "Idle",
+            "name": "Idle",
             "transitions": []
         }
     ],

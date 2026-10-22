@@ -37,6 +37,7 @@ namespace buki
 
     static void ToJson(const SpriteFrame& frame, json& out)
     {
+        out["path"] = frame.texturePath;
         out["duration"] = frame.duration;
         out["flipX"] = frame.flipX;
         out["flipY"] = frame.flipY;
@@ -54,6 +55,7 @@ namespace buki
     {
         SpriteFrame result;
 
+        result.texturePath = frame.value("path", "");
         result.duration = frame.value("duration", 0.1f);
         result.flipX = frame.value("flipX", false);
         result.flipY = frame.value("flipY", false);
@@ -66,7 +68,6 @@ namespace buki
             result.sourceRect.w = rect.value("w", 0.0f);
             result.sourceRect.h = rect.value("h", 0.0f);
         }
-
         return result;
     }
 

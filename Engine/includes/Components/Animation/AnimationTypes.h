@@ -11,6 +11,7 @@ namespace buki
 {
 	struct SpriteFrame
 	{
+		std::string texturePath = "";
 		Texture2D* texture = nullptr;
 		RectF sourceRect{};
 		float duration = 0.1f;

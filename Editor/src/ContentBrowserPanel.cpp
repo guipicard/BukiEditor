@@ -97,7 +97,6 @@ void buki::ContentBrowserPanel::Render(EditorState& state)
 
 
 	std::vector<BrowserEntry> entries = CollectBrowserEntries(state.currentContentPath, false);
-	SortBrowserEntries(entries);
 
 	const float thumbnailSize = 128.0f;
 	const float padding = thumbnailSize / 8.0f;

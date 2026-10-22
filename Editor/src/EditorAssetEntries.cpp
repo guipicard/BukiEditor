@@ -7,11 +7,6 @@
 #include "EditorState.h"
 #include "EditorViewportHelpers.h"
 
-//#include <algorithm>
-//#include <cctype>
-//#include <cstdint>
-//#include <cstring>
-
 namespace
 {
 	bool MatchesPayloadType(const buki::BrowserEntry& entry, const char* payloadType)
@@ -19,7 +14,8 @@ namespace
 		if (payloadType == nullptr || payloadType[0] == '\0')
 			return true;
 
-
+		if (std::strcmp(payloadType, "FOLDER") == 0)
+			return entry.type == buki::BrowserVisualType::Folder;
 
 		if (std::strcmp(payloadType, "IMAGE") == 0)
 			return entry.type == buki::BrowserVisualType::Image;
@@ -48,26 +44,32 @@ namespace
 		if (dirEntry.is_directory())
 		{
 			item.type = buki::BrowserVisualType::Folder;
+			item.payloadType = "FOLDER";
 		}
 		else if (buki::IsSceneFile(item.path))
 		{
 			item.type = buki::BrowserVisualType::Scene;
+			item.payloadType = "SCENE";
 		}
 		else if (buki::IsPrefabFile(item.path))
 		{
 			item.type = buki::BrowserVisualType::Prefab;
+			item.payloadType = "PREFAB";
 		}
 		else if (buki::IsImageFile(item.path))
 		{
 			item.type = buki::BrowserVisualType::Image;
+			item.payloadType = "IMAGE";
 		}
 		else if (buki::IsAudioFile(item.path))
 		{
 			item.type = buki::BrowserVisualType::Audio;
+			item.payloadType = "AUDIO";
 		}
 		else if (buki::IsAnimFile(item.path))
 		{
 			item.type = buki::BrowserVisualType::Anim;
+			item.payloadType = "ANIM";
 		}
 
 		return item;
@@ -446,7 +448,7 @@ void buki::OnClick(EditorState& state, const BrowserEntry item)
 	switch (item.type)
 	{
 	case BrowserVisualType::Folder:
-		state.currentContentPath = item.path;
+		
 		break;
 	case BrowserVisualType::Scene:
 		state.selectedScenePath = item.path;
@@ -468,16 +470,19 @@ void buki::OnClick(EditorState& state, const BrowserEntry item)
 
 void buki::OnDoubleClick(EditorState& state, const BrowserEntry item)
 {
-	IWorld* world = Engine::Get().GetWorldPtr();
-	Vector2 camPos = state.prefabPreviewSessions[state.activePrefabPreviewIndex].cameraSettings.position;
+	IWorld* world = nullptr;
+	Vector2 sceneCamPos;
+	Vector2 prefabCamPos;
 	switch (item.type)
 	{
 	case BrowserVisualType::Folder:
 		state.currentContentPath = item.path;
 		break;
 	case BrowserVisualType::Scene:
+		sceneCamPos = state.scenePreviewSession.cameraSettings.position;
 		state.selectedScenePath = item.path;
 		state.requestSceneWindowFocus = true;
+		world = Engine::Get().GetWorldPtr();
 		if (world != nullptr && world->LoadScene(item.path))
 		{
 			ClearSceneSelection(state);
@@ -488,8 +493,7 @@ void buki::OnDoubleClick(EditorState& state, const BrowserEntry item)
 			state.scenePreviewSession.cameraSettings.Deserialize(item.path);
 			state.scenePreviewSession.path = item.path;
 			state.selectedScenePath = item.path;
-			Vector2 camPos = state.scenePreviewSession.cameraSettings.position;
-			Engine::Get().GetActiveCameraPtr()->position = { camPos.x, camPos.y };
+			Engine::Get().GetActiveCameraPtr()->position = { sceneCamPos.x, sceneCamPos.y };
 			std::vector<Entity*> entities = world->GetEntitiesInWorld();
 			for (Entity* entity : entities)
 			{
@@ -499,18 +503,19 @@ void buki::OnDoubleClick(EditorState& state, const BrowserEntry item)
 		break;
 	case BrowserVisualType::Prefab:
 		SelectPrefab(state, item.path);
+		prefabCamPos = state.prefabPreviewSessions[state.activePrefabPreviewIndex].cameraSettings.position;
+		SelectPrefab(state, item.path);
 		OpenPrefabPreview(state, item.path);
 		state.prefabPreviewSessions[state.activePrefabPreviewIndex].cameraSettings.Deserialize(item.path);
-
-		Engine::Get().GetActiveCameraPtr()->position = { camPos.x, camPos.y };
+		Engine::Get().GetActiveCameraPtr()->position = { prefabCamPos.x, prefabCamPos.y };
 		break;
 	case BrowserVisualType::Anim:
-		if (state.animationAssetEditor->Load(item.path))
+		if (state.animationAssetEditor->open)
 		{
-
+			state.animationAssetEditor->Load(item.path);
 		}
-		break;
-	default:
+		// TODO
+		// OPEN IN OWN WINDOW
 		break;
 	}
 }
