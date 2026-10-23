@@ -1,0 +1,140 @@
+{
+    "clips": {
+        "Idle": {
+            "frames": [
+                {
+                    "duration": 0.10000000149011612,
+                    "flipX": false,
+                    "flipY": false,
+                    "path": "../deployment/assets/kenney/abstract platformer/png/players/player blue/playerblue_stand.png",
+                    "sourceRect": {
+                        "h": 0.0,
+                        "w": 0.0,
+                        "x": 0.0,
+                        "y": 0.0
+                    }
+                }
+            ],
+            "loop": true,
+            "name": "Idle"
+        },
+        "Walk": {
+            "frames": [
+                {
+                    "duration": 0.10000000149011612,
+                    "flipX": false,
+                    "flipY": false,
+                    "path": "../deployment/assets/kenney/abstract platformer/png/players/player blue/playerblue_walk1.png",
+                    "sourceRect": {
+                        "h": 0.0,
+                        "w": 0.0,
+                        "x": 0.0,
+                        "y": 0.0
+                    }
+                },
+                {
+                    "duration": 0.10000000149011612,
+                    "flipX": false,
+                    "flipY": false,
+                    "path": "../deployment/assets/kenney/abstract platformer/png/players/player blue/playerblue_walk2.png",
+                    "sourceRect": {
+                        "h": 0.0,
+                        "w": 0.0,
+                        "x": 0.0,
+                        "y": 0.0
+                    }
+                },
+                {
+                    "duration": 0.10000000149011612,
+                    "flipX": false,
+                    "flipY": false,
+                    "path": "../deployment/assets/kenney/abstract platformer/png/players/player blue/playerblue_walk3.png",
+                    "sourceRect": {
+                        "h": 0.0,
+                        "w": 0.0,
+                        "x": 0.0,
+                        "y": 0.0
+                    }
+                },
+                {
+                    "duration": 0.10000000149011612,
+                    "flipX": false,
+                    "flipY": false,
+                    "path": "../deployment/assets/kenney/abstract platformer/png/players/player blue/playerblue_walk4.png",
+                    "sourceRect": {
+                        "h": 0.0,
+                        "w": 0.0,
+                        "x": 0.0,
+                        "y": 0.0
+                    }
+                },
+                {
+                    "duration": 0.10000000149011612,
+                    "flipX": false,
+                    "flipY": false,
+                    "path": "../deployment/assets/kenney/abstract platformer/png/players/player blue/playerblue_walk5.png",
+                    "sourceRect": {
+                        "h": 0.0,
+                        "w": 0.0,
+                        "x": 0.0,
+                        "y": 0.0
+                    }
+                },
+                {
+                    "duration": 0.10000000149011612,
+                    "flipX": false,
+                    "flipY": false,
+                    "path": "../deployment/assets/kenney/abstract platformer/png/players/player blue/playerblue_walk4.png",
+                    "sourceRect": {
+                        "h": 0.0,
+                        "w": 0.0,
+                        "x": 0.0,
+                        "y": 0.0
+                    }
+                },
+                {
+                    "duration": 0.10000000149011612,
+                    "flipX": false,
+                    "flipY": false,
+                    "path": "../deployment/assets/kenney/abstract platformer/png/players/player blue/playerblue_walk3.png",
+                    "sourceRect": {
+                        "h": 0.0,
+                        "w": 0.0,
+                        "x": 0.0,
+                        "y": 0.0
+                    }
+                },
+                {
+                    "duration": 0.10000000149011612,
+                    "flipX": false,
+                    "flipY": false,
+                    "path": "../deployment/assets/kenney/abstract platformer/png/players/player blue/playerblue_walk2.png",
+                    "sourceRect": {
+                        "h": 0.0,
+                        "w": 0.0,
+                        "x": 0.0,
+                        "y": 0.0
+                    }
+                }
+            ],
+            "loop": true,
+            "name": "Walk"
+        }
+    },
+    "initialState": "Idle",
+    "name": "PlayerBlue",
+    "parameters": [],
+    "states": [
+        {
+            "clipName": "Idle",
+            "name": "Idle",
+            "transitions": []
+        },
+        {
+            "clipName": "Walk",
+            "name": "Walk",
+            "transitions": []
+        }
+    ],
+    "version": 1
+}

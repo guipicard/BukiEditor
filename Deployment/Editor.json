@@ -119,6 +119,30 @@
         "viewportWidth": 1060.0,
         "zoom": 1.0
     },
+    "../Deployment/Scenes/Ag_Lvl_3.scene": {
+        "displayMode": 2,
+        "path": "../Deployment/Scenes/Ag_Lvl_3.scene",
+        "position": {
+            "x": 0.0,
+            "y": 0.0
+        },
+        "type": ".scene",
+        "viewportHeight": 658.0,
+        "viewportWidth": 1060.0,
+        "zoom": 1.0
+    },
+    "../Deployment/Scenes/AngryBird.scene": {
+        "displayMode": 2,
+        "path": "../Deployment/Scenes/AngryBird.scene",
+        "position": {
+            "x": 0.0,
+            "y": 0.0
+        },
+        "type": ".scene",
+        "viewportHeight": 658.0,
+        "viewportWidth": 1060.0,
+        "zoom": 1.0
+    },
     "../Deployment/Scenes/Menu.scene": {
         "displayMode": 2,
         "path": "../Deployment/Scenes/Menu.scene",

@@ -56,7 +56,7 @@ void buki::AnimationAssetEditor::DrawInspector()
 
         ImGui::PushID(stateIndex);
 
-        if (ImGui::TreeNode("State"))
+        if (ImGui::TreeNode(("state" + std::to_string(stateIndex)).c_str()))
         {
             char stateNameBuffer[256];
             std::snprintf(stateNameBuffer, sizeof(stateNameBuffer), "%s", state.name.c_str());
@@ -88,14 +88,15 @@ void buki::AnimationAssetEditor::DrawInspector()
     {
         AnimationClip clip;
         clip.name = "NewClip";
-        asset.clips[clip.name] = clip;
+        asset.clips.push_back(clip);
     }
 
-    for (auto& [clipName, clip] : asset.clips)
+    for (size_t i = 0; i < asset.clips.size(); i++)
     {
-        ImGui::PushID(clipName.c_str());
+        auto& clip = asset.clips[i];
+        ImGui::PushID(("clip" + std::to_string(i)).c_str());
 
-        if (ImGui::TreeNode(clipName.c_str()))
+        if (ImGui::TreeNode(("clip" + std::to_string(i)).c_str()))
         {
             char clipNameBuffer[256];
             std::snprintf(clipNameBuffer, sizeof(clipNameBuffer), "%s", clip.name.c_str());

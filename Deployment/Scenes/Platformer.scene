@@ -1104,7 +1104,8 @@
             "components": {
                 "Animator": {
                     "params": {
-                        "playOnStart": false,
+                        "animationPath": "../deployment/prefabs/playerblue.anim",
+                        "playOnStart": true,
                         "speed": 1.0
                     }
                 },

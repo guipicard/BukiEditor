@@ -8,6 +8,10 @@ namespace buki
 
     void Animator::Start()
     {
+        /*if (!m_Asset)
+        {
+            m_Asset = new AnimationAsset();
+        }*/
         m_StateMachine.SetAsset(m_Asset);
         m_StateMachine.SetPlayer(&m_Player);
 
@@ -94,5 +98,6 @@ namespace buki
     {
         // Add editor-only behavior here if needed.
         // For example: reload the asset when animationAssetPath changes.
+        m_Asset->LoadFromFile(params.animationPath);
     }
 }

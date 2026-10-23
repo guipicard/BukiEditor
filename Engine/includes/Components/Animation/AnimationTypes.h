@@ -21,8 +21,8 @@ namespace buki
 
 	struct AnimationClip
 	{
-		std::string name;
-		std::vector<SpriteFrame> frames;
+		std::string name = "";
+		std::vector<SpriteFrame> frames = std::vector<SpriteFrame>();
 		bool loop = true;
 	};
 
@@ -32,6 +32,7 @@ namespace buki
 	{
 		bool playOnStart = false;
 		float speed = 1.0f;
+		std::string animationPath = "";
 	};
 
 	enum class AnimParameterType

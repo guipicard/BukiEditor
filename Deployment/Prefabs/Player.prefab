@@ -1,0 +1,67 @@
+{
+    "components": {
+        "Animator": {
+            "params": {
+                "animationPath": "../deployment/prefabs/playerblue.anim",
+                "playOnStart": true,
+                "speed": 1.0
+            }
+        },
+        "Box": {
+            "box": {
+                "size": {
+                    "x": 1.0,
+                    "y": 1.0
+                }
+            },
+            "def": {
+                "density": 1.0,
+                "fillColor": {
+                    "a": 0.30000001192092896,
+                    "b": 1.0,
+                    "g": 1.0,
+                    "r": 0.0
+                },
+                "fillDraw": false,
+                "filter": 0,
+                "friction": 0.6000000238418579,
+                "isSensor": false,
+                "positionOffset": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "restitution": 0.0,
+                "shapeColor": {
+                    "a": 1.0,
+                    "b": 0.0,
+                    "g": 0.0,
+                    "r": 1.0
+                },
+                "shapeDraw": true
+            }
+        },
+        "RigidBody": {
+            "def": {
+                "motionLocks": {
+                    "angularZ": true,
+                    "linearX": true,
+                    "linearY": true
+                }
+            },
+            "type": 2
+        }
+    },
+    "enable": true,
+    "layer": "",
+    "physics": true,
+    "position": {
+        "x": 0.0,
+        "y": 0.0
+    },
+    "rotation": 0.0,
+    "size": {
+        "x": 1.0,
+        "y": 1.0
+    },
+    "z": 0
+}

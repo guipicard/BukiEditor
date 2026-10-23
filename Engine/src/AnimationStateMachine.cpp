@@ -1,5 +1,6 @@
 #include "AnimationStateMachine.h"
 #include "Animator.h"
+#include "AnimationTypes.h"
 
 #include <variant>
 
@@ -183,7 +184,8 @@ namespace buki
 
         m_CurrentState = stateName;
 
-        const AnimationClip* clip = m_Asset->GetClip(nextState->clipName);
+        AnimationClip* clip = nullptr;
+        clip = m_Asset->GetClip(nextState->clipName);
         m_Player->Play(clip);
     }
 }

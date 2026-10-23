@@ -70,7 +70,7 @@ namespace buki
 		{
 			static std::vector<PropertyInfo> properties =
 			{
-				BUKI_PROP_ANIMATION_GROUPED("Animation", Animator, animationAssetPath, "Asset"),
+				BUKI_PROP_NESTED_ANIMATION_GROUPED(BUKI_FIELD_NESTED(Animator, "params", params, "animationPath", animationPath), "Asset"),
 				BUKI_PROP_NESTED_BOOL_GROUPED(BUKI_FIELD_NESTED(Animator, "params", params, "playOnStart", playOnStart), "Playback"),
 				BUKI_PROP_NESTED_FLOAT_GROUPED(BUKI_FIELD_NESTED(Animator, "params", params, "speed", speed), "Playback")
 			};
@@ -79,8 +79,7 @@ namespace buki
 		}
 
 	private:
-		std::string animationAssetPath;
-		AnimationAsset* m_Asset = nullptr;
+		AnimationAsset* m_Asset = new AnimationAsset();
 		SpriteAnimator m_Player;
 		AnimationStateMachine m_StateMachine;
 	};

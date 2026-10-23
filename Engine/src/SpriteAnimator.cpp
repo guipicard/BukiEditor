@@ -1,4 +1,6 @@
 #include "Animator.h"
+#include "Engine.h"
+#include "BukiContainers.h"
 
 namespace buki
 {
@@ -79,5 +81,12 @@ namespace buki
         // Replace this with your engine’s sprite/renderer draw call.
         // Example shape:
         // Renderer::DrawTexture(*frame->texture, frame->sourceRect, transform, alpha, frame->flipX, frame->flipY);
+        bool flipX = frame->flipX;
+        bool flipY = frame->flipY;
+        const RectF &destRect = RectF{ 0.0f,0.0f, 1.0f,1.0f };
+        const RectF &srcRect = frame->sourceRect;
+        const Texture2D tex = *frame->texture;
+        float rad = 0.0f;
+        Engine::Get().Graphics().DrawSprite(tex, destRect, srcRect, rad, flipX, flipY, Color{0.0f,0.0f,0.0f,0.0f});
     }
 }

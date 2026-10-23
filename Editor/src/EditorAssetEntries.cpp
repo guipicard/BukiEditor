@@ -422,8 +422,7 @@ bool buki::DrawBrowserTile(const BrowserEntry& entry, float thumbnailSize, bool 
 	{
 		if (!entry.payloadType.empty())
 		{
-			const std::string pathStr = buki::ToAbsolutePath(entry.path).string();
-			ImGui::SetDragDropPayload(entry.payloadType.c_str(), pathStr.c_str(), pathStr.size() + 1);
+			ImGui::SetDragDropPayload(entry.payloadType.c_str(), entry.path.c_str(), entry.path.size() + 1);
 			ImGui::TextUnformatted(entry.displayName.c_str());
 		}
 		ImGui::EndDragDropSource();
@@ -503,10 +502,9 @@ void buki::OnDoubleClick(EditorState& state, const BrowserEntry item)
 		break;
 	case BrowserVisualType::Prefab:
 		SelectPrefab(state, item.path);
-		prefabCamPos = state.prefabPreviewSessions[state.activePrefabPreviewIndex].cameraSettings.position;
-		SelectPrefab(state, item.path);
 		OpenPrefabPreview(state, item.path);
 		state.prefabPreviewSessions[state.activePrefabPreviewIndex].cameraSettings.Deserialize(item.path);
+		prefabCamPos = state.prefabPreviewSessions[state.activePrefabPreviewIndex].cameraSettings.position;
 		Engine::Get().GetActiveCameraPtr()->position = { prefabCamPos.x, prefabCamPos.y };
 		break;
 	case BrowserVisualType::Anim:

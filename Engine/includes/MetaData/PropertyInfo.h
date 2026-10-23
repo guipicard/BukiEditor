@@ -316,6 +316,8 @@ buki::PropertyInfo{ { { #FIELD, offsetof(TYPE, FIELD), NAME } }, buki::PropertyT
 	buki::PropertyInfo{ FIELDS, buki::PropertyType::Int, GROUP, \
 		static_cast<float>(MIN), static_cast<float>(MAX), static_cast<float>(SPEED), true, true }
 
+#define BUKI_PROP_NESTED_ANIMATION_GROUPED(FIELDS, GROUP) \
+buki::PropertyInfo{ FIELDS, buki::PropertyType::AnimationAsset, GROUP }
 
 #define BUKI_PROP_NESTED_FLOAT_GROUPED(FIELDS, GROUP) \
 	buki::PropertyInfo{ FIELDS, buki::PropertyType::Float, GROUP }

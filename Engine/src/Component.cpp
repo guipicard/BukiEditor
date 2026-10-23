@@ -64,6 +64,7 @@ json buki::Component::Serialize() const
 		case PropertyType::ImageAsset:
 		case PropertyType::AudioAsset:
 		case PropertyType::FontAsset:
+		case PropertyType::AnimationAsset:
 		case PropertyType::PrefabRef:
 			(*current)[key] = *reinterpret_cast<const std::string*>(fieldPtr);
 			break;
@@ -211,6 +212,7 @@ void buki::Component::Deserialize(const json& doc)
 
 		case PropertyType::String:
 		case PropertyType::ImageAsset:
+		case PropertyType::AnimationAsset:
 		case PropertyType::AudioAsset:
 		case PropertyType::FontAsset:
 		case PropertyType::PrefabRef:

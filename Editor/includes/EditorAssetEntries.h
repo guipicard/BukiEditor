@@ -1,12 +1,12 @@
 #pragma once
 
-#include <filesystem>
 #include <string>
 #include <vector>
 #include "EditorState.h"
 #include "imgui.h"
 #include "AnimationAsset.h"
 
+#include <filesystem>
 namespace fs = std::filesystem;
 namespace buki
 {

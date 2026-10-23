@@ -25,7 +25,6 @@
                         "x": 21.600000381469727,
                         "y": 21.600000381469727
                     },
-                    "defaultVisible": true,
                     "layerOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -59,8 +58,7 @@
                                 "w": 1024.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -84,8 +82,7 @@
                                 "w": 1024.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         }
                     ]
                 }
@@ -163,7 +160,6 @@
                         "x": 1.0,
                         "y": 1.0
                     },
-                    "defaultVisible": true,
                     "layerOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -197,8 +193,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -222,8 +217,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -247,8 +241,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -272,8 +265,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -297,8 +289,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -322,8 +313,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -347,8 +337,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -372,8 +361,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -397,8 +385,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -422,8 +409,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -447,8 +433,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -472,8 +457,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -497,8 +481,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -522,8 +505,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -547,8 +529,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -572,8 +553,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -597,8 +577,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -622,8 +601,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -647,8 +625,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -672,8 +649,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -697,8 +673,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -722,8 +697,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -747,8 +721,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -772,8 +745,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -797,8 +769,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -822,8 +793,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -847,8 +817,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -872,8 +841,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -897,8 +865,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -922,8 +889,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -947,8 +913,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -972,8 +937,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -997,8 +961,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1022,8 +985,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1047,8 +1009,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1072,8 +1033,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1097,8 +1057,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1122,8 +1081,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1147,8 +1105,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1172,8 +1129,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1197,8 +1153,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1222,8 +1177,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1247,8 +1201,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1272,8 +1225,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1297,8 +1249,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1322,8 +1273,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1347,8 +1297,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1372,8 +1321,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1397,8 +1345,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1422,8 +1369,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1447,8 +1393,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1472,8 +1417,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1497,8 +1441,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1522,8 +1465,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1547,8 +1489,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1572,8 +1513,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1597,8 +1537,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1622,8 +1561,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1647,8 +1585,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1672,8 +1609,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1697,8 +1633,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1722,8 +1657,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1747,8 +1681,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1772,8 +1705,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1797,8 +1729,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1822,8 +1753,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1847,8 +1777,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1872,8 +1801,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1897,8 +1825,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1922,8 +1849,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1947,8 +1873,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1972,8 +1897,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -1997,8 +1921,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -2022,8 +1945,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -2047,8 +1969,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         },
                         {
                             "color": {
@@ -2072,8 +1993,7 @@
                                 "w": 128.0,
                                 "x": 0.0,
                                 "y": 0.0
-                            },
-                            "visible": true
+                            }
                         }
                     ]
                 }
@@ -2800,17 +2720,11 @@
                         "\\audio\\angrybird\\sfx - rock destroyed a3.mp3"
                     ],
                     "DamageSounds": [
-                        "\\audio\\angrybird\\sfx - rock damage a1.mp3",
+                        "../deployment/audio/angrybird/sfx - rock collision a1.mp3",
                         "\\audio\\angrybird\\sfx - rock damage a2.mp3",
                         "\\audio\\angrybird\\sfx - rock damage a3.mp3"
                     ],
-                    "collisionSounds": [
-                        "\\audio\\angrybird\\sfx - rock collision a1.mp3",
-                        "\\audio\\angrybird\\sfx - rock collision a2.mp3",
-                        "\\audio\\angrybird\\sfx - rock collision a3.mp3",
-                        "\\audio\\angrybird\\sfx - rock collision a4.mp3",
-                        "\\audio\\angrybird\\sfx - rock collision a5.mp3"
-                    ],
+                    "collisionSounds": [],
                     "maxHealth": 300.0,
                     "stageImages": [
                         "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone020.png",
@@ -2911,17 +2825,11 @@
                         "\\audio\\angrybird\\sfx - rock destroyed a3.mp3"
                     ],
                     "DamageSounds": [
-                        "\\audio\\angrybird\\sfx - rock damage a1.mp3",
+                        "../deployment/audio/angrybird/sfx - rock collision a1.mp3",
                         "\\audio\\angrybird\\sfx - rock damage a2.mp3",
                         "\\audio\\angrybird\\sfx - rock damage a3.mp3"
                     ],
-                    "collisionSounds": [
-                        "\\audio\\angrybird\\sfx - rock collision a1.mp3",
-                        "\\audio\\angrybird\\sfx - rock collision a2.mp3",
-                        "\\audio\\angrybird\\sfx - rock collision a3.mp3",
-                        "\\audio\\angrybird\\sfx - rock collision a4.mp3",
-                        "\\audio\\angrybird\\sfx - rock collision a5.mp3"
-                    ],
+                    "collisionSounds": [],
                     "maxHealth": 300.0,
                     "stageImages": [
                         "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone020.png",
@@ -3319,5 +3227,5 @@
         }
     },
     "sceneName": "Ag_Lvl_3",
-    "scenePath": "Scenes/Ag_Lvl_3.scene"
+    "scenePath": "../Deployment/Scenes/Ag_Lvl_3.scene"
 }
