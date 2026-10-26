@@ -75,6 +75,8 @@ void buki::ContentBrowserPanel::Render(EditorState& state)
 	ImGui::SameLine();
 	const bool canSaveScene = (world != nullptr && !world->GetCurrentScenePath().empty());
 	if (!canSaveScene)
+
+
 		ImGui::BeginDisabled();
 
 	if (ImGui::Button("Save Scene"))

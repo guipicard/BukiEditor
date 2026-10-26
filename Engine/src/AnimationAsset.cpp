@@ -313,11 +313,12 @@ namespace buki
 
 	AnimationClip* AnimationAsset::GetClip(const std::string& clipName) const
 	{
-		for (AnimationClip clip : clips)
+		for (const AnimationClip& clip : clips)
 		{
 			if (clip.name == clipName)
 			{
-				return &clip;
+				AnimationClip* clipPtr = const_cast<AnimationClip*>(&clip);
+				return clipPtr;
 			}
 		}
 		return nullptr;
