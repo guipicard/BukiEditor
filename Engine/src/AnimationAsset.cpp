@@ -38,6 +38,24 @@ namespace buki
 		return false;
 	}
 
+	static void ToJson(const AnimationStateLayout& temp, json& out)
+	{
+		out["name"] = temp.stateName;
+		out["position"]["x"] = temp.editorPosition.x;
+		out["position"]["y"] = temp.editorPosition.y;
+	}
+
+	static AnimationStateLayout ParseLayout(const json& temp)
+	{
+		AnimationStateLayout result;
+
+		result.stateName = temp.value("name", "");
+		result.stateName = temp["position"].value("x", 0);
+		result.stateName = temp["position"].value("y", 0);
+
+		return result;
+	}
+
 	static void ToJson(const SpriteFrame& frame, json& out)
 	{
 		out["path"] = frame.texturePath;
@@ -235,6 +253,15 @@ namespace buki
 		}
 		root["clips"] = clipsJson;
 
+		json layoutJson;
+		for (AnimationStateLayout temp : layout)
+		{
+			json tempJson;
+			ToJson(temp, tempJson);
+			layoutJson[temp.stateName] = tempJson;
+		}
+		root["layout"] = layoutJson;
+
 		std::ofstream file(path);
 		if (!file.is_open())
 			return false;
@@ -297,6 +324,12 @@ namespace buki
 				clips.push_back(ParseClip(it.value()));
 		}
 
+		if (root.contains("layout") && root["layout"].is_object())
+		{
+			for (auto it = root["layout"].begin(); it != root["layout"].end(); ++it)
+				layout.push_back(ParseLayout(it.value()));
+		}
+
 		return true;
 	}
 
@@ -318,6 +351,21 @@ namespace buki
 			if (clip.name == clipName)
 			{
 				AnimationClip* clipPtr = const_cast<AnimationClip*>(&clip);
+				for (size_t i = 0; i < clipPtr->frames.size(); i++)
+				{
+					if (!clipPtr->frames[i].texture)
+					{
+						clipPtr->frames[i].texture = Engine::Get().Textures().Load(clipPtr->frames[i].texturePath);
+						Texture2D* tex = Engine::Get().Textures().Get(clipPtr->frames[i].texturePath);
+						RectF src = RectF();
+						if (tex)
+						{
+							src.w = tex->width;
+							src.h = tex->height;
+						}
+						clipPtr->frames[i].sourceRect = src;
+					}
+				}
 				return clipPtr;
 			}
 		}

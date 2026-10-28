@@ -4,8 +4,7 @@
 namespace buki
 {
 	class RigidBody;
-	struct Animation;
-	class SpriteAnimator;
+	class Animator;
 	class Box;
 	class Circle;
 	class Polygon;
@@ -30,10 +29,11 @@ namespace buki
 
 		virtual void OnSet() override;
 
+
 		//void Jump(float _force);
 		//void Move(Vector2 _dir, float _maxVel, float _speed);
 
-		Animation* GetAnimation() const { return anim; }
+		Animator* GetAnimation() const { return anim; }
 	public:
 		const std::vector<PropertyInfo>& GetProperties() const override
 		{
@@ -44,12 +44,13 @@ namespace buki
 		}
 		std::string jumpSFXPath = "/audio/AngryBird/Sfx - Wood Collision A1.mp3";
 	private:
-		Animation* anim = nullptr;
+		Animator* anim = nullptr;
 		Box* boxCollider = nullptr;
 		RigidBody* rigidbody = nullptr;
-		Text* text = nullptr;
-
 		size_t jumpSFX = 0;
 
+		float walkSpeed;
+		float runSpeed;
+		float jumpSpeed;
 	};
 }

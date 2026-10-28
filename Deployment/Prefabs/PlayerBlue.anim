@@ -134,18 +134,51 @@
         }
     },
     "initialState": "Idle",
+    "layout": null,
     "name": "PlayerBlue",
-    "parameters": [],
+    "parameters": [
+        {
+            "defaultValue": 0.0,
+            "name": "Speed",
+            "type": 2
+        }
+    ],
     "states": [
         {
             "clipName": "Idle",
             "name": "Idle",
-            "transitions": []
+            "transitions": [
+                {
+                    "conditions": [
+                        {
+                            "op": 2,
+                            "parameter": "Speed",
+                            "type": 2,
+                            "value": 0.15000000596046448
+                        }
+                    ],
+                    "forceRestart": false,
+                    "to": "Walk"
+                }
+            ]
         },
         {
             "clipName": "Walk",
             "name": "Walk",
-            "transitions": []
+            "transitions": [
+                {
+                    "conditions": [
+                        {
+                            "op": 3,
+                            "parameter": "Speed",
+                            "type": 2,
+                            "value": 0.15000000596046448
+                        }
+                    ],
+                    "forceRestart": false,
+                    "to": "Idle"
+                }
+            ]
         }
     ],
     "version": 1

@@ -4,14 +4,14 @@
 
 namespace buki
 {
-    void SpriteAnimator::Play(const AnimationClip* clip)
+    void SpriteAnimator::Play(AnimationClip* clip)
     {
         if (!clip || clip->frames.empty())
         {
             Stop();
             return;
         }
-
+        
         m_CurrentClip = clip;
         m_CurrentClipName = clip->name;
         m_FrameIndex = 0;
@@ -64,7 +64,7 @@ namespace buki
         }
     }
 
-    const SpriteFrame* SpriteAnimator::GetCurrentFrame() const
+    const SpriteFrame* SpriteAnimator::GetCurrentFrame() const 
     {
         if (!m_CurrentClip || m_CurrentClip->frames.empty())
             return nullptr;
@@ -72,21 +72,24 @@ namespace buki
         return &m_CurrentClip->frames[m_FrameIndex];
     }
 
-    void SpriteAnimator::Draw(float alpha)
+    void SpriteAnimator::Draw(float alpha, const RectF& destRect)
     {
         const SpriteFrame* frame = GetCurrentFrame();
         if (!frame || !frame->texture)
             return;
 
-        // Replace this with your engine’s sprite/renderer draw call.
-        // Example shape:
-        // Renderer::DrawTexture(*frame->texture, frame->sourceRect, transform, alpha, frame->flipX, frame->flipY);
-        bool flipX = frame->flipX;
+        bool flipX = frame->flipX != m_FlipX;
         bool flipY = frame->flipY;
-        const RectF &destRect = RectF{ 0.0f,0.0f, 1.0f,1.0f };
         const RectF &srcRect = frame->sourceRect;
-        const Texture2D tex = *frame->texture;
+        RectF scaledRect = destRect;
+        scaledRect.w *= srcRect.w / METRES_TO_PIXELS;
+        scaledRect.h *= srcRect.h / METRES_TO_PIXELS;
         float rad = 0.0f;
-        Engine::Get().Graphics().DrawSprite(tex, destRect, srcRect, rad, flipX, flipY, Color{0.0f,0.0f,0.0f,0.0f});
+        Engine::Get().Graphics().DrawSprite(*frame->texture, scaledRect, srcRect, rad, flipX, flipY, Color{1.0f,1.0f,1.0f,1.0f});
+    }
+
+    void SpriteAnimator::SetFlipX(bool flipX)
+    {
+        m_FlipX = flipX;
     }
 }

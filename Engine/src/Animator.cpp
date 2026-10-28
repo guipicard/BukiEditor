@@ -1,103 +1,109 @@
 #include "Animator.h"
+#include "Entity.h"
 
 namespace buki
 {
-    Animator::Animator(Entity* entity)
-        : Component(entity)
-    {}
+	Animator::Animator(Entity* entity)
+		: Component(entity)
+	{
+	}
 
-    void Animator::Start()
-    {
-        /*if (!m_Asset)
-        {
-            m_Asset = new AnimationAsset();
-        }*/
-        m_StateMachine.SetAsset(m_Asset);
-        m_StateMachine.SetPlayer(&m_Player);
+	void Animator::Start()
+	{
+		m_StateMachine.SetAsset(m_Asset);
+		m_StateMachine.SetPlayer(&m_Player);
 
-        if (m_Asset && params.playOnStart)
-        {
-            m_StateMachine.Start();
-        }
-    }
+		if (m_Asset && params.playOnStart)
+		{
+			m_StateMachine.Start();
+		}
+	}
 
-    void Animator::Destroy()
-    {
-        m_StateMachine.SetAsset(nullptr);
-        m_StateMachine.SetPlayer(nullptr);
-        m_Player.Stop();
-    }
+	void Animator::Destroy()
+	{
+		m_StateMachine.SetAsset(nullptr);
+		m_StateMachine.SetPlayer(nullptr);
+		m_Player.Stop();
+	}
 
-    void Animator::SetAnimationAsset(AnimationAsset* asset)
-    {
-        m_Asset = asset;
+	void Animator::SetAnimationAsset(AnimationAsset* asset)
+	{
+		m_Asset = asset;
 
-        m_StateMachine.SetAsset(m_Asset);
-        m_StateMachine.SetPlayer(&m_Player);
+		m_StateMachine.SetAsset(m_Asset);
+		m_StateMachine.SetPlayer(&m_Player);
 
-        if (m_Asset)
-            m_StateMachine.Start();
-    }
+		if (m_Asset)
+			m_StateMachine.Start();
+	}
 
-    void Animator::Play()
-    {
-        if (m_Asset)
-            m_StateMachine.Start();
-    }
+	void Animator::Play()
+	{
+		if (m_Asset)
+			m_StateMachine.Start();
+	}
 
-    void Animator::Stop()
-    {
-        m_Player.Stop();
-    }
+	void Animator::Stop()
+	{
+		m_Player.Stop();
+	}
 
-    void Animator::SetBool(const std::string& name, bool value)
-    {
-        m_StateMachine.SetBool(name, value);
-    }
+	void Animator::SetFlipX(bool flipX)
+	{
+		m_Player.SetFlipX(flipX);
+	}
 
-    void Animator::SetInt(const std::string& name, int value)
-    {
-        m_StateMachine.SetInt(name, value);
-    }
+	void Animator::SetBool(const std::string& name, bool value)
+	{
+		m_StateMachine.SetBool(name, value);
+	}
 
-    void Animator::SetFloat(const std::string& name, float value)
-    {
-        m_StateMachine.SetFloat(name, value);
-    }
+	void Animator::SetInt(const std::string& name, int value)
+	{
+		m_StateMachine.SetInt(name, value);
+	}
 
-    void Animator::SetString(const std::string& name, const std::string& value)
-    {
-        m_StateMachine.SetString(name, value);
-    }
+	void Animator::SetFloat(const std::string& name, float value)
+	{
+		m_StateMachine.SetFloat(name, value);
+	}
 
-    void Animator::Update(float dt)
-    {
-        if (!m_Asset)
-            return;
+	void Animator::SetString(const std::string& name, const std::string& value)
+	{
+		m_StateMachine.SetString(name, value);
+	}
 
-        m_StateMachine.Update();
-        m_Player.Update(dt * params.speed);
-    }
+	void Animator::Update(float dt)
+	{
+		if (!m_Asset)
+			return;
 
-    void Animator::Draw(float alpha)
-    {
-        m_Player.Draw(alpha);
-    }
+		m_StateMachine.Update();
+		m_Player.Update(dt * params.speed);
+	}
 
-    const SpriteFrame* Animator::GetCurrentFrame() const
-    {
-        return m_Player.GetCurrentFrame();
-    }
+	void Animator::Draw(float alpha)
+	{
+		Vector2 pos = m_Entity->Tm().GetPosition();
+		Vector2 size = m_Entity->Tm().GetSize();
+		RectF destRect = RectF{ pos.x,pos.y, size.x,size.y };
+		m_Player.Draw(alpha, destRect);
+	}
 
-    bool Animator::IsPlaying() const
-    {
-        return m_Player.IsPlaying();
-    }
+	const SpriteFrame* Animator::GetCurrentFrame()
+	{
+		return m_Player.GetCurrentFrame();
+	}
 
-    void Animator::Set()
-    {
-        // Add editor-only behavior here if needed.
-        // For example: reload the asset when animationAssetPath changes.
-        m_Asset->LoadFromFile(params.animationPath);
-    }
+	bool Animator::IsPlaying() const
+	{
+		return m_Player.IsPlaying();
+	}
+
+	void Animator::Set()
+	{
+		// Add editor-only behavior here if needed.
+		// For example: reload the asset when animationAssetPath changes.
+		m_Asset->LoadFromFile(params.animationPath);
+	}
 }

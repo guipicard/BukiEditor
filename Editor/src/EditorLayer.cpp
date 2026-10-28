@@ -29,6 +29,11 @@ void buki::EditorLayer::Render()
 	if (state.showSceneView)
 		sceneViewPanel.Render(state);
 
+	if (state.animationStateMachineEditorWindow->IsOpen())
+	{
+		state.animationStateMachineEditorWindow->Draw();
+	}
+
 	RenderPrefabPanels();
 	RenderSceneViewport();
 	RenderPrefabPreviewViewports();

@@ -12,7 +12,7 @@
         "Background": {
             "components": {
                 "TileLayer": {
-                    "atlasPath": "/assets/Kenney/Physics Assets/PNG/Backgrounds/colored_shroom.png",
+                    "atlasPath": "../deployment/assets/kenney/physics assets/png/backgrounds/colored_shroom.png",
                     "defaultFlipX": false,
                     "defaultFlipY": false,
                     "defaultSrcRect": {
@@ -147,7 +147,7 @@
                     "type": 0
                 },
                 "TileLayer": {
-                    "atlasPath": "/assets/Kenney/Physics Assets/PNG/Other/dirt.png",
+                    "atlasPath": "../deployment/assets/kenney/physics assets/png/other/dirt.png",
                     "defaultFlipX": false,
                     "defaultFlipY": false,
                     "defaultSrcRect": {
@@ -1102,6 +1102,9 @@
         },
         "Player": {
             "components": {
+                "AnimTest": {
+                    "jumpSFXPath": "/audio/AngryBird/Sfx - Wood Collision A1.mp3"
+                },
                 "Animator": {
                     "params": {
                         "animationPath": "../deployment/prefabs/playerblue.anim",

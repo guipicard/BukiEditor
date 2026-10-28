@@ -35,6 +35,18 @@
         "viewportWidth": 1060.0,
         "zoom": 1.0
     },
+    "../Deployment/Prefabs/Player.prefab": {
+        "displayMode": 1,
+        "path": "../Deployment/Prefabs/Player.prefab",
+        "position": {
+            "x": 0.0,
+            "y": 0.0
+        },
+        "type": ".prefab",
+        "viewportHeight": 754.0,
+        "viewportWidth": 1060.0,
+        "zoom": 1.0
+    },
     "../Deployment/Prefabs/PolygonEntity.prefab": {
         "displayMode": 1,
         "path": "../Deployment/Prefabs/PolygonEntity.prefab",

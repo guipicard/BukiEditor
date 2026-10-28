@@ -21,10 +21,13 @@ namespace buki
 		SpriteAnimator() = default;
 		~SpriteAnimator() = default;
 
-		void Play(const AnimationClip* clip);
+		void Play(AnimationClip* clip);
 		void Stop();
 		void Update(float dt);
-		void Draw(float alpha);
+		void Draw(float alpha, const RectF& destRect);
+
+		void SetFlipX(bool flipX);
+		[[nodiscard]] bool GetFlipX() const { return m_FlipX; }
 
 		[[nodiscard]] const SpriteFrame* GetCurrentFrame() const;
 		[[nodiscard]] bool IsPlaying() const { return m_Playing; }
@@ -33,11 +36,12 @@ namespace buki
 	private:
 		void AdvanceFrame(float dt);
 
-		const AnimationClip* m_CurrentClip = nullptr;
+		AnimationClip* m_CurrentClip = nullptr;
 		std::size_t m_FrameIndex = 0;
 		float m_TimeRemaining = 0.0f;
 		bool m_Playing = false;
 		std::string m_CurrentClipName;
+		bool m_FlipX = false;
 	};
 
 	struct Animator : public Component, public IDrawable, public IUpdatable
@@ -61,7 +65,10 @@ namespace buki
 		void SetFloat(const std::string& name, float value);
 		void SetString(const std::string& name, const std::string& value);
 
-		[[nodiscard]] const SpriteFrame* GetCurrentFrame() const;
+		void SetFlipX(bool flipX);
+		[[nodiscard]] bool GetFlipX() const { return  m_Player.GetFlipX(); }
+
+		[[nodiscard]] const SpriteFrame* GetCurrentFrame();
 		[[nodiscard]] bool IsPlaying() const;
 
 		AnimatorParams params;

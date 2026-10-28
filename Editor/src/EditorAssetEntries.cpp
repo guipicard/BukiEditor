@@ -212,13 +212,13 @@ buki::EditorBrowserIcons& buki::GetEditorBrowserIcons()
 	{
 		auto& textures = Engine::Get().Textures();
 
-		icons.folder = textures.Load("EditorImg/Folder.png");
-		icons.scene = textures.Load("EditorImg/Network.png");
-		icons.audio = textures.Load("EditorImg/Audio.png");
-		icons.file = textures.Load("EditorImg/File.png");
-		icons.prefab = textures.Load("EditorImg/Portrait.png");
-		icons.image = textures.Load("EditorImg/Landscape.png");
-		icons.anim = textures.Load("assets/Kenney/Game Icons/PNG/Black/2x/video.png");
+		icons.folder = textures.Load("../Deployment/EditorImg/Folder.png");
+		icons.scene = textures.Load("../Deployment/EditorImg/Network.png");
+		icons.audio = textures.Load("../Deployment/EditorImg/Audio.png");
+		icons.file = textures.Load("../Deployment/EditorImg/File.png");
+		icons.prefab = textures.Load("../Deployment/EditorImg/Portrait.png");
+		icons.image = textures.Load("../Deployment/EditorImg/Landscape.png");
+		icons.anim = textures.Load("../Deployment/assets/Kenney/Game Icons/PNG/Black/2x/video.png");
 
 		loaded = true;
 	}
@@ -508,12 +508,9 @@ void buki::OnDoubleClick(EditorState& state, const BrowserEntry item)
 		Engine::Get().GetActiveCameraPtr()->position = { prefabCamPos.x, prefabCamPos.y };
 		break;
 	case BrowserVisualType::Anim:
-		if (state.animationAssetEditor->open)
-		{
-			state.animationAssetEditor->Load(item.path);
-		}
 		// TODO
 		// OPEN IN OWN WINDOW
+		state.animationStateMachineEditorWindow->Open(item.path);
 		break;
 	}
 }

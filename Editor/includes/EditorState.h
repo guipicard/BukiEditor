@@ -9,6 +9,7 @@
 #include "BukiContainers.h"
 #include "Engine.h"
 #include "AnimationAssetEditor.h"
+#include "AnimationStateMachineEditorWindow.h"
 #include "ImGui.h"
 
 namespace fs = std::filesystem;
@@ -185,6 +186,7 @@ namespace buki
 		Component* activeComponent = nullptr;
 
 		AnimationAssetEditor* animationAssetEditor = new AnimationAssetEditor();
+		AnimationStateMachineEditorWindow* animationStateMachineEditorWindow = new AnimationStateMachineEditorWindow();
 
 		bool showHierarchy = true;
 		bool showInspector = true;

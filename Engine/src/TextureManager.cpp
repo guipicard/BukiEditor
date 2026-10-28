@@ -24,10 +24,11 @@ namespace buki
 
 		if (relative)
 		{
-			if(path[0] != '/')
+			/*if(path[0] != '/')
 				fullPath = assetPath + "/" + path;
 			else
-				fullPath = assetPath + path;
+				fullPath = assetPath + path;*/
+			fullPath = std::filesystem::absolute(path).string();
 		}
 		else
 		{
@@ -58,7 +59,8 @@ namespace buki
 
 	Texture2D* TextureManager::Get(const std::string& path)
 	{
-		std::string assetPath = std::filesystem::absolute("../Deployment").string() + path[0] == "/" ? "": "/" + path;
+		std::string assetPath = std::filesystem::absolute(path).string();
+		//std::string assetPath = std::filesystem::absolute("../Deployment").string() + path[0] == "/" ? "": "/" + path;
 		auto it = m_Textures.find(assetPath);
 		if (it == m_Textures.end())
 		{
