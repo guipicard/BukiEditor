@@ -9,7 +9,7 @@ namespace buki
 	{
 		std::string assetPath;
 		AnimationAsset asset;
-		bool open = false;
+		bool selected = false;
 
 		bool Load(const std::string& path);
 		bool Save();

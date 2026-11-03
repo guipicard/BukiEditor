@@ -12,7 +12,7 @@
         "Background": {
             "components": {
                 "TileLayer": {
-                    "atlasPath": "/assets/Kenney/Physics Assets/PNG/Backgrounds/colored_desert.png",
+                    "atlasPath": "../deployment/assets/kenney/physics assets/png/backgrounds/colored_grass.png",
                     "defaultFlipX": false,
                     "defaultFlipY": false,
                     "defaultSrcRect": {
@@ -159,9 +159,9 @@
                     ],
                     "maxHealth": 100.0,
                     "stageImages": [
-                        "\\assets\\kenney\\physics assets\\png\\glass elements\\elementglass021.png",
-                        "\\assets\\kenney\\physics assets\\png\\glass elements\\elementglass026.png",
-                        "\\assets\\kenney\\physics assets\\png\\glass elements\\elementglass053.png"
+                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass026.png",
+                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass026.png",
+                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass053.png"
                     ]
                 },
                 "RigidBody": {
@@ -183,7 +183,7 @@
                     },
                     "flipX": false,
                     "flipY": false,
-                    "path": "assets/kenney/physics assets/png/glass elements/elementglass021.png",
+                    "path": "../deployment/assets/kenney/physics assets/png/glass elements/elementglass021.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -273,9 +273,9 @@
                     ],
                     "maxHealth": 100.0,
                     "stageImages": [
-                        "\\assets\\kenney\\physics assets\\png\\glass elements\\elementglass021.png",
-                        "\\assets\\kenney\\physics assets\\png\\glass elements\\elementglass026.png",
-                        "\\assets\\kenney\\physics assets\\png\\glass elements\\elementglass053.png"
+                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass026.png",
+                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass026.png",
+                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass053.png"
                     ]
                 },
                 "RigidBody": {
@@ -297,7 +297,7 @@
                     },
                     "flipX": false,
                     "flipY": false,
-                    "path": "assets/kenney/physics assets/png/glass elements/elementglass021.png",
+                    "path": "../deployment/assets/kenney/physics assets/png/glass elements/elementglass021.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -387,9 +387,9 @@
                     ],
                     "maxHealth": 100.0,
                     "stageImages": [
-                        "\\assets\\kenney\\physics assets\\png\\glass elements\\elementglass021.png",
-                        "\\assets\\kenney\\physics assets\\png\\glass elements\\elementglass026.png",
-                        "\\assets\\kenney\\physics assets\\png\\glass elements\\elementglass053.png"
+                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass026.png",
+                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass026.png",
+                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass053.png"
                     ]
                 },
                 "RigidBody": {
@@ -411,7 +411,7 @@
                     },
                     "flipX": false,
                     "flipY": false,
-                    "path": "assets/kenney/physics assets/png/glass elements/elementglass021.png",
+                    "path": "../deployment/assets/kenney/physics assets/png/glass elements/elementglass021.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -501,9 +501,9 @@
                     ],
                     "maxHealth": 100.0,
                     "stageImages": [
-                        "\\assets\\kenney\\physics assets\\png\\glass elements\\elementglass021.png",
-                        "\\assets\\kenney\\physics assets\\png\\glass elements\\elementglass026.png",
-                        "\\assets\\kenney\\physics assets\\png\\glass elements\\elementglass053.png"
+                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass026.png",
+                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass026.png",
+                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass053.png"
                     ]
                 },
                 "RigidBody": {
@@ -525,7 +525,7 @@
                     },
                     "flipX": false,
                     "flipY": false,
-                    "path": "assets/kenney/physics assets/png/glass elements/elementglass021.png",
+                    "path": "../deployment/assets/kenney/physics assets/png/glass elements/elementglass021.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -615,9 +615,9 @@
                     ],
                     "maxHealth": 100.0,
                     "stageImages": [
-                        "\\assets\\kenney\\physics assets\\png\\glass elements\\elementglass021.png",
-                        "\\assets\\kenney\\physics assets\\png\\glass elements\\elementglass026.png",
-                        "\\assets\\kenney\\physics assets\\png\\glass elements\\elementglass053.png"
+                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass026.png",
+                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass026.png",
+                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass053.png"
                     ]
                 },
                 "RigidBody": {
@@ -639,7 +639,7 @@
                     },
                     "flipX": false,
                     "flipY": false,
-                    "path": "assets/kenney/physics assets/png/glass elements/elementglass021.png",
+                    "path": "../deployment/assets/kenney/physics assets/png/glass elements/elementglass021.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -729,9 +729,9 @@
                     ],
                     "maxHealth": 100.0,
                     "stageImages": [
-                        "\\assets\\kenney\\physics assets\\png\\glass elements\\elementglass021.png",
-                        "\\assets\\kenney\\physics assets\\png\\glass elements\\elementglass026.png",
-                        "\\assets\\kenney\\physics assets\\png\\glass elements\\elementglass053.png"
+                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass026.png",
+                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass026.png",
+                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass053.png"
                     ]
                 },
                 "RigidBody": {
@@ -753,7 +753,7 @@
                     },
                     "flipX": false,
                     "flipY": false,
-                    "path": "assets/kenney/physics assets/png/glass elements/elementglass021.png",
+                    "path": "../deployment/assets/kenney/physics assets/png/glass elements/elementglass021.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -843,9 +843,9 @@
                     ],
                     "maxHealth": 100.0,
                     "stageImages": [
-                        "\\assets\\kenney\\physics assets\\png\\glass elements\\elementglass021.png",
-                        "\\assets\\kenney\\physics assets\\png\\glass elements\\elementglass026.png",
-                        "\\assets\\kenney\\physics assets\\png\\glass elements\\elementglass053.png"
+                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass026.png",
+                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass026.png",
+                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass053.png"
                     ]
                 },
                 "RigidBody": {
@@ -867,7 +867,7 @@
                     },
                     "flipX": false,
                     "flipY": false,
-                    "path": "assets/kenney/physics assets/png/glass elements/elementglass021.png",
+                    "path": "../deployment/assets/kenney/physics assets/png/glass elements/elementglass021.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -957,9 +957,9 @@
                     ],
                     "maxHealth": 100.0,
                     "stageImages": [
-                        "\\assets\\kenney\\physics assets\\png\\glass elements\\elementglass021.png",
-                        "\\assets\\kenney\\physics assets\\png\\glass elements\\elementglass026.png",
-                        "\\assets\\kenney\\physics assets\\png\\glass elements\\elementglass053.png"
+                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass026.png",
+                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass026.png",
+                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass053.png"
                     ]
                 },
                 "RigidBody": {
@@ -981,7 +981,7 @@
                     },
                     "flipX": false,
                     "flipY": false,
-                    "path": "assets/kenney/physics assets/png/glass elements/elementglass021.png",
+                    "path": "../deployment/assets/kenney/physics assets/png/glass elements/elementglass021.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -1059,7 +1059,7 @@
                     "type": 0
                 },
                 "TileLayer": {
-                    "atlasPath": "/assets/Kenney/Physics Assets/PNG/Other/grass.png",
+                    "atlasPath": "../deployment/assets/kenney/physics assets/png/other/grass.png",
                     "defaultFlipX": false,
                     "defaultFlipY": false,
                     "defaultSrcRect": {
@@ -3064,7 +3064,7 @@
                     },
                     "flipX": false,
                     "flipY": false,
-                    "path": "assets/kenney/physics assets/png/aliens/aliengreen_round.png",
+                    "path": "../deployment/assets/kenney/physics assets/png/aliens/aliengreen_round.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -3186,7 +3186,7 @@
                     },
                     "flipX": false,
                     "flipY": false,
-                    "path": "/assets/slignshot1.png",
+                    "path": "../deployment/assets/slignshot1.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -3229,7 +3229,7 @@
                     },
                     "flipX": false,
                     "flipY": false,
-                    "path": "/assets/slignshot2.png",
+                    "path": "../deployment/assets/slignshot2.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0

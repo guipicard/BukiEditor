@@ -316,6 +316,7 @@ void buki::HierarchyPanel::Render(EditorState& state)
 			state.selectedPrefabPath.clear();
 			state.selectedPrefabEntity = nullptr;
 			state.activeEntity = entity;
+			state.animationAssetEditor->selected = false;
 			SyncLegacySelection(state);
 		}
 

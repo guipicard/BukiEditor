@@ -21,16 +21,27 @@ void buki::EditorLayer::Render()
 	DrawDockspace();
 
 	if (state.showHierarchy)
+	{
 		hierarchyPanel.Render(state);
-
+	}
 	if (state.showInspector)
+	{
 		inspectorPanel.Render(state);
-
+	}
 	if (state.showSceneView)
+	{
 		sceneViewPanel.Render(state);
-
+	}
 	if (state.animationStateMachineEditorWindow->IsOpen())
 	{
+		if (state.animationStateMachineEditorWindow->ShouldDockNextToScene() &&
+			state.prefabDockNodeId != 0)
+		{
+			ImGui::SetNextWindowDockID(
+				state.prefabDockNodeId,
+				ImGuiCond_Always);
+		}
+
 		state.animationStateMachineEditorWindow->Draw();
 	}
 
@@ -92,8 +103,8 @@ void buki::EditorLayer::RenderSceneViewport()
 	glClearColor(0.12f, 0.12f, 0.14f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-		Engine::Get().World().Render(1.0f);
-	
+	Engine::Get().World().Render(1.0f);
+
 
 	if (depthTestWasEnabled)
 	{

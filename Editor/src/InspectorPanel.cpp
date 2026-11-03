@@ -185,7 +185,7 @@ void buki::InspectorPanel::Render(EditorState& state)
 
 	auto& world = Engine::Get().World();
 
-	if (state.animationAssetEditor->open)
+	if (state.animationAssetEditor->selected)
 	{
 		state.animationAssetEditor->DrawInspector();
 		ImGui::End();
@@ -225,7 +225,6 @@ void buki::InspectorPanel::Render(EditorState& state)
 		ImGui::End();
 		return;
 	}
-
 
 	if (selected.size() == 1)
 	{

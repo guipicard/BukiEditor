@@ -12,7 +12,7 @@ bool buki::AnimationAssetEditor::Load(const std::string& path)
 
 	assetPath = path;
 	asset = std::move(loaded);
-	open = true;
+	selected = true;
 	return true;
 }
 
@@ -94,7 +94,7 @@ static void DrawParameterValueEditor(
 
 void buki::AnimationAssetEditor::DrawInspector()
 {
-	if (!open)
+	if (!selected)
 		return;
 
 	DrawAssetSection();

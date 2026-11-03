@@ -566,7 +566,7 @@ void buki::SelectPrefab(EditorState& state, const std::string& path)
 	state.selectedEntity = nullptr;
 	state.activeEntity = nullptr;
 	state.selectedEntities.clear();
-	state.animationAssetEditor->open = false;
+	state.animationAssetEditor->selected = false;
 
 	state.selectedPrefabPath = path;
 
