@@ -44,6 +44,18 @@ void buki::EditorLayer::Render()
 
 		state.animationStateMachineEditorWindow->Draw();
 	}
+	if (state.clipAssetEditorWindow->IsOpen())
+	{
+		if (state.clipAssetEditorWindow->ShouldDockNextToScene() &&
+			state.prefabDockNodeId != 0)
+		{
+			ImGui::SetNextWindowDockID(
+				state.prefabDockNodeId,
+				ImGuiCond_Always);
+		}
+
+		state.clipAssetEditorWindow->Draw();
+	}
 
 	RenderPrefabPanels();
 	RenderSceneViewport();

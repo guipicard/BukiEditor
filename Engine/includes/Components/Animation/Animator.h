@@ -14,6 +14,7 @@
 namespace buki
 {
 	class Entity;
+	struct ClipAsset;
 
 	class SpriteAnimator
 	{
@@ -21,7 +22,7 @@ namespace buki
 		SpriteAnimator() = default;
 		~SpriteAnimator() = default;
 
-		void Play(AnimationClip* clip);
+		void Play(ClipAsset* clip);
 		void Stop();
 		void Update(float dt);
 		void Draw(float alpha, const RectF& destRect);
@@ -36,7 +37,7 @@ namespace buki
 	private:
 		void AdvanceFrame(float dt);
 
-		AnimationClip* m_CurrentClip = nullptr;
+		ClipAsset* m_CurrentClip = nullptr;
 		std::size_t m_FrameIndex = 0;
 		float m_TimeRemaining = 0.0f;
 		bool m_Playing = false;

@@ -1,10 +1,11 @@
 #include "Animator.h"
 #include "Engine.h"
 #include "BukiContainers.h"
+#include "ClipAsset.h"
 
 namespace buki
 {
-    void SpriteAnimator::Play(AnimationClip* clip)
+    void SpriteAnimator::Play(ClipAsset* clip)
     {
         if (!clip || clip->frames.empty())
         {

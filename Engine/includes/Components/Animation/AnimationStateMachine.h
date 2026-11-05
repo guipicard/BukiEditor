@@ -9,6 +9,7 @@
 namespace buki
 {
 	class SpriteAnimator;
+	class ClipLibrary;
 
 	class AnimationStateMachine
 	{
@@ -17,6 +18,7 @@ namespace buki
 
 		void SetAsset(const AnimationAsset* asset);
 		void SetPlayer(SpriteAnimator* player);
+		void SetClipLibrary(ClipLibrary* library);
 
 		void SetBool(const std::string& name, bool value);
 		void SetInt(const std::string& name, int value);
@@ -37,5 +39,6 @@ namespace buki
 		SpriteAnimator* m_Player = nullptr;
 		std::unordered_map<std::string, AnimParameterValue> m_Parameters;
 		std::string m_CurrentState;
+		ClipLibrary* m_ClipLibrary = nullptr;
 	};
 }

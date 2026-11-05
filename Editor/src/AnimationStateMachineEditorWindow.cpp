@@ -230,14 +230,14 @@ namespace buki
 		m_SelectedTransitionIndex = -1;
 	}
 
-	void AnimationStateMachineEditorWindow::Draw()
+	void buki::AnimationStateMachineEditorWindow::Draw()
 	{
 		if (!m_Open)
 			return;
 
-		m_RequestDockNextToScene = false;
-		const bool shouldDock = m_RequestDockNextToScene;
-		ImGui::SetNextWindowSize(ImVec2(1100.0f, 700.0f), ImGuiCond_FirstUseEver);
+		ImGui::SetNextWindowSize(
+			ImVec2(1100.0f, 700.0f),
+			ImGuiCond_FirstUseEver);
 
 		if (!ImGui::Begin("Animation State Machine", &m_Open))
 		{
@@ -254,6 +254,8 @@ namespace buki
 		DrawInspector();
 
 		ImGui::End();
+
+		m_RequestDockNextToScene = false;
 	}
 
 	void AnimationStateMachineEditorWindow::DrawToolbar()
@@ -269,7 +271,7 @@ namespace buki
 		{
 			AnimationState state;
 			state.name = "NewState";
-			state.clipName = "";
+			state.clipPath = "";
 
 			AnimationStateLayout layout;
 			layout.stateName = state.name;
@@ -609,14 +611,14 @@ namespace buki
 
 		ImGui::Text("State: %s", state->name.c_str());
 
-		if (ImGui::BeginCombo("Clip", state->clipName.c_str()))
+		if (ImGui::BeginCombo("Clip", state->clipPath.c_str()))
 		{
-			for (const AnimationClip& clip : m_Asset.clips)
+			for (const AnimationClipReference& clip : m_Asset.clips)
 			{
-				const bool selected = (clip.name == state->clipName);
+				const bool selected = (clip.clipPath == state->clipPath);
 
-				if (ImGui::Selectable(clip.name.c_str(), selected))
-					state->clipName = clip.name;
+				if (ImGui::Selectable(clip.clipPath.c_str(), selected))
+					state->clipPath = clip.clipPath;
 
 				if (selected)
 					ImGui::SetItemDefaultFocus();

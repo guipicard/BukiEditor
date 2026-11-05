@@ -32,6 +32,9 @@ namespace
 		if (std::strcmp(payloadType, "ANIM") == 0)
 			return entry.type == buki::BrowserVisualType::Anim;
 
+		if (std::strcmp(payloadType, "CLIP") == 0)
+			return entry.type == buki::BrowserVisualType::Clip;
+
 		return false;
 	}
 
@@ -71,7 +74,11 @@ namespace
 			item.type = buki::BrowserVisualType::Anim;
 			item.payloadType = "ANIM";
 		}
-
+		else if (buki::IsClipFile(item.path))
+		{
+			item.type = buki::BrowserVisualType::Clip;
+			item.payloadType = "CLIP";
+		}
 		return item;
 	}
 
@@ -112,6 +119,12 @@ bool buki::IsAnimFile(const std::string& path)
 {
 	fs::path aspath = buki::ToAbsolutePath(path);
 	return ToLowerCopy(aspath.extension().string()) == ".anim";
+}
+
+bool buki::IsClipFile(const std::string& path)
+{
+	const fs::path asPath = buki::ToAbsolutePath(path);
+	return ToLowerCopy(asPath.extension().string()) == ".clip";
 }
 
 bool buki::IsAudioFile(const std::string& path)
@@ -194,6 +207,9 @@ buki::BrowserVisualType buki::GetBrowserVisualType(const std::string& path, bool
 	if (IsAnimFile(path))
 		return BrowserVisualType::Anim;
 
+	if (IsClipFile(path))
+		return BrowserVisualType::Clip;
+
 	if (IsAudioFile(path))
 		return BrowserVisualType::Audio;
 
@@ -219,6 +235,7 @@ buki::EditorBrowserIcons& buki::GetEditorBrowserIcons()
 		icons.prefab = textures.Load("../Deployment/EditorImg/Portrait.png");
 		icons.image = textures.Load("../Deployment/EditorImg/Landscape.png");
 		icons.anim = textures.Load("../Deployment/assets/Kenney/Game Icons/PNG/Black/2x/video.png");
+		icons.clip = textures.Load("../Deployment/assets/Kenney/Game Icons/PNG/Black/2x/right.png");
 
 		loaded = true;
 	}
@@ -266,6 +283,7 @@ const buki::Texture2D* buki::GetBrowserThumbnail(const std::string& path, bool i
 	case BrowserVisualType::Audio:  return icons.audio;
 	case BrowserVisualType::Image:  return icons.image;
 	case BrowserVisualType::Anim:   return icons.anim;
+	case BrowserVisualType::Clip:	return icons.clip;
 	case BrowserVisualType::File:   return icons.file;
 	default:                        return icons.file;
 	}
@@ -462,6 +480,9 @@ void buki::OnClick(EditorState& state, const BrowserEntry item)
 		{
 		}
 		break;
+	case BrowserVisualType::Clip:
+		// Optionally open the clip in the inspector/editor.
+		break;
 	default:
 		break;
 	}
@@ -511,6 +532,9 @@ void buki::OnDoubleClick(EditorState& state, const BrowserEntry item)
 		// TODO
 		// OPEN IN OWN WINDOW
 		state.animationStateMachineEditorWindow->Open(item.path);
+		break;
+	case BrowserVisualType::Clip:
+		state.clipAssetEditorWindow->Open(item.path);
 		break;
 	}
 }

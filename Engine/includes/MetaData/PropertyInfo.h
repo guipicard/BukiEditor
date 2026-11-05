@@ -18,6 +18,7 @@ namespace buki
 		AudioAsset,
 		FontAsset,
 		AnimationAsset,
+		ClipAsset,
 		EntityRef,
 		PrefabRef,
 		ImageAssetList,
@@ -240,6 +241,9 @@ namespace buki
 
 #define BUKI_PROP_ANIMATION_GROUPED(NAME, TYPE, FIELD, GROUP) \
 buki::PropertyInfo{ { { #FIELD, offsetof(TYPE, FIELD), NAME } }, buki::PropertyType::AnimationAsset, GROUP }
+
+#define BUKI_PROP_CLIP_GROUPED(NAME, TYPE, FIELD, GROUP) \
+buki::PropertyInfo{ { { #FIELD, offsetof(TYPE, FIELD), NAME } }, buki::PropertyType::ClipAsset, GROUP }
 		
 #define BUKI_PROP_ENTITY_GROUPED(NAME, TYPE, FIELD, GROUP) \
 	buki::PropertyInfo{ { { #FIELD, offsetof(TYPE, FIELD), NAME } }, buki::PropertyType::EntityRef, GROUP }

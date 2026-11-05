@@ -1,0 +1,15 @@
+{
+    "clips": [],
+    "initialState": "Idle",
+    "layout": [],
+    "name": "NewAnimation",
+    "parameters": [],
+    "states": [
+        {
+            "clipPath": "",
+            "name": "Idle",
+            "transitions": []
+        }
+    ],
+    "version": 1
+}

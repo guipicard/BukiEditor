@@ -10,6 +10,7 @@
 #include "Engine.h"
 #include "AnimationAssetEditor.h"
 #include "AnimationStateMachineEditorWindow.h"
+#include "ClipAssetEditorWindow.h"
 #include "ImGui.h"
 
 namespace fs = std::filesystem;
@@ -187,6 +188,8 @@ namespace buki
 
 		AnimationAssetEditor* animationAssetEditor = new AnimationAssetEditor();
 		AnimationStateMachineEditorWindow* animationStateMachineEditorWindow = new AnimationStateMachineEditorWindow();
+
+		ClipAssetEditorWindow* clipAssetEditorWindow = new ClipAssetEditorWindow();
 
 		bool showHierarchy = true;
 		bool showInspector = true;

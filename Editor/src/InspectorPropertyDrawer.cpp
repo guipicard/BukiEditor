@@ -867,10 +867,10 @@ namespace
 				state.name = stateNameBuffer;
 
 			char clipNameBuffer[256];
-			std::snprintf(clipNameBuffer, sizeof(clipNameBuffer), "%s", state.clipName.c_str());
+			std::snprintf(clipNameBuffer, sizeof(clipNameBuffer), "%s", state.name.c_str());
 
 			if (ImGui::InputText("Clip Name", clipNameBuffer, sizeof(clipNameBuffer)))
-				state.clipName = clipNameBuffer;
+				state.name = clipNameBuffer;
 
 			if (ImGui::Button("Remove State"))
 				stateToRemove = i;
@@ -2316,6 +2316,7 @@ bool buki::InspectorPropertyDrawer::DrawProperty(const PropertyInfo& propInfo, v
 	case PropertyType::PrefabRef:         ImGui::SameLine(); return DrawPrefabPicker(propInfo, fieldPtr);
 	case PropertyType::FontAsset:         ImGui::SameLine(); return DrawStringAssetPicker(propInfo, fieldPtr, "FONT");
 	case PropertyType::AnimationAsset:    return DrawStringAssetPicker(propInfo, fieldPtr, "ANIM");
+	case PropertyType::ClipAsset:		  return DrawStringAssetPicker(propInfo, fieldPtr, "CLIP");
 	case PropertyType::FontAssetList:     return DrawStringAssetListPicker(propInfo, fieldPtr, "FONT");
 	case PropertyType::Vector2:           ImGui::SameLine(); return DrawVector2Property(propInfo, fieldPtr);
 	case PropertyType::Color:             ImGui::SameLine(); return DrawColorProperty(propInfo, fieldPtr);

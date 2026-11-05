@@ -242,7 +242,7 @@ void buki::AnimationAssetEditor::DrawStatesSection()
 	{
 		AnimationState state;
 		state.name = "NewState";
-		state.clipName = "";
+		state.clipPath = "";
 
 		asset.states.push_back(state);
 	}
@@ -269,14 +269,14 @@ void buki::AnimationAssetEditor::DrawStatesSection()
 				state.name = nameBuffer;
 
 			// Clip selection should come from existing clips.
-			if (ImGui::BeginCombo("Clip", state.clipName.c_str()))
+			if (ImGui::BeginCombo("Clip", state.clipPath.c_str()))
 			{
-				for (const AnimationClip& clip : asset.clips)
+				for (const AnimationClipReference& clip : asset.clips)
 				{
-					const bool isSelected = (clip.name == state.clipName);
+					const bool isSelected = (clip.clipPath == state.clipPath);
 
-					if (ImGui::Selectable(clip.name.c_str(), isSelected))
-						state.clipName = clip.name;
+					if (ImGui::Selectable(clip.clipPath.c_str(), isSelected))
+						state.clipPath = clip.clipPath;
 
 					if (isSelected)
 						ImGui::SetItemDefaultFocus();
@@ -511,20 +511,20 @@ void buki::AnimationAssetEditor::DrawConditionOperatorEditor(
 
 void buki::AnimationAssetEditor::DrawClipsSection()
 {
-	ImGui::SeparatorText("Clips");
+	
+	ImGui::SeparatorText("Clip References");
 
 	if (asset.clips.empty())
 	{
-		ImGui::TextDisabled("No clips. Add one before assigning it to a state.");
+		ImGui::TextDisabled("No clip references. Add one before assigning it to a state.");
 	}
 
-	if (ImGui::Button("Add Clip"))
+	if (ImGui::Button("Add Clip Reference"))
 	{
-		AnimationClip clip;
-		clip.name = "NewClip";
-		clip.loop = true;
+		AnimationClipReference reference;
+		reference.clipPath = "";
 
-		asset.clips.push_back(clip);
+		asset.clips.push_back(reference);
 	}
 
 	int clipToRemove = -1;
@@ -533,83 +533,25 @@ void buki::AnimationAssetEditor::DrawClipsSection()
 		clipIndex < static_cast<int>(asset.clips.size());
 		++clipIndex)
 	{
-		AnimationClip& clip = asset.clips[clipIndex];
+		AnimationClipReference& clip = asset.clips[clipIndex];
 
 		ImGui::PushID(clipIndex);
 
 		const std::string treeNodeId =
-			"Clip##" + std::to_string(clipIndex);
+			"Clip Reference##" + std::to_string(clipIndex);
 
 		if (ImGui::TreeNode(treeNodeId.c_str()))
 		{
-			char nameBuffer[256];
-			std::snprintf(nameBuffer, sizeof(nameBuffer), "%s", clip.name.c_str());
+			PropertyInfo clipPathProperty =
+				BUKI_PROP_STRING(AnimationClipReference, clipPath);
 
-			if (ImGui::InputText("Clip Name", nameBuffer, sizeof(nameBuffer)))
-				clip.name = nameBuffer;
+			InspectorPropertyDrawer::DrawStringAssetPicker(
+				clipPathProperty,
+				&clip.clipPath,
+				"CLIP"
+			);
 
-			ImGui::Checkbox("Loop", &clip.loop);
-
-			ImGui::Separator();
-			ImGui::TextDisabled("Frames");
-
-			if (ImGui::Button("Add Frame"))
-			{
-				SpriteFrame frame;
-				frame.texturePath = "";
-				frame.duration = 0.1f;
-
-				clip.frames.push_back(frame);
-			}
-
-			int frameToRemove = -1;
-
-			for (int frameIndex = 0;
-				frameIndex < static_cast<int>(clip.frames.size());
-				++frameIndex)
-			{
-				SpriteFrame& frame = clip.frames[frameIndex];
-
-				ImGui::PushID(frameIndex);
-
-				if (ImGui::TreeNode("Frame"))
-				{
-					PropertyInfo prop =
-						BUKI_PROP_STRING(SpriteFrame, texturePath);
-
-					InspectorPropertyDrawer::DrawStringAssetPicker(
-						prop,
-						&frame.texturePath,
-						"IMAGE"
-					);
-
-					ImGui::DragFloat(
-						"Duration",
-						&frame.duration,
-						0.01f,
-						0.01f,
-						10.0f
-					);
-
-					ImGui::Checkbox("Flip X", &frame.flipX);
-					ImGui::Checkbox("Flip Y", &frame.flipY);
-
-					if (ImGui::Button("Remove Frame"))
-						frameToRemove = frameIndex;
-
-					ImGui::TreePop();
-				}
-
-				ImGui::PopID();
-			}
-
-			if (frameToRemove >= 0)
-			{
-				clip.frames.erase(
-					clip.frames.begin() + frameToRemove);
-			}
-
-			if (ImGui::Button("Remove Clip"))
+			if (ImGui::Button("Remove Reference"))
 				clipToRemove = clipIndex;
 
 			ImGui::TreePop();

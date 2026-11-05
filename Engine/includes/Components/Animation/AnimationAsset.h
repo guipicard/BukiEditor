@@ -2,35 +2,39 @@
 
 #include "AnimationTypes.h"
 
-#include <map>
 #include <string>
 #include <vector>
 
 namespace buki
 {
-	struct AnimationStateLayout
-	{
-		std::string stateName;
-		Vector2 editorPosition{};
-	};
+    struct AnimationStateLayout
+    {
+        std::string stateName;
+        Vector2 editorPosition{};
+    };
 
-	struct AnimationAsset
-	{
-		int version = 1;
-		std::string name;
-		std::vector<AnimParameter> parameters;
-		std::vector<AnimationState> states;
-		std::vector<AnimationClip> clips;
-		std::string initialState;
+    struct AnimationClipReference
+    {
+        std::string clipPath;
+    };
 
-		bool LoadFromFile(const std::string& path);
-		bool SaveToFile(const std::string& path) const;
+    struct AnimationAsset
+    {
+        int version = 1;
+        std::string name;
+        std::string initialState;
 
-		[[nodiscard]] const AnimationState* GetState(const std::string& name) const;
-		[[nodiscard]] AnimationClip* GetClip(const std::string& name) const;
-		[[nodiscard]] const AnimParameter* GetParameter(const std::string& name) const;
+        std::vector<AnimParameter> parameters;
+        std::vector<AnimationState> states;
+        std::vector<AnimationClipReference> clips;
 
-		// editor-only data
-		std::vector<AnimationStateLayout> layout;
-	};
+        std::vector<AnimationStateLayout> layout;
+
+        bool LoadFromFile(const std::string& path);
+        bool SaveToFile(const std::string& path) const;
+
+        [[nodiscard]] const AnimationState* GetState(const std::string& name) const;
+        [[nodiscard]] const AnimationClipReference* GetClipReference(const std::string& clipPath) const;
+        [[nodiscard]] const AnimParameter* GetParameter(const std::string& name) const;
+    };
 }

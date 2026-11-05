@@ -1107,7 +1107,7 @@
                 },
                 "Animator": {
                     "params": {
-                        "animationPath": "../deployment/prefabs/playerblue.anim",
+                        "animationPath": "../deployment/prefabs/newanimation.anim",
                         "playOnStart": true,
                         "speed": 1.0
                     }

@@ -18,6 +18,7 @@ namespace buki
 		Scene,
 		Prefab,
 		Anim,
+		Clip,
 		Audio,
 		Image,
 		File,
@@ -31,13 +32,6 @@ namespace buki
 		std::string payloadType;
 		BrowserVisualType type;
 
-		// dumbest shit ive seen
-		//bool isDirectory = false;
-		//bool isSceneFile = false;
-		//bool isPrefabFile = false;
-		//bool isImageFile = false;
-		//bool isAnimFile = false;
-		//bool isAudioFile = false;
 	};
 
 	struct EditorBrowserIcons
@@ -45,6 +39,7 @@ namespace buki
 		const Texture2D* folder = nullptr;
 		const Texture2D* scene = nullptr;
 		const Texture2D* anim = nullptr;
+		const Texture2D* clip = nullptr;
 		const Texture2D* audio = nullptr;
 		const Texture2D* file = nullptr;
 		const Texture2D* prefab = nullptr;
@@ -54,6 +49,7 @@ namespace buki
 	bool IsPrefabFile(const std::string& path);
 	bool IsImageFile(const std::string& path);
 	bool IsAnimFile(const std::string& path);
+	bool IsClipFile(const std::string& path);
 	bool IsAudioFile(const std::string& path);
 	bool IsSceneFile(const std::string& path);
 

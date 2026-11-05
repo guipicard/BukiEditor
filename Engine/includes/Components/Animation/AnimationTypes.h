@@ -80,7 +80,7 @@ namespace buki
 	struct AnimationState
 	{
 		std::string name;
-		std::string clipName;
+		std::string clipPath;
 		std::vector<AnimationTransition> transitions;
 	};
 

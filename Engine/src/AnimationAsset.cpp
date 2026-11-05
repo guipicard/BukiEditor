@@ -1,385 +1,340 @@
 #include "AnimationAsset.h"
-#include "Engine.h"
 
 #include <nlohmann/json.hpp>
 #include <filesystem>
 #include <fstream>
-#include <iostream>
+
 namespace fs = std::filesystem;
 using json = nlohmann::json;
 
 namespace buki
 {
-	static void ToJson(const AnimParameterValue& value, json& out)
-	{
-		if (auto* v = std::get_if<bool>(&value)) out = *v;
-		else if (auto* v = std::get_if<int>(&value)) out = *v;
-		else if (auto* v = std::get_if<float>(&value)) out = *v;
-		else if (auto* v = std::get_if<std::string>(&value)) out = *v;
-	}
+    static void ToJson(const AnimParameterValue& value, json& out)
+    {
+        if (auto* v = std::get_if<bool>(&value))
+            out = *v;
+        else if (auto* v = std::get_if<int>(&value))
+            out = *v;
+        else if (auto* v = std::get_if<float>(&value))
+            out = *v;
+        else if (auto* v = std::get_if<std::string>(&value))
+            out = *v;
+    }
 
-	static AnimParameterValue ParseValue(const json& value, AnimParameterType type)
-	{
-		switch (type)
-		{
-		case AnimParameterType::Bool:
-			return value.get<bool>();
+    static AnimParameterValue ParseValue(const json& value, AnimParameterType type)
+    {
+        switch (type)
+        {
+        case AnimParameterType::Bool:
+            return value.get<bool>();
 
-		case AnimParameterType::Int:
-			return value.get<int>();
+        case AnimParameterType::Int:
+            return value.get<int>();
 
-		case AnimParameterType::Float:
-			return value.get<float>();
+        case AnimParameterType::Float:
+            return value.get<float>();
 
-		case AnimParameterType::String:
-			return value.get<std::string>();
-		}
+        case AnimParameterType::String:
+            return value.get<std::string>();
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	static void ToJson(const AnimationStateLayout& temp, json& out)
-	{
-		out["name"] = temp.stateName;
-		out["position"]["x"] = temp.editorPosition.x;
-		out["position"]["y"] = temp.editorPosition.y;
-	}
+    static void ToJson(const AnimParameter& parameter, json& out)
+    {
+        out["name"] = parameter.name;
+        out["type"] = static_cast<int>(parameter.type);
+        ToJson(parameter.defaultValue, out["defaultValue"]);
+    }
 
-	static AnimationStateLayout ParseLayout(const json& temp)
-	{
-		AnimationStateLayout result;
+    static AnimParameter ParseParameter(const json& parameter)
+    {
+        AnimParameter result;
+        result.name = parameter.value("name", "");
+        result.type = static_cast<AnimParameterType>(
+            parameter.value("type", static_cast<int>(AnimParameterType::Bool)));
+        result.defaultValue = ParseValue(
+            parameter.value("defaultValue", json(false)),
+            result.type);
 
-		result.stateName = temp.value("name", "");
-		result.stateName = temp["position"].value("x", 0);
-		result.stateName = temp["position"].value("y", 0);
+        return result;
+    }
 
-		return result;
-	}
+    static void ToJson(const AnimCondition& condition, json& out)
+    {
+        out["parameter"] = condition.parameter;
+        out["type"] = static_cast<int>(condition.type);
+        out["op"] = static_cast<int>(condition.op);
+        ToJson(condition.value, out["value"]);
+    }
 
-	static void ToJson(const SpriteFrame& frame, json& out)
-	{
-		out["path"] = frame.texturePath;
-		out["duration"] = frame.duration;
-		out["flipX"] = frame.flipX;
-		out["flipY"] = frame.flipY;
+    static AnimCondition ParseCondition(const json& condition)
+    {
+        AnimCondition result;
+        result.parameter = condition.value("parameter", "");
+        result.type = static_cast<AnimParameterType>(
+            condition.value("type", static_cast<int>(AnimParameterType::Bool)));
+        result.op = static_cast<AnimConditionOp>(
+            condition.value("op", static_cast<int>(AnimConditionOp::Equals)));
+        result.value = ParseValue(
+            condition.value("value", json(false)),
+            result.type);
 
-		out["sourceRect"]["x"] = frame.sourceRect.x;
-		out["sourceRect"]["y"] = frame.sourceRect.y;
-		out["sourceRect"]["w"] = frame.sourceRect.w;
-		out["sourceRect"]["h"] = frame.sourceRect.h;
+        return result;
+    }
 
-		// Texture ownership/loading is engine-specific.
-		// If you serialize texture paths elsewhere, store that path here instead.
-	}
+    static void ToJson(const AnimationTransition& transition, json& out)
+    {
+        out["to"] = transition.to;
+        out["forceRestart"] = transition.forceRestart;
 
-	static SpriteFrame ParseFrame(const json& frame)
-	{
-		SpriteFrame result;
+        json conditions = json::array();
 
-		result.texturePath = frame.value("path", "");
-		result.duration = frame.value("duration", 0.1f);
-		result.flipX = frame.value("flipX", false);
-		result.flipY = frame.value("flipY", false);
+        for (const AnimCondition& condition : transition.conditions)
+        {
+            json conditionJson;
+            ToJson(condition, conditionJson);
+            conditions.push_back(conditionJson);
+        }
 
-		if (frame.contains("sourceRect"))
-		{
-			const json& rect = frame["sourceRect"];
-			result.sourceRect.x = rect.value("x", 0.0f);
-			result.sourceRect.y = rect.value("y", 0.0f);
-			result.sourceRect.w = rect.value("w", 0.0f);
-			result.sourceRect.h = rect.value("h", 0.0f);
-		}
-		return result;
-	}
+        out["conditions"] = conditions;
+    }
 
-	static void ToJson(const AnimationClip& clip, json& out)
-	{
-		out["name"] = clip.name;
-		out["loop"] = clip.loop;
+    static AnimationTransition ParseTransition(const json& transition)
+    {
+        AnimationTransition result;
+        result.to = transition.value("to", "");
+        result.forceRestart = transition.value("forceRestart", false);
 
-		json frames = json::array();
-		for (const SpriteFrame& frame : clip.frames)
-		{
-			json frameJson;
-			ToJson(frame, frameJson);
-			frames.push_back(frameJson);
-		}
+        if (transition.contains("conditions") &&
+            transition["conditions"].is_array())
+        {
+            for (const json& conditionJson : transition["conditions"])
+                result.conditions.push_back(ParseCondition(conditionJson));
+        }
 
-		out["frames"] = frames;
-	}
+        return result;
+    }
 
-	static AnimationClip ParseClip(const json& clip)
-	{
-		AnimationClip result;
-		result.name = clip.value("name", "");
-		result.loop = clip.value("loop", true);
+    static void ToJson(const AnimationState& state, json& out)
+    {
+        out["name"] = state.name;
+        out["clipPath"] = state.clipPath;
 
-		if (clip.contains("frames") && clip["frames"].is_array())
-		{
-			for (const json& frameJson : clip["frames"])
-				result.frames.push_back(ParseFrame(frameJson));
-		}
+        json transitions = json::array();
 
-		return result;
-	}
+        for (const AnimationTransition& transition : state.transitions)
+        {
+            json transitionJson;
+            ToJson(transition, transitionJson);
+            transitions.push_back(transitionJson);
+        }
 
-	static void ToJson(const AnimParameter& parameter, json& out)
-	{
-		out["name"] = parameter.name;
-		out["type"] = static_cast<int>(parameter.type);
-		ToJson(parameter.defaultValue, out["defaultValue"]);
-	}
+        out["transitions"] = transitions;
+    }
 
-	static AnimParameter ParseParameter(const json& parameter)
-	{
-		AnimParameter result;
-		result.name = parameter.value("name", "");
-		result.type = static_cast<AnimParameterType>(parameter.value("type", 0));
-		result.defaultValue = ParseValue(parameter.value("defaultValue", json(false)), result.type);
-		return result;
-	}
+    static AnimationState ParseState(const json& state)
+    {
+        AnimationState result;
+        result.name = state.value("name", "");
+        result.clipPath = state.value("clipPath", "");
 
-	static void ToJson(const AnimCondition& condition, json& out)
-	{
-		out["parameter"] = condition.parameter;
-		out["type"] = static_cast<int>(condition.type);
-		out["op"] = static_cast<int>(condition.op);
-		ToJson(condition.value, out["value"]);
-	}
+        if (state.contains("transitions") &&
+            state["transitions"].is_array())
+        {
+            for (const json& transitionJson : state["transitions"])
+                result.transitions.push_back(ParseTransition(transitionJson));
+        }
 
-	static AnimCondition ParseCondition(const json& condition)
-	{
-		AnimCondition result;
-		result.parameter = condition.value("parameter", "");
-		result.type = static_cast<AnimParameterType>(condition.value("type", 0));
-		result.op = static_cast<AnimConditionOp>(condition.value("op", 0));
-		result.value = ParseValue(condition.value("value", json(false)), result.type);
-		return result;
-	}
+        return result;
+    }
 
-	static void ToJson(const AnimationTransition& transition, json& out)
-	{
-		out["to"] = transition.to;
-		out["forceRestart"] = transition.forceRestart;
+    static void ToJson(const AnimationClipReference& clip, json& out)
+    {
+        out["clipPath"] = clip.clipPath;
+    }
 
-		json conditions = json::array();
-		for (const AnimCondition& condition : transition.conditions)
-		{
-			json conditionJson;
-			ToJson(condition, conditionJson);
-			conditions.push_back(conditionJson);
-		}
+    static AnimationClipReference ParseClipReference(const json& clip)
+    {
+        AnimationClipReference result;
+        result.clipPath = clip.value("clipPath", "");
+        return result;
+    }
 
-		out["conditions"] = conditions;
-	}
+    static void ToJson(const AnimationStateLayout& layout, json& out)
+    {
+        out["stateName"] = layout.stateName;
+        out["position"]["x"] = layout.editorPosition.x;
+        out["position"]["y"] = layout.editorPosition.y;
+    }
 
-	static AnimationTransition ParseTransition(const json& transition)
-	{
-		AnimationTransition result;
-		result.to = transition.value("to", "");
-		result.forceRestart = transition.value("forceRestart", false);
+    static AnimationStateLayout ParseLayout(const json& layout)
+    {
+        AnimationStateLayout result;
 
-		if (transition.contains("conditions") && transition["conditions"].is_array())
-		{
-			for (const json& conditionJson : transition["conditions"])
-				result.conditions.push_back(ParseCondition(conditionJson));
-		}
+        result.stateName = layout.value("stateName", "");
 
-		return result;
-	}
+        if (layout.contains("position"))
+        {
+            result.editorPosition.x = layout["position"].value("x", 0.0f);
+            result.editorPosition.y = layout["position"].value("y", 0.0f);
+        }
 
-	static void ToJson(const AnimationState& state, json& out)
-	{
-		out["name"] = state.name;
-		out["clipName"] = state.clipName;
+        return result;
+    }
 
-		json transitions = json::array();
-		for (const AnimationTransition& transition : state.transitions)
-		{
-			json transitionJson;
-			ToJson(transition, transitionJson);
-			transitions.push_back(transitionJson);
-		}
+    bool AnimationAsset::SaveToFile(const std::string& path) const
+    {
+        json root;
+        root["version"] = version;
+        root["name"] = name;
+        root["initialState"] = initialState;
 
-		out["transitions"] = transitions;
-	}
+        json parametersJson = json::array();
 
-	static AnimationState ParseState(const json& state)
-	{
-		AnimationState result;
-		result.name = state.value("name", "");
-		result.clipName = state.value("clipName", "");
+        for (const AnimParameter& parameter : parameters)
+        {
+            json parameterJson;
+            ToJson(parameter, parameterJson);
+            parametersJson.push_back(parameterJson);
+        }
 
-		if (state.contains("transitions") && state["transitions"].is_array())
-		{
-			for (const json& transitionJson : state["transitions"])
-				result.transitions.push_back(ParseTransition(transitionJson));
-		}
+        root["parameters"] = parametersJson;
 
-		return result;
-	}
+        json statesJson = json::array();
 
-	bool AnimationAsset::SaveToFile(const std::string& path) const
-	{
-		json root;
-		root["version"] = version;
-		root["name"] = name;
-		root["initialState"] = initialState;
+        for (const AnimationState& state : states)
+        {
+            json stateJson;
+            ToJson(state, stateJson);
+            statesJson.push_back(stateJson);
+        }
 
-		json parametersJson = json::array();
-		for (const AnimParameter& parameter : parameters)
-		{
-			json parameterJson;
-			ToJson(parameter, parameterJson);
-			parametersJson.push_back(parameterJson);
-		}
-		root["parameters"] = parametersJson;
+        root["states"] = statesJson;
 
-		json statesJson = json::array();
-		for (const AnimationState& state : states)
-		{
-			json stateJson;
-			ToJson(state, stateJson);
-			statesJson.push_back(stateJson);
-		}
-		root["states"] = statesJson;
+        json clipsJson = json::array();
 
-		json clipsJson = json::object();
-		for (const auto& clip : clips)
-		{
-			json clipJson;
-			ToJson(clip, clipJson);
-			clipsJson[clip.name] = clipJson;
-		}
-		root["clips"] = clipsJson;
+        for (const AnimationClipReference& clip : clips)
+        {
+            json clipJson;
+            ToJson(clip, clipJson);
+            clipsJson.push_back(clipJson);
+        }
 
-		json layoutJson;
-		for (AnimationStateLayout temp : layout)
-		{
-			json tempJson;
-			ToJson(temp, tempJson);
-			layoutJson[temp.stateName] = tempJson;
-		}
-		root["layout"] = layoutJson;
+        root["clips"] = clipsJson;
 
-		std::ofstream file(path);
-		if (!file.is_open())
-			return false;
+        json layoutJson = json::array();
 
-		file << root.dump(4);
-		return true;
-	}
+        for (const AnimationStateLayout& layout : layout)
+        {
+            json layoutJsonItem;
+            ToJson(layout, layoutJsonItem);
+            layoutJson.push_back(layoutJsonItem);
+        }
 
-	bool AnimationAsset::LoadFromFile(const std::string& path)
-	{
-		const fs::path absolutePath =
-			fs::absolute(fs::path("../Deployment") / path).lexically_normal();
+        root["layout"] = layoutJson;
 
-		std::ifstream file(absolutePath);
-		if (!file.is_open())
-		{
-			return false;
-		}
+        std::ofstream file(path);
+        if (!file.is_open())
+            return false;
 
-		json root;
-		try
-		{
-			file >> root;
-		}
-		catch (const json::exception& e)
-		{
-			return false;
-		}
+        file << root.dump(4);
+        return true;
+    }
 
-		file.close();
+    bool AnimationAsset::LoadFromFile(const std::string& path)
+    {
+        const fs::path absolutePath =
+            fs::absolute(fs::path("../Deployment") / path).lexically_normal();
 
-		if (!root.is_object())
-		{
-			return false;
-		}
+        std::ifstream file(absolutePath);
+        if (!file.is_open())
+            return false;
 
-		version = root.value("version", 1);
-		name = root.value("name", "");
-		initialState = root.value("initialState", "");
+        json root;
 
-		parameters.clear();
-		states.clear();
-		clips.clear();
+        try
+        {
+            file >> root;
+        }
+        catch (const json::exception&)
+        {
+            return false;
+        }
 
-		if (root.contains("parameters") && root["parameters"].is_array())
-		{
-			for (const json& parameterJson : root["parameters"])
-				parameters.push_back(ParseParameter(parameterJson));
-		}
+        if (!root.is_object())
+            return false;
 
-		if (root.contains("states") && root["states"].is_array())
-		{
-			for (const json& stateJson : root["states"])
-				states.push_back(ParseState(stateJson));
-		}
+        version = root.value("version", 1);
+        name = root.value("name", "");
+        initialState = root.value("initialState", "");
 
-		if (root.contains("clips") && root["clips"].is_object())
-		{
-			for (auto it = root["clips"].begin(); it != root["clips"].end(); ++it)
-				clips.push_back(ParseClip(it.value()));
-		}
+        parameters.clear();
+        states.clear();
+        clips.clear();
+        layout.clear();
 
-		if (root.contains("layout") && root["layout"].is_object())
-		{
-			for (auto it = root["layout"].begin(); it != root["layout"].end(); ++it)
-				layout.push_back(ParseLayout(it.value()));
-		}
+        if (root.contains("parameters") && root["parameters"].is_array())
+        {
+            for (const json& parameterJson : root["parameters"])
+                parameters.push_back(ParseParameter(parameterJson));
+        }
 
-		return true;
-	}
+        if (root.contains("states") && root["states"].is_array())
+        {
+            for (const json& stateJson : root["states"])
+                states.push_back(ParseState(stateJson));
+        }
 
-	const AnimationState* AnimationAsset::GetState(const std::string& stateName) const
-	{
-		for (const AnimationState& state : states)
-		{
-			if (state.name == stateName)
-				return &state;
-		}
+        if (root.contains("clips") && root["clips"].is_array())
+        {
+            for (const json& clipJson : root["clips"])
+                clips.push_back(ParseClipReference(clipJson));
+        }
 
-		return nullptr;
-	}
+        if (root.contains("layout") && root["layout"].is_array())
+        {
+            for (const json& layoutJson : root["layout"])
+                layout.push_back(ParseLayout(layoutJson));
+        }
 
-	AnimationClip* AnimationAsset::GetClip(const std::string& clipName) const
-	{
-		for (const AnimationClip& clip : clips)
-		{
-			if (clip.name == clipName)
-			{
-				AnimationClip* clipPtr = const_cast<AnimationClip*>(&clip);
-				for (size_t i = 0; i < clipPtr->frames.size(); i++)
-				{
-					if (!clipPtr->frames[i].texture)
-					{
-						clipPtr->frames[i].texture = Engine::Get().Textures().Load(clipPtr->frames[i].texturePath);
-						Texture2D* tex = Engine::Get().Textures().Get(clipPtr->frames[i].texturePath);
-						RectF src = RectF();
-						if (tex)
-						{
-							src.w = tex->width;
-							src.h = tex->height;
-						}
-						clipPtr->frames[i].sourceRect = src;
-					}
-				}
-				return clipPtr;
-			}
-		}
-		return nullptr;
-	}
+        return true;
+    }
 
-	const AnimParameter* AnimationAsset::GetParameter(const std::string& parameterName) const
-	{
-		for (const AnimParameter& parameter : parameters)
-		{
-			if (parameter.name == parameterName)
-				return &parameter;
-		}
+    const AnimationState* AnimationAsset::GetState(
+        const std::string& stateName) const
+    {
+        for (const AnimationState& state : states)
+        {
+            if (state.name == stateName)
+                return &state;
+        }
 
-		return nullptr;
-	}
+        return nullptr;
+    }
+
+    const AnimationClipReference* AnimationAsset::GetClipReference(
+        const std::string& clipPath) const
+    {
+        for (const AnimationClipReference& clip : clips)
+        {
+            if (clip.clipPath == clipPath)
+                return &clip;
+        }
+
+        return nullptr;
+    }
+
+    const AnimParameter* AnimationAsset::GetParameter(
+        const std::string& parameterName) const
+    {
+        for (const AnimParameter& parameter : parameters)
+        {
+            if (parameter.name == parameterName)
+                return &parameter;
+        }
+
+        return nullptr;
+    }
 }

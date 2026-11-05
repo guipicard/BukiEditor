@@ -9,6 +9,7 @@
 #include "WorldService.h"
 #include "AnimationAsset.h"
 #include "AnimationAssetEditor.h"
+#include "ClipAsset.h"
 
 #include <algorithm>
 #include <cctype>
@@ -20,12 +21,15 @@
 
 namespace buki
 {
-	bool CreateAnimationAsset(const std::string& directory, const std::string& baseName)
+	bool CreateAnimationAsset(
+		const std::string& directory,
+		const std::string& baseName)
 	{
 		std::string name = baseName.empty() ? "NewAnimation" : baseName;
 		std::string path = directory + "/" + name + ".anim";
 
 		int suffix = 1;
+
 		while (std::ifstream(path).good())
 		{
 			path = directory + "/" + name + std::to_string(suffix++) + ".anim";
@@ -35,13 +39,40 @@ namespace buki
 		asset.name = name;
 		asset.initialState = "Idle";
 
-		AnimationState idle;
-		idle.name = "Idle";
-		idle.clipName = "Idle";
+		AnimationState idleState;
+		idleState.name = "Idle";
+		idleState.clipPath = "";
 
-		asset.states.push_back(idle);
+		asset.states.push_back(idleState);
 
 		return asset.SaveToFile(path);
+	}
+
+	bool CreateClipAsset(
+		const std::string& directory,
+		const std::string& baseName)
+	{
+		std::string name = baseName.empty() ? "NewClip" : baseName;
+		std::string path = directory + "/" + name + ".clip";
+
+		int suffix = 1;
+
+		while (std::ifstream(path).good())
+		{
+			path = directory + "/" + name + std::to_string(suffix++) + ".clip";
+		}
+
+		ClipAsset clip;
+		clip.name = name;
+		clip.loop = true;
+
+		SpriteFrame frame;
+		frame.texturePath = "";
+		frame.duration = 0.1f;
+
+		clip.frames.push_back(frame);
+
+		return clip.SaveToFile(path);
 	}
 }
 
@@ -119,9 +150,23 @@ void buki::ContentBrowserPanel::Render(EditorState& state)
 
 	if (ImGui::BeginPopup("browserRightClick"))
 	{
-		if (ImGui::MenuItem("Animation"))
+		if (ImGui::BeginMenu("Create"))
 		{
-			CreateAnimationAsset((state.currentContentPath).string(), "NewAnimation");
+			if (ImGui::MenuItem("Animation"))
+			{
+				CreateAnimationAsset(
+					state.currentContentPath.string(),
+					"NewAnimation");
+			}
+
+			if (ImGui::MenuItem("Animation Clip"))
+			{
+				CreateClipAsset(
+					state.currentContentPath.string(),
+					"NewClip");
+			}
+
+			ImGui::EndMenu();
 		}
 		ImGui::EndPopup();
 	}

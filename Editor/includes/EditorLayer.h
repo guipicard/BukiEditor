@@ -12,16 +12,6 @@
 
 namespace buki
 {
-	//class Entity;
-
-	//class RenderService
-	//{
-	//public:
-	//	void RenderEntities(const std::vector<Entity*>& entities,
-	//		const CameraSettings& camera,
-	//		float dt);
-	//};
-
 	class EditorLayer
 	{
 	public:
