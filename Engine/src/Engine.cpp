@@ -47,6 +47,8 @@ bool Engine::Init(const std::string& title, int w, int h)
 	m_World = MakeScope<WorldService>();
 	m_Audio = MakeScope<SDL_Audio>();
 	m_Physics = MakeScope<PhysicsService>();
+	m_AssetManager = MakeScope<AssetManager>();
+	m_AssetManager->SetRoot("../Deployment");
 
 	m_Physics->InitPhysics();
 
@@ -181,6 +183,9 @@ void Engine::Shutdown()
 	m_FontManager->Clear();
 	m_FontManager.reset();
 
+	m_AssetManager->Clear();
+	m_AssetManager.reset();
+
 	m_Physics->Destroy();
 	m_Physics.reset();
 
@@ -196,6 +201,7 @@ void Engine::Shutdown()
 
 	m_Platform->Shutdown();
 	m_Platform.reset();
+
 
 	m_IsInit = false;
 }

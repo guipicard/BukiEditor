@@ -14,6 +14,7 @@
 #include "Graphics/Camera2D.h"
 #include "Graphics/FontManager.h"
 #include "ScriptFunctionRegistry.h"
+#include "AssetManager.h"
 
 namespace buki {
     using Uint32 = std::uint32_t;
@@ -55,6 +56,7 @@ namespace buki {
         Camera2D& GetActiveCamera() { return m_Camera; }
         const Camera2D& GetActiveCamera() const { return m_Camera; }
         Camera2D* GetActiveCameraPtr() { return &m_Camera; }
+        AssetManager& Assets() { return *m_AssetManager; }
 
         bool HasWorld() const { return m_World != nullptr; }
         IWorld* GetWorldPtr() const { return m_World.get(); }
@@ -93,5 +95,6 @@ namespace buki {
 
         Scope<TextureManager> m_TextureManager;
         Scope<FontManager> m_FontManager;
+        Scope<AssetManager> m_AssetManager;
     };
 }

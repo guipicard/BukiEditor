@@ -26,7 +26,6 @@ namespace buki
 
         std::vector<AnimParameter> parameters;
         std::vector<AnimationState> states;
-        std::vector<AnimationClipReference> clips;
 
         std::vector<AnimationStateLayout> layout;
 

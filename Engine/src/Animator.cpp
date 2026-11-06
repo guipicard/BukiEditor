@@ -1,5 +1,6 @@
 #include "Animator.h"
 #include "Entity.h"
+#include "Engine.h"
 
 namespace buki
 {
@@ -10,10 +11,15 @@ namespace buki
 
 	void Animator::Start()
 	{
-		m_StateMachine.SetAsset(m_Asset);
+		m_StateMachine.SetAsset(&m_Asset);
 		m_StateMachine.SetPlayer(&m_Player);
 
-		if (m_Asset && params.playOnStart)
+		if (!params.animationPath.empty())
+		{
+			m_Asset.LoadFromFile(params.animationPath);
+		}
+
+		if (params.playOnStart)
 		{
 			m_StateMachine.Start();
 		}
@@ -21,26 +27,26 @@ namespace buki
 
 	void Animator::Destroy()
 	{
-		m_StateMachine.SetAsset(nullptr);
-		m_StateMachine.SetPlayer(nullptr);
 		m_Player.Stop();
 	}
 
 	void Animator::SetAnimationAsset(AnimationAsset* asset)
 	{
-		m_Asset = asset;
+		if (asset == nullptr)
+			return;
 
-		m_StateMachine.SetAsset(m_Asset);
+		m_Asset = *asset;
+		m_LoadedAnimationPath = params.animationPath;
+
+		m_StateMachine.SetAsset(&m_Asset);
 		m_StateMachine.SetPlayer(&m_Player);
 
-		if (m_Asset)
-			m_StateMachine.Start();
+		m_StateMachine.Start();
 	}
 
 	void Animator::Play()
 	{
-		if (m_Asset)
-			m_StateMachine.Start();
+		m_StateMachine.Start();
 	}
 
 	void Animator::Stop()
@@ -75,9 +81,6 @@ namespace buki
 
 	void Animator::Update(float dt)
 	{
-		if (!m_Asset)
-			return;
-
 		m_StateMachine.Update();
 		m_Player.Update(dt * params.speed);
 	}
@@ -102,8 +105,19 @@ namespace buki
 
 	void Animator::Set()
 	{
-		// Add editor-only behavior here if needed.
-		// For example: reload the asset when animationAssetPath changes.
-		m_Asset->LoadFromFile(params.animationPath);
+		if (params.animationPath.empty())
+			return;
+
+		if (m_LoadedAnimationPath == params.animationPath)
+			return;
+
+		if (m_Asset.LoadFromFile(params.animationPath))
+		{
+			m_LoadedAnimationPath = params.animationPath;
+
+			m_StateMachine.SetAsset(&m_Asset);
+			m_StateMachine.SetPlayer(&m_Player);
+			m_StateMachine.Start();
+		}
 	}
 }

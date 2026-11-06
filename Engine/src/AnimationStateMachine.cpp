@@ -5,6 +5,7 @@
 #include "AnimationTypes.h"
 #include "ClipLibrary.h"
 #include "ClipAsset.h"
+#include "Engine.h"
 
 #include <variant>
 
@@ -18,11 +19,6 @@ namespace buki
     void AnimationStateMachine::SetPlayer(SpriteAnimator* player)
     {
         m_Player = player;
-    }
-
-    void AnimationStateMachine::SetClipLibrary(ClipLibrary* library)
-    {
-		m_ClipLibrary = library;
     }
 
     void AnimationStateMachine::SetBool(const std::string& name, bool value)
@@ -179,16 +175,27 @@ namespace buki
         return false;
     }
 
-    void AnimationStateMachine::ChangeState(const std::string& stateName, bool forceRestart)
+    void AnimationStateMachine::ChangeState(
+        const std::string& stateName,
+        bool forceRestart)
     {
-        const AnimationState* nextState = m_Asset->GetState(stateName);
-        if (!nextState)
+        if (!m_Asset || !m_Player)
             return;
 
-        ClipAsset* clip = m_ClipLibrary->GetOrLoad(nextState->clipPath);
+        const AnimationState* nextState =
+            m_Asset->GetState(stateName);
+
+        if (!nextState || nextState->clipPath.empty())
+            return;
+
+        ClipAsset* clip =
+            Engine::Get().Assets().GetOrLoad<ClipAsset>(
+                nextState->clipPath);
+
         if (!clip)
             return;
 
         m_Player->Play(clip);
+        m_CurrentState = stateName;
     }
 }

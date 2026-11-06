@@ -265,7 +265,7 @@ void buki::InspectorPanel::RenderSingleEntityInspector(Entity* entity, EditorSta
 
 	if (ImGui::CollapsingHeader("Components", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		for (auto& [type, component] : entity->GetComponents())
+		for (auto& [type, component] : entity->GetComponentsByType())
 		{
 			if (component == nullptr) continue;
 
@@ -499,7 +499,7 @@ void buki::InspectorPanel::RenderPrefabInspector(EditorState& state, IWorld& wor
 
 	if (ImGui::CollapsingHeader("Components", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		for (auto& [type, component] : entity->GetComponents())
+		for (auto& [type, component] : entity->GetComponentsByType())
 		{
 			if (component == nullptr)
 				continue;

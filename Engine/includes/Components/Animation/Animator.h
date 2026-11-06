@@ -56,7 +56,7 @@ namespace buki
 		virtual void Set() override;
 
 		void SetAnimationAsset(AnimationAsset* asset);
-		[[nodiscard]] const AnimationAsset* GetAnimationAsset() const { return m_Asset; }
+		[[nodiscard]] const AnimationAsset GetAnimationAsset() const { return m_Asset; }
 
 		void Play();
 		void Stop();
@@ -87,8 +87,9 @@ namespace buki
 		}
 
 	private:
-		AnimationAsset* m_Asset = new AnimationAsset();
+		AnimationAsset m_Asset;
 		SpriteAnimator m_Player;
 		AnimationStateMachine m_StateMachine;
+		std::string m_LoadedAnimationPath;
 	};
 }

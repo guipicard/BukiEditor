@@ -11,6 +11,8 @@ namespace buki
     {
     public:
         bool Open(const std::string& path);
+        bool IsOpenForPath(const std::string& path) const;
+        void RequestFocus();
         bool Save();
 
         void Draw();
@@ -30,5 +32,6 @@ namespace buki
         bool open = false;
         bool selected = false;
         bool requestDockNextToScene = false;
+        bool requestFocus = false;
     };
 }

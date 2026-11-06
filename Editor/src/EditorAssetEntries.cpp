@@ -465,7 +465,7 @@ void buki::OnClick(EditorState& state, const BrowserEntry item)
 	switch (item.type)
 	{
 	case BrowserVisualType::Folder:
-		
+
 		break;
 	case BrowserVisualType::Scene:
 		state.selectedScenePath = item.path;
@@ -529,12 +529,27 @@ void buki::OnDoubleClick(EditorState& state, const BrowserEntry item)
 		Engine::Get().GetActiveCameraPtr()->position = { prefabCamPos.x, prefabCamPos.y };
 		break;
 	case BrowserVisualType::Anim:
-		// TODO
-		// OPEN IN OWN WINDOW
-		state.animationStateMachineEditorWindow->Open(item.path);
+	{
+		if (state.animationStateMachineEditorWindow->IsOpenForPath(item.path))
+		{
+			state.animationStateMachineEditorWindow->RequestFocus();
+		}
+		else
+		{
+			state.animationStateMachineEditorWindow->Open(item.path);
+		}
+
 		break;
+	}
 	case BrowserVisualType::Clip:
-		state.clipAssetEditorWindow->Open(item.path);
+		if (state.clipAssetEditorWindow->IsOpenForPath(item.path))
+		{
+			state.clipAssetEditorWindow->RequestFocus();
+		}
+		else
+		{
+			state.clipAssetEditorWindow->Open(item.path);
+		}
 		break;
 	}
 }
@@ -543,7 +558,6 @@ void buki::OnRightClick(EditorState& state, const BrowserEntry item)
 {
 	switch (item.type)
 	{
-
 	case BrowserVisualType::Folder:
 	{
 		break;
@@ -572,15 +586,20 @@ void buki::OnRightClick(EditorState& state, const BrowserEntry item)
 	}
 	case BrowserVisualType::Anim:
 	{
-		if (ImGui::MenuItem("Delete"))
-		{
-			// TODO 
-			// INCLUDE IN UNIVERSAL RIGHT CLICK MENU 
-		}
 		break;
 	}
 	default:
 		break;
+	}
+	if (ImGui::MenuItem("Rename"))
+	{
+		state.renamePath = item.path;
+		state.renameBuffer = fs::path(item.path).filename().string();
+	}
+
+	if (ImGui::MenuItem("Delete"))
+	{
+		state.deleteCandidate = item.path;
 	}
 }
 

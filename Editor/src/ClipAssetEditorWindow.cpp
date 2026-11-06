@@ -25,6 +25,16 @@ bool buki::ClipAssetEditorWindow::Save()
     return asset.SaveToFile(assetPath);
 }
 
+bool buki::ClipAssetEditorWindow::IsOpenForPath(const std::string& path) const
+{
+    return open && assetPath == path;
+}
+
+void buki::ClipAssetEditorWindow::RequestFocus()
+{
+    requestFocus = true;
+}
+
 void buki::ClipAssetEditorWindow::Draw()
 {
     if (!open)
@@ -33,6 +43,11 @@ void buki::ClipAssetEditorWindow::Draw()
     ImGui::SetNextWindowSize(
         ImVec2(700.0f, 500.0f),
         ImGuiCond_FirstUseEver);
+    if (requestFocus)
+    {
+        ImGui::SetNextWindowFocus();
+        requestFocus = false;
+    }
 
     if (!ImGui::Begin("Animation Clip", &open))
     {

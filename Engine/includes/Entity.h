@@ -126,7 +126,8 @@ namespace buki
 
 		bool HasComponent(std::string name);
 		Component* GetComponentByTypeName(const std::string& typeName);
-		std::map<const type_info*, Component*> GetComponents() const { return m_ComponentByType; }
+		std::map<const type_info*, Component*> GetComponentsByType() const { return m_ComponentByType; }
+		std::vector<Component*> GetComponents() const;
 		bool AddComponentByTypeName(const std::string& name);
 		bool RemoveComponentByTypeName(const std::string& typeName);
 		bool CanRemoveComponent(const std::string& typeName) const;

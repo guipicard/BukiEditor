@@ -10,6 +10,11 @@
 #include "EditorViewportHelpers.h"
 #include <glad/glad.h>
 
+buki::EditorLayer::EditorLayer()
+{
+	state.assetDatabase.ScanDirectory("../Deployment");
+}
+
 buki::EditorLayer::~EditorLayer()
 {
 	for (auto& session : state.prefabPreviewSessions)

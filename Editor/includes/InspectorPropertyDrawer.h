@@ -48,5 +48,7 @@ namespace buki
 		static bool DrawAddComponentPopup(const std::vector<Entity*>& owners);
 		static std::vector<std::string> GetSharedComponentTypeNames(const std::vector<Entity*>& entities);
 
+		static void RefreshAssetPickers();
+		static void RefreshAssetPicker(const char* payloadType);
 	};
 }

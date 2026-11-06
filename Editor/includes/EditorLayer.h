@@ -15,7 +15,7 @@ namespace buki
 	class EditorLayer
 	{
 	public:
-		EditorLayer() = default;
+		EditorLayer();
 		~EditorLayer();
 		void Render();
 		void RenderSceneViewport();

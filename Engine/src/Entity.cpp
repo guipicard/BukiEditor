@@ -301,6 +301,17 @@ buki::Component* buki::Entity::GetComponentByTypeName(const std::string& typeNam
 
 	return nullptr;
 }
+
+std::vector<buki::Component*> buki::Entity::GetComponents() const
+{
+	std::vector<Component*> result = std::vector<Component*>();
+	for (auto& [type, component] : m_ComponentByType)
+	{
+		result.push_back(component);
+	}
+	return result;
+}
+
 bool buki::Entity::RemoveComponentByTypeName(const std::string& typeName)
 {
 	if (!CanRemoveComponent(typeName))

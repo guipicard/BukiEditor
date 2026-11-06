@@ -213,17 +213,6 @@ namespace buki
 
         root["states"] = statesJson;
 
-        json clipsJson = json::array();
-
-        for (const AnimationClipReference& clip : clips)
-        {
-            json clipJson;
-            ToJson(clip, clipJson);
-            clipsJson.push_back(clipJson);
-        }
-
-        root["clips"] = clipsJson;
-
         json layoutJson = json::array();
 
         for (const AnimationStateLayout& layout : layout)
@@ -272,7 +261,6 @@ namespace buki
 
         parameters.clear();
         states.clear();
-        clips.clear();
         layout.clear();
 
         if (root.contains("parameters") && root["parameters"].is_array())
@@ -285,12 +273,6 @@ namespace buki
         {
             for (const json& stateJson : root["states"])
                 states.push_back(ParseState(stateJson));
-        }
-
-        if (root.contains("clips") && root["clips"].is_array())
-        {
-            for (const json& clipJson : root["clips"])
-                clips.push_back(ParseClipReference(clipJson));
         }
 
         if (root.contains("layout") && root["layout"].is_array())
@@ -309,18 +291,6 @@ namespace buki
         {
             if (state.name == stateName)
                 return &state;
-        }
-
-        return nullptr;
-    }
-
-    const AnimationClipReference* AnimationAsset::GetClipReference(
-        const std::string& clipPath) const
-    {
-        for (const AnimationClipReference& clip : clips)
-        {
-            if (clip.clipPath == clipPath)
-                return &clip;
         }
 
         return nullptr;

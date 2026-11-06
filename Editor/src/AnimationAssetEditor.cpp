@@ -106,9 +106,6 @@ void buki::AnimationAssetEditor::DrawInspector()
 	DrawStatesSection();
 	ImGui::Separator();
 
-	DrawClipsSection();
-	ImGui::Separator();
-
 	if (ImGui::Button("Save"))
 		Save();
 }
@@ -269,21 +266,14 @@ void buki::AnimationAssetEditor::DrawStatesSection()
 				state.name = nameBuffer;
 
 			// Clip selection should come from existing clips.
-			if (ImGui::BeginCombo("Clip", state.clipPath.c_str()))
-			{
-				for (const AnimationClipReference& clip : asset.clips)
-				{
-					const bool isSelected = (clip.clipPath == state.clipPath);
+			PropertyInfo clipPathProperty =
+				BUKI_PROP_STRING(AnimationState, clipPath);
 
-					if (ImGui::Selectable(clip.clipPath.c_str(), isSelected))
-						state.clipPath = clip.clipPath;
-
-					if (isSelected)
-						ImGui::SetItemDefaultFocus();
-				}
-
-				ImGui::EndCombo();
-			}
+			InspectorPropertyDrawer::DrawStringAssetPicker(
+				clipPathProperty,
+				&state.clipPath,
+				"CLIP"
+			);
 
 			ImGui::Separator();
 			ImGui::TextDisabled("Transitions");
@@ -507,59 +497,4 @@ void buki::AnimationAssetEditor::DrawConditionOperatorEditor(
 
 		ImGui::EndCombo();
 	}
-}
-
-void buki::AnimationAssetEditor::DrawClipsSection()
-{
-	
-	ImGui::SeparatorText("Clip References");
-
-	if (asset.clips.empty())
-	{
-		ImGui::TextDisabled("No clip references. Add one before assigning it to a state.");
-	}
-
-	if (ImGui::Button("Add Clip Reference"))
-	{
-		AnimationClipReference reference;
-		reference.clipPath = "";
-
-		asset.clips.push_back(reference);
-	}
-
-	int clipToRemove = -1;
-
-	for (int clipIndex = 0;
-		clipIndex < static_cast<int>(asset.clips.size());
-		++clipIndex)
-	{
-		AnimationClipReference& clip = asset.clips[clipIndex];
-
-		ImGui::PushID(clipIndex);
-
-		const std::string treeNodeId =
-			"Clip Reference##" + std::to_string(clipIndex);
-
-		if (ImGui::TreeNode(treeNodeId.c_str()))
-		{
-			PropertyInfo clipPathProperty =
-				BUKI_PROP_STRING(AnimationClipReference, clipPath);
-
-			InspectorPropertyDrawer::DrawStringAssetPicker(
-				clipPathProperty,
-				&clip.clipPath,
-				"CLIP"
-			);
-
-			if (ImGui::Button("Remove Reference"))
-				clipToRemove = clipIndex;
-
-			ImGui::TreePop();
-		}
-
-		ImGui::PopID();
-	}
-
-	if (clipToRemove >= 0)
-		asset.clips.erase(asset.clips.begin() + clipToRemove);
 }

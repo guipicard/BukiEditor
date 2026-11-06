@@ -2,6 +2,7 @@
 
 #include "Graphics/Texture2D.h"
 #include "BukiContainers.h"
+#include "Ids.h"
 
 #include <string>
 #include <vector>
@@ -26,14 +27,16 @@ namespace buki
 		bool loop = true;
 	};
 
-	// ------- new system for animation state machine --------
-
+	// for animator Serializable fields
 	struct AnimatorParams
 	{
-		bool playOnStart = false;
-		float speed = 1.0f;
 		std::string animationPath = "";
+		bool playOnStart = true;
+		float speed = 1.0f;
 	};
+
+	// ------- new system for animation state machine --------
+
 
 	enum class AnimParameterType
 	{
@@ -55,13 +58,6 @@ namespace buki
 
 	using AnimParameterValue = std::variant<bool, int, float, std::string>;
 
-	struct AnimParameter
-	{
-		std::string name;
-		AnimParameterType type = AnimParameterType::Bool;
-		AnimParameterValue defaultValue = false;
-	};
-
 	struct AnimCondition
 	{
 		std::string parameter;
@@ -72,16 +68,26 @@ namespace buki
 
 	struct AnimationTransition
 	{
+		EditorId id = InvalidEditorId;
 		std::string to;
-		std::vector<AnimCondition> conditions;
 		bool forceRestart = false;
+		std::vector<AnimCondition> conditions;
 	};
 
 	struct AnimationState
 	{
+		EditorId id = InvalidEditorId;
 		std::string name;
 		std::string clipPath;
 		std::vector<AnimationTransition> transitions;
+	};
+
+	struct AnimParameter
+	{
+		EditorId id = InvalidEditorId;
+		std::string name;
+		AnimParameterType type;
+		AnimParameterValue defaultValue;
 	};
 
 }

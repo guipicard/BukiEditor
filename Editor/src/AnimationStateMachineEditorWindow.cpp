@@ -1,5 +1,7 @@
 #pragma once
 #include "AnimationStateMachineEditorWindow.h"
+#include "PropertyInfo.h"
+#include "InspectorPropertyDrawer.h"
 
 namespace buki
 {
@@ -211,6 +213,8 @@ namespace buki
 		m_Asset = std::move(loaded);
 		m_RequestDockNextToScene = true;
 		m_Open = true;
+		ImGui::SetNextWindowFocus();
+		m_RequestFocus = false;
 
 		m_SelectedStateName.clear();
 		m_SelectedTransitionFrom.clear();
@@ -238,6 +242,11 @@ namespace buki
 		ImGui::SetNextWindowSize(
 			ImVec2(1100.0f, 700.0f),
 			ImGuiCond_FirstUseEver);
+		if (m_RequestFocus)
+		{
+			ImGui::SetNextWindowFocus();
+			m_RequestFocus = false;
+		}
 
 		if (!ImGui::Begin("Animation State Machine", &m_Open))
 		{
@@ -258,6 +267,17 @@ namespace buki
 		m_RequestDockNextToScene = false;
 	}
 
+	bool AnimationStateMachineEditorWindow::IsOpenForPath(std::string path) const
+	{
+		return m_Open && path == m_AssetPath;
+	}
+
+
+	void AnimationStateMachineEditorWindow::RequestFocus()
+	{
+		m_RequestFocus = true;
+	}
+
 	void AnimationStateMachineEditorWindow::DrawToolbar()
 	{
 		if (ImGui::Button("Save"))
@@ -269,18 +289,7 @@ namespace buki
 
 		if (ImGui::Button("Add State"))
 		{
-			AnimationState state;
-			state.name = "NewState";
-			state.clipPath = "";
-
-			AnimationStateLayout layout;
-			layout.stateName = state.name;
-			layout.editorPosition = Vector2(100.0f, 100.0f);
-
-			m_Asset.states.push_back(state);
-			m_Asset.layout.push_back(layout);
-
-			m_SelectedStateName = state.name;
+			AddStateAtWorldPosition(100.0f, 100.0f);
 		}
 
 		ImGui::SameLine();
@@ -296,37 +305,6 @@ namespace buki
 		}
 	}
 
-	/*void buki::AnimationStateMachineEditorWindow::DrawGraph()
-	{
-		ImGui::BeginChild("StateMachineCanvas", ImVec2(0.0f, 0.0f), true);
-
-		m_CanvasOrigin = ImGui::GetCursorScreenPos();
-		const ImVec2 mousePos = ImGui::GetIO().MousePos;
-
-		DrawTransitionLines();
-
-		for (AnimationState& state : m_Asset.states)
-		{
-			DrawStateNode(state);
-		}
-
-		TrySelectTransition(mousePos);
-
-		if (m_DraggingTransition)
-		{
-			DrawPendingTransition(mousePos);
-
-			if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) &&
-				!ImGui::IsAnyItemHovered())
-			{
-				m_DraggingTransition = false;
-				m_PendingTransitionFrom.clear();
-			}
-		}
-
-		ImGui::EndChild();
-	}*/
-
 	void buki::AnimationStateMachineEditorWindow::DrawGraph()
 	{
 		constexpr float inspectorHeight = 280.0f;
@@ -338,6 +316,50 @@ namespace buki
 			canvasSize.y = 100.0f;
 
 		ImGui::BeginChild("StateMachineCanvas", canvasSize, true);
+
+		const bool canvasHovered = ImGui::IsWindowHovered();
+
+		if (canvasHovered &&
+			ImGui::IsMouseClicked(ImGuiMouseButton_Middle))
+		{
+			m_PanningCanvas = true;
+		}
+
+		if (m_PanningCanvas)
+		{
+			if (ImGui::IsMouseDown(ImGuiMouseButton_Middle))
+			{
+				const ImVec2 mouseDelta = ImGui::GetIO().MouseDelta;
+
+				m_CanvasOffset.x += mouseDelta.x;
+				m_CanvasOffset.y += mouseDelta.y;
+			}
+			else
+			{
+				m_PanningCanvas = false;
+			}
+		}
+
+		if (canvasHovered &&
+			ImGui::IsMouseClicked(ImGuiMouseButton_Right) &&
+			!ImGui::IsAnyItemHovered())
+		{
+			ImGui::OpenPopup("StateMachineCanvasContextMenu");
+		}
+
+		if (ImGui::BeginPopup("StateMachineCanvasContextMenu"))
+		{
+			if (ImGui::MenuItem("Add State Here"))
+			{
+				const ImVec2 mousePos = ImGui::GetIO().MousePos;
+
+				AddStateAtWorldPosition(
+					mousePos.x - m_CanvasOrigin.x - m_CanvasOffset.x,
+					mousePos.y - m_CanvasOrigin.y - m_CanvasOffset.y);
+			}
+
+			ImGui::EndPopup();
+		}
 
 		m_CanvasOrigin = ImGui::GetCursorScreenPos();
 
@@ -482,6 +504,77 @@ namespace buki
 			6.0f);
 	}
 
+	bool buki::AnimationStateMachineEditorWindow::DoesStateOverlap(
+		const Vector2& position) const
+	{
+		constexpr float Padding = 20.0f;
+
+		for (const AnimationStateLayout& layout : m_Asset.layout)
+		{
+			const float deltaX =
+				fabsf(layout.editorPosition.x - position.x);
+
+			const float deltaY =
+				fabsf(layout.editorPosition.y - position.y);
+
+			if (deltaX < NodeSize.x + Padding &&
+				deltaY < NodeSize.y + Padding)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	Vector2 buki::AnimationStateMachineEditorWindow::
+		FindNonOverlappingPosition(float x, float y) const
+	{
+		Vector2 position(x, y);
+
+		if (!DoesStateOverlap(position))
+			return position;
+
+		constexpr float StepX = NodeSize.x + 40.0f;
+		constexpr float StepY = NodeSize.y + 40.0f;
+
+		for (int row = 0; row < 20; ++row)
+		{
+			for (int column = 0; column < 20; ++column)
+			{
+				Vector2 candidate(
+					x + static_cast<float>(column) * StepX,
+					y + static_cast<float>(row) * StepY);
+
+				if (!DoesStateOverlap(candidate))
+					return candidate;
+			}
+		}
+
+		return position;
+	}
+
+	void buki::AnimationStateMachineEditorWindow::AddStateAtWorldPosition(
+		float x,
+		float y)
+	{
+		AnimationState state;
+		state.name = "NewState";
+		state.clipPath = "";
+
+		AnimationStateLayout layout;
+		layout.stateName = state.name;
+		layout.editorPosition =
+			FindNonOverlappingPosition(x, y);
+
+		m_Asset.states.push_back(state);
+		m_Asset.layout.push_back(layout);
+
+		m_SelectedStateName = state.name;
+		m_SelectedTransitionFrom.clear();
+		m_SelectedTransitionIndex = -1;
+	}
+
 	ImVec2 buki::AnimationStateMachineEditorWindow::GetStatePosition(
 		const std::string& name) const
 	{
@@ -490,16 +583,24 @@ namespace buki
 			if (layout.stateName == name)
 			{
 				return ImVec2(
-					m_CanvasOrigin.x + layout.editorPosition.x,
-					m_CanvasOrigin.y + layout.editorPosition.y);
+					m_CanvasOrigin.x +
+					layout.editorPosition.x +
+					m_CanvasOffset.x,
+
+					m_CanvasOrigin.y +
+					layout.editorPosition.y +
+					m_CanvasOffset.y);
 			}
 		}
 
 		const int fallbackIndex = GetStateIndex(name);
 
 		return ImVec2(
-			m_CanvasOrigin.x + (100.0f + (fallbackIndex % 4) * 220.0f),
-			m_CanvasOrigin.y + (100.0f + (fallbackIndex / 4) * 140.0f));
+			m_CanvasOrigin.x + m_CanvasOffset.x +
+			(100.0f + (fallbackIndex % 4) * 220.0f),
+
+			m_CanvasOrigin.y + m_CanvasOffset.y +
+			(100.0f + (fallbackIndex / 4) * 140.0f));
 	}
 
 	ImVec2 AnimationStateMachineEditorWindow::GetStateCenter(
@@ -535,7 +636,8 @@ namespace buki
 			m_SelectedTransitionIndex = -1;
 		}
 
-		if (ImGui::IsItemActive() &&
+		if (!m_PanningCanvas &&
+			ImGui::IsItemActive() &&
 			ImGui::IsMouseDragging(ImGuiMouseButton_Left))
 		{
 			AnimationStateLayout* layout = FindLayout(state.name);
@@ -611,21 +713,14 @@ namespace buki
 
 		ImGui::Text("State: %s", state->name.c_str());
 
-		if (ImGui::BeginCombo("Clip", state->clipPath.c_str()))
-		{
-			for (const AnimationClipReference& clip : m_Asset.clips)
-			{
-				const bool selected = (clip.clipPath == state->clipPath);
+		PropertyInfo clipPathProperty =
+			BUKI_PROP_STRING(AnimationState, clipPath);
 
-				if (ImGui::Selectable(clip.clipPath.c_str(), selected))
-					state->clipPath = clip.clipPath;
-
-				if (selected)
-					ImGui::SetItemDefaultFocus();
-			}
-
-			ImGui::EndCombo();
-		}
+		InspectorPropertyDrawer::DrawStringAssetPicker(
+			clipPathProperty,
+			&state->clipPath,
+			"CLIP"
+		);
 
 		if (ImGui::Button("Set As Initial State"))
 		{

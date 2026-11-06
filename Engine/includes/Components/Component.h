@@ -4,6 +4,8 @@
 #include "PropertyInfo.h"
 
 #include <vector>
+#include <set>
+#include <string>
 
 using json = nlohmann::json;
 
@@ -19,7 +21,14 @@ namespace buki
 	class TextureManager;
 	class FontManager;
 	struct Camera2D;
-	 
+
+	enum class AssetReferenceUpdateResult
+	{
+		None,
+		Changed,
+		Failed
+	};
+
 	class Component
 	{
 	public:
@@ -35,6 +44,10 @@ namespace buki
 			static std::vector<PropertyInfo> empty;
 			return empty;
 		}
+
+		virtual void CollectAssetReferences(
+			std::set<std::string>& outReferences) const;
+		virtual AssetReferenceUpdateResult ReplaceAssetReference(const std::string& oldPath, const std::string& newPath);
 
 		virtual json Serialize() const;
 		virtual void Deserialize(const json& doc);

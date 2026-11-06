@@ -23,7 +23,6 @@ namespace buki
 		void DrawParametersSection();
 		void DrawStatesSection();
 		void DrawTransitionsForState(AnimationState& state);
-		void DrawClipsSection();
 
 	};
 }

@@ -5,6 +5,7 @@
 #include <sstream>
 #include <filesystem>
 #include <vector>
+#include <random>
 #include "nlohmann/json.hpp"
 #include "BukiContainers.h"
 #include "Engine.h"
@@ -12,10 +13,10 @@
 #include "AnimationStateMachineEditorWindow.h"
 #include "ClipAssetEditorWindow.h"
 #include "ImGui.h"
+#include "EditorAssetDatabase.h"
 
 namespace fs = std::filesystem;
 using json = nlohmann::json;
-
 
 namespace buki
 {
@@ -28,6 +29,17 @@ namespace buki
 		Fit = 1,
 		OneToOne = 2
 	};
+
+	/*struct EditorCanvas2D
+	{
+		ImVec2 offset = ImVec2(0.0f, 0.0f);
+		float zoom = 1.0f;
+		bool panning = false;
+
+		void Update(const ImVec2& canvasOrigin);
+		ImVec2 WorldToScreen(const Vector2& world) const;
+		Vector2 ScreenToWorld(const ImVec2& screen) const;
+	};*/
 
 	class CameraSettings
 	{
@@ -178,11 +190,18 @@ namespace buki
 
 	struct EditorState
 	{
+		EditorAssetDatabase assetDatabase;
+
+		std::filesystem::path renamePath;
+		std::string renameBuffer;
+
+		std::filesystem::path deleteCandidate;
+
 		Entity* selectedEntity = nullptr;
 		std::vector<Entity*> selectedEntities;
 		Entity* activeEntity = nullptr;
 
-		Component* selectedComponent = nullptr;	
+		Component* selectedComponent = nullptr;
 		std::vector<Component*> selectedComponents;
 		Component* activeComponent = nullptr;
 
@@ -235,13 +254,13 @@ namespace buki
 		ImGuiID prefabDockNodeId = 0;
 
 		void MarkSceneDirty() { sceneDirty = true; }
-		void ClearSceneDirty() 
+		void ClearSceneDirty()
 		{
 			if (sceneDirty)
 			{
 				Engine::Get().Log().LogMessage("Scene marked as clean.");
 			}
-			sceneDirty = false; 
+			sceneDirty = false;
 		}
 		bool IsSceneDirty() const { return sceneDirty; }
 	private:

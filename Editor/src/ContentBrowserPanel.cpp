@@ -10,6 +10,8 @@
 #include "AnimationAsset.h"
 #include "AnimationAssetEditor.h"
 #include "ClipAsset.h"
+#include "EditorState.h"
+#include "InspectorPropertyDrawer.h"
 
 #include <algorithm>
 #include <cctype>
@@ -40,12 +42,14 @@ namespace buki
 		asset.initialState = "Idle";
 
 		AnimationState idleState;
+		idleState.id = GenerateEditorId();
 		idleState.name = "Idle";
 		idleState.clipPath = "";
 
 		asset.states.push_back(idleState);
 
-		return asset.SaveToFile(path);
+		bool result = asset.SaveToFile(path);
+		return result;
 	}
 
 	bool CreateClipAsset(
@@ -157,6 +161,8 @@ void buki::ContentBrowserPanel::Render(EditorState& state)
 				CreateAnimationAsset(
 					state.currentContentPath.string(),
 					"NewAnimation");
+				state.assetDatabase.ScanDirectory("../Deployment");
+				InspectorPropertyDrawer::RefreshAssetPickers();
 			}
 
 			if (ImGui::MenuItem("Animation Clip"))
@@ -164,6 +170,8 @@ void buki::ContentBrowserPanel::Render(EditorState& state)
 				CreateClipAsset(
 					state.currentContentPath.string(),
 					"NewClip");
+				state.assetDatabase.ScanDirectory("../Deployment");
+				InspectorPropertyDrawer::RefreshAssetPickers();
 			}
 
 			ImGui::EndMenu();
@@ -212,6 +220,107 @@ void buki::ContentBrowserPanel::Render(EditorState& state)
 			ImGui::EndDragDropTarget();
 		}
 		ImGui::NextColumn();
+	}
+
+	if (!state.renamePath.empty() &&
+		!ImGui::IsPopupOpen("Rename Asset"))
+	{
+		ImGui::OpenPopup("Rename Asset");
+	}
+
+	if (ImGui::BeginPopupModal("Rename Asset"))
+	{
+		char buffer[256];
+		std::snprintf(
+			buffer,
+			sizeof(buffer),
+			"%s",
+			state.renameBuffer.c_str());
+
+		ImGui::SetKeyboardFocusHere();
+		const bool submitted = ImGui::InputText(
+			"##Rename",
+			buffer,
+			sizeof(buffer),
+			ImGuiInputTextFlags_EnterReturnsTrue);
+
+		if (submitted || ImGui::Button("Rename"))
+		{
+			fs::path newName(buffer);
+
+			if (newName.extension().empty())
+			{
+				newName.replace_extension(
+					state.renamePath.extension());
+			}
+
+			const fs::path parent =
+				state.renamePath.parent_path();
+
+			const std::string newPath =
+				(parent / newName).string();
+
+			if (state.assetDatabase.RenameAsset(
+				state.renamePath.string(),
+				newPath))
+			{
+				state.renamePath.clear();
+				state.renameBuffer.clear();
+				ImGui::CloseCurrentPopup();
+			}
+			else
+			{
+				ImGui::TextColored(
+					ImVec4(1.0f, 0.4f, 0.4f, 1.0f),
+					"Rename failed.");
+			}
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Cancel"))
+		{
+			state.renamePath.clear();
+			state.renameBuffer.clear();
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::EndPopup();
+	}
+
+	if (!state.deleteCandidate.empty() &&
+		!ImGui::IsPopupOpen("Confirm Delete"))
+	{
+		ImGui::OpenPopup("Confirm Delete");
+	}
+
+	if (ImGui::BeginPopupModal("Confirm Delete"))
+	{
+		ImGui::Text(
+			"Delete %s?",
+			state.deleteCandidate.filename().string().c_str());
+
+		ImGui::TextDisabled(
+			"Animations referencing this clip will have their reference cleared.");
+
+		if (ImGui::Button("Delete"))
+		{
+			state.assetDatabase.DeleteAsset(
+				state.deleteCandidate.string());
+
+			state.deleteCandidate.clear();
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Cancel"))
+		{
+			state.deleteCandidate.clear();
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::EndPopup();
 	}
 
 	ImGui::Columns(1);

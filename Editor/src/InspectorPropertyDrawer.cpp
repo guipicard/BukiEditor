@@ -52,6 +52,8 @@ namespace
 		std::string search;
 	};
 
+	std::unordered_map<std::string,std::vector<buki::BrowserEntry>> sCachedEntries;
+
 	static std::unordered_map<ImGuiID, FloatingAssetPickerState> sAssetPickerStates;
 	static std::unordered_map<ImGuiID, MixedTextState> sMixedTextStates;
 
@@ -696,7 +698,6 @@ namespace
 			changed = true;
 		}
 
-		static std::unordered_map<std::string, std::vector<buki::BrowserEntry>> sCachedEntries;
 		const std::string cacheKey = std::string(payloadType);
 		if (sCachedEntries.find(cacheKey) == sCachedEntries.end())
 		{
@@ -4005,7 +4006,7 @@ std::vector<std::string> buki::InspectorPropertyDrawer::GetSharedComponentTypeNa
 	if (entities.empty() || entities[0] == nullptr)
 		return result;
 
-	for (auto& [type, component] : entities[0]->GetComponents())
+	for (auto& [type, component] : entities[0]->GetComponentsByType())
 	{
 		if (component == nullptr)
 			continue;
@@ -4030,4 +4031,15 @@ std::vector<std::string> buki::InspectorPropertyDrawer::GetSharedComponentTypeNa
 	}
 
 	return result;
+}
+
+void buki::InspectorPropertyDrawer::RefreshAssetPickers()
+{
+	sCachedEntries.clear();
+}
+
+void buki::InspectorPropertyDrawer::RefreshAssetPicker(
+	const char* payloadType)
+{
+	sCachedEntries.erase(payloadType);
 }

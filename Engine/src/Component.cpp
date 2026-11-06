@@ -17,6 +17,96 @@ buki::Component::Component(Entity* _entity) : m_Entity(_entity)
 {
 }
 
+void buki::Component::CollectAssetReferences(
+	std::set<std::string>& outReferences) const
+{
+	const char* base = reinterpret_cast<const char*>(this);
+
+	for (const PropertyInfo& propInfo : GetProperties())
+	{
+		const auto& fields = propInfo.prop.fields;
+
+		if (fields.empty())
+			continue;
+
+		const BukiField& lastField = fields.back();
+		const void* fieldPtr = base + lastField.offset;
+
+		switch (propInfo.prop.type)
+		{
+		case PropertyType::ImageAsset:
+		case PropertyType::AudioAsset:
+		case PropertyType::FontAsset:
+		case PropertyType::AnimationAsset:
+		case PropertyType::ClipAsset:
+		case PropertyType::PrefabRef:
+		{
+			const std::string& path =
+				*reinterpret_cast<const std::string*>(fieldPtr);
+
+			if (!path.empty())
+				outReferences.insert(path);
+
+			break;
+		}
+
+		default:
+			break;
+		}
+	}
+}
+
+buki::AssetReferenceUpdateResult buki::Component::ReplaceAssetReference(const std::string& oldPath, const std::string& newPath)
+{
+	char* base = reinterpret_cast<char*>(this);
+	bool changed = false;
+
+	for (const PropertyInfo& propInfo : GetProperties())
+	{
+		const auto& fields = propInfo.prop.fields;
+
+		if (fields.empty())
+			continue;
+
+		const BukiField& lastField = fields.back();
+		void* fieldPtr = base + lastField.offset;
+
+		switch (propInfo.prop.type)
+		{
+		case PropertyType::ImageAsset:
+		case PropertyType::AudioAsset:
+		case PropertyType::FontAsset:
+		case PropertyType::AnimationAsset:
+		case PropertyType::ClipAsset:
+		case PropertyType::PrefabRef:
+		{
+			std::string& path =
+				*reinterpret_cast<std::string*>(fieldPtr);
+
+			if (path == oldPath)
+			{
+				path = newPath;
+				changed = true;
+			}
+
+			break;
+		}
+
+		default:
+			break;
+		}
+	}
+	if (changed)
+	{
+		return AssetReferenceUpdateResult::Changed;
+	}
+	else
+	{
+		return AssetReferenceUpdateResult::None;
+	}
+	return AssetReferenceUpdateResult::Failed;
+}
+
 json buki::Component::Serialize() const
 {
 	json doc = json::object();
@@ -65,6 +155,7 @@ json buki::Component::Serialize() const
 		case PropertyType::AudioAsset:
 		case PropertyType::FontAsset:
 		case PropertyType::AnimationAsset:
+		case PropertyType::ClipAsset:
 		case PropertyType::PrefabRef:
 			(*current)[key] = *reinterpret_cast<const std::string*>(fieldPtr);
 			break;
@@ -213,11 +304,14 @@ void buki::Component::Deserialize(const json& doc)
 		case PropertyType::String:
 		case PropertyType::ImageAsset:
 		case PropertyType::AnimationAsset:
+		case PropertyType::ClipAsset:
 		case PropertyType::AudioAsset:
 		case PropertyType::FontAsset:
 		case PropertyType::PrefabRef:
 			if (value.is_string())
+			{
 				*reinterpret_cast<std::string*>(fieldPtr) = value.get<std::string>();
+			}
 			break;
 
 		case PropertyType::StringList:

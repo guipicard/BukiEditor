@@ -18,6 +18,8 @@ namespace buki
 		{
 			return m_RequestDockNextToScene;
 		}
+		bool IsOpenForPath(std::string path) const;
+		void RequestFocus();
 	private:
 		void DrawToolbar();
 		void DrawGraph();
@@ -37,10 +39,15 @@ namespace buki
 		ImVec2 GetTransitionControlPoint(const std::string& fromStateName, const std::string& toStateName) const;
 		void GetTransitionEndpoints(const std::string& fromStateName, const std::string& toStateName, ImVec2& outFrom, ImVec2& outTo) const;
 
+		bool DoesStateOverlap(const Vector2& position) const;
+		Vector2 FindNonOverlappingPosition(float x, float y) const;
+		void AddStateAtWorldPosition(float x, float y);
+
 		std::string m_AssetPath;
 		AnimationAsset m_Asset;
 		bool m_Open = false;
 		bool m_RequestDockNextToScene = false;
+		bool m_RequestFocus = false;
 
 		std::string m_SelectedStateName;
 		std::string m_SelectedTransitionFrom;
@@ -58,5 +65,8 @@ namespace buki
 		void FinishTransitionDrag(const std::string& toStateName);
 
 		ImVec2 m_CanvasOrigin = ImVec2(0.0f, 0.0f);
+		ImVec2 m_CanvasOffset = ImVec2(0.0f, 0.0f);
+		bool m_PanningCanvas = false;
+		float m_CanvasZoom = 1.0f;
 	};
 }
