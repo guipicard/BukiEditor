@@ -1,0 +1,41 @@
+{
+    "initialState": "Idle",
+    "layout": [
+        {
+            "position": {
+                "x": 100.0,
+                "y": 100.0
+            },
+            "stateName": "Idle"
+        },
+        {
+            "position": {
+                "x": 310.0,
+                "y": 100.0
+            },
+            "stateName": "NewState"
+        },
+        {
+            "position": {
+                "x": 320.0,
+                "y": 100.0
+            },
+            "stateName": "Walk"
+        }
+    ],
+    "name": "NewAnimation",
+    "parameters": [],
+    "states": [
+        {
+            "clipPath": "../Deployment/assets/playerblue_r.clip",
+            "name": "Idle",
+            "transitions": []
+        },
+        {
+            "clipPath": "../Deployment/assets/NewClipe.clip",
+            "name": "Walk",
+            "transitions": []
+        }
+    ],
+    "version": 1
+}

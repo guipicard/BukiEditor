@@ -2,7 +2,7 @@
     "components": {
         "Animator": {
             "params": {
-                "animationPath": "../deployment/assets/playerblue_anim.anim",
+                "animationPath": "../deployment/assets/playerblue.anim",
                 "playOnStart": true,
                 "speed": 1.0
             }

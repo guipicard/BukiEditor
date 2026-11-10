@@ -2,9 +2,12 @@
 
 #include "Ids.h"
 
-#include <string>
-#include <vector>
+#include <cstdint>
 #include <set>
+#include <string>
+#include <unordered_map>
+#include <vector>
+
 #include "nlohmann/json.hpp"
 
 using json = nlohmann::json;
@@ -32,12 +35,12 @@ namespace buki
 
 		bool DeleteAsset(const std::string& path);
 
-		bool UpdateReferences(
-			const std::string& oldPath,
-			const std::string& newPath);
+		bool UpdateReferencesByAssetId(EditorId assetId, const std::string& oldPath, const std::string& newPath);
+
+		[[nodiscard]] std::vector<std::string> GetReferencedBy(EditorId assetId) const;
 	private:
 		std::vector<AssetRecord> m_Assets;
-		std::unordered_map<std::string, std::set<std::string>> m_References;
+		std::unordered_map<EditorId, std::set<std::string>> m_References;
 
 		bool UpdatePrefabReferences(const std::string& prefabPath, const std::string& oldPath, const std::string& newPath);
 		bool UpdateAnimationReferences(const std::string& animationPath, const std::string& oldPath, const std::string& newPath);
