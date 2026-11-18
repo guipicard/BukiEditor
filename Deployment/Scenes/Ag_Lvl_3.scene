@@ -12,7 +12,7 @@
         "Background": {
             "components": {
                 "TileLayer": {
-                    "atlasPath": "/assets/Kenney/Physics Assets/PNG/Backgrounds/colored_desert.png",
+                    "atlasPath": "../deployment/assets/kenney/physics assets/png/backgrounds/colored_desert.png",
                     "defaultFlipX": false,
                     "defaultFlipY": false,
                     "defaultSrcRect": {
@@ -147,7 +147,7 @@
                     "type": 0
                 },
                 "TileLayer": {
-                    "atlasPath": "/assets/Kenney/Physics Assets/PNG/Other/grass.png",
+                    "atlasPath": "../deployment/assets/kenney/physics assets/png/other/grass.png",
                     "defaultFlipX": false,
                     "defaultFlipY": false,
                     "defaultSrcRect": {
@@ -2053,23 +2053,13 @@
                         "\\audio\\angrybird\\sfx - rock destroyed a2.mp3",
                         "\\audio\\angrybird\\sfx - rock destroyed a3.mp3"
                     ],
-                    "DamageSounds": [
-                        "\\audio\\angrybird\\sfx - rock damage a1.mp3",
-                        "\\audio\\angrybird\\sfx - rock damage a2.mp3",
-                        "\\audio\\angrybird\\sfx - rock damage a3.mp3"
-                    ],
-                    "collisionSounds": [
-                        "\\audio\\angrybird\\sfx - rock collision a1.mp3",
-                        "\\audio\\angrybird\\sfx - rock collision a2.mp3",
-                        "\\audio\\angrybird\\sfx - rock collision a3.mp3",
-                        "\\audio\\angrybird\\sfx - rock collision a4.mp3",
-                        "\\audio\\angrybird\\sfx - rock collision a5.mp3"
-                    ],
+                    "DamageSounds": [],
+                    "collisionSounds": [],
                     "maxHealth": 300.0,
                     "stageImages": [
-                        "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone020.png",
-                        "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone025.png",
-                        "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone052.png"
+                        "../deployment/assets/kenney/physics assets/png/stone elements/elementstone020.png",
+                        "../deployment/assets/kenney/physics assets/png/stone elements/elementstone025.png",
+                        "../deployment/assets/kenney/physics assets/png/stone elements/elementstone052.png"
                     ]
                 },
                 "RigidBody": {
@@ -2091,7 +2081,7 @@
                     },
                     "flipX": false,
                     "flipY": false,
-                    "path": "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone020.png",
+                    "path": "../deployment/assets/kenney/physics assets/png/stone elements/elementstone020.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -2164,23 +2154,13 @@
                         "\\audio\\angrybird\\sfx - rock destroyed a2.mp3",
                         "\\audio\\angrybird\\sfx - rock destroyed a3.mp3"
                     ],
-                    "DamageSounds": [
-                        "\\audio\\angrybird\\sfx - rock damage a1.mp3",
-                        "\\audio\\angrybird\\sfx - rock damage a2.mp3",
-                        "\\audio\\angrybird\\sfx - rock damage a3.mp3"
-                    ],
-                    "collisionSounds": [
-                        "\\audio\\angrybird\\sfx - rock collision a1.mp3",
-                        "\\audio\\angrybird\\sfx - rock collision a2.mp3",
-                        "\\audio\\angrybird\\sfx - rock collision a3.mp3",
-                        "\\audio\\angrybird\\sfx - rock collision a4.mp3",
-                        "\\audio\\angrybird\\sfx - rock collision a5.mp3"
-                    ],
+                    "DamageSounds": [],
+                    "collisionSounds": [],
                     "maxHealth": 300.0,
                     "stageImages": [
-                        "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone020.png",
-                        "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone025.png",
-                        "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone052.png"
+                        "../deployment/assets/kenney/physics assets/png/stone elements/elementstone020.png",
+                        "../deployment/assets/kenney/physics assets/png/stone elements/elementstone025.png",
+                        "../deployment/assets/kenney/physics assets/png/stone elements/elementstone052.png"
                     ]
                 },
                 "RigidBody": {
@@ -2202,7 +2182,7 @@
                     },
                     "flipX": false,
                     "flipY": false,
-                    "path": "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone020.png",
+                    "path": "../deployment/assets/kenney/physics assets/png/stone elements/elementstone020.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -2275,23 +2255,13 @@
                         "\\audio\\angrybird\\sfx - rock destroyed a2.mp3",
                         "\\audio\\angrybird\\sfx - rock destroyed a3.mp3"
                     ],
-                    "DamageSounds": [
-                        "\\audio\\angrybird\\sfx - rock damage a1.mp3",
-                        "\\audio\\angrybird\\sfx - rock damage a2.mp3",
-                        "\\audio\\angrybird\\sfx - rock damage a3.mp3"
-                    ],
-                    "collisionSounds": [
-                        "\\audio\\angrybird\\sfx - rock collision a1.mp3",
-                        "\\audio\\angrybird\\sfx - rock collision a2.mp3",
-                        "\\audio\\angrybird\\sfx - rock collision a3.mp3",
-                        "\\audio\\angrybird\\sfx - rock collision a4.mp3",
-                        "\\audio\\angrybird\\sfx - rock collision a5.mp3"
-                    ],
+                    "DamageSounds": [],
+                    "collisionSounds": [],
                     "maxHealth": 300.0,
                     "stageImages": [
-                        "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone020.png",
-                        "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone025.png",
-                        "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone052.png"
+                        "../deployment/assets/kenney/physics assets/png/stone elements/elementstone020.png",
+                        "../deployment/assets/kenney/physics assets/png/stone elements/elementstone025.png",
+                        "../deployment/assets/kenney/physics assets/png/stone elements/elementstone052.png"
                     ]
                 },
                 "RigidBody": {
@@ -2313,7 +2283,7 @@
                     },
                     "flipX": false,
                     "flipY": false,
-                    "path": "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone020.png",
+                    "path": "../deployment/assets/kenney/physics assets/png/stone elements/elementstone020.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -2386,23 +2356,13 @@
                         "\\audio\\angrybird\\sfx - rock destroyed a2.mp3",
                         "\\audio\\angrybird\\sfx - rock destroyed a3.mp3"
                     ],
-                    "DamageSounds": [
-                        "\\audio\\angrybird\\sfx - rock damage a1.mp3",
-                        "\\audio\\angrybird\\sfx - rock damage a2.mp3",
-                        "\\audio\\angrybird\\sfx - rock damage a3.mp3"
-                    ],
-                    "collisionSounds": [
-                        "\\audio\\angrybird\\sfx - rock collision a1.mp3",
-                        "\\audio\\angrybird\\sfx - rock collision a2.mp3",
-                        "\\audio\\angrybird\\sfx - rock collision a3.mp3",
-                        "\\audio\\angrybird\\sfx - rock collision a4.mp3",
-                        "\\audio\\angrybird\\sfx - rock collision a5.mp3"
-                    ],
+                    "DamageSounds": [],
+                    "collisionSounds": [],
                     "maxHealth": 300.0,
                     "stageImages": [
-                        "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone020.png",
-                        "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone025.png",
-                        "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone052.png"
+                        "../deployment/assets/kenney/physics assets/png/stone elements/elementstone020.png",
+                        "../deployment/assets/kenney/physics assets/png/stone elements/elementstone025.png",
+                        "../deployment/assets/kenney/physics assets/png/stone elements/elementstone052.png"
                     ]
                 },
                 "RigidBody": {
@@ -2424,7 +2384,7 @@
                     },
                     "flipX": false,
                     "flipY": false,
-                    "path": "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone020.png",
+                    "path": "../deployment/assets/kenney/physics assets/png/stone elements/elementstone020.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -2497,23 +2457,13 @@
                         "\\audio\\angrybird\\sfx - rock destroyed a2.mp3",
                         "\\audio\\angrybird\\sfx - rock destroyed a3.mp3"
                     ],
-                    "DamageSounds": [
-                        "\\audio\\angrybird\\sfx - rock damage a1.mp3",
-                        "\\audio\\angrybird\\sfx - rock damage a2.mp3",
-                        "\\audio\\angrybird\\sfx - rock damage a3.mp3"
-                    ],
-                    "collisionSounds": [
-                        "\\audio\\angrybird\\sfx - rock collision a1.mp3",
-                        "\\audio\\angrybird\\sfx - rock collision a2.mp3",
-                        "\\audio\\angrybird\\sfx - rock collision a3.mp3",
-                        "\\audio\\angrybird\\sfx - rock collision a4.mp3",
-                        "\\audio\\angrybird\\sfx - rock collision a5.mp3"
-                    ],
+                    "DamageSounds": [],
+                    "collisionSounds": [],
                     "maxHealth": 300.0,
                     "stageImages": [
-                        "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone020.png",
-                        "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone025.png",
-                        "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone052.png"
+                        "../deployment/assets/kenney/physics assets/png/stone elements/elementstone020.png",
+                        "../deployment/assets/kenney/physics assets/png/stone elements/elementstone025.png",
+                        "../deployment/assets/kenney/physics assets/png/stone elements/elementstone052.png"
                     ]
                 },
                 "RigidBody": {
@@ -2535,7 +2485,7 @@
                     },
                     "flipX": false,
                     "flipY": false,
-                    "path": "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone020.png",
+                    "path": "../deployment/assets/kenney/physics assets/png/stone elements/elementstone020.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -2608,23 +2558,13 @@
                         "\\audio\\angrybird\\sfx - rock destroyed a2.mp3",
                         "\\audio\\angrybird\\sfx - rock destroyed a3.mp3"
                     ],
-                    "DamageSounds": [
-                        "\\audio\\angrybird\\sfx - rock damage a1.mp3",
-                        "\\audio\\angrybird\\sfx - rock damage a2.mp3",
-                        "\\audio\\angrybird\\sfx - rock damage a3.mp3"
-                    ],
-                    "collisionSounds": [
-                        "\\audio\\angrybird\\sfx - rock collision a1.mp3",
-                        "\\audio\\angrybird\\sfx - rock collision a2.mp3",
-                        "\\audio\\angrybird\\sfx - rock collision a3.mp3",
-                        "\\audio\\angrybird\\sfx - rock collision a4.mp3",
-                        "\\audio\\angrybird\\sfx - rock collision a5.mp3"
-                    ],
+                    "DamageSounds": [],
+                    "collisionSounds": [],
                     "maxHealth": 300.0,
                     "stageImages": [
-                        "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone020.png",
-                        "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone025.png",
-                        "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone052.png"
+                        "../deployment/assets/kenney/physics assets/png/stone elements/elementstone020.png",
+                        "../deployment/assets/kenney/physics assets/png/stone elements/elementstone025.png",
+                        "../deployment/assets/kenney/physics assets/png/stone elements/elementstone052.png"
                     ]
                 },
                 "RigidBody": {
@@ -2646,7 +2586,7 @@
                     },
                     "flipX": false,
                     "flipY": false,
-                    "path": "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone020.png",
+                    "path": "../deployment/assets/kenney/physics assets/png/stone elements/elementstone020.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -2719,17 +2659,13 @@
                         "\\audio\\angrybird\\sfx - rock destroyed a2.mp3",
                         "\\audio\\angrybird\\sfx - rock destroyed a3.mp3"
                     ],
-                    "DamageSounds": [
-                        "../deployment/audio/angrybird/sfx - rock collision a1.mp3",
-                        "\\audio\\angrybird\\sfx - rock damage a2.mp3",
-                        "\\audio\\angrybird\\sfx - rock damage a3.mp3"
-                    ],
+                    "DamageSounds": [],
                     "collisionSounds": [],
                     "maxHealth": 300.0,
                     "stageImages": [
-                        "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone020.png",
-                        "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone025.png",
-                        "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone052.png"
+                        "../deployment/assets/kenney/physics assets/png/stone elements/elementstone020.png",
+                        "../deployment/assets/kenney/physics assets/png/stone elements/elementstone025.png",
+                        "../deployment/assets/kenney/physics assets/png/stone elements/elementstone052.png"
                     ]
                 },
                 "RigidBody": {
@@ -2751,7 +2687,7 @@
                     },
                     "flipX": false,
                     "flipY": false,
-                    "path": "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone020.png",
+                    "path": "../deployment/assets/kenney/physics assets/png/stone elements/elementstone020.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -2824,17 +2760,13 @@
                         "\\audio\\angrybird\\sfx - rock destroyed a2.mp3",
                         "\\audio\\angrybird\\sfx - rock destroyed a3.mp3"
                     ],
-                    "DamageSounds": [
-                        "../deployment/audio/angrybird/sfx - rock collision a1.mp3",
-                        "\\audio\\angrybird\\sfx - rock damage a2.mp3",
-                        "\\audio\\angrybird\\sfx - rock damage a3.mp3"
-                    ],
+                    "DamageSounds": [],
                     "collisionSounds": [],
                     "maxHealth": 300.0,
                     "stageImages": [
-                        "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone020.png",
-                        "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone025.png",
-                        "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone052.png"
+                        "../deployment/assets/kenney/physics assets/png/stone elements/elementstone020.png",
+                        "../deployment/assets/kenney/physics assets/png/stone elements/elementstone025.png",
+                        "../deployment/assets/kenney/physics assets/png/stone elements/elementstone052.png"
                     ]
                 },
                 "RigidBody": {
@@ -2856,7 +2788,7 @@
                     },
                     "flipX": false,
                     "flipY": false,
-                    "path": "\\assets\\kenney\\physics assets\\png\\stone elements\\elementstone020.png",
+                    "path": "../deployment/assets/kenney/physics assets/png/stone elements/elementstone020.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -3028,7 +2960,7 @@
                     },
                     "flipX": false,
                     "flipY": false,
-                    "path": "\\assets\\kenney\\physics assets\\png\\aliens\\aliengreen_round.png",
+                    "path": "../deployment/assets/kenney/physics assets/png/aliens/aliengreen_round.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -3150,7 +3082,7 @@
                     },
                     "flipX": false,
                     "flipY": false,
-                    "path": "/assets/slignshot1.png",
+                    "path": "../deployment/assets/slignshot1.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
@@ -3193,7 +3125,7 @@
                     },
                     "flipX": false,
                     "flipY": false,
-                    "path": "/assets/slignshot2.png",
+                    "path": "../deployment/assets/slignshot2.png",
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0

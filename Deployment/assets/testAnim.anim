@@ -1,0 +1,23 @@
+{
+    "initialState": "Idle",
+    "layout": [
+        {
+            "position": {
+                "x": 100.0,
+                "y": 100.0
+            },
+            "stateName": "Idle"
+        }
+    ],
+    "name": "New Animator",
+    "parameters": [],
+    "path": "../Deployment/assets/testAnim.anim",
+    "states": [
+        {
+            "clipPath": "../deployment/assets/testclip_.clip",
+            "name": "Idle",
+            "transitions": []
+        }
+    ],
+    "version": 1
+}

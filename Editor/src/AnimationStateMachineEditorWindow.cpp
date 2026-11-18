@@ -2,236 +2,223 @@
 #include "AnimationStateMachineEditorWindow.h"
 #include "PropertyInfo.h"
 #include "InspectorPropertyDrawer.h"
+#include "IAssetBehavior.h"
+#include "EditorState.h"
+
+namespace
+{
+	constexpr ImVec2 NodeSize = ImVec2(170.0f, 64.0f);
+	constexpr float ArrowHeadSize = 12.0f;
+
+	ImU32 GetNodeColor(bool selected, bool initial)
+	{
+		if (selected)
+			return IM_COL32(80, 150, 220, 255);
+
+		if (initial)
+			return IM_COL32(90, 190, 120, 255);
+
+		return IM_COL32(70, 70, 70, 255);
+	}
+
+	void DrawArrowHead(
+		ImDrawList* drawList,
+		const ImVec2& from,
+		const ImVec2& to,
+		ImU32 color)
+	{
+		ImVec2 direction = ImVec2(to.x - from.x, to.y - from.y);
+		const float length = sqrtf(
+			direction.x * direction.x +
+			direction.y * direction.y);
+
+		if (length <= 0.001f)
+			return;
+
+		direction.x /= length;
+		direction.y /= length;
+
+		const ImVec2 left = ImVec2(
+			to.x - direction.x * ArrowHeadSize - direction.y * (ArrowHeadSize * 0.5f),
+			to.y - direction.y * ArrowHeadSize + direction.x * (ArrowHeadSize * 0.5f));
+
+		const ImVec2 right = ImVec2(
+			to.x - direction.x * ArrowHeadSize + direction.y * (ArrowHeadSize * 0.5f),
+			to.y - direction.y * ArrowHeadSize - direction.x * (ArrowHeadSize * 0.5f));
+
+		drawList->AddTriangleFilled(to, left, right, color);
+	}
+}
+
+namespace
+{
+	bool IsPointNearSegment(
+		const ImVec2& point,
+		const ImVec2& a,
+		const ImVec2& b,
+		float maxDistance)
+	{
+		const float segmentX = b.x - a.x;
+		const float segmentY = b.y - a.y;
+
+		const float lengthSquared =
+			segmentX * segmentX + segmentY * segmentY;
+
+		if (lengthSquared <= 0.0001f)
+			return false;
+
+		float t =
+			((point.x - a.x) * segmentX +
+				(point.y - a.y) * segmentY) / lengthSquared;
+
+		t = t < 0.0f ? 0.0f : t;
+		t = t > 1.0f ? 1.0f : t;
+
+		const float closestX = a.x + segmentX * t;
+		const float closestY = a.y + segmentY * t;
+
+		const float deltaX = point.x - closestX;
+		const float deltaY = point.y - closestY;
+
+		const float distanceSquared =
+			deltaX * deltaX + deltaY * deltaY;
+
+		return distanceSquared <= maxDistance * maxDistance;
+	}
+
+	ImVec2 GetBezierPoint(
+		const ImVec2& a,
+		const ImVec2& control,
+		const ImVec2& b,
+		float t)
+	{
+		const float oneMinusT = 1.0f - t;
+
+		const float x =
+			oneMinusT * oneMinusT * a.x +
+			2.0f * oneMinusT * t * control.x +
+			t * t * b.x;
+
+		const float y =
+			oneMinusT * oneMinusT * a.y +
+			2.0f * oneMinusT * t * control.y +
+			t * t * b.y;
+
+		return ImVec2(x, y);
+	}
+
+	bool IsPointNearCurve(
+		const ImVec2& point,
+		const ImVec2& from,
+		const ImVec2& control,
+		const ImVec2& to,
+		float maxDistance)
+	{
+		constexpr int SampleCount = 24;
+
+		ImVec2 previous = from;
+
+		for (int sample = 1; sample <= SampleCount; ++sample)
+		{
+			const float t =
+				static_cast<float>(sample) / static_cast<float>(SampleCount);
+
+			const ImVec2 current = GetBezierPoint(
+				from, control, to, t);
+
+			if (IsPointNearSegment(point, previous, current, maxDistance))
+				return true;
+
+			previous = current;
+		}
+
+		return false;
+	}
+}
+
+namespace
+{
+	const char* GetConditionOpName(buki::AnimConditionOp op)
+	{
+		using buki::AnimConditionOp;
+
+		switch (op)
+		{
+		case AnimConditionOp::Equals: return "==";
+		case AnimConditionOp::NotEquals: return "!=";
+		case AnimConditionOp::Greater: return ">";
+		case AnimConditionOp::Less: return "<";
+		case AnimConditionOp::GreaterOrEqual: return ">=";
+		case AnimConditionOp::LessOrEqual: return "<=";
+		}
+
+		return "==";
+	}
+}
+
+namespace
+{
+	ImVec2 GetRectEdgePoint(
+		const ImVec2& fromCenter,
+		const ImVec2& toCenter,
+		const ImVec2& nodeSize,
+		float extraPadding)
+	{
+		float directionX = toCenter.x - fromCenter.x;
+		float directionY = toCenter.y - fromCenter.y;
+
+		const float length = sqrtf(
+			directionX * directionX +
+			directionY * directionY);
+
+		if (length <= 0.001f)
+			return fromCenter;
+
+		directionX /= length;
+		directionY /= length;
+
+		// Avoid division by zero for vertical/horizontal lines.
+		const float absX = fabsf(directionX);
+		const float absY = fabsf(directionY);
+
+		float scaleX = 0.0f;
+		float scaleY = 0.0f;
+
+		if (absX > 0.0001f)
+			scaleX = (nodeSize.x * 0.5f) / absX;
+
+		if (absY > 0.0001f)
+			scaleY = (nodeSize.y * 0.5f) / absY;
+
+		// The ray exits the rectangle at the smaller scale factor.
+		const float scale = (scaleX > 0.0f && scaleY > 0.0f)
+			? (scaleX < scaleY ? scaleX : scaleY)
+			: (scaleX > 0.0f ? scaleX : scaleY);
+
+		return ImVec2(
+			fromCenter.x + directionX * (scale + extraPadding),
+			fromCenter.y + directionY * (scale + extraPadding));
+	}
+}
+
 
 namespace buki
 {
-	namespace
+	AnimationStateMachineEditorWindow::AnimationStateMachineEditorWindow(EditorState& editorState, const std::string& assetPath)
+		: AssetEditorWindow(editorState)
 	{
-		constexpr ImVec2 NodeSize = ImVec2(170.0f, 64.0f);
-		constexpr float ArrowHeadSize = 12.0f;
-
-		ImU32 GetNodeColor(bool selected, bool initial)
-		{
-			if (selected)
-				return IM_COL32(80, 150, 220, 255);
-
-			if (initial)
-				return IM_COL32(90, 190, 120, 255);
-
-			return IM_COL32(70, 70, 70, 255);
-		}
-
-		void DrawArrowHead(
-			ImDrawList* drawList,
-			const ImVec2& from,
-			const ImVec2& to,
-			ImU32 color)
-		{
-			ImVec2 direction = ImVec2(to.x - from.x, to.y - from.y);
-			const float length = sqrtf(
-				direction.x * direction.x +
-				direction.y * direction.y);
-
-			if (length <= 0.001f)
-				return;
-
-			direction.x /= length;
-			direction.y /= length;
-
-			const ImVec2 left = ImVec2(
-				to.x - direction.x * ArrowHeadSize - direction.y * (ArrowHeadSize * 0.5f),
-				to.y - direction.y * ArrowHeadSize + direction.x * (ArrowHeadSize * 0.5f));
-
-			const ImVec2 right = ImVec2(
-				to.x - direction.x * ArrowHeadSize + direction.y * (ArrowHeadSize * 0.5f),
-				to.y - direction.y * ArrowHeadSize - direction.x * (ArrowHeadSize * 0.5f));
-
-			drawList->AddTriangleFilled(to, left, right, color);
-		}
+		Open(assetPath);
 	}
 
-	namespace
-	{
-		bool IsPointNearSegment(
-			const ImVec2& point,
-			const ImVec2& a,
-			const ImVec2& b,
-			float maxDistance)
-		{
-			const float segmentX = b.x - a.x;
-			const float segmentY = b.y - a.y;
-
-			const float lengthSquared =
-				segmentX * segmentX + segmentY * segmentY;
-
-			if (lengthSquared <= 0.0001f)
-				return false;
-
-			float t =
-				((point.x - a.x) * segmentX +
-					(point.y - a.y) * segmentY) / lengthSquared;
-
-			t = t < 0.0f ? 0.0f : t;
-			t = t > 1.0f ? 1.0f : t;
-
-			const float closestX = a.x + segmentX * t;
-			const float closestY = a.y + segmentY * t;
-
-			const float deltaX = point.x - closestX;
-			const float deltaY = point.y - closestY;
-
-			const float distanceSquared =
-				deltaX * deltaX + deltaY * deltaY;
-
-			return distanceSquared <= maxDistance * maxDistance;
-		}
-
-		ImVec2 GetBezierPoint(
-			const ImVec2& a,
-			const ImVec2& control,
-			const ImVec2& b,
-			float t)
-		{
-			const float oneMinusT = 1.0f - t;
-
-			const float x =
-				oneMinusT * oneMinusT * a.x +
-				2.0f * oneMinusT * t * control.x +
-				t * t * b.x;
-
-			const float y =
-				oneMinusT * oneMinusT * a.y +
-				2.0f * oneMinusT * t * control.y +
-				t * t * b.y;
-
-			return ImVec2(x, y);
-		}
-
-		bool IsPointNearCurve(
-			const ImVec2& point,
-			const ImVec2& from,
-			const ImVec2& control,
-			const ImVec2& to,
-			float maxDistance)
-		{
-			constexpr int SampleCount = 24;
-
-			ImVec2 previous = from;
-
-			for (int sample = 1; sample <= SampleCount; ++sample)
-			{
-				const float t =
-					static_cast<float>(sample) / static_cast<float>(SampleCount);
-
-				const ImVec2 current = GetBezierPoint(
-					from, control, to, t);
-
-				if (IsPointNearSegment(point, previous, current, maxDistance))
-					return true;
-
-				previous = current;
-			}
-
-			return false;
-		}
-	}
-
-	namespace
-	{
-		const char* GetConditionOpName(buki::AnimConditionOp op)
-		{
-			using buki::AnimConditionOp;
-
-			switch (op)
-			{
-			case AnimConditionOp::Equals: return "==";
-			case AnimConditionOp::NotEquals: return "!=";
-			case AnimConditionOp::Greater: return ">";
-			case AnimConditionOp::Less: return "<";
-			case AnimConditionOp::GreaterOrEqual: return ">=";
-			case AnimConditionOp::LessOrEqual: return "<=";
-			}
-
-			return "==";
-		}
-	}
-
-	namespace
-	{
-		ImVec2 GetRectEdgePoint(
-			const ImVec2& fromCenter,
-			const ImVec2& toCenter,
-			const ImVec2& nodeSize,
-			float extraPadding)
-		{
-			float directionX = toCenter.x - fromCenter.x;
-			float directionY = toCenter.y - fromCenter.y;
-
-			const float length = sqrtf(
-				directionX * directionX +
-				directionY * directionY);
-
-			if (length <= 0.001f)
-				return fromCenter;
-
-			directionX /= length;
-			directionY /= length;
-
-			// Avoid division by zero for vertical/horizontal lines.
-			const float absX = fabsf(directionX);
-			const float absY = fabsf(directionY);
-
-			float scaleX = 0.0f;
-			float scaleY = 0.0f;
-
-			if (absX > 0.0001f)
-				scaleX = (nodeSize.x * 0.5f) / absX;
-
-			if (absY > 0.0001f)
-				scaleY = (nodeSize.y * 0.5f) / absY;
-
-			// The ray exits the rectangle at the smaller scale factor.
-			const float scale = (scaleX > 0.0f && scaleY > 0.0f)
-				? (scaleX < scaleY ? scaleX : scaleY)
-				: (scaleX > 0.0f ? scaleX : scaleY);
-
-			return ImVec2(
-				fromCenter.x + directionX * (scale + extraPadding),
-				fromCenter.y + directionY * (scale + extraPadding));
-		}
-	}
-
-
-	void AnimationStateMachineEditorWindow::Open(const std::string& path)
+	void AnimationStateMachineEditorWindow::Reload()
 	{
 		AnimationAsset loaded;
 
-		if (!loaded.LoadFromFile(path))
+		if (!loaded.LoadFromFile(m_AssetPath))
 			return;
 
-		m_AssetPath = path;
 		m_Asset = std::move(loaded);
-		m_RequestDockNextToScene = true;
-		m_Open = true;
-		ImGui::SetNextWindowFocus();
-		m_RequestFocus = false;
-
-		m_SelectedStateName.clear();
-		m_SelectedTransitionFrom.clear();
-		m_SelectedTransitionIndex = -1;
-
 		EnsureLayoutEntries();
-	}
-
-	void AnimationStateMachineEditorWindow::Close()
-	{
-		m_Open = false;
-		m_AssetPath.clear();
-		m_Asset = AnimationAsset{};
-
-		m_SelectedStateName.clear();
-		m_SelectedTransitionFrom.clear();
-		m_SelectedTransitionIndex = -1;
 	}
 
 	void buki::AnimationStateMachineEditorWindow::Draw()
@@ -248,7 +235,12 @@ namespace buki
 			m_RequestFocus = false;
 		}
 
-		if (!ImGui::Begin("Animation State Machine", &m_Open))
+		const std::string title =
+			"Animation: " +
+			GetAssetFileName() +
+			"###" +
+			m_AssetPath;
+		if (!ImGui::Begin(title.c_str(), &m_Open))
 		{
 			ImGui::End();
 			return;
@@ -267,15 +259,41 @@ namespace buki
 		m_RequestDockNextToScene = false;
 	}
 
-	bool AnimationStateMachineEditorWindow::IsOpenForPath(std::string path) const
+	void AnimationStateMachineEditorWindow::OnClosed()
 	{
-		return m_Open && path == m_AssetPath;
+		m_AssetPath.clear();
+		m_Asset = AnimationAsset{};
+
+		m_SelectedStateName.clear();
+		m_SelectedTransitionFrom.clear();
+		m_SelectedTransitionIndex = -1;
 	}
 
-
-	void AnimationStateMachineEditorWindow::RequestFocus()
+	bool AnimationStateMachineEditorWindow::LoadAsset(const std::string& path)
 	{
-		m_RequestFocus = true;
+
+		AnimationAsset loaded;
+
+		if (!loaded.LoadFromFile(path))
+		{
+			return false;
+		}
+
+		m_Asset = std::move(loaded);
+		return true;
+	}
+
+	void AnimationStateMachineEditorWindow::OnAssetLoaded()
+	{
+		m_RequestDockNextToScene = true;
+		ImGui::SetNextWindowFocus();
+		m_RequestFocus = false;
+
+		m_SelectedStateName.clear();
+		m_SelectedTransitionFrom.clear();
+		m_SelectedTransitionIndex = -1;
+
+		EnsureLayoutEntries();
 	}
 
 	void AnimationStateMachineEditorWindow::DrawToolbar()
@@ -713,14 +731,18 @@ namespace buki
 
 		ImGui::Text("State: %s", state->name.c_str());
 
-		PropertyInfo clipPathProperty =
-			BUKI_PROP_STRING(AnimationState, clipPath);
+		PropertyInfo clipPathProperty = BUKI_PROP_STRING(AnimationState, clipPath);
 
-		InspectorPropertyDrawer::DrawStringAssetPicker(
-			clipPathProperty,
-			&state->clipPath,
-			"CLIP"
-		);
+		const std::string oldClipPath = state->clipPath;
+
+		if (InspectorPropertyDrawer::DrawStringAssetPicker(clipPathProperty, &state->clipPath, "CLIP"))
+		{
+			if (IAssetBehavior* behavior = m_EditorState.assetBehaviors.Find(AssetType::Anim))
+			{
+				behavior->OnReferenceChanged(m_EditorState.assetDatabase, m_AssetPath, oldClipPath, state->clipPath);
+			}
+
+		}
 
 		if (ImGui::Button("Set As Initial State"))
 		{

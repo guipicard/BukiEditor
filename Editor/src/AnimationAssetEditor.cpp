@@ -1,8 +1,9 @@
 #pragma once
-#include "AnimationassetEditor.h"
+
 #include "InspectorPropertyDrawer.h"
 #include "imgui.h"
 #include "PropertyInfo.h"
+#include "EditorState.h"
 
 bool buki::AnimationAssetEditor::Load(const std::string& path)
 {

@@ -1,37 +1,28 @@
 #pragma once
 
-#include <string>
-
+#include "AssetEditorWindow.h"
 #include "ClipAsset.h"
-#include "imgui.h"
+
+#include <memory>
+#include <string>
 
 namespace buki
 {
-    class ClipAssetEditorWindow
-    {
-    public:
-        bool Open(const std::string& path);
-        bool IsOpenForPath(const std::string& path) const;
-        void RequestFocus();
-        bool Save();
+	struct EditorState;
 
-        void Draw();
+	class ClipAssetEditorWindow : public AssetEditorWindow
+	{
+	public:
+		ClipAssetEditorWindow(EditorState& editorState, const std::string& assetPath);
 
-        bool IsOpen() const;
-        void Close();
+		void Draw() override;
+		void Reload() override;
 
-        bool ShouldDockNextToScene() const;
+	private:
+		bool LoadAsset(const std::string& path) override;
+		void OnAssetLoaded() override;
+		void OnClosed() override;
 
-    private:
-        void DrawAssetSection();
-        void DrawFramesSection();
-
-        ClipAsset asset;
-        std::string assetPath;
-
-        bool open = false;
-        bool selected = false;
-        bool requestDockNextToScene = false;
-        bool requestFocus = false;
-    };
+		ClipAsset m_Asset;
+	};
 }

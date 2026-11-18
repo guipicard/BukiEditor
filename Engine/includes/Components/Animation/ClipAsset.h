@@ -7,14 +7,16 @@
 
 namespace buki
 {
-    struct ClipAsset
-    {
-        int version = 1;
-        std::string name;
-        bool loop = true;
-        std::vector<SpriteFrame> frames;
+	struct ClipAsset
+	{
+		
+		int version = 1;
+		std::string name;
+		std::string path;
+		bool loop = true;
+		std::vector<SpriteFrame> frames;
 
-        bool LoadFromFile(const std::string& path);
-        bool SaveToFile(const std::string& path) const;
-    };
+		bool LoadFromFile(const std::string& _path);
+		bool SaveToFile(const std::string& _path) const;
+	};
 }

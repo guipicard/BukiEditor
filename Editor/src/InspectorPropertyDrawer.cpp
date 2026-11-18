@@ -44,7 +44,7 @@ namespace
 		std::string value;
 	};
 
-	static struct FloatingAssetPickerState
+	struct FloatingAssetPickerState
 	{
 		bool open = false;
 		bool setInitialPos = false;

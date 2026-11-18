@@ -22,6 +22,7 @@ namespace buki
     {
         int version = 1;
         std::string name;
+        std::string path;
         std::string initialState;
 
         std::vector<AnimParameter> parameters;
@@ -29,11 +30,11 @@ namespace buki
 
         std::vector<AnimationStateLayout> layout;
 
-        bool LoadFromFile(const std::string& path);
-        bool SaveToFile(const std::string& path) const;
+        bool LoadFromFile(const std::string& _path);
+        bool SaveToFile(const std::string& _path) const;
 
         [[nodiscard]] const AnimationState* GetState(const std::string& name) const;
-        [[nodiscard]] const AnimationClipReference* GetClipReference(const std::string& clipPath) const;
+        //[[nodiscard]] const AnimationClipReference* GetClipReference(const std::string& clipPath) const;
         [[nodiscard]] const AnimParameter* GetParameter(const std::string& name) const;
     };
 }

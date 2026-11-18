@@ -99,5 +99,6 @@
     ],
     "loop": true,
     "name": "Idle",
+    "path": "../Deployment/assets/Playerblue.clip",
     "version": 1
 }

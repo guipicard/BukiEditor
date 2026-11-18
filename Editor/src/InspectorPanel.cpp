@@ -396,9 +396,10 @@ void buki::InspectorPanel::DrawPrefabPreviewWindows(EditorState& state)
 		std::string title =
 			buki::GetFileName(session.path) + "##PrefabPreview_" + session.windowId;
 
-		if (session.requestDockNextToScene && state.prefabDockNodeId != 0)
+		ImGuiID windowId = state.assetEditorWindows.GetAssetDockNodeId();
+		if (session.requestDockNextToScene && windowId != 0)
 		{
-			ImGui::SetNextWindowDockID(state.prefabDockNodeId, ImGuiCond_Always);
+			ImGui::SetNextWindowDockID(windowId, ImGuiCond_Always);
 			session.requestDockNextToScene = false;
 		}
 

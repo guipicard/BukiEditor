@@ -8,6 +8,8 @@
 
 #include "Engine.h"
 #include "Entity.h"
+#include "IAssetBehavior.h"
+#include "AssetType.h"
 
 #include <cstdint>
 #include <algorithm>
@@ -49,7 +51,7 @@ void buki::SceneViewPanel::Render(EditorState& state)
 		ImGuiWindow* sceneWindow = ImGui::GetCurrentWindow();
 		if (sceneWindow != nullptr && sceneWindow->DockNode != nullptr)
 		{
-			state.prefabDockNodeId = sceneWindow->DockNode->ID;
+			state.assetEditorWindows.SetAssetDockNodeId(sceneWindow->DockNode->ID);
 		}
 
 		const bool focusedNow =
@@ -198,23 +200,25 @@ void buki::SceneViewPanel::Render(EditorState& state)
 
 		if (ImGui::BeginDragDropTarget())
 		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("PREFAB"))
+			if (const ImGuiPayload* payload =
+				ImGui::AcceptDragDropPayload("PREFAB"))
 			{
-				const char* droppedPath = static_cast<const char*>(payload->Data);
-				if (droppedPath != nullptr)
+				const char* droppedPath =
+					static_cast<const char*>(payload->Data);
+
+				if (droppedPath && *droppedPath)
 				{
-					Entity* entity = buki::Engine::Get().World().InstantiatePrefab(fs::path(droppedPath).string());
-					if (entity != nullptr)
+					if (IAssetBehavior* behavior =
+						state.assetBehaviors.Find(AssetType::Prefab))
 					{
-						entity->Set();
-						state.selectedEntity = entity;
-						state.activeEntity = entity;
-						state.selectedEntities.clear();
-						state.selectedEntities.push_back(entity);
-						state.MarkSceneDirty();
+						behavior->OnDropped(
+							state,
+							droppedPath,
+							"");
 					}
 				}
 			}
+
 			ImGui::EndDragDropTarget();
 		}
 	}

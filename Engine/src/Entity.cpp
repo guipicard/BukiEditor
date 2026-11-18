@@ -139,7 +139,7 @@ void buki::Entity::DeactivatePhysics()
 json buki::Entity::Serialize() const
 {
 	json doc;
-	auto t = Tm();
+	auto& t = Tm();
 	doc["position"]["x"] = t.GetPosition().x;
 	doc["position"]["y"] = t.GetPosition().y;
 	doc["rotation"] = t.GetRotation().GetRadians();

@@ -6,6 +6,10 @@
 #include "Texture2D.h"
 #include "EditorState.h"
 #include "EditorViewportHelpers.h"
+#include "AssetBehaviorRegistry.h"
+#include "AssetBehaviors.h"
+#include "AnimationStateMachineEditorWindow.h"
+#include "PrefabEditorWindow.h"
 
 namespace
 {
@@ -490,69 +494,35 @@ void buki::OnClick(EditorState& state, const BrowserEntry item)
 
 void buki::OnDoubleClick(EditorState& state, const BrowserEntry item)
 {
-	IWorld* world = nullptr;
-	Vector2 sceneCamPos;
-	Vector2 prefabCamPos;
-	switch (item.type)
-	{
-	case BrowserVisualType::Folder:
-		state.currentContentPath = item.path;
-		break;
-	case BrowserVisualType::Scene:
-		sceneCamPos = state.scenePreviewSession.cameraSettings.position;
-		state.selectedScenePath = item.path;
-		state.requestSceneWindowFocus = true;
-		world = Engine::Get().GetWorldPtr();
-		if (world != nullptr && world->LoadScene(item.path))
-		{
-			ClearSceneSelection(state);
-			state.activePrefabPreviewIndex = -1;
-			state.selectedPrefabPath.clear();
-			state.selectedPrefabEntity = nullptr;
-			state.ClearSceneDirty();
-			state.scenePreviewSession.cameraSettings.Deserialize(item.path);
-			state.scenePreviewSession.path = item.path;
-			state.selectedScenePath = item.path;
-			Engine::Get().GetActiveCameraPtr()->position = { sceneCamPos.x, sceneCamPos.y };
-			std::vector<Entity*> entities = world->GetEntitiesInWorld();
-			for (Entity* entity : entities)
-			{
-				if (entity != nullptr) entity->Set();
-			}
-		}
-		break;
-	case BrowserVisualType::Prefab:
-		SelectPrefab(state, item.path);
-		OpenPrefabPreview(state, item.path);
-		state.prefabPreviewSessions[state.activePrefabPreviewIndex].cameraSettings.Deserialize(item.path);
-		prefabCamPos = state.prefabPreviewSessions[state.activePrefabPreviewIndex].cameraSettings.position;
-		Engine::Get().GetActiveCameraPtr()->position = { prefabCamPos.x, prefabCamPos.y };
-		break;
-	case BrowserVisualType::Anim:
-	{
-		if (state.animationStateMachineEditorWindow->IsOpenForPath(item.path))
-		{
-			state.animationStateMachineEditorWindow->RequestFocus();
-		}
-		else
-		{
-			state.animationStateMachineEditorWindow->Open(item.path);
-		}
+	const AssetRecord* record = state.assetDatabase.FindByPath(item.path);
 
-		break;
+	if (!record)
+	{
+		return;
 	}
-	case BrowserVisualType::Clip:
-		if (state.clipAssetEditorWindow->IsOpenForPath(item.path))
-		{
-			state.clipAssetEditorWindow->RequestFocus();
-		}
-		else
-		{
-			state.clipAssetEditorWindow->Open(item.path);
-		}
+
+	switch (record->assetType)
+	{
+	case AssetType::Anim:
+		state.assetEditorWindows.OpenAssetWindow<
+			AnimationStateMachineEditorWindow>(
+				item.path,
+				state,
+				item.path);
+		break;
+
+	case AssetType::Prefab:
+		state.assetEditorWindows.OpenAssetWindow<PrefabEditorWindow>(item.path, state, item.path);
+		break;
+
+	case AssetType::Clip:
+		state.assetEditorWindows.OpenAssetWindow<ClipAssetEditorWindow>(item.path, state, item.path);
+		break;
+	default:
 		break;
 	}
 }
+
 
 void buki::OnRightClick(EditorState& state, const BrowserEntry item)
 {
@@ -595,11 +565,14 @@ void buki::OnRightClick(EditorState& state, const BrowserEntry item)
 	{
 		state.renamePath = item.path;
 		state.renameBuffer = fs::path(item.path).filename().string();
+
+		state.renamePopupOpen = true;
 	}
 
 	if (ImGui::MenuItem("Delete"))
 	{
 		state.deleteCandidate = item.path;
+		state.deletePopupOpen = true;
 	}
 }
 

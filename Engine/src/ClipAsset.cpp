@@ -44,12 +44,13 @@ namespace buki
         return result;
     }
 
-    bool ClipAsset::SaveToFile(const std::string& path) const
+    bool ClipAsset::SaveToFile(const std::string& _path) const
     {
         json root;
         root["version"] = version;
         root["name"] = name;
         root["loop"] = loop;
+        root["path"] = _path;
 
         json framesJson = json::array();
 
@@ -62,7 +63,7 @@ namespace buki
 
         root["frames"] = framesJson;
 
-        std::ofstream file(path);
+        std::ofstream file(_path);
         if (!file.is_open())
             return false;
 
@@ -70,10 +71,10 @@ namespace buki
         return true;
     }
 
-    bool ClipAsset::LoadFromFile(const std::string& path)
+    bool ClipAsset::LoadFromFile(const std::string& _path)
     {
         const fs::path absolutePath =
-            fs::absolute(fs::path("../Deployment") / path).lexically_normal();
+            fs::absolute(fs::path("../Deployment") / _path).lexically_normal();
 
         std::ifstream file(absolutePath);
         if (!file.is_open())
@@ -93,6 +94,7 @@ namespace buki
         if (!root.is_object())
             return false;
 
+        path = _path;
         version = root.value("version", 1);
         name = root.value("name", "");
         loop = root.value("loop", true);

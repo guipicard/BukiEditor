@@ -26,12 +26,6 @@ namespace buki
 		void BuildDefaultLayout(ImGuiID dockspaceId);
 		void DrawMenuBar();
 
-		void RenderPrefabPreviewViewports();
-		void RenderPrefabSessionToFramebuffer(PrefabPreviewSession& session);
-		void EnsurePrefabPreviewFramebuffer(PrefabPreviewSession& session, int width, int height);
-		void DestroyPrefabPreviewFramebuffer(PrefabPreviewSession& session);
-
-		void RenderPrefabPanels();
 	private:
 		EditorState state;
 		HierarchyPanel hierarchyPanel;

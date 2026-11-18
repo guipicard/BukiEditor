@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Ids.h"
+#include "AssetType.h"
+#include "AssetBehaviorRegistry.h"
 
 #include <cstdint>
 #include <set>
@@ -18,7 +20,7 @@ namespace buki
 	{
 		EditorId id = InvalidEditorId;
 		std::string path;
-		std::string assetType;
+		AssetType assetType = AssetType::File;
 	};
 
 	class EditorAssetDatabase
@@ -26,29 +28,43 @@ namespace buki
 	public:
 		void ScanDirectory(const std::string& root);
 
+		void SetBehaviorRegistry(AssetBehaviorRegistry* behaviors);
+
 		const AssetRecord* FindByPath(const std::string& path) const;
+
 		const AssetRecord* FindById(EditorId id) const;
 
-		bool RenameAsset(
-			const std::string& oldPath,
-			const std::string& newPath);
+		bool RenameAsset(const std::string& oldPath, const std::string& newPath);
 
 		bool DeleteAsset(const std::string& path);
 
-		bool UpdateReferencesByAssetId(EditorId assetId, const std::string& oldPath, const std::string& newPath);
-
 		[[nodiscard]] std::vector<std::string> GetReferencedBy(EditorId assetId) const;
-	private:
-		std::vector<AssetRecord> m_Assets;
-		std::unordered_map<EditorId, std::set<std::string>> m_References;
 
-		bool UpdatePrefabReferences(const std::string& prefabPath, const std::string& oldPath, const std::string& newPath);
-		bool UpdateAnimationReferences(const std::string& animationPath, const std::string& oldPath, const std::string& newPath);
-		void CollectPrefabReferences(const std::string& prefabPath);
+		[[nodiscard]] const std::vector<std::string>& GetLastChangedReferencingAssets() const;
+
+		void AddLastChangedReferencingAsset(const std::string& path);
+
+		void UpdateReference(const std::string& ownerAssetPath, const std::string& oldReferencedPath, const std::string& newReferencedPath);
+
+	private:
+		AssetRecord* FindRecordByPath(const std::string& path);
+
+		void RemoveRecord(const std::string& path);
+
+		bool MoveFileOnDisk(const std::string& oldPath, const std::string& newPath);
+
+		bool DeleteFileOnDisk(const std::string& path);
+
 		void BuildReferences();
 
-
 		static EditorId MakeStableId(const std::string& path);
-		[[nodiscard]] std::string GetAssetType(const std::string& path) const;
+
+		std::vector<AssetRecord> m_Assets;
+
+		std::unordered_map<EditorId, std::set<std::string>> m_References;
+
+		std::vector<std::string> m_LastChangedReferencingAssets;
+
+		AssetBehaviorRegistry* m_Behaviors = nullptr;
 	};
 }

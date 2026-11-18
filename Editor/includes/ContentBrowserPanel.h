@@ -1,6 +1,5 @@
 #pragma once
 
-#include "EditorState.h"
 #include "Engine.h"
 #include "AnimationAssetEditor.h"
 
@@ -16,6 +15,7 @@ namespace buki
 {
 	struct Texture2D;
 	struct BrowserEntry;
+	struct EditorState;
 	class Entity;
 
 	class ContentBrowserPanel

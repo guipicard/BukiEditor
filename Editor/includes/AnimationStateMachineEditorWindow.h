@@ -1,26 +1,29 @@
 #pragma once
 
-#include "AnimationAsset.h"
+
+#include "AssetEditorWindow.h"
 #include "ImGui.h"
+#include "AnimationAsset.h"
+
 #include <string>
 
 namespace buki
 {
-	class AnimationStateMachineEditorWindow
+	class Vector2;
+	struct EditorState;
+
+	class AnimationStateMachineEditorWindow : public AssetEditorWindow
 	{
 	public:
-		void Open(const std::string& animationAssetPath);
-		void Close();
-		void Draw();
+		AnimationStateMachineEditorWindow(EditorState& editorState,const std::string& assetPath);
+		void Draw() override;
+		void Reload() override;
 
-		[[nodiscard]] bool IsOpen() const { return m_Open; }
-		[[nodiscard]] bool ShouldDockNextToScene() const
-		{
-			return m_RequestDockNextToScene;
-		}
-		bool IsOpenForPath(std::string path) const;
-		void RequestFocus();
 	private:
+		bool LoadAsset(const std::string& path) override;
+		void OnAssetLoaded() override;
+		void OnClosed() override;
+
 		void DrawToolbar();
 		void DrawGraph();
 		void DrawInspector();
@@ -43,11 +46,7 @@ namespace buki
 		Vector2 FindNonOverlappingPosition(float x, float y) const;
 		void AddStateAtWorldPosition(float x, float y);
 
-		std::string m_AssetPath;
 		AnimationAsset m_Asset;
-		bool m_Open = false;
-		bool m_RequestDockNextToScene = false;
-		bool m_RequestFocus = false;
 
 		std::string m_SelectedStateName;
 		std::string m_SelectedTransitionFrom;

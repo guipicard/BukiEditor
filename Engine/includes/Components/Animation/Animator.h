@@ -45,8 +45,9 @@ namespace buki
 		bool m_FlipX = false;
 	};
 
-	struct Animator : public Component, public IDrawable, public IUpdatable
+	class Animator : public Component, public IDrawable, public IUpdatable
 	{
+	public:
 		Animator(Entity* entity);
 
 		virtual void Start() override;

@@ -1107,7 +1107,7 @@
                 },
                 "Animator": {
                     "params": {
-                        "animationPath": "../deployment/assets/playerblue.anim",
+                        "animationPath": "../Deployment/assets/PlayerBlue.anim",
                         "playOnStart": true,
                         "speed": 1.0
                     }

@@ -13,30 +13,27 @@
                 },
                 "radius": 0.5
             },
-            "density": 2.0,
-            "fillColor": {
-                "a": 0.30000001192092896,
-                "b": 0.0,
-                "g": 0.0,
-                "r": 1.0
-            },
-            "fillDraw": false,
-            "filter": 0,
-            "friction": 0.6000000238418579,
-            "isSensor": false,
-            "positionOffset": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "restitution": 0.4000000059604645,
-            "shapeColor": {
-                "a": 1.0,
-                "b": 0.0,
-                "g": 1.0,
-                "r": 0.0
-            },
-            "shapeDraw": false,
-            "type": "Circle"
+            "def": {
+                "density": 2.0,
+                "fillColor": {
+                    "a": 0.30000001192092896,
+                    "b": 0.0,
+                    "g": 0.0,
+                    "r": 1.0
+                },
+                "fillDraw": false,
+                "filter": 0,
+                "friction": 0.6000000238418579,
+                "isSensor": false,
+                "restitution": 0.4000000059604645,
+                "shapeColor": {
+                    "a": 1.0,
+                    "b": 0.0,
+                    "g": 1.0,
+                    "r": 0.0
+                },
+                "shapeDraw": false
+            }
         },
         "Sprite": {
             "color": {
@@ -45,11 +42,9 @@
                 "g": 1.0,
                 "r": 1.0
             },
-            "flip": {
-                "h": false,
-                "v": false
-            },
-            "path": "\\assets\\kenney\\physics assets\\png\\aliens\\aliengreen_round.png",
+            "flipX": false,
+            "flipY": false,
+            "path": "../deployment/assets/kenney/physics assets/png/aliens/aliengreen_round.png",
             "positionOffset": {
                 "x": 0.0,
                 "y": 0.0
@@ -58,7 +53,7 @@
                 "x": 1.0,
                 "y": 1.0
             },
-            "sourceRect": {
+            "sourceRectPixels": {
                 "h": 0.0,
                 "w": 0.0,
                 "x": 0.0,

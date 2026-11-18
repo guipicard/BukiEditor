@@ -1,54 +1,44 @@
-#pragma once
-
 #include "EditorAssetDatabase.h"
-
-#include "AnimationAsset.h"
-#include "Engine.h"
-#include "Component.h"
-#include "Entity.h"
 #include "EditorAssetEntries.h"
-#include "InspectorPropertyDrawer.h"
+#include "Engine.h"
+#include "IAssetBehavior.h"
 
-#include <cstdlib>
 #include <algorithm>
 #include <filesystem>
 #include <fstream>
 
-#include "nlohmann/json.hpp"
-
 namespace fs = std::filesystem;
-using json = nlohmann::json;
 
 namespace buki
 {
 	namespace
 	{
-		bool IsAnimFile(const fs::path& path)
+		std::string CanonicalizePath(
+			const std::string& path)
 		{
-			return path.extension() == ".anim";
-		}
-
-		bool IsClipFile(const fs::path& path)
-		{
-			return path.extension() == ".clip";
-		}
-
-		std::string CanonicalizePath(const std::string& path)
-		{
-			return ToAssetRelativePath(
-				fs::absolute(path).lexically_normal());
+			return ToAssetRelativePath(fs::absolute(path).lexically_normal());
 		}
 	}
 
-	void EditorAssetDatabase::ScanDirectory(const std::string& root)
+	void EditorAssetDatabase::SetBehaviorRegistry(
+		AssetBehaviorRegistry* behaviors)
+	{
+		m_Behaviors = behaviors;
+	}
+
+	void EditorAssetDatabase::ScanDirectory(
+		const std::string& root)
 	{
 		m_Assets.clear();
 
 		const fs::path rootPath =
 			fs::absolute(root).lexically_normal();
 
-		if (!fs::exists(rootPath) || !fs::is_directory(rootPath))
+		if (!fs::exists(rootPath) ||
+			!fs::is_directory(rootPath))
+		{
 			return;
+		}
 
 		for (const fs::directory_entry& entry :
 			fs::recursive_directory_iterator(rootPath))
@@ -56,17 +46,22 @@ namespace buki
 			if (!entry.is_regular_file())
 				continue;
 
-			const std::string canonicalPath =
-				ToAssetRelativePath(
-					fs::absolute(entry.path()).lexically_normal());
+			const std::string canonicalPath = ToAssetRelativePath(fs::absolute(entry.path()).lexically_normal());
 
 			AssetRecord record;
 			record.path = canonicalPath;
-			record.assetType = GetAssetType(canonicalPath);
-			record.id = MakeStableId(canonicalPath);
 
-			if (record.assetType.empty())
-				continue;
+			if (m_Behaviors)
+			{
+				record.assetType =
+					m_Behaviors->GetAssetType(canonicalPath);
+			}
+			else
+			{
+				record.assetType = AssetType::File;
+			}
+
+			record.id = MakeStableId(canonicalPath);
 
 			m_Assets.push_back(record);
 		}
@@ -82,12 +77,10 @@ namespace buki
 		BuildReferences();
 	}
 
-	const AssetRecord* EditorAssetDatabase::FindByPath(
-		const std::string& path) const
+	const AssetRecord* EditorAssetDatabase::FindByPath(const std::string& path) const
 	{
 		const std::string canonicalPath =
-			ToAssetRelativePath(
-				fs::absolute(path).lexically_normal());
+			CanonicalizePath(path);
 
 		for (const AssetRecord& record : m_Assets)
 		{
@@ -106,145 +99,216 @@ namespace buki
 		for (const AssetRecord& record : m_Assets)
 		{
 			if (record.id == id)
+			{
 				return &record;
+			}
 		}
 
 		return nullptr;
+	}
+
+	AssetRecord* EditorAssetDatabase::FindRecordByPath(
+		const std::string& path)
+	{
+		const std::string canonicalPath =
+			CanonicalizePath(path);
+
+		for (AssetRecord& record : m_Assets)
+		{
+			if (record.path == canonicalPath)
+			{
+				return &record;
+			}
+		}
+
+		return nullptr;
+	}
+
+	void EditorAssetDatabase::RemoveRecord(
+		const std::string& path)
+	{
+		const std::string canonicalPath =
+			CanonicalizePath(path);
+
+		std::erase_if(
+			m_Assets,
+			[&canonicalPath](const AssetRecord& record)
+			{
+				return record.path == canonicalPath;
+			});
+	}
+
+	bool EditorAssetDatabase::MoveFileOnDisk(
+		const std::string& oldPath,
+		const std::string& newPath)
+	{
+		const fs::path oldFilePath =
+			ToAbsolutePath(oldPath);
+
+		const fs::path newFilePath =
+			ToAbsolutePath(newPath);
+
+		std::error_code error;
+
+		fs::rename(oldFilePath, newFilePath, error);
+
+		if (error)
+		{
+			Engine::Get().Log().LogError(
+				"Failed to rename asset: " +
+				error.message());
+
+			return false;
+		}
+
+		return true;
+	}
+
+	bool EditorAssetDatabase::DeleteFileOnDisk(
+		const std::string& path)
+	{
+		const fs::path filePath =
+			ToAbsolutePath(path);
+
+		std::error_code error;
+
+		fs::remove(filePath, error);
+
+		if (error)
+		{
+			Engine::Get().Log().LogError(
+				"Failed to delete asset: " +
+				error.message());
+
+			return false;
+		}
+
+		return true;
 	}
 
 	bool EditorAssetDatabase::RenameAsset(
 		const std::string& oldPath,
 		const std::string& newPath)
 	{
-		const AssetRecord* oldRecord = FindByPath(oldPath);
-
-		if (!oldRecord)
-			return false;
-
-		const EditorId assetId = oldRecord->id;
-
-		const std::string oldCanonicalPath =
-			ToAssetRelativePath(
-				fs::absolute(oldPath).lexically_normal());
-
-		const std::string newCanonicalPath =
-			ToAssetRelativePath(
-				fs::absolute(newPath).lexically_normal());
-
-		if (oldCanonicalPath == newCanonicalPath)
-			return false;
-
-		if (!UpdateReferencesByAssetId(
-			assetId,
-			oldCanonicalPath,
-			newCanonicalPath))
-		{
-			return false;
-		}
-
-		std::error_code error;
-		fs::rename(
-			ToAbsolutePath(oldCanonicalPath),
-			ToAbsolutePath(newCanonicalPath),
-			error);
-
-		if (error)
-			return false;
-
-		Engine::Get().Assets().Unload(oldCanonicalPath);
-		ScanDirectory("../Deployment");
-
-		return true;
-	}
-
-	bool buki::EditorAssetDatabase::DeleteAsset(
-		const std::string& path)
-	{
-		const AssetRecord* record = FindByPath(path);
+		AssetRecord* record =
+			FindRecordByPath(oldPath);
 
 		if (!record)
-			return false;
-
-		const EditorId assetId = record->id;
-
-		const std::string canonicalPath =
-			ToAssetRelativePath(
-				fs::absolute(path).lexically_normal());
-
-		if (!UpdateReferencesByAssetId(
-			assetId,
-			canonicalPath,
-			""))
 		{
 			return false;
 		}
 
-		std::error_code error;
-		fs::remove(ToAbsolutePath(canonicalPath), error);
+		const std::string canonicalOldPath =
+			CanonicalizePath(oldPath);
 
-		if (error)
+		const std::string canonicalNewPath =
+			CanonicalizePath(newPath);
+
+		const EditorId oldAssetId =
+			record->id;
+
+		m_LastChangedReferencingAssets.clear();
+
+		const auto referencesIt =
+			m_References.find(oldAssetId);
+
+		if (referencesIt != m_References.end())
+		{
+			for (const std::string& referencingPath : referencesIt->second)
+			{
+				IAssetBehavior* behavior =
+					m_Behaviors->FindByPath(referencingPath);
+
+				if (!behavior)
+					continue;
+
+				behavior->UpdateReferences(
+					*this,
+					referencingPath,
+					canonicalOldPath,
+					canonicalNewPath);
+			}
+		}
+
+		if (!MoveFileOnDisk(
+			canonicalOldPath,
+			canonicalNewPath))
+		{
 			return false;
+		}
 
-		Engine::Get().Assets().Unload(canonicalPath);
-		ScanDirectory("../Deployment");
+		record->path = canonicalNewPath;
+		record->id = MakeStableId(canonicalNewPath);
+
+		BuildReferences();
 
 		return true;
 	}
 
-	bool EditorAssetDatabase::UpdateReferencesByAssetId(
-		EditorId assetId,
-		const std::string& oldPath,
-		const std::string& newPath)
+	bool EditorAssetDatabase::DeleteAsset(
+		const std::string& path)
 	{
-		const auto referenceIt = m_References.find(assetId);
+		AssetRecord* record =
+			FindRecordByPath(path);
 
-		if (referenceIt == m_References.end())
-			return true;
-
-		bool allUpdated = true;
-
-		for (const std::string& referencingPath :
-			referenceIt->second)
+		if (!record)
 		{
-			const AssetRecord* record =
-				FindByPath(referencingPath);
-
-			if (!record)
-				continue;
-
-			bool updated = true;
-
-			if (record->assetType == "ANIM")
-			{
-				updated = UpdateAnimationReferences(
-					record->path,
-					oldPath,
-					newPath);
-			}
-			else if (record->assetType == "PREFAB")
-			{
-				updated = UpdatePrefabReferences(
-					record->path,
-					oldPath,
-					newPath);
-			}
-
-			if (!updated)
-				allUpdated = false;
+			return false;
 		}
 
-		return allUpdated;
+		const std::string canonicalPath =
+			CanonicalizePath(path);
+
+		const EditorId assetId =
+			record->id;
+
+		m_LastChangedReferencingAssets.clear();
+
+		const auto referencesIt =
+			m_References.find(assetId);
+
+		if (referencesIt != m_References.end())
+		{
+			for (const std::string& referencingPath : referencesIt->second)
+			{
+				IAssetBehavior* behavior =
+					m_Behaviors->FindByPath(referencingPath);
+
+				if (!behavior)
+					continue;
+
+				behavior->UpdateReferences(
+					*this,
+					referencingPath,
+					canonicalPath,
+					"");
+			}
+		}
+
+		if (!DeleteFileOnDisk(canonicalPath))
+		{
+			return false;
+		}
+
+		RemoveRecord(canonicalPath);
+
+		BuildReferences();
+
+		return true;
 	}
 
-	std::vector<std::string> EditorAssetDatabase::GetReferencedBy(
-		EditorId assetId) const
+	std::vector<std::string>
+		EditorAssetDatabase::GetReferencedBy(
+			EditorId assetId) const
 	{
 		std::vector<std::string> result;
 
 		const auto it = m_References.find(assetId);
 
 		if (it == m_References.end())
+		{
 			return result;
+		}
 
 		result.assign(
 			it->second.begin(),
@@ -253,107 +317,53 @@ namespace buki
 		return result;
 	}
 
-	std::string EditorAssetDatabase::GetAssetType(
-		const std::string& path) const
+	const std::vector<std::string>&
+		EditorAssetDatabase::GetLastChangedReferencingAssets() const
 	{
-		const fs::path asPath(path);
-
-
-
-		if (IsAnimFile(asPath))
-			return "ANIM";
-
-		if (IsClipFile(asPath))
-			return "CLIP";
-
-		return "";
+		return m_LastChangedReferencingAssets;
 	}
 
-	bool EditorAssetDatabase::UpdatePrefabReferences(
-		const std::string& prefabPath,
-		const std::string& oldPath,
-		const std::string& newPath)
+	void EditorAssetDatabase::AddLastChangedReferencingAsset(
+		const std::string& path)
 	{
-		IWorld* world = Engine::Get().GetWorldPtr();
+		m_LastChangedReferencingAssets.push_back(
+			CanonicalizePath(path));
+	}
 
-		if (!world)
-			return false;
+	void EditorAssetDatabase::UpdateReference(const std::string& ownerAssetPath, const std::string& oldReferencedPath, const std::string& newReferencedPath)
+	{
+		const std::string ownerPath = CanonicalizePath(ownerAssetPath);
 
-		Entity* prefabEntity =
-			world->GetOrLoadPrefabEntity(prefabPath);
+		const EditorId ownerId =MakeStableId(ownerPath);
 
-		if (!prefabEntity)
-			return false;
-
-		bool changed = false;
-
-		for (Component* component : prefabEntity->GetComponents())
+		if (!oldReferencedPath.empty())
 		{
-			if (!component)
-				continue;
+			const AssetRecord* oldRecord =FindByPath(oldReferencedPath);
 
-			const AssetReferenceUpdateResult result =
-				component->ReplaceAssetReference(
-					oldPath,
-					newPath);
+			if (oldRecord)
+			{
+				auto it = m_References.find(oldRecord->id);
 
-			if (result == AssetReferenceUpdateResult::Changed)
-			{
-				changed = true;
-			}
-			else if (result == AssetReferenceUpdateResult::Failed)
-			{
-				Engine::Get().Log().LogError(
-					"Failed to update prefab reference: " +
-					prefabPath);
+				if (it != m_References.end())
+				{
+					it->second.erase(ownerPath);
+
+					if (it->second.empty())
+					{
+						m_References.erase(it);
+					}
+				}
 			}
 		}
 
-		if (!changed)
-			return true;
-
-		return world->SavePrefabAsset(prefabPath);
-	}
-
-	void EditorAssetDatabase::CollectPrefabReferences(
-		const std::string& prefabPath)
-	{
-		IWorld* world = Engine::Get().GetWorldPtr();
-
-		if (!world)
-			return;
-
-		Entity* prefabEntity =
-			world->GetOrLoadPrefabEntity(prefabPath);
-
-		if (!prefabEntity)
-			return;
-
-		std::set<std::string> references;
-
-		for (Component* component : prefabEntity->GetComponents())
+		if (!newReferencedPath.empty())
 		{
-			if (!component)
-				continue;
+			const AssetRecord* newRecord = FindByPath(newReferencedPath);
 
-			component->CollectAssetReferences(references);
-		}
-
-		for (const std::string& reference : references)
-		{
-			if (reference.empty())
-				continue;
-
-			const AssetRecord* referencedAsset =
-				FindByPath(reference);
-
-			if (!referencedAsset)
-				continue;
-
-			m_References[referencedAsset->id].insert(
-				ToAssetRelativePath(
-					fs::absolute(prefabPath)
-					.lexically_normal()));
+			if (newRecord)
+			{
+				m_References[newRecord->id].insert(ownerPath);
+			}
 		}
 	}
 
@@ -363,74 +373,42 @@ namespace buki
 
 		for (const AssetRecord& record : m_Assets)
 		{
-			if (record.assetType == "ANIM")
-			{
-				AnimationAsset asset;
-
-				if (!asset.LoadFromFile(record.path))
-					continue;
-
-				for (const AnimationState& state : asset.states)
-				{
-					if (state.clipPath.empty())
-						continue;
-
-					const AssetRecord* referencedAsset =
-						FindByPath(state.clipPath);
-
-					if (!referencedAsset)
-						continue;
-
-					m_References[referencedAsset->id].insert(
-						record.path);
-				}
-			}
-			else if (record.assetType == "PREFAB")
-			{
-				CollectPrefabReferences(record.path);
-			}
-		}
-	}
-
-	bool EditorAssetDatabase::UpdateAnimationReferences(
-		const std::string& animationPath,
-		const std::string& oldPath,
-		const std::string& newPath)
-	{
-		AnimationAsset asset;
-
-		if (!asset.LoadFromFile(animationPath))
-			return false;
-
-		bool changed = false;
-
-		for (AnimationState& state : asset.states)
-		{
-			if (state.clipPath.empty())
+			if (!m_Behaviors)
 				continue;
 
-			const std::string canonicalStateClipPath =
-				ToAssetRelativePath(
-					fs::absolute(state.clipPath)
-					.lexically_normal());
+			IAssetBehavior* behavior =
+				m_Behaviors->FindByPath(record.path);
 
-			if (canonicalStateClipPath == oldPath)
+			if (!behavior)
+				continue;
+
+			std::vector<std::string> references;
+
+			behavior->CollectReferences(
+				*this,
+				record.path,
+				references);
+
+			for (const std::string& referencedPath : references)
 			{
-				state.clipPath = newPath;
-				changed = true;
+				if (referencedPath.empty())
+					continue;
+
+				const AssetRecord* referencedRecord =
+					FindByPath(referencedPath);
+
+				if (!referencedRecord)
+					continue;
+
+				m_References[referencedRecord->id].insert(
+					record.path);
 			}
 		}
-
-		if (!changed)
-			return true;
-
-		return asset.SaveToFile(animationPath);
 	}
 
 	EditorId EditorAssetDatabase::MakeStableId(
 		const std::string& path)
 	{
-		// Temporary stable identity until assets persist GUIDs.
 		std::uint64_t hash = 1469598103934665603ULL;
 
 		for (const char character : path)

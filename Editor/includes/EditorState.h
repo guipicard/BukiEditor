@@ -1,270 +1,147 @@
 #pragma once
 
-#include <cstdlib>
-#include <fstream>
-#include <sstream>
-#include <filesystem>
+
+#include <memory>
+#include <string>
 #include <vector>
-#include <random>
-#include "nlohmann/json.hpp"
+
 #include "BukiContainers.h"
 #include "Engine.h"
-#include "AnimationAssetEditor.h"
-#include "AnimationStateMachineEditorWindow.h"
-#include "ClipAssetEditorWindow.h"
-#include "ImGui.h"
-#include "EditorAssetDatabase.h"
 
-namespace fs = std::filesystem;
-using json = nlohmann::json;
+#include "AnimationAssetEditor.h"
+#include "AssetBehaviorRegistry.h"
+#include "AssetEditorWindowManager.h"
+#include "ClipAssetEditorWindow.h"
+#include "EditorAssetDatabase.h"
+#include "EditorPreviewSessions.h"
 
 namespace buki
 {
-	class Entity;
-	class Component;
+    class Entity;
+    class Component;
 
-	enum class ViewportDisplayMode
-	{
-		Stretch = 0,
-		Fit = 1,
-		OneToOne = 2
-	};
+    struct EditorState
+    {
+        // ------------------------------------------------------------------
+        // Core editor services
+        // ------------------------------------------------------------------
 
-	/*struct EditorCanvas2D
-	{
-		ImVec2 offset = ImVec2(0.0f, 0.0f);
-		float zoom = 1.0f;
-		bool panning = false;
+        EditorAssetDatabase assetDatabase;
+        AssetBehaviorRegistry assetBehaviors;
 
-		void Update(const ImVec2& canvasOrigin);
-		ImVec2 WorldToScreen(const Vector2& world) const;
-		Vector2 ScreenToWorld(const ImVec2& screen) const;
-	};*/
+        AssetEditorWindowManager assetEditorWindows;
 
-	class CameraSettings
-	{
-	public:
-		CameraSettings() = default;
-		~CameraSettings() = default;
-		Vector2 position = { 0.0f, 0.0f };
-		float zoom = 1.0f;
-		float viewportWidth = 0.0f;
-		float viewportHeight = 0.0f;
-		ViewportDisplayMode displayMode = ViewportDisplayMode::Fit;
+        // ------------------------------------------------------------------
+        // Asset rename / delete
+        // ------------------------------------------------------------------
 
-		void Serialize(std::filesystem::path path)
-		{
-			std::filesystem::path asPath(std::filesystem::absolute("../Deployment/Editor.json"));
-			std::string fileName = path.stem().string();
-			std::string extension = path.extension().string();
+        std::filesystem::path renamePath;
+        std::string renameBuffer;
+        bool renamePopupOpen = false;
 
-			json doc = json::object();
-			std::ifstream in(asPath);
-			if (in.is_open())
-			{
-				try { in >> doc; }
-				catch (...) { doc = json::object(); }
-			}
+        std::filesystem::path deleteCandidate;
+        bool deletePopupOpen = false;
 
-			const std::string key = path.string();
-			const bool firstPass = !doc.contains(key);
-			if (firstPass)
-			{
-				if (extension == ".scene")
-				{
-					json sceneDoc = json::object();
-					std::ifstream sceneIn(std::filesystem::absolute("../Deployment/" + path.string()));
-					sceneIn >> sceneDoc;
-					doc[key]["position"]["x"] = sceneDoc["camera"]["position"]["x"];
-					doc[key]["position"]["y"] = sceneDoc["camera"]["position"]["y"];
-				}
-				else if (extension == ".prefab")
-				{
-					json prefabDoc = json::object();
-					std::ifstream prefabIn(std::filesystem::absolute("../Deployment/" + path.string()));
-					prefabIn >> prefabDoc;
-					doc[key]["position"]["x"] = prefabDoc["position"]["x"];
-					doc[key]["position"]["y"] = prefabDoc["position"]["y"];
-				}
-			}
-			else
-			{
-				doc[key]["position"]["x"] = position.x;
-				doc[key]["position"]["y"] = position.y;
-			}
-			doc[key]["zoom"] = zoom;
-			doc[key]["viewportWidth"] = viewportWidth;
-			doc[key]["viewportHeight"] = viewportHeight;
-			doc[key]["displayMode"] = static_cast<int>(displayMode);
-			doc[key]["type"] = extension;
-			doc[key]["path"] = key;
+        // ------------------------------------------------------------------
+        // Selection
+        // ------------------------------------------------------------------
 
-			std::ofstream out(asPath, std::ios::out | std::ios::trunc);
-			if (out.is_open())
-				out << doc.dump(4);
-			if (firstPass)
-			{
-				Deserialize(path);
-			}
-		}
-		void Deserialize(std::filesystem::path path)
-		{
-			const std::filesystem::path asPath = std::filesystem::absolute("../Deployment/Editor.json");
-			json doc = json::object();
+        Entity* selectedEntity = nullptr;
+        std::vector<Entity*> selectedEntities;
+        Entity* activeEntity = nullptr;
 
-			std::ifstream in(asPath);
-			if (!in.is_open())
-				return;
+        Component* selectedComponent = nullptr;
+        std::vector<Component*> selectedComponents;
+        Component* activeComponent = nullptr;
 
-			try { in >> doc; }
-			catch (...) { return; }
+        std::string selectedPrefabPath;
+        Entity* selectedPrefabEntity = nullptr;
 
-			const std::string key = path.string();
-			if (!doc.contains(key))
-				return;
+        std::string selectedItem;
 
-			const json& node = doc[key];
+        // ------------------------------------------------------------------
+        // Editor windows
+        // ------------------------------------------------------------------
 
-			position.x = node["position"].value("x", 0.0f);
-			position.y = node["position"].value("y", 0.0f);
-			zoom = node.value("zoom", 1.0f);
-			viewportWidth = node.value("viewportWidth", 0.0f);
-			viewportHeight = node.value("viewportHeight", 0.0f);
-			displayMode = static_cast<ViewportDisplayMode>(node.value("displayMode", static_cast<int>(ViewportDisplayMode::Fit)));
+        std::unique_ptr<AnimationAssetEditor> animationAssetEditor = std::make_unique<AnimationAssetEditor>();
 
-			Engine::Get().GetActiveCameraPtr()->position = { position.x, position.y };
-			Engine::Get().GetActiveCameraPtr()->zoom = zoom;
-		}
-	};
+        bool showHierarchy = true;
+        bool showInspector = true;
+        bool showSceneView = true;
+        bool showContentBrowser = true;
+        bool showDemoWindow = false;
 
-	struct PrefabPreviewSession
-	{
-		std::string path = std::string();
-		Entity* prefabEntity = nullptr;
-		bool open = true;
-		bool focused = false;
-		bool hovered = false;
-		bool requestFocus = false;
-		bool requestDockNextToScene = false;
-		std::string windowId;
+        bool requestSceneWindowFocus = false;
 
-		unsigned int framebuffer = 0;
-		unsigned int colorTexture = 0;
-		unsigned int depthRenderbuffer = 0;
-		int framebufferWidth = 0;
-		int framebufferHeight = 0;
+        // ------------------------------------------------------------------
+        // Scene viewport
+        // ------------------------------------------------------------------
 
-		CameraSettings cameraSettings = {};
-	};
+        float viewportWidth = 0.0f;
+        float viewportHeight = 0.0f;
 
-	struct ScenePreviewSession
-	{
-		std::filesystem::path path;
-		std::vector<Entity*> prefabEntity;
-		bool open = true;
-		bool focused = false;
-		bool hovered = false;
-		std::string windowId;
+        unsigned int sceneFramebuffer = 0;
+        unsigned int sceneColorTexture = 0;
+        unsigned int sceneDepthRenderbuffer = 0;
 
-		unsigned int framebuffer = 0;
-		unsigned int colorTexture = 0;
-		unsigned int depthRenderbuffer = 0;
-		int framebufferWidth = 0;
-		int framebufferHeight = 0;
+        int sceneFramebufferWidth = 0;
+        int sceneFramebufferHeight = 0;
 
-		CameraSettings cameraSettings;
-	};
+        ViewportDisplayMode viewportDisplayMode =
+            ViewportDisplayMode::OneToOne;
 
-	enum class EditorContextType
-	{
-		Scene,
-		Prefab
-	};
+        bool lockViewportRenderSize = true;
+        bool canSeeViewportRenderSize = true;
+        bool canSeeViewportRenderInfo = false;
 
-	struct EditorContext
-	{
-		EditorContextType type = EditorContextType::Scene;
-		std::filesystem::path path;
-		Entity* prefabEntity = nullptr;
-	};
+        int lockedViewportWidth = 1920;
+        int lockedViewportHeight = 1080;
 
-	struct EditorState
-	{
-		EditorAssetDatabase assetDatabase;
+        // ------------------------------------------------------------------
+        // Content browser
+        // ------------------------------------------------------------------
 
-		std::filesystem::path renamePath;
-		std::string renameBuffer;
+        std::filesystem::path currentContentPath = "../Deployment";
+        std::filesystem::path scenesRootPath = "../Deployment/Scenes";
+        std::filesystem::path selectedScenePath;
 
-		std::filesystem::path deleteCandidate;
+        bool setTilesDefaults = true;
 
-		Entity* selectedEntity = nullptr;
-		std::vector<Entity*> selectedEntities;
-		Entity* activeEntity = nullptr;
+        // ------------------------------------------------------------------
+        // Preview sessions
+        // ------------------------------------------------------------------
 
-		Component* selectedComponent = nullptr;
-		std::vector<Component*> selectedComponents;
-		Component* activeComponent = nullptr;
+        std::vector<PrefabPreviewSession> prefabPreviewSessions;
+        int activePrefabPreviewIndex = -1;
 
-		AnimationAssetEditor* animationAssetEditor = new AnimationAssetEditor();
-		AnimationStateMachineEditorWindow* animationStateMachineEditorWindow = new AnimationStateMachineEditorWindow();
+        ScenePreviewSession scenePreviewSession;
 
-		ClipAssetEditorWindow* clipAssetEditorWindow = new ClipAssetEditorWindow();
+        // ------------------------------------------------------------------
+        // Dirty state
+        // ------------------------------------------------------------------
 
-		bool showHierarchy = true;
-		bool showInspector = true;
-		bool showSceneView = true;
-		bool showContentBrowser = true;
-		bool showDemoWindow = false;
+        void MarkSceneDirty()
+        {
+            m_SceneDirty = true;
+        }
 
-		bool requestSceneWindowFocus = false;
+        void ClearSceneDirty()
+        {
+            if (m_SceneDirty)
+            {
+                Engine::Get().Log().LogMessage(
+                    "Scene marked as clean.");
+            }
 
+            m_SceneDirty = false;
+        }
 
-		float viewportWidth = 0.0f;
-		float viewportHeight = 0.0f;
+        [[nodiscard]] bool IsSceneDirty() const
+        {
+            return m_SceneDirty;
+        }
 
-		unsigned int sceneFramebuffer = 0;
-		unsigned int sceneColorTexture = 0;
-		unsigned int sceneDepthRenderbuffer = 0;
-		int sceneFramebufferWidth = 0;
-		int sceneFramebufferHeight = 0;
-
-		ViewportDisplayMode viewportDisplayMode = ViewportDisplayMode::OneToOne;
-		bool lockViewportRenderSize = true;
-		bool canSeeViewportRenderSize = true;
-		bool canSeeViewportRenderInfo = false;
-		int lockedViewportWidth = 1920;
-		int lockedViewportHeight = 1080;
-
-		std::filesystem::path currentContentPath = "../Deployment";
-		std::filesystem::path scenesRootPath = "../Deployment/Scenes";
-		std::filesystem::path selectedScenePath;
-
-		bool setTilesDefaults = true;
-
-		std::string selectedPrefabPath = "";
-		Entity* selectedPrefabEntity = nullptr;
-
-		std::string selectedItem = "";
-
-		std::vector<PrefabPreviewSession> prefabPreviewSessions;
-		int activePrefabPreviewIndex = -1;
-
-		ScenePreviewSession scenePreviewSession;
-
-		ImGuiID prefabDockNodeId = 0;
-
-		void MarkSceneDirty() { sceneDirty = true; }
-		void ClearSceneDirty()
-		{
-			if (sceneDirty)
-			{
-				Engine::Get().Log().LogMessage("Scene marked as clean.");
-			}
-			sceneDirty = false;
-		}
-		bool IsSceneDirty() const { return sceneDirty; }
-	private:
-
-		bool sceneDirty = false;
-	};
+    private:
+        bool m_SceneDirty = false;
+    };
 }

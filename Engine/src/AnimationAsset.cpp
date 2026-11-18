@@ -1,3 +1,4 @@
+#pragma once
 #include "AnimationAsset.h"
 
 #include <nlohmann/json.hpp>
@@ -184,12 +185,13 @@ namespace buki
         return result;
     }
 
-    bool AnimationAsset::SaveToFile(const std::string& path) const
+    bool AnimationAsset::SaveToFile(const std::string& _path) const
     {
         json root;
         root["version"] = version;
         root["name"] = name;
         root["initialState"] = initialState;
+        root["path"] = _path;
 
         json parametersJson = json::array();
 
@@ -224,7 +226,7 @@ namespace buki
 
         root["layout"] = layoutJson;
 
-        std::ofstream file(path);
+        std::ofstream file(_path);
         if (!file.is_open())
             return false;
 
@@ -232,10 +234,10 @@ namespace buki
         return true;
     }
 
-    bool AnimationAsset::LoadFromFile(const std::string& path)
+    bool AnimationAsset::LoadFromFile(const std::string& _path)
     {
         const fs::path absolutePath =
-            fs::absolute(fs::path("../Deployment") / path).lexically_normal();
+            fs::absolute(fs::path("../Deployment") / _path).lexically_normal();
 
         std::ifstream file(absolutePath);
         if (!file.is_open())

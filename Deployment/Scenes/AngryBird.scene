@@ -12,7 +12,7 @@
         "ButtonSimple1": {
             "components": {
                 "Button": {
-                    "backgroundImagePath": "/assets/Kenney/MiniGame/Ui/miniguide5_button.png",
+                    "backgroundImagePath": "../deployment/assets/kenney/minigame/ui/miniguide5_button.png",
                     "fontPath": "/fonts/Kenney/Kenney Blocks.ttf",
                     "fontSize": 36,
                     "onClick": {
@@ -22,9 +22,9 @@
                     "style": {
                         "backgroundColor": {
                             "a": 1.0,
-                            "b": 1.0,
-                            "g": 0.0,
-                            "r": 0.029411792755126953
+                            "b": 0.0,
+                            "g": 0.5882352590560913,
+                            "r": 1.0
                         },
                         "backgroundHoverColor": {
                             "a": 1.0,
@@ -56,9 +56,9 @@
                         "showBackground": true,
                         "textColor": {
                             "a": 1.0,
-                            "b": 0.9754902124404907,
-                            "g": 0.3203815817832947,
-                            "r": 0.8213468194007874
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
                         },
                         "textHoverColor": {
                             "a": 1.0,
@@ -91,7 +91,7 @@
         "ButtonSimple2": {
             "components": {
                 "Button": {
-                    "backgroundImagePath": "/assets/Kenney/MiniGame/Ui/miniguide5_button.png",
+                    "backgroundImagePath": "../deployment/assets/kenney/minigame/ui/miniguide5_button.png",
                     "fontPath": "/fonts/Kenney/Kenney Blocks.ttf",
                     "fontSize": 36,
                     "onClick": {
@@ -101,9 +101,9 @@
                     "style": {
                         "backgroundColor": {
                             "a": 1.0,
-                            "b": 1.0,
-                            "g": 0.0,
-                            "r": 0.029411792755126953
+                            "b": 0.0,
+                            "g": 0.5882352590560913,
+                            "r": 1.0
                         },
                         "backgroundHoverColor": {
                             "a": 1.0,
@@ -135,9 +135,9 @@
                         "showBackground": true,
                         "textColor": {
                             "a": 1.0,
-                            "b": 0.9754902124404907,
-                            "g": 0.3203815817832947,
-                            "r": 0.8213468194007874
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
                         },
                         "textHoverColor": {
                             "a": 1.0,
@@ -170,7 +170,7 @@
         "ButtonSimple3": {
             "components": {
                 "Button": {
-                    "backgroundImagePath": "/assets/Kenney/MiniGame/Ui/miniguide5_button.png",
+                    "backgroundImagePath": "../deployment/assets/kenney/minigame/ui/miniguide5_button.png",
                     "fontPath": "/fonts/Kenney/Kenney Blocks.ttf",
                     "fontSize": 36,
                     "onClick": {
@@ -180,9 +180,9 @@
                     "style": {
                         "backgroundColor": {
                             "a": 1.0,
-                            "b": 1.0,
-                            "g": 0.0,
-                            "r": 0.029411792755126953
+                            "b": 0.0,
+                            "g": 0.5882352590560913,
+                            "r": 1.0
                         },
                         "backgroundHoverColor": {
                             "a": 1.0,
@@ -214,9 +214,9 @@
                         "showBackground": true,
                         "textColor": {
                             "a": 1.0,
-                            "b": 0.9754902124404907,
-                            "g": 0.3203815817832947,
-                            "r": 0.8213468194007874
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
                         },
                         "textHoverColor": {
                             "a": 1.0,
@@ -249,7 +249,7 @@
         "ButtonSimple4": {
             "components": {
                 "Button": {
-                    "backgroundImagePath": "/assets/Kenney/MiniGame/Ui/miniguide5_button.png",
+                    "backgroundImagePath": "../deployment/assets/kenney/minigame/ui/miniguide5_button.png",
                     "fontPath": "/fonts/Kenney/Kenney Blocks.ttf",
                     "fontSize": 36,
                     "onClick": {
@@ -259,9 +259,9 @@
                     "style": {
                         "backgroundColor": {
                             "a": 1.0,
-                            "b": 1.0,
-                            "g": 0.0,
-                            "r": 0.029411792755126953
+                            "b": 0.0,
+                            "g": 0.5882352590560913,
+                            "r": 1.0
                         },
                         "backgroundHoverColor": {
                             "a": 1.0,
@@ -293,9 +293,9 @@
                         "showBackground": true,
                         "textColor": {
                             "a": 1.0,
-                            "b": 0.9754902124404907,
-                            "g": 0.3203815817832947,
-                            "r": 0.8213468194007874
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
                         },
                         "textHoverColor": {
                             "a": 1.0,
@@ -327,5 +327,5 @@
         }
     },
     "sceneName": "AngryBird",
-    "scenePath": "Scenes/AngryBird.scene"
+    "scenePath": "../Deployment/Scenes/AngryBird.scene"
 }

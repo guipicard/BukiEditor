@@ -86,7 +86,7 @@ namespace buki
 	{
 		EditorId id = InvalidEditorId;
 		std::string name;
-		AnimParameterType type;
+		AnimParameterType type = AnimParameterType::Bool;
 		AnimParameterValue defaultValue;
 	};
 
