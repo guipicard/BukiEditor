@@ -24,7 +24,8 @@ void buki::Polygon::Draw(float alpha)
 
     if (def.shapeDraw)
     {
-        Graphics().DrawPolygonOutline(pos, def.radius, angle, def.shapeColor, def.segments);
+        const LineStyle lineStyle{ def.shapeThickness, LineThicknessSpace::ScreenPixels };
+        Graphics().DrawPolygonOutline(pos, def.radius, angle, def.shapeColor, def.segments, lineStyle);
     }
 }
 

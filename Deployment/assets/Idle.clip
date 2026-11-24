@@ -4,7 +4,7 @@
             "duration": 0.10000000149011612,
             "flipX": false,
             "flipY": false,
-            "path": "",
+            "path": "../deployment/assets/kenney/abstract platformer/png/players/player blue/playerblue_stand.png",
             "sourceRect": {
                 "h": 0.0,
                 "w": 0.0,
@@ -15,6 +15,6 @@
     ],
     "loop": true,
     "name": "New Clip",
-    "path": "../Deployment/assets/testClip_.clip",
+    "path": "../Deployment/assets/Idle.clip",
     "version": 1
 }

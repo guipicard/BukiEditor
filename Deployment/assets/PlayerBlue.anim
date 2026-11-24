@@ -3,28 +3,27 @@
     "layout": [
         {
             "position": {
-                "x": 100.0,
-                "y": 100.0
+                "x": 116.0,
+                "y": 56.0
             },
             "stateName": "Idle"
         },
         {
             "position": {
-                "x": 310.0,
-                "y": 100.0
-            },
-            "stateName": "NewState"
-        },
-        {
-            "position": {
-                "x": 320.0,
-                "y": 100.0
+                "x": 495.0,
+                "y": 52.0
             },
             "stateName": "Walk"
         }
     ],
-    "name": "NewAnimation",
-    "parameters": [],
+    "name": "PlayerBlue",
+    "parameters": [
+        {
+            "defaultValue": 0.0,
+            "name": "Speed",
+            "type": 2
+        }
+    ],
     "path": "../Deployment/assets/PlayerBlue.anim",
     "states": [
         {
@@ -46,7 +45,7 @@
             ]
         },
         {
-            "clipPath": "",
+            "clipPath": "../deployment/assets/playerblue.clip",
             "name": "Walk",
             "transitions": [
                 {

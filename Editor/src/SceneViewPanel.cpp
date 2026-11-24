@@ -10,6 +10,7 @@
 #include "Entity.h"
 #include "IAssetBehavior.h"
 #include "AssetType.h"
+#include "EditorViewportNavigation.h"
 
 #include <cstdint>
 #include <algorithm>
@@ -54,20 +55,12 @@ void buki::SceneViewPanel::Render(EditorState& state)
 			state.assetEditorWindows.SetAssetDockNodeId(sceneWindow->DockNode->ID);
 		}
 
-		const bool focusedNow =
-			ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) ||
-			ImGui::IsWindowAppearing();
+		const bool focusedNow = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) || ImGui::IsWindowAppearing();
 
 		const bool wasFocused = !state.scenePreviewSession.focused && focusedNow;
 
 		state.scenePreviewSession.focused = focusedNow;
 		state.scenePreviewSession.hovered = ImGui::IsWindowHovered();
-
-		if (wasFocused)
-		{
-			state.scenePreviewSession.cameraSettings.Deserialize(state.scenePreviewSession.path);
-
-		}
 
 		if (state.selectedScenePath.empty())
 		{
@@ -76,13 +69,6 @@ void buki::SceneViewPanel::Render(EditorState& state)
 		else
 		{
 			ImGui::Text("Selected scene: %s", state.selectedScenePath.filename().string().c_str());
-			if (state.scenePreviewSession.focused)
-			{
-				state.scenePreviewSession.cameraSettings.displayMode = state.viewportDisplayMode;
-				state.scenePreviewSession.cameraSettings.viewportWidth = state.viewportWidth;
-				state.scenePreviewSession.cameraSettings.viewportHeight = state.viewportHeight;
-				state.scenePreviewSession.cameraSettings.Serialize(state.scenePreviewSession.path);
-			}
 		}
 
 		ImGui::Separator();
@@ -198,6 +184,34 @@ void buki::SceneViewPanel::Render(EditorState& state)
 			state.viewportHeight
 		);
 
+		const bool imageAvailable =
+			state.sceneColorTexture != 0 &&
+			state.sceneFramebufferWidth > 0 &&
+			state.sceneFramebufferHeight > 0;
+
+		if (imageAvailable)
+		{
+			state.scenePreviewSession.hovered = ImGui::IsItemHovered();
+
+			if (!state.scenePreviewSession.path.empty())
+			{
+				UpdateEditorViewportNavigation(
+					state.scenePreviewSession.cameraSettings,
+					m_CameraNavigation,
+					state.sceneFramebufferWidth,
+					state.sceneFramebufferHeight);
+			}
+			else
+			{
+				m_CameraNavigation.Reset();
+			}
+		}
+		else
+		{
+			state.scenePreviewSession.hovered = false;
+			m_CameraNavigation.Reset();
+		}
+
 		if (ImGui::BeginDragDropTarget())
 		{
 			if (const ImGuiPayload* payload =
@@ -220,6 +234,26 @@ void buki::SceneViewPanel::Render(EditorState& state)
 			}
 
 			ImGui::EndDragDropTarget();
+		}
+
+		if (!state.scenePreviewSession.path.empty())
+		{
+			auto& settings = state.scenePreviewSession.cameraSettings;
+
+			settings.displayMode = state.viewportDisplayMode;
+
+			settings.viewportWidth = state.viewportWidth;
+
+			settings.viewportHeight = state.viewportHeight;
+
+			const bool panFinished = ImGui::IsMouseReleased(ImGuiMouseButton_Middle);
+
+			const bool wheelUsed = state.scenePreviewSession.hovered && ImGui::GetIO().MouseWheel != 0.0f;
+
+			if (panFinished || wheelUsed)
+			{
+				settings.Serialize(state.scenePreviewSession.path);
+			}
 		}
 	}
 	ImGui::End();

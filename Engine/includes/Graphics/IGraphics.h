@@ -14,6 +14,18 @@ namespace buki
 	class IPlatform;
 	struct Texture2D;
 
+	enum class LineThicknessSpace
+	{
+		ScreenPixels,
+		WorldUnits
+	};
+
+	struct LineStyle
+	{
+		float thickness = 1.0f;
+		LineThicknessSpace space = LineThicknessSpace::ScreenPixels;
+	};
+
 	class IGraphics
 	{
 	public:
@@ -38,6 +50,7 @@ namespace buki
 		virtual std::uint32_t CreateTextureRGBA8(const void* pixels, int width, int height) = 0;
 		virtual void DestroyTexture(std::uint32_t textureId) = 0;
 
+		// Line Shapes
 		virtual void DrawTexturedQuad(
 			std::uint32_t textureId,
 			const Camera2D& camera,
@@ -48,12 +61,37 @@ namespace buki
 			const UVRect& uvRect,
 			const Color& color = {}) = 0;
 
-		virtual void DrawLine(const Vector2& a, const Vector2& b, const Color& color) = 0;
-		virtual void DrawRectOutline(const Vector2& center, const Vector2& size, float rotationRadians, const Color& color) = 0;
+		virtual void DrawLine(
+			const Vector2& a,
+			const Vector2& b,
+			const Color& color,
+			const LineStyle& lineStyle = {}) = 0;
+
+		virtual void DrawRectOutline(
+			const Vector2& center,
+			const Vector2& size,
+			float rotationRadians,
+			const Color& color,
+			const LineStyle& lineStyle = {}) = 0;
+
+		virtual void DrawCircleOutline(
+			const Vector2& center,
+			float radius,
+			const Color& color,
+			float rotationRadians = 0.0f,
+			const LineStyle& lineStyle = {}) = 0;
+
+		virtual void DrawPolygonOutline(
+			const Vector2& center,
+			float radius,
+			float rotationRadians,
+			const Color& color,
+			int segments,
+			const LineStyle& lineStyle = {}) = 0;
+
+		// Filled Shapes 
 		virtual void FillRect(const Vector2& center, const Vector2& size, float rotationRadians, const Color& color) = 0;
-		virtual void DrawCircleOutline(const Vector2& center, float radius, const Color& color, float rotationRadians = 0.0f) = 0;
 		virtual void FillCircle(const Vector2& center, float radius, const Color& color) = 0;
-		virtual void DrawPolygonOutline(const Vector2& center, float radius, float rotationRadians, const Color& color, int segments) = 0;
 		virtual void FillPolygon(const Vector2& center, float radius, float rotationRadians, const Color& color, int segments) = 0;
 
 		virtual std::vector<glm::vec2> GetPolygonPoints(glm::vec2 center, float radius, float rotationRadians, int segments, bool renderFill) = 0;
@@ -114,8 +152,11 @@ namespace buki
 			const glm::vec2& worldPositionMeters,
 			const Color& color = {},
 			bool centerX = false,
-			bool centerY = false) = 0;
+			bool centerY = false,
+			bool centerVisuallyY = false) = 0;
 
-		virtual Vector2 MeasureText(const Font2D& font, const std::string& text) const = 0;
+		virtual Vector2 MeasureText(
+			const Font2D& font,
+			const std::string& text) const = 0;
 	};
 }

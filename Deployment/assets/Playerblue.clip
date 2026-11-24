@@ -98,7 +98,7 @@
         }
     ],
     "loop": true,
-    "name": "Idle",
+    "name": "Walk",
     "path": "../Deployment/assets/Playerblue.clip",
     "version": 1
 }

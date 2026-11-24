@@ -14,15 +14,15 @@ namespace buki
 
 	enum class BrowserVisualType
 	{
+		Unknown,
 		Folder,
-		Scene,
+		Image,
+		Audio,
 		Prefab,
+		Scene,
 		Anim,
 		Clip,
-		Audio,
-		Image,
-		File,
-		Count
+		Font
 	};
 
 	struct BrowserEntry
@@ -30,8 +30,7 @@ namespace buki
 		std::string path;
 		std::string displayName;
 		std::string payloadType;
-		BrowserVisualType type;
-
+		BrowserVisualType type = BrowserVisualType::Unknown;
 	};
 
 	struct EditorBrowserIcons
@@ -44,6 +43,7 @@ namespace buki
 		const Texture2D* file = nullptr;
 		const Texture2D* prefab = nullptr;
 		const Texture2D* image = nullptr;
+		const Texture2D* font = nullptr;
 	};
 
 	bool IsPrefabFile(const std::string& path);
@@ -52,6 +52,7 @@ namespace buki
 	bool IsClipFile(const std::string& path);
 	bool IsAudioFile(const std::string& path);
 	bool IsSceneFile(const std::string& path);
+	bool IsFontFile(const std::string& path);
 
 	void SortBrowserEntries(std::vector<buki::BrowserEntry>& entries);
 	std::string ToAssetRelativePath(const fs::path& fullPath);
@@ -82,5 +83,4 @@ namespace buki
 	void OnRightClick(EditorState& state, const BrowserEntry item);
 
 	void SelectPrefab(EditorState& state, const std::string& path);
-	bool OpenPrefabPreview(EditorState& state, const std::string& path);
 }

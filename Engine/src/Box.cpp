@@ -27,7 +27,8 @@ void buki::Box::Draw(float alpha)
 
 	if (def.shapeDraw)
 	{
-		Graphics().DrawRectOutline(pos, def.size, angle, def.shapeColor);
+		const LineStyle lineStyle{ def.shapeThickness, LineThicknessSpace::ScreenPixels };
+		Graphics().DrawRectOutline(pos, def.size, angle, def.shapeColor, lineStyle);
 	}
 }
 

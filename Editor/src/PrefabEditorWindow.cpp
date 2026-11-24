@@ -9,7 +9,8 @@
 #include "Entity.h"
 
 #include "EditorState.h"
-
+#include "Camera2DUtils.h"
+#include "EditorViewportNavigation.h"
 #include "EditorViewportFramebuffer.h"
 #include "EditorViewportHelpers.h"
 #include "glad/glad.h"
@@ -30,22 +31,47 @@ namespace buki
 	{
 		m_Session.path = path;
 
-		m_Session.prefabEntity =
-			Engine::Get().World().GetOrLoadPrefabEntity(path);
+		m_Session.prefabEntity = Engine::Get().World().GetOrLoadPrefabEntity(path);
 
 		return m_Session.prefabEntity != nullptr;
 	}
 
-	void PrefabEditorWindow::OnAssetLoaded()
+	void buki::PrefabEditorWindow::OnAssetLoaded()
 	{
 		m_Session.windowId =
 			"Prefab_" + m_AssetPath;
+
+		m_Session.open = true;
+		m_Session.focused = false;
+		m_Session.hovered = false;
+
+		m_CameraNavigation.Reset();
+
+		m_Session.cameraSettings = CameraSettings{};
+
+		const bool restored =
+			m_Session.cameraSettings.Deserialize(
+				ToAssetRelativePath(m_AssetPath));
+
+		if (!restored && m_Session.prefabEntity)
+		{
+			const auto position =
+				m_Session.prefabEntity->Tm().GetPosition();
+
+			m_Session.cameraSettings.position =
+			{
+				position.x,
+				position.y
+			};
+
+			m_Session.cameraSettings.zoom = 1.0f;
+		}
 
 		m_RequestDockNextToScene = true;
 		m_RequestFocus = true;
 	}
 
-	void PrefabEditorWindow::Draw()
+	void buki::PrefabEditorWindow::Draw()
 	{
 		if (!m_Open)
 		{
@@ -55,7 +81,7 @@ namespace buki
 		const std::string title =
 			"Prefab: " +
 			GetAssetFileName() +
-			"###" +
+			"###PrefabEditor:" +
 			m_AssetPath;
 
 		if (m_RequestFocus)
@@ -63,63 +89,82 @@ namespace buki
 			ImGui::SetNextWindowFocus();
 		}
 
-		bool open = m_Open;
+		bool keepOpen = true;
 
-		if (!ImGui::Begin(title.c_str(), &open))
-		{
-			m_Open = open;
-
-			if (!open)
-			{
-				Close();
-			}
-
-			ImGui::End();
-			return;
-		}
-
-		const bool focusedNow =
-			m_RequestFocus ||
-			ImGui::IsWindowFocused(
-				ImGuiFocusedFlags_RootAndChildWindows) ||
-			ImGui::IsWindowAppearing();
-
-		m_Session.hovered = ImGui::IsWindowHovered(
-			ImGuiHoveredFlags_RootAndChildWindows);
-
-		if (focusedNow)
-		{
-			UpdateSelection();
-
-			m_Session.cameraSettings.Deserialize(
-				ToAssetRelativePath(m_AssetPath));
-		}
+		const bool visible =
+			ImGui::Begin(title.c_str(), &keepOpen);
 
 		m_RequestFocus = false;
 		m_RequestDockNextToScene = false;
 
-		const ImVec2 available = ImGui::GetContentRegionAvail();
-
-		m_Session.cameraSettings.viewportWidth =
-			std::max(1.0f, available.x);
-
-		m_Session.cameraSettings.viewportHeight =
-			std::max(1.0f, available.y);
-
-		RenderToFramebuffer();
-		DrawFramebufferTexture();
-
-		if (focusedNow)
+		if (visible && keepOpen)
 		{
-			UpdateCamera();
-			SaveCamera();
+			const bool focusedNow =
+				ImGui::IsWindowFocused(
+					ImGuiFocusedFlags_RootAndChildWindows);
+
+			const bool gainedFocus =
+				focusedNow && !m_Session.focused;
+
+			m_Session.focused = focusedNow;
+
+			if (gainedFocus)
+			{
+				UpdateSelection();
+			}
+
+			const ImVec2 available =
+				ImGui::GetContentRegionAvail();
+
+			if (available.x >= 1.0f &&
+				available.y >= 1.0f)
+			{
+				m_Session.cameraSettings.viewportWidth =
+					available.x;
+
+				m_Session.cameraSettings.viewportHeight =
+					available.y;
+
+				RenderToFramebuffer();
+				DrawFramebufferTexture();
+
+				const bool imageAvailable =
+					m_Session.colorTexture != 0 &&
+					m_Session.framebufferWidth > 0 &&
+					m_Session.framebufferHeight > 0;
+
+				if (imageAvailable)
+				{
+					m_Session.hovered = ImGui::IsItemHovered();
+
+					UpdateEditorViewportNavigation(
+						m_Session.cameraSettings,
+						m_CameraNavigation,
+						m_Session.framebufferWidth,
+						m_Session.framebufferHeight);
+				}
+				else
+				{
+					m_Session.hovered = false;
+					m_CameraNavigation.Reset();
+				}
+			}
+			else
+			{
+				m_Session.hovered = false;
+				m_CameraNavigation.Reset();
+			}
+		}
+		else
+		{
+			m_Session.focused = false;
+			m_Session.hovered = false;
+			m_CameraNavigation.Reset();
 		}
 
 		ImGui::End();
 
-		m_Open = open;
-
-		if (!open)
+		if (!keepOpen)
 		{
 			Close();
 		}
@@ -136,66 +181,42 @@ namespace buki
 		Open(previousPath);
 	}
 
-	void PrefabEditorWindow::OnClosed()
+	void buki::PrefabEditorWindow::OnClosed()
 	{
+		SaveCamera();
+
+		m_CameraNavigation.Reset();
+		DestroyFramebuffer();
+
 		m_Session.path.clear();
 		m_Session.windowId.clear();
-		m_Session.hovered = false;
-		m_Session.focused = false;
 		m_Session.prefabEntity = nullptr;
 		m_Session.open = false;
-
-		DestroyFramebuffer();
+		m_Session.focused = false;
+		m_Session.hovered = false;
 	}
 
-	void PrefabEditorWindow::UpdateSelection()
+	void buki::PrefabEditorWindow::UpdateSelection()
 	{
-		m_EditorState.selectedPrefabPath =
-			ToAssetRelativePath(m_AssetPath);
+		m_EditorState.selectedPrefabPath = ToAssetRelativePath(m_AssetPath);
 
-		m_EditorState.selectedPrefabEntity =
-			m_Session.prefabEntity;
+		m_EditorState.selectedPrefabEntity = m_Session.prefabEntity;
 
 		m_EditorState.selectedEntity = nullptr;
 		m_EditorState.activeEntity = nullptr;
 		m_EditorState.selectedEntities.clear();
 	}
 
-	void PrefabEditorWindow::UpdateCamera()
-	{
-		Camera2D* camera = Engine::Get().GetActiveCameraPtr();
-
-		if (!camera)
-		{
-			return;
-		}
-
-		m_Session.cameraSettings.position =
-		{
-			camera->position.x,
-			camera->position.y
-		};
-
-		m_Session.cameraSettings.zoom = camera->zoom;
-	}
-
 	void PrefabEditorWindow::SaveCamera()
 	{
-		m_Session.cameraSettings.Serialize(
-			ToAssetRelativePath(m_AssetPath));
+		m_Session.cameraSettings.Serialize(ToAssetRelativePath(m_AssetPath));
 	}
 
 	void PrefabEditorWindow::RenderToFramebuffer()
 	{
-		m_Session.prefabEntity =
-			Engine::Get().World().GetOrLoadPrefabEntity(
-				m_AssetPath);
+		m_Session.prefabEntity = Engine::Get().World().GetOrLoadPrefabEntity(m_AssetPath);
 
-		const int targetWidth =
-			std::max(
-				1,
-				static_cast<int>(
-					m_Session.cameraSettings.viewportWidth));
+		const int targetWidth = std::max(1, static_cast<int>(m_Session.cameraSettings.viewportWidth));
 
 		const int targetHeight =
 			std::max(
@@ -251,9 +272,30 @@ namespace buki
 			GL_DEPTH_BUFFER_BIT |
 			GL_STENCIL_BUFFER_BIT);
 
-		if (m_Session.prefabEntity != nullptr)
+		Camera2D* camera = Engine::Get().GetActiveCameraPtr();
+
+		if (camera && m_Session.prefabEntity)
 		{
+			const Camera2D previousCamera = *camera;
+
+			camera->position =
+			{
+				m_Session.cameraSettings.position.x,
+				m_Session.cameraSettings.position.y
+			};
+
+			camera->zoom =
+				m_Session.cameraSettings.zoom;
+
+			camera->viewportWidth =
+				static_cast<float>(m_Session.framebufferWidth);
+
+			camera->viewportHeight =
+				static_cast<float>(m_Session.framebufferHeight);
+
 			m_Session.prefabEntity->Draw(0.0f);
+
+			*camera = previousCamera;
 		}
 
 		if (depthTestWasEnabled)
@@ -300,6 +342,46 @@ namespace buki
 		{
 			return;
 		}
+
+		GLint previousDrawFramebuffer = 0;
+		GLint previousReadFramebuffer = 0;
+		GLint previousTexture = 0;
+		GLint previousRenderbuffer = 0;
+
+		glGetIntegerv(
+			GL_DRAW_FRAMEBUFFER_BINDING,
+			&previousDrawFramebuffer);
+
+		glGetIntegerv(
+			GL_READ_FRAMEBUFFER_BINDING,
+			&previousReadFramebuffer);
+
+		glGetIntegerv(
+			GL_TEXTURE_BINDING_2D,
+			&previousTexture);
+
+		glGetIntegerv(
+			GL_RENDERBUFFER_BINDING,
+			&previousRenderbuffer);
+
+		const auto restoreBindings = [&]()
+			{
+				glBindFramebuffer(
+					GL_DRAW_FRAMEBUFFER,
+					static_cast<GLuint>(previousDrawFramebuffer));
+
+				glBindFramebuffer(
+					GL_READ_FRAMEBUFFER,
+					static_cast<GLuint>(previousReadFramebuffer));
+
+				glBindTexture(
+					GL_TEXTURE_2D,
+					static_cast<GLuint>(previousTexture));
+
+				glBindRenderbuffer(
+					GL_RENDERBUFFER,
+					static_cast<GLuint>(previousRenderbuffer));
+			};
 
 		DestroyFramebuffer();
 
@@ -381,14 +463,14 @@ namespace buki
 			GL_FRAMEBUFFER_COMPLETE)
 		{
 			DestroyFramebuffer();
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			restoreBindings();
 			return;
 		}
 
 		m_Session.framebufferWidth = width;
 		m_Session.framebufferHeight = height;
 
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		restoreBindings();
 	}
 
 	void PrefabEditorWindow::DestroyFramebuffer()

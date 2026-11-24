@@ -38,6 +38,7 @@ namespace buki
     {
         bool fillDraw;
         bool shapeDraw;
+        float shapeThickness;
         Color shapeColor;
         Color fillColor;
         bool isSensor;
@@ -54,6 +55,7 @@ namespace buki
 		ShapeDef def{};
 		def.fillDraw = false;
         def.shapeDraw = false;
+        def.shapeThickness = 1.0f;
 		def.shapeColor = { 0.0f, 1.0f, 0.0f, 1.0f };
 		def.fillColor = { 1.0f, 0.0f, 0.0f, 0.3f };
 		def.isSensor = false;
@@ -76,6 +78,7 @@ namespace buki
         BoxShapeDef def{};
         def.fillDraw = false;
         def.shapeDraw = false;
+        def.shapeThickness = 1.0f;
         def.fillColor = { 0.0f, 1.0f, 1.0f, 0.3f };
         def.shapeColor = { 1.0f, 0.0f, 0.0f, 1.0f };
         def.isSensor = false;
@@ -101,6 +104,7 @@ namespace buki
         CircleShapeDef def{};
         def.fillDraw = false;
         def.shapeDraw = false;
+        def.shapeThickness = 1.0f;
         def.fillColor = { 1.0f, 0.0f, 0.0f, 0.3f };
         def.shapeColor = { 0.0f, 1.0f, 0.0f, 1.0f };
         def.isSensor = false;
@@ -126,6 +130,7 @@ namespace buki
         PolygonShapeDef def{};
         def.fillDraw = false;
         def.shapeDraw = false;
+        def.shapeThickness = 1.0f;
         def.fillColor = { 1.0f, 1.0f, 0.0f, 0.3f };
         def.shapeColor = { 0.0f, 0.0f, 1.0f, 1.0f };
         def.isSensor = false;

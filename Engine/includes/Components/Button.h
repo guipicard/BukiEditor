@@ -33,6 +33,7 @@ namespace buki
         bool drawOutlineOnHoverOnly = true;
         bool centerTextX = true;
         bool centerTextY = true;
+        bool centerTextVisuallyY = true;
     };
 
     struct StaticFunctionBinding
@@ -122,6 +123,7 @@ namespace buki
                 BUKI_PROP_NESTED_BOOL_GROUPED(BUKI_FIELD_NESTED(Button, "style", m_Style, "drawOutlineOnHoverOnly", drawOutlineOnHoverOnly), "Flags"),
                 BUKI_PROP_NESTED_BOOL_GROUPED(BUKI_FIELD_NESTED(Button, "style", m_Style, "centerTextX", centerTextX), "Flags"),
                 BUKI_PROP_NESTED_BOOL_GROUPED(BUKI_FIELD_NESTED(Button, "style", m_Style, "centerTextY", centerTextY), "Flags"),
+                BUKI_PROP_NESTED_BOOL_GROUPED(BUKI_FIELD_NESTED(Button, "style", m_Style, "centerTextVisuallyY", centerTextVisuallyY), "Flags"),
 
                 BUKI_PROP_ENUM_SCRIPT_GROUPED("onClick", Button, m_OnClickBinding, "OnClick"),
             };

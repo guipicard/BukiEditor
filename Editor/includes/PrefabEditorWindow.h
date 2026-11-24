@@ -4,6 +4,8 @@
 
 #include "AssetEditorWindow.h"
 #include "EditorPreviewSessions.h"
+#include "EditorCanvasNavigation.h"
+#include "ImGui.h"
 
 namespace buki
 {
@@ -22,7 +24,6 @@ namespace buki
 		void OnClosed() override;
 
 		void UpdateSelection();
-		void UpdateCamera();
 		void SaveCamera();
 
 		void RenderToFramebuffer();
@@ -31,5 +32,7 @@ namespace buki
 		void DrawFramebufferTexture();
 
 		PrefabPreviewSession m_Session;
+
+		EditorCanvasNavigation m_CameraNavigation;
 	};
 }

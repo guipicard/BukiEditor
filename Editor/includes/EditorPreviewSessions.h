@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <cmath>
 
 #include <filesystem>
 #include "nlohmann/json.hpp"
@@ -33,182 +34,164 @@ namespace buki
         float viewportHeight = 0.0f;
         ViewportDisplayMode displayMode = ViewportDisplayMode::Fit;
 
-        void Serialize(const fs::path& path)
+        void Serialize(const fs::path& path) const
         {
-            const fs::path editorSettingsPath =
-                fs::absolute(
-                    "../Deployment/Editor.json");
+            if (path.empty())
+            {
+                return;
+            }
 
-            const std::string fileName = path.stem().string();
-            const std::string extension = path.extension().string();
+            const fs::path editorSettingsPath =
+                fs::absolute("../Deployment/Editor.json");
+
+            const std::string key =
+                path.lexically_normal().generic_string();
 
             json document = json::object();
 
-            std::ifstream inputFile(editorSettingsPath);
-
-            if (inputFile.is_open())
             {
-                try
+                std::ifstream input(editorSettingsPath);
+
+                if (input.is_open())
                 {
-                    inputFile >> document;
-                }
-                catch (...)
-                {
-                    document = json::object();
-                }
-            }
+                    json parsed = json::parse(input, nullptr, false);
 
-            const std::string key = path.string();
-
-            const bool firstPass = !document.contains(key);
-
-            if (firstPass)
-            {
-                if (extension == ".scene")
-                {
-                    json sceneDocument = json::object();
-
-                    std::ifstream sceneFile(
-                        fs::absolute(
-                            "../Deployment/" + path.string()));
-
-                    if (sceneFile.is_open())
+                    if (parsed.is_object())
                     {
-                        try
-                        {
-                            sceneFile >> sceneDocument;
-                        }
-                        catch (...)
-                        {
-                            sceneDocument = json::object();
-                        }
+                        document = std::move(parsed);
                     }
-
-                    document[key]["position"]["x"] =
-                        sceneDocument["camera"]["position"]["x"];
-
-                    document[key]["position"]["y"] =
-                        sceneDocument["camera"]["position"]["y"];
-                }
-                else if (extension == ".prefab")
-                {
-                    json prefabDocument = json::object();
-
-                    std::ifstream prefabFile(
-                        fs::absolute(
-                            "../Deployment/" + path.string()));
-
-                    if (prefabFile.is_open())
+                    else
                     {
-                        try
-                        {
-                            prefabFile >> prefabDocument;
-                        }
-                        catch (...)
-                        {
-                            prefabDocument = json::object();
-                        }
+                        // Do not overwrite a malformed existing settings file.
+                        return;
                     }
-
-                    document[key]["position"]["x"] =
-                        prefabDocument["position"]["x"];
-
-                    document[key]["position"]["y"] =
-                        prefabDocument["position"]["y"];
                 }
             }
-            else
+
+            document[key] =
             {
-                document[key]["position"]["x"] = position.x;
-                document[key]["position"]["y"] = position.y;
-            }
+                {
+                    "position",
+                    {
+                        { "x", position.x },
+                        { "y", position.y }
+                    }
+                },
+                { "zoom", zoom },
+                { "viewportWidth", viewportWidth },
+                { "viewportHeight", viewportHeight },
+                { "displayMode", static_cast<int>(displayMode) },
+                { "type", path.extension().string() },
+                { "path", key }
+            };
 
-            document[key]["zoom"] = zoom;
-            document[key]["viewportWidth"] = viewportWidth;
-            document[key]["viewportHeight"] = viewportHeight;
-            document[key]["displayMode"] =
-                static_cast<int>(displayMode);
-
-            document[key]["type"] = extension;
-            document[key]["path"] = key;
-
-            std::ofstream outputFile(
+            std::ofstream output(
                 editorSettingsPath,
                 std::ios::out | std::ios::trunc);
 
-            if (outputFile.is_open())
+            if (output.is_open())
             {
-                outputFile << document.dump(4);
-            }
-
-            if (firstPass)
-            {
-                Deserialize(path);
+                output << document.dump(4);
             }
         }
 
-        void Deserialize(const fs::path& path)
+        bool Deserialize(const fs::path& path)
         {
+            if (path.empty())
+            {
+                return false;
+            }
+
             const fs::path editorSettingsPath =
-                fs::absolute(
-                    "../Deployment/Editor.json");
+                fs::absolute("../Deployment/Editor.json");
 
-            json document = json::object();
+            std::ifstream input(editorSettingsPath);
 
-            std::ifstream inputFile(editorSettingsPath);
-
-            if (!inputFile.is_open())
+            if (!input.is_open())
             {
-                return;
+                return false;
             }
 
-            try
-            {
-                inputFile >> document;
-            }
-            catch (...)
-            {
-                return;
-            }
+            const json document =
+                json::parse(input, nullptr, false);
 
-            const std::string key = path.string();
-
-            if (!document.contains(key))
+            if (!document.is_object())
             {
-                return;
+                return false;
             }
 
-            const json& node = document[key];
+            const std::string normalizedKey =
+                path.lexically_normal().generic_string();
 
-            position.x = node["position"].value("x", 0.0f);
-            position.y = node["position"].value("y", 0.0f);
+            auto entry = document.find(normalizedKey);
 
-            zoom = node.value("zoom", 1.0f);
-
-            viewportWidth =
-                node.value("viewportWidth", 0.0f);
-
-            viewportHeight =
-                node.value("viewportHeight", 0.0f);
-
-            displayMode = static_cast<ViewportDisplayMode>(
-                node.value(
-                    "displayMode",
-                    static_cast<int>(
-                        ViewportDisplayMode::Fit)));
-
-            Camera2D* camera = Engine::Get().GetActiveCameraPtr();
-
-            if (camera)
+            // Compatibility with keys written using path.string().
+            if (entry == document.end())
             {
-                camera->position =
+                entry = document.find(path.string());
+            }
+
+            if (entry == document.end() || !entry->is_object())
+            {
+                return false;
+            }
+
+            const json& node = *entry;
+
+            auto readFloat = [](const json& object,
+                const char* key,
+                float fallback)
                 {
-                    position.x,
-                    position.y
+                    const auto value = object.find(key);
+
+                    if (value == object.end() || !value->is_number())
+                    {
+                        return fallback;
+                    }
+
+                    const float result = value->get<float>();
+
+                    return std::isfinite(result) ? result : fallback;
                 };
 
-                camera->zoom = zoom;
+            const auto savedPosition = node.find("position");
+
+            if (savedPosition != node.end() &&
+                savedPosition->is_object())
+            {
+                position.x = readFloat(
+                    *savedPosition, "x", position.x);
+
+                position.y = readFloat(
+                    *savedPosition, "y", position.y);
             }
+
+            const float savedZoom =
+                readFloat(node, "zoom", zoom);
+
+            if (savedZoom > 0.0f)
+            {
+                zoom = savedZoom;
+            }
+
+            const auto mode = node.find("displayMode");
+
+            if (mode != node.end() && mode->is_number_integer())
+            {
+                const int value = mode->get<int>();
+
+                if (value >= static_cast<int>(ViewportDisplayMode::Stretch) &&
+                    value <= static_cast<int>(ViewportDisplayMode::OneToOne))
+                {
+                    displayMode =
+                        static_cast<ViewportDisplayMode>(value);
+                }
+            }
+
+            // Viewport dimensions come from the current panel size.
+            // Do not restore stale dimensions from a previous layout.
+
+            return true;
         }
     };
 

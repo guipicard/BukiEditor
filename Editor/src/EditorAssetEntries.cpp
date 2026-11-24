@@ -16,28 +16,49 @@ namespace
 	bool MatchesPayloadType(const buki::BrowserEntry& entry, const char* payloadType)
 	{
 		if (payloadType == nullptr || payloadType[0] == '\0')
+		{
 			return true;
+		}
 
 		if (std::strcmp(payloadType, "FOLDER") == 0)
+		{
 			return entry.type == buki::BrowserVisualType::Folder;
+		}
 
 		if (std::strcmp(payloadType, "IMAGE") == 0)
+		{
 			return entry.type == buki::BrowserVisualType::Image;
+		}
 
 		if (std::strcmp(payloadType, "AUDIO") == 0)
+		{
 			return entry.type == buki::BrowserVisualType::Audio;
+		}
 
 		if (std::strcmp(payloadType, "PREFAB") == 0)
+		{
 			return entry.type == buki::BrowserVisualType::Prefab;
+		}
 
 		if (std::strcmp(payloadType, "SCENE") == 0)
+		{
 			return entry.type == buki::BrowserVisualType::Scene;
+		}
 
 		if (std::strcmp(payloadType, "ANIM") == 0)
+		{
 			return entry.type == buki::BrowserVisualType::Anim;
+		}
 
 		if (std::strcmp(payloadType, "CLIP") == 0)
+		{
 			return entry.type == buki::BrowserVisualType::Clip;
+		}
+
+		if (std::strcmp(payloadType, "FONT") == 0)
+		{
+			return entry.type == buki::BrowserVisualType::Font;
+		}
 
 		return false;
 	}
@@ -82,6 +103,11 @@ namespace
 		{
 			item.type = buki::BrowserVisualType::Clip;
 			item.payloadType = "CLIP";
+		}
+		else if (buki::IsFontFile(item.path))
+		{
+			item.type = buki::BrowserVisualType::Font;
+			item.payloadType = "FONT";
 		}
 		return item;
 	}
@@ -143,6 +169,13 @@ bool buki::IsSceneFile(const std::string& path)
 	fs::path aspath = buki::ToAbsolutePath(path);
 	const std::string ext = aspath.extension().string();
 	return ext == ".json" || ext == ".scene";
+}
+
+bool buki::IsFontFile(const std::string& path)
+{
+	fs::path aspath = buki::ToAbsolutePath(path);
+	const std::string extension = aspath.extension().string();
+	return extension == ".ttf" || extension == ".otf" || extension == ".woff" || extension == ".woff2";
 }
 
 std::string buki::ToAssetRelativePath(const fs::path& fullPath)
@@ -220,7 +253,10 @@ buki::BrowserVisualType buki::GetBrowserVisualType(const std::string& path, bool
 	if (IsImageFile(path))
 		return BrowserVisualType::Image;
 
-	return BrowserVisualType::File;
+	if (IsFontFile(path))
+		return BrowserVisualType::Font;
+
+	return BrowserVisualType::Unknown;
 }
 
 buki::EditorBrowserIcons& buki::GetEditorBrowserIcons()
@@ -288,7 +324,9 @@ const buki::Texture2D* buki::GetBrowserThumbnail(const std::string& path, bool i
 	case BrowserVisualType::Image:  return icons.image;
 	case BrowserVisualType::Anim:   return icons.anim;
 	case BrowserVisualType::Clip:	return icons.clip;
-	case BrowserVisualType::File:   return icons.file;
+	case BrowserVisualType::Font:	return icons.font;
+
+	case BrowserVisualType::Unknown:   return icons.file;
 	default:                        return icons.file;
 	}
 }
@@ -480,9 +518,9 @@ void buki::OnClick(EditorState& state, const BrowserEntry item)
 		SelectPrefab(state, item.path);
 		break;
 	case BrowserVisualType::Anim:
-		if (state.animationAssetEditor->Load(item.path))
+		/*if (state.animationAssetEditor->Load(item.path))
 		{
-		}
+		}*/
 		break;
 	case BrowserVisualType::Clip:
 		// Optionally open the clip in the inspector/editor.
@@ -518,6 +556,16 @@ void buki::OnDoubleClick(EditorState& state, const BrowserEntry item)
 	case AssetType::Clip:
 		state.assetEditorWindows.OpenAssetWindow<ClipAssetEditorWindow>(item.path, state, item.path);
 		break;
+	case AssetType::Scene:
+	{
+		if (IAssetBehavior* behavior =
+			state.assetBehaviors.Find(AssetType::Scene))
+		{
+			behavior->OnDoubleClick(state, item);
+		}
+
+		break;
+	}
 	default:
 		break;
 	}
@@ -550,7 +598,6 @@ void buki::OnRightClick(EditorState& state, const BrowserEntry item)
 		if (ImGui::MenuItem("Preview"))
 		{
 			SelectPrefab(state, item.path);
-			OpenPrefabPreview(state, item.path);
 		}
 		break;
 	}
@@ -582,7 +629,6 @@ void buki::SelectPrefab(EditorState& state, const std::string& path)
 	state.selectedEntity = nullptr;
 	state.activeEntity = nullptr;
 	state.selectedEntities.clear();
-	state.animationAssetEditor->selected = false;
 
 	state.selectedPrefabPath = path;
 
@@ -590,59 +636,4 @@ void buki::SelectPrefab(EditorState& state, const std::string& path)
 	state.selectedPrefabEntity = (world != nullptr)
 		? world->GetOrLoadPrefabEntity(path)
 		: nullptr;
-}
-
-bool buki::OpenPrefabPreview(EditorState& state, const std::string& path)
-{
-	IWorld* world = Engine::Get().GetWorldPtr();
-	if (world == nullptr)
-	{
-		return false;
-	}
-
-	const fs::path absNormalized = fs::absolute("../Deployment/" + path).lexically_normal();
-	const std::string& normalized = path;
-
-	if (state.activePrefabPreviewIndex >= 0 &&
-		state.activePrefabPreviewIndex < static_cast<int>(state.prefabPreviewSessions.size()))
-	{
-		state.prefabPreviewSessions[state.activePrefabPreviewIndex].focused = false;
-	}
-
-	for (size_t i = 0; i < state.prefabPreviewSessions.size(); ++i)
-	{
-		PrefabPreviewSession& session = state.prefabPreviewSessions[i];
-		if (session.path == normalized)
-		{
-			session.open = true;
-			session.focused = true;
-			session.requestFocus = true;
-			session.prefabEntity = world->GetOrLoadPrefabEntity(path);
-
-			state.activePrefabPreviewIndex = static_cast<int>(i);
-			state.selectedPrefabPath = normalized;
-			state.selectedPrefabEntity = session.prefabEntity;
-			return session.prefabEntity != nullptr;
-		}
-	}
-
-	PrefabPreviewSession session;
-	session.path = normalized;
-	session.prefabEntity = world->GetOrLoadPrefabEntity(path);
-	session.open = (session.prefabEntity != nullptr);
-	session.focused = session.open;
-	session.requestFocus = session.open;
-	session.requestDockNextToScene = session.open;
-	session.windowId = absNormalized.string();
-
-	if (!session.open)
-	{
-		return false;
-	}
-
-	state.prefabPreviewSessions.push_back(session);
-	state.activePrefabPreviewIndex = static_cast<int>(state.prefabPreviewSessions.size() - 1);
-	state.selectedPrefabPath = normalized;
-	state.selectedPrefabEntity = session.prefabEntity;
-	return true;
 }

@@ -9,6 +9,7 @@ json buki::Shapes::SerializeShapeDef(const ShapeDef& def) const
 
 	doc["fillDraw"] = def.fillDraw;
 	doc["shapeDraw"] = def.shapeDraw;
+	doc["shapeThickness"] = def.shapeThickness;
 
 	doc["shapeColor"]["r"] = def.shapeColor.r;
 	doc["shapeColor"]["g"] = def.shapeColor.g;
@@ -40,6 +41,7 @@ void buki::Shapes::DeserializeShapeDef(const json& doc, ShapeDef& def) const
 
 	def.fillDraw = doc.value("fillDraw", def.fillDraw);
 	def.shapeDraw = doc.value("shapeDraw", def.shapeDraw);
+	def.shapeThickness = doc.value("shapeThickness", def.shapeThickness);
 
 	if (doc.contains("shapeColor"))
 	{

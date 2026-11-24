@@ -108,8 +108,34 @@ void buki::EditorLayer::RenderSceneViewport()
 	glClearColor(0.12f, 0.12f, 0.14f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-	Engine::Get().World().Render(1.0f);
+	Camera2D* camera = Engine::Get().GetActiveCameraPtr();
 
+	if (camera)
+	{
+		const Camera2D previousCamera = *camera;
+
+		const auto& settings = state.scenePreviewSession.cameraSettings;
+
+		camera->position =
+		{
+			settings.position.x,
+			settings.position.y
+		};
+
+		camera->zoom = settings.zoom;
+
+		camera->viewportWidth = static_cast<float>(state.sceneFramebufferWidth);
+
+		camera->viewportHeight = static_cast<float>(state.sceneFramebufferHeight);
+
+		Engine::Get().World().Render(1.0f);
+
+		*camera = previousCamera;
+	}
+	else
+	{
+		Engine::Get().World().Render(1.0f);
+	}
 
 	if (depthTestWasEnabled)
 	{

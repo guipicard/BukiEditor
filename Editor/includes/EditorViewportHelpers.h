@@ -2,97 +2,138 @@
 #include "imgui_internal.h"
 #include "EditorState.h"
 #include "EditorAssetEntries.h"
+#include <algorithm>
+#include <glad/glad.h>
+#include <cmath>
 
 namespace buki
 {
-	static void DrawViewportTexture(unsigned int texture, int framebufferWidth, int framebufferHeight, ViewportDisplayMode mode, float& outViewportWidth, float& outViewportHeight)
-	{
-		const ImVec2 imageRegionStart = ImGui::GetCursorPos();
-		const ImVec2 imageAvail = ImGui::GetContentRegionAvail();
+    static void DrawViewportTexture(
+        unsigned int texture,
+        int framebufferWidth,
+        int framebufferHeight,
+        ViewportDisplayMode mode,
+        float& outViewportWidth,
+        float& outViewportHeight)
+    {
+        const ImVec2 available = ImGui::GetContentRegionAvail();
+        const ImVec2 regionMin = ImGui::GetCursorScreenPos();
 
-		outViewportWidth = imageAvail.x;
-		outViewportHeight = imageAvail.y;
+        outViewportWidth = std::max(0.0f, available.x);
+        outViewportHeight = std::max(0.0f, available.y);
 
-		if (texture == 0 || imageAvail.x <= 0.0f || imageAvail.y <= 0.0f)
-		{
-			ImGui::TextUnformatted("Viewport texture unavailable.");
-			ImGui::Dummy(ImVec2(imageAvail.x, imageAvail.y > 0.0f ? imageAvail.y : 0.0f));
-			return;
-		}
+        if (texture == 0 ||
+            framebufferWidth <= 0 ||
+            framebufferHeight <= 0 ||
+            available.x <= 0.0f ||
+            available.y <= 0.0f)
+        {
+            ImGui::Dummy(ImVec2(outViewportWidth, outViewportHeight));
+            return;
+        }
 
-		const float texW = static_cast<float>(std::max(1, framebufferWidth));
-		const float texH = static_cast<float>(std::max(1, framebufferHeight));
+        const float textureWidth = static_cast<float>(framebufferWidth);
+        const float textureHeight = static_cast<float>(framebufferHeight);
 
-		ImVec2 imageSize = imageAvail;
-		ImVec2 cursor = imageRegionStart;
+        ImVec2 imageSize = available;
 
-		if (mode == ViewportDisplayMode::Fit)
-		{
-			const float textureAspect = texW / texH;
-			const float availAspect = imageAvail.x / imageAvail.y;
+        if (mode == ViewportDisplayMode::Fit)
+        {
+            const float scale = std::min(available.x / textureWidth, available.y / textureHeight);
 
-			if (availAspect > textureAspect)
-			{
-				imageSize.y = imageAvail.y;
-				imageSize.x = imageSize.y * textureAspect;
-				cursor.x += (imageAvail.x - imageSize.x) * 0.5f;
-			}
-			else
-			{
-				imageSize.x = imageAvail.x;
-				imageSize.y = imageSize.x / textureAspect;
-				cursor.y += (imageAvail.y - imageSize.y) * 0.5f;
-			}
-		}
-		else if (mode == ViewportDisplayMode::OneToOne)
-		{
-			imageSize.x = texW;
-			imageSize.y = texH;
+            imageSize = ImVec2(textureWidth * scale, textureHeight * scale);
+        }
+        else if (mode == ViewportDisplayMode::OneToOne)
+        {
+            const float scale = std::min(
+                1.0f,
+                std::min(available.x / textureWidth, available.y / textureHeight));
 
-			if (imageSize.x > imageAvail.x)
-			{
-				const float scale = imageAvail.x / imageSize.x;
-				imageSize.x *= scale;
-				imageSize.y *= scale;
-			}
+            imageSize = ImVec2(textureWidth * scale, textureHeight * scale);
+        }
 
-			if (imageSize.y > imageAvail.y)
-			{
-				const float scale = imageAvail.y / imageSize.y;
-				imageSize.x *= scale;
-				imageSize.y *= scale;
-			}
+        ImVec2 imageMin = regionMin;
 
-			cursor.x += (imageAvail.x - imageSize.x) * 0.5f;
-			cursor.y += (imageAvail.y - imageSize.y) * 0.5f;
-		}
+        if (mode != ViewportDisplayMode::Stretch)
+        {
+            imageMin.x += (available.x - imageSize.x) * 0.5f;
+            imageMin.y += (available.y - imageSize.y) * 0.5f;
+        }
 
-		if (imageSize.x < 1.0f) imageSize.x = 1.0f;
-		if (imageSize.y < 1.0f) imageSize.y = 1.0f;
+        const ImVec2 framebufferScale = ImGui::GetIO().DisplayFramebufferScale;
 
-		ImDrawList* drawList = ImGui::GetWindowDrawList();
-		const ImVec2 contentMin = ImGui::GetCursorScreenPos();
-		const ImVec2 contentMax = ImVec2(contentMin.x + imageAvail.x, contentMin.y + imageAvail.y);
+        const float scaleX = framebufferScale.x > 0.0f ? framebufferScale.x : 1.0f;
+        const float scaleY = framebufferScale.y > 0.0f ? framebufferScale.y : 1.0f;
 
-		drawList->AddRectFilled(contentMin, contentMax, IM_COL32(18, 18, 22, 255));
+        // Align relative to the host viewport's origin.
+        const ImVec2 hostOrigin = ImGui::GetWindowViewport()->Pos;
 
-		ImGui::SetCursorPos(cursor);
-		ImGui::Image(
-			ToImGuiTextureID(texture),
-			imageSize,
-			ImVec2(0, 1),
-			ImVec2(1, 0)
-		);
+        const auto snapX = [scaleX, hostOrigin](float value)
+            {
+                return hostOrigin.x + std::round((value - hostOrigin.x) * scaleX) / scaleX;
+            };
 
-		if (mode != ViewportDisplayMode::Stretch)
-		{
-			drawList->AddRect(
-				ImGui::GetItemRectMin(),
-				ImGui::GetItemRectMax(),
-				IM_COL32(90, 90, 110, 255)
-			);
-		}
-	}
+        const auto snapY = [scaleY, hostOrigin](float value)
+            {
+                return hostOrigin.y + std::round((value - hostOrigin.y) * scaleY) / scaleY;
+            };
+
+        const ImVec2 imageMax =
+        {
+            snapX(imageMin.x + imageSize.x),
+            snapY(imageMin.y + imageSize.y)
+        };
+
+        imageMin.x = snapX(imageMin.x);
+        imageMin.y = snapY(imageMin.y);
+
+        imageSize.x = imageMax.x - imageMin.x;
+        imageSize.y = imageMax.y - imageMin.y;
+
+        if (imageSize.x <= 0.0f || imageSize.y <= 0.0f)
+        {
+            ImGui::Dummy(ImVec2(outViewportWidth, outViewportHeight));
+            return;
+        }
+
+        GLint previousTexture = 0;
+        glGetIntegerv(GL_TEXTURE_BINDING_2D, &previousTexture);
+
+        glBindTexture(GL_TEXTURE_2D, texture);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+        glBindTexture(GL_TEXTURE_2D, static_cast<GLuint>(previousTexture));
+
+        ImDrawList* drawList = ImGui::GetWindowDrawList();
+
+        const ImVec2 regionMax =
+        {
+            regionMin.x + available.x,
+            regionMin.y + available.y
+        };
+
+        drawList->AddRectFilled(regionMin, regionMax, IM_COL32(18, 18, 22, 255));
+
+        ImGui::SetCursorScreenPos(imageMin);
+
+        ImGui::Image(
+            ToImGuiTextureID(texture),
+            imageSize,
+            ImVec2(0.0f, 1.0f),
+            ImVec2(1.0f, 0.0f));
+
+        if (mode != ViewportDisplayMode::Stretch)
+        {
+            drawList->AddRect(
+                ImGui::GetItemRectMin(),
+                ImGui::GetItemRectMax(),
+                IM_COL32(90, 90, 110, 255));
+        }
+    }
 
 	static void DrawPrefabSessionTexture(PrefabPreviewSession& session)
 	{

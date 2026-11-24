@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Engine.h"
-#include "AnimationAssetEditor.h"
+#include "EditorCanvasNavigation.h"
 
 #include <algorithm>
 #include <filesystem>
@@ -22,5 +22,6 @@ namespace buki
 	{
 	public:
 		void Render(EditorState& state);
+
 	};
 }

@@ -7,30 +7,31 @@
                     "y": 2.25
                 }
             },
-            "density": 0.4000000059604645,
-            "fillColor": {
-                "a": 0.30000001192092896,
-                "b": 1.0,
-                "g": 1.0,
-                "r": 0.0
-            },
-            "fillDraw": false,
-            "filter": 0,
-            "friction": 0.10000000149011612,
-            "isSensor": false,
-            "positionOffset": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "restitution": 0.30000001192092896,
-            "shapeColor": {
-                "a": 1.0,
-                "b": 0.0,
-                "g": 0.0,
-                "r": 1.0
-            },
-            "shapeDraw": false,
-            "type": "Box"
+            "def": {
+                "density": 0.4000000059604645,
+                "fillColor": {
+                    "a": 0.30000001192092896,
+                    "b": 1.0,
+                    "g": 1.0,
+                    "r": 0.0
+                },
+                "fillDraw": false,
+                "filter": 0,
+                "friction": 0.10000000149011612,
+                "isSensor": false,
+                "positionOffset": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "restitution": 0.30000001192092896,
+                "shapeColor": {
+                    "a": 1.0,
+                    "b": 0.0,
+                    "g": 0.0,
+                    "r": 1.0
+                },
+                "shapeDraw": false
+            }
         },
         "BricksBehaviour": {
             "BreakSounds": [
@@ -55,16 +56,18 @@
             ],
             "maxHealth": 100.0,
             "stageImages": [
-                "\\assets\\kenney\\physics assets\\png\\glass elements\\elementglass021.png",
-                "/assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass026.png",
-                "/assets/Kenney/Physics Assets/PNG/Glass elements/elementGlass053.png"
+                "../deployment/assets/kenney/physics assets/png/glass elements/elementglass021.png",
+                "../deployment/assets/kenney/physics assets/png/glass elements/elementglass026.png",
+                "../deployment/assets/kenney/physics assets/png/glass elements/elementglass053.png"
             ]
         },
         "RigidBody": {
-            "motionLocks": {
-                "angularZ": false,
-                "linearX": false,
-                "linearY": false
+            "def": {
+                "motionLocks": {
+                    "angularZ": false,
+                    "linearX": false,
+                    "linearY": false
+                }
             },
             "type": 2
         },
@@ -75,11 +78,9 @@
                 "g": 1.0,
                 "r": 1.0
             },
-            "flip": {
-                "h": false,
-                "v": false
-            },
-            "path": "\\assets\\kenney\\physics assets\\png\\glass elements\\elementglass021.png",
+            "flipX": false,
+            "flipY": false,
+            "path": "../deployment/assets/kenney/physics assets/png/glass elements/elementglass021.png",
             "positionOffset": {
                 "x": 0.0,
                 "y": 0.0
@@ -88,7 +89,7 @@
                 "x": 0.75,
                 "y": 2.25
             },
-            "sourceRect": {
+            "sourceRectPixels": {
                 "h": 0.0,
                 "w": 0.0,
                 "x": 0.0,
@@ -106,8 +107,8 @@
     },
     "rotation": 0.0,
     "size": {
-        "x": 0.75,
-        "y": 2.25
+        "x": 1.0,
+        "y": 1.0
     },
     "z": 0
 }

@@ -170,39 +170,6 @@ void buki::HierarchyPanel::Render(EditorState& state)
 	ImGui::Begin("Hierarchy", &state.showHierarchy);
 	auto& world = buki::Engine::Get().World();
 
-	if (state.activePrefabPreviewIndex >= 0 &&
-		state.activePrefabPreviewIndex < static_cast<int>(state.prefabPreviewSessions.size()) &&
-		state.prefabPreviewSessions[state.activePrefabPreviewIndex].open)
-	{
-		PrefabPreviewSession& session = state.prefabPreviewSessions[state.activePrefabPreviewIndex];
-		Entity* prefab = session.prefabEntity;
-
-		ImGui::TextUnformatted("Prefab");
-
-		if (prefab != nullptr)
-		{
-			const std::string fileLabel = fs::path(session.path).stem().string();
-			const std::string entityLabel = prefab->GetName().empty() ? "Unnamed Entity" : prefab->GetName();
-
-			bool selected = (state.selectedPrefabEntity == prefab);
-			std::string label = fileLabel + "##prefab-hierarchy-entry";
-
-			if (ImGui::Selectable(label.c_str(), selected))
-			{
-				state.selectedPrefabEntity = prefab;
-				state.selectedPrefabPath = session.path;
-				state.selectedEntity = nullptr;
-				state.activeEntity = nullptr;
-				state.selectedEntities.clear();
-				state.activePrefabPreviewIndex = static_cast<int>(state.activePrefabPreviewIndex);
-			}
-
-			ImGui::TextDisabled("Entity: %s", entityLabel.c_str());
-		}
-		ImGui::End();
-		return;
-	}
-
 	const std::vector<Entity*> allEntities = world.GetEntitiesInWorld();
 	SanitizeSelection(state, allEntities);
 
@@ -316,7 +283,7 @@ void buki::HierarchyPanel::Render(EditorState& state)
 			state.selectedPrefabPath.clear();
 			state.selectedPrefabEntity = nullptr;
 			state.activeEntity = entity;
-			state.animationAssetEditor->selected = false;
+			//state.animationAssetEditor->selected = false;
 			SyncLegacySelection(state);
 		}
 

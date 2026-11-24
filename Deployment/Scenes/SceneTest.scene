@@ -1,18 +1,194 @@
 {
     "camera": {
         "position": {
-            "x": 0.0,
-            "y": 0.0
+            "x": 20.83013153076172,
+            "y": -12.227472305297852
         },
         "viewportHeight": 1080.0,
         "viewportWidth": 1920.0,
-        "zoom": 1.0
+        "zoom": 0.08745034039020538
     },
     "entities": {
+        "CircleEntity": {
+            "components": {
+                "Circle": {
+                    "circle": {
+                        "positionOffset": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "radius": 23.827999114990234
+                    },
+                    "def": {
+                        "density": 1.0,
+                        "fillColor": {
+                            "a": 0.30000001192092896,
+                            "b": 0.0,
+                            "g": 0.0,
+                            "r": 1.0
+                        },
+                        "fillDraw": true,
+                        "filter": 0,
+                        "friction": 0.6000000238418579,
+                        "isSensor": false,
+                        "restitution": 0.0,
+                        "shapeColor": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 1.0,
+                            "r": 0.0
+                        },
+                        "shapeDraw": true,
+                        "shapeThickness": 10.0
+                    }
+                },
+                "RigidBody": {
+                    "def": {
+                        "motionLocks": {
+                            "angularZ": false,
+                            "linearX": true,
+                            "linearY": true
+                        }
+                    },
+                    "type": 2
+                }
+            },
+            "enable": true,
+            "layer": "Circle",
+            "physics": true,
+            "position": {
+                "x": 50.0,
+                "y": -4.199999809265137
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 1.0,
+                "y": 1.0
+            },
+            "z": 1
+        },
+        "PolygonEntity": {
+            "components": {
+                "Polygon": {
+                    "polygon": {
+                        "density": 1.0,
+                        "fillColor": {
+                            "a": 0.30000001192092896,
+                            "b": 0.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "fillDraw": true,
+                        "filter": 0,
+                        "friction": 0.6000000238418579,
+                        "isSensor": false,
+                        "positionOffset": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "radius": 25.391000747680664,
+                        "restitution": 0.0,
+                        "segments": 3,
+                        "shapeColor": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 0.0,
+                            "r": 0.0
+                        },
+                        "shapeDraw": true,
+                        "shapeThickness": 10.0
+                    }
+                },
+                "RigidBody": {
+                    "def": {
+                        "motionLocks": {
+                            "angularZ": false,
+                            "linearX": true,
+                            "linearY": true
+                        }
+                    },
+                    "type": 2
+                }
+            },
+            "enable": true,
+            "layer": "Polygon",
+            "physics": true,
+            "position": {
+                "x": -18.600000381469727,
+                "y": 5.0
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 1.0,
+                "y": 1.0
+            },
+            "z": 1
+        },
+        "RectEntity": {
+            "components": {
+                "Box": {
+                    "box": {
+                        "size": {
+                            "x": 35.0,
+                            "y": 35.0
+                        }
+                    },
+                    "def": {
+                        "density": 1.0,
+                        "fillColor": {
+                            "a": 0.30000001192092896,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 0.0
+                        },
+                        "fillDraw": true,
+                        "filter": 0,
+                        "friction": 0.6000000238418579,
+                        "isSensor": false,
+                        "positionOffset": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "restitution": 0.0,
+                        "shapeColor": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 0.0,
+                            "r": 1.0
+                        },
+                        "shapeDraw": true,
+                        "shapeThickness": 1.0
+                    }
+                },
+                "RigidBody": {
+                    "def": {
+                        "motionLocks": {
+                            "angularZ": false,
+                            "linearX": false,
+                            "linearY": false
+                        }
+                    },
+                    "type": 2
+                }
+            },
+            "enable": true,
+            "layer": "Box",
+            "physics": true,
+            "position": {
+                "x": -101.0,
+                "y": 0.0
+            },
+            "rotation": 0.0,
+            "size": {
+                "x": 1.0,
+                "y": 1.0
+            },
+            "z": 1
+        },
         "test": {
             "components": {
                 "OpenGlTest": {
-                    "playerTexturePath": "./assets/Samurai/HURT.png"
+                    "playerTexturePath": "../deployment/assets/warrior/samurai/hurt.png"
                 }
             },
             "enable": true,
@@ -31,5 +207,5 @@
         }
     },
     "sceneName": "SceneTest",
-    "scenePath": "Scenes/SceneTest.scene"
+    "scenePath": "../Deployment/Scenes/SceneTest.scene"
 }

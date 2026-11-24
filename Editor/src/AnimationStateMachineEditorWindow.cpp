@@ -4,7 +4,13 @@
 #include "InspectorPropertyDrawer.h"
 #include "IAssetBehavior.h"
 #include "EditorState.h"
-
+#include <cstdio>
+#include <string>
+#include <utility>
+#include <variant>
+#include <algorithm>
+#include <cctype>
+#include <filesystem>
 namespace
 {
 	constexpr ImVec2 NodeSize = ImVec2(170.0f, 64.0f);
@@ -247,6 +253,9 @@ namespace buki
 		}
 
 		DrawToolbar();
+
+		DrawAssetSettings();
+
 		ImGui::Separator();
 
 		DrawGraph();
@@ -267,6 +276,13 @@ namespace buki
 		m_SelectedStateName.clear();
 		m_SelectedTransitionFrom.clear();
 		m_SelectedTransitionIndex = -1;
+
+		m_StatePendingDeletion.clear();
+		m_DraggingTransition = false;
+		m_PendingTransitionFrom.clear();
+
+		m_CanvasNavigation.Reset();
+		m_PanningCanvas = false;
 	}
 
 	bool AnimationStateMachineEditorWindow::LoadAsset(const std::string& path)
@@ -293,13 +309,21 @@ namespace buki
 		m_SelectedTransitionFrom.clear();
 		m_SelectedTransitionIndex = -1;
 
+		m_StatePendingDeletion.clear();
+		m_DraggingTransition = false;
+		m_PendingTransitionFrom.clear();
+
 		EnsureLayoutEntries();
+
+		m_CanvasNavigation.Reset();
+		m_PanningCanvas = false;
 	}
 
 	void AnimationStateMachineEditorWindow::DrawToolbar()
 	{
 		if (ImGui::Button("Save"))
 		{
+			m_Asset.name = std::filesystem::path(m_AssetPath).stem().string();
 			m_Asset.SaveToFile(m_AssetPath);
 		}
 
@@ -309,18 +333,6 @@ namespace buki
 		{
 			AddStateAtWorldPosition(100.0f, 100.0f);
 		}
-
-		ImGui::SameLine();
-
-		if (ImGui::Button("Add Parameter"))
-		{
-			AnimParameter parameter;
-			parameter.name = "NewParameter";
-			parameter.type = AnimParameterType::Float;
-			parameter.defaultValue = 0.0f;
-
-			m_Asset.parameters.push_back(parameter);
-		}
 	}
 
 	void buki::AnimationStateMachineEditorWindow::DrawGraph()
@@ -328,40 +340,47 @@ namespace buki
 		constexpr float inspectorHeight = 280.0f;
 
 		ImVec2 canvasSize = ImGui::GetContentRegionAvail();
-		canvasSize.y -= inspectorHeight + ImGui::GetStyle().ItemSpacing.y;
 
-		if (canvasSize.y < 100.0f)
-			canvasSize.y = 100.0f;
+		canvasSize.y -=
+			inspectorHeight +
+			ImGui::GetStyle().ItemSpacing.y;
 
-		ImGui::BeginChild("StateMachineCanvas", canvasSize, true);
+		canvasSize.x = std::max(1.0f, canvasSize.x);
+		canvasSize.y = std::max(100.0f, canvasSize.y);
+
+		ImGui::BeginChild(
+			"StateMachineCanvas",
+			canvasSize,
+			true,
+			ImGuiWindowFlags_NoScrollbar |
+			ImGuiWindowFlags_NoScrollWithMouse);
+
+		m_CanvasOrigin = ImGui::GetCursorScreenPos();
 
 		const bool canvasHovered = ImGui::IsWindowHovered();
 
-		if (canvasHovered &&
-			ImGui::IsMouseClicked(ImGuiMouseButton_Middle))
-		{
-			m_PanningCanvas = true;
-		}
+		const ImVec2 panDelta = m_CanvasNavigation.Update(canvasHovered);
 
-		if (m_PanningCanvas)
-		{
-			if (ImGui::IsMouseDown(ImGuiMouseButton_Middle))
-			{
-				const ImVec2 mouseDelta = ImGui::GetIO().MouseDelta;
+		m_PanningCanvas = m_CanvasNavigation.panning;
 
-				m_CanvasOffset.x += mouseDelta.x;
-				m_CanvasOffset.y += mouseDelta.y;
-			}
-			else
-			{
-				m_PanningCanvas = false;
-			}
-		}
+		m_CanvasOffset.x += panDelta.x;
+		m_CanvasOffset.y += panDelta.y;
 
 		if (canvasHovered &&
 			ImGui::IsMouseClicked(ImGuiMouseButton_Right) &&
 			!ImGui::IsAnyItemHovered())
 		{
+			const ImVec2 mousePosition = ImGui::GetIO().MousePos;
+
+			m_ContextMenuWorldPosition = ImVec2(
+				mousePosition.x -
+				m_CanvasOrigin.x -
+				m_CanvasOffset.x,
+
+				mousePosition.y -
+				m_CanvasOrigin.y -
+				m_CanvasOffset.y);
+
 			ImGui::OpenPopup("StateMachineCanvasContextMenu");
 		}
 
@@ -369,11 +388,9 @@ namespace buki
 		{
 			if (ImGui::MenuItem("Add State Here"))
 			{
-				const ImVec2 mousePos = ImGui::GetIO().MousePos;
-
 				AddStateAtWorldPosition(
-					mousePos.x - m_CanvasOrigin.x - m_CanvasOffset.x,
-					mousePos.y - m_CanvasOrigin.y - m_CanvasOffset.y);
+					m_ContextMenuWorldPosition.x,
+					m_ContextMenuWorldPosition.y);
 			}
 
 			ImGui::EndPopup();
@@ -388,6 +405,14 @@ namespace buki
 		for (AnimationState& state : m_Asset.states)
 		{
 			DrawStateNode(state);
+		}
+
+		if (!m_StatePendingDeletion.empty())
+		{
+			const std::string stateName = m_StatePendingDeletion;
+			m_StatePendingDeletion.clear();
+
+			DeleteState(stateName);
 		}
 
 		TrySelectTransition(mousePos);
@@ -572,13 +597,20 @@ namespace buki
 		return position;
 	}
 
-	void buki::AnimationStateMachineEditorWindow::AddStateAtWorldPosition(
-		float x,
-		float y)
+	void buki::AnimationStateMachineEditorWindow::
+		AddStateAtWorldPosition(float x, float y)
 	{
 		AnimationState state;
 		state.name = "NewState";
-		state.clipPath = "";
+		state.clipPath.clear();
+
+		int suffix = 1;
+
+		while (FindState(state.name) != nullptr)
+		{
+			state.name =
+				"NewState" + std::to_string(suffix++);
+		}
 
 		AnimationStateLayout layout;
 		layout.stateName = state.name;
@@ -696,6 +728,13 @@ namespace buki
 				m_Asset.initialState = state.name;
 			}
 
+			ImGui::Separator();
+
+			if (ImGui::MenuItem("Delete State"))
+			{
+				m_StatePendingDeletion = state.name;
+			}
+
 			ImGui::EndPopup();
 		}
 
@@ -729,7 +768,50 @@ namespace buki
 			return;
 		}
 
-		ImGui::Text("State: %s", state->name.c_str());
+		char stateNameBuffer[512];
+		std::snprintf(
+			stateNameBuffer,
+			sizeof(stateNameBuffer),
+			"%s",
+			state->name.c_str());
+
+		ImGui::TextUnformatted("State Name");
+
+		ImGui::InputText(
+			"##StateName",
+			stateNameBuffer,
+			sizeof(stateNameBuffer));
+
+		const bool finishedEditing =
+			ImGui::IsItemDeactivatedAfterEdit();
+
+		const std::string proposedName = stateNameBuffer;
+		const std::string oldName = state->name;
+
+		const bool onlyWhitespace =
+			proposedName.find_first_not_of(" \t\r\n") ==
+			std::string::npos;
+
+		const bool duplicateName =
+			proposedName != oldName &&
+			FindState(proposedName) != nullptr;
+
+		if (onlyWhitespace)
+		{
+			ImGui::TextDisabled("State name cannot be empty.");
+		}
+		else if (duplicateName)
+		{
+			ImGui::TextDisabled(
+				"Another state already uses this name.");
+		}
+
+		if (finishedEditing &&
+			!onlyWhitespace &&
+			!duplicateName)
+		{
+			RenameState(oldName, proposedName);
+		}
 
 		PropertyInfo clipPathProperty = BUKI_PROP_STRING(AnimationState, clipPath);
 
@@ -952,6 +1034,486 @@ namespace buki
 
 		m_DraggingTransition = false;
 		m_PendingTransitionFrom.clear();
+	}
+
+	void AnimationStateMachineEditorWindow::DrawAssetSettings()
+	{
+		if (!ImGui::CollapsingHeader("Animation Settings"))
+		{
+			return;
+		}
+
+		const std::string fileName =
+			std::filesystem::path(m_AssetPath).stem().string();
+
+		ImGui::Text("Name: %s", fileName.c_str());
+
+		const char* initialStatePreview =
+			m_Asset.initialState.empty()
+			? "None"
+			: m_Asset.initialState.c_str();
+
+		if (ImGui::BeginCombo(
+			"Initial State",
+			initialStatePreview))
+		{
+			if (ImGui::Selectable(
+				"None",
+				m_Asset.initialState.empty()))
+			{
+				m_Asset.initialState.clear();
+			}
+
+			for (const AnimationState& state : m_Asset.states)
+			{
+				const bool selected =
+					state.name == m_Asset.initialState;
+
+				if (ImGui::Selectable(
+					state.name.c_str(),
+					selected))
+				{
+					m_Asset.initialState = state.name;
+				}
+
+				if (selected)
+				{
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+
+			ImGui::EndCombo();
+		}
+
+		DrawParametersSection();
+	}
+
+	void AnimationStateMachineEditorWindow::DrawParametersSection()
+	{
+		ImGui::SeparatorText("Parameters");
+
+		auto parameterNameExists =
+			[&](const std::string& name, int excludedIndex)
+			{
+				for (int index = 0;
+					index < static_cast<int>(m_Asset.parameters.size());
+					++index)
+				{
+					if (index == excludedIndex)
+					{
+						continue;
+					}
+
+					if (m_Asset.parameters[index].name == name)
+					{
+						return true;
+					}
+				}
+
+				return false;
+			};
+
+		if (ImGui::Button("Add Parameter"))
+		{
+			AnimParameter parameter;
+			parameter.name = "NewParameter";
+			parameter.type = AnimParameterType::Float;
+			parameter.defaultValue = 0.0f;
+
+			int suffix = 1;
+
+			while (parameterNameExists(parameter.name, -1))
+			{
+				parameter.name =
+					"NewParameter" + std::to_string(suffix++);
+			}
+
+			m_Asset.parameters.push_back(std::move(parameter));
+		}
+
+		if (m_Asset.parameters.empty())
+		{
+			ImGui::TextDisabled(
+				"No parameters. Add one to use in transitions.");
+
+			return;
+		}
+
+		int parameterToRemove = -1;
+
+		for (int parameterIndex = 0;
+			parameterIndex <
+			static_cast<int>(m_Asset.parameters.size());
+			++parameterIndex)
+		{
+			AnimParameter& parameter =
+				m_Asset.parameters[parameterIndex];
+
+			ImGui::PushID(parameterIndex);
+
+			const std::string label =
+				parameter.name + "###Parameter";
+
+			if (ImGui::TreeNode(label.c_str()))
+			{
+				char nameBuffer[512];
+				std::snprintf(
+					nameBuffer,
+					sizeof(nameBuffer),
+					"%s",
+					parameter.name.c_str());
+
+				if (ImGui::InputText(
+					"Name",
+					nameBuffer,
+					sizeof(nameBuffer),
+					ImGuiInputTextFlags_EnterReturnsTrue))
+				{
+					const std::string newName = nameBuffer;
+
+					if (!newName.empty() &&
+						!parameterNameExists(
+							newName,
+							parameterIndex))
+					{
+						const std::string oldName =
+							parameter.name;
+
+						parameter.name = newName;
+
+						for (AnimationState& state :
+							m_Asset.states)
+						{
+							for (AnimationTransition& transition :
+								state.transitions)
+							{
+								for (AnimCondition& condition :
+									transition.conditions)
+								{
+									if (condition.parameter == oldName)
+									{
+										condition.parameter = newName;
+									}
+								}
+							}
+						}
+					}
+				}
+
+				ImGui::TextDisabled(
+					"Press Enter to commit a unique parameter name.");
+
+				int typeIndex =
+					static_cast<int>(parameter.type);
+
+				const char* typeNames[] =
+				{
+					"Bool",
+					"Int",
+					"Float",
+					"String"
+				};
+
+				const bool typeChanged = ImGui::Combo(
+					"Type",
+					&typeIndex,
+					typeNames,
+					IM_ARRAYSIZE(typeNames));
+
+				if (typeChanged)
+				{
+					parameter.type =
+						static_cast<AnimParameterType>(typeIndex);
+
+					switch (parameter.type)
+					{
+					case AnimParameterType::Bool:
+						parameter.defaultValue = false;
+						break;
+
+					case AnimParameterType::Int:
+						parameter.defaultValue = 0;
+						break;
+
+					case AnimParameterType::Float:
+						parameter.defaultValue = 0.0f;
+						break;
+
+					case AnimParameterType::String:
+						parameter.defaultValue = std::string{};
+						break;
+					}
+				}
+
+				switch (parameter.type)
+				{
+				case AnimParameterType::Bool:
+				{
+					bool value =
+						std::get<bool>(parameter.defaultValue);
+
+					if (ImGui::Checkbox("Default", &value))
+					{
+						parameter.defaultValue = value;
+					}
+
+					break;
+				}
+
+				case AnimParameterType::Int:
+				{
+					int value =
+						std::get<int>(parameter.defaultValue);
+
+					if (ImGui::InputInt("Default", &value))
+					{
+						parameter.defaultValue = value;
+					}
+
+					break;
+				}
+
+				case AnimParameterType::Float:
+				{
+					float value =
+						std::get<float>(parameter.defaultValue);
+
+					if (ImGui::InputFloat("Default", &value))
+					{
+						parameter.defaultValue = value;
+					}
+
+					break;
+				}
+
+				case AnimParameterType::String:
+				{
+					char buffer[512];
+					std::snprintf(
+						buffer,
+						sizeof(buffer),
+						"%s",
+						std::get<std::string>(
+							parameter.defaultValue).c_str());
+
+					if (ImGui::InputText(
+						"Default",
+						buffer,
+						sizeof(buffer)))
+					{
+						parameter.defaultValue =
+							std::string(buffer);
+					}
+
+					break;
+				}
+				}
+
+				if (typeChanged)
+				{
+					// Keep condition variants consistent with the new type.
+					// Existing comparison values are reset to the new default.
+					for (AnimationState& state : m_Asset.states)
+					{
+						for (AnimationTransition& transition :
+							state.transitions)
+						{
+							for (AnimCondition& condition :
+								transition.conditions)
+							{
+								if (condition.parameter ==
+									parameter.name)
+								{
+									condition.type = parameter.type;
+									condition.value =
+										parameter.defaultValue;
+								}
+							}
+						}
+					}
+				}
+
+				bool referenced = false;
+
+				for (const AnimationState& state : m_Asset.states)
+				{
+					for (const AnimationTransition& transition :
+						state.transitions)
+					{
+						for (const AnimCondition& condition :
+							transition.conditions)
+						{
+							if (condition.parameter == parameter.name)
+							{
+								referenced = true;
+							}
+						}
+					}
+				}
+
+				ImGui::BeginDisabled(referenced);
+
+				if (ImGui::Button("Remove Parameter"))
+				{
+					parameterToRemove = parameterIndex;
+				}
+
+				ImGui::EndDisabled();
+
+				if (referenced)
+				{
+					ImGui::TextDisabled(
+						"Remove or reassign conditions using this "
+						"parameter before deleting it.");
+				}
+
+				ImGui::TreePop();
+			}
+
+			ImGui::PopID();
+		}
+
+		if (parameterToRemove >= 0)
+		{
+			m_Asset.parameters.erase(
+				m_Asset.parameters.begin() + parameterToRemove);
+		}
+	}
+
+	bool buki::AnimationStateMachineEditorWindow::RenameState(
+		const std::string& oldName,
+		const std::string& newName)
+	{
+		if (oldName == newName)
+		{
+			return true;
+		}
+
+		if (newName.find_first_not_of(" \t\r\n") ==
+			std::string::npos)
+		{
+			return false;
+		}
+
+		AnimationState* state = FindState(oldName);
+
+		if (state == nullptr || FindState(newName) != nullptr)
+		{
+			return false;
+		}
+
+		state->name = newName;
+
+		for (AnimationStateLayout& layout : m_Asset.layout)
+		{
+			if (layout.stateName == oldName)
+			{
+				layout.stateName = newName;
+			}
+		}
+
+		for (AnimationState& otherState : m_Asset.states)
+		{
+			for (AnimationTransition& transition :
+				otherState.transitions)
+			{
+				if (transition.to == oldName)
+				{
+					transition.to = newName;
+				}
+			}
+		}
+
+		if (m_Asset.initialState == oldName)
+		{
+			m_Asset.initialState = newName;
+		}
+
+		if (m_SelectedStateName == oldName)
+		{
+			m_SelectedStateName = newName;
+		}
+
+		if (m_SelectedTransitionFrom == oldName)
+		{
+			m_SelectedTransitionFrom = newName;
+		}
+
+		if (m_PendingTransitionFrom == oldName)
+		{
+			m_PendingTransitionFrom = newName;
+		}
+
+		if (m_StatePendingDeletion == oldName)
+		{
+			m_StatePendingDeletion = newName;
+		}
+
+		return true;
+	}
+
+	void buki::AnimationStateMachineEditorWindow::DeleteState(
+		const std::string& name)
+	{
+		if (FindState(name) == nullptr)
+		{
+			return;
+		}
+
+		for (AnimationState& state : m_Asset.states)
+		{
+			auto& transitions = state.transitions;
+
+			transitions.erase(
+				std::remove_if(
+					transitions.begin(),
+					transitions.end(),
+					[&](const AnimationTransition& transition)
+					{
+						return transition.to == name;
+					}),
+				transitions.end());
+		}
+
+		m_Asset.states.erase(
+			std::remove_if(
+				m_Asset.states.begin(),
+				m_Asset.states.end(),
+				[&](const AnimationState& state)
+				{
+					return state.name == name;
+				}),
+			m_Asset.states.end());
+
+		m_Asset.layout.erase(
+			std::remove_if(
+				m_Asset.layout.begin(),
+				m_Asset.layout.end(),
+				[&](const AnimationStateLayout& layout)
+				{
+					return layout.stateName == name;
+				}),
+			m_Asset.layout.end());
+
+		if (m_Asset.initialState == name)
+		{
+			m_Asset.initialState.clear();
+		}
+
+		if (m_SelectedStateName == name)
+		{
+			m_SelectedStateName.clear();
+		}
+
+		// Incoming transitions may have been erased, shifting indices.
+		m_SelectedTransitionFrom.clear();
+		m_SelectedTransitionIndex = -1;
+
+		if (m_PendingTransitionFrom == name)
+		{
+			m_PendingTransitionFrom.clear();
+			m_DraggingTransition = false;
+		}
 	}
 
 	void buki::AnimationStateMachineEditorWindow::DrawPendingTransition(

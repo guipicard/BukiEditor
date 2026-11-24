@@ -7,6 +7,9 @@
 #include "EditorAssetDatabase.h"
 #include "EditorState.h"
 #include "AnimationStateMachineEditorWindow.h"
+#include "PrefabEditorWindow.h"
+#include "ClipAssetEditorWindow.h"
+#include "Iscene.h"
 #include <filesystem>
 #include <fstream>
 
@@ -218,12 +221,13 @@ namespace buki
 		return false;
 	}
 
-	void PrefabAssetBehavior::OnDoubleClick(
-		EditorState& state,
-		const BrowserEntry& entry)
+	void buki::PrefabAssetBehavior::OnDoubleClick(EditorState& state, const BrowserEntry& entry)
 	{
-		SelectPrefab(state, entry.path);
-		OpenPrefabPreview(state, entry.path);
+		state.assetEditorWindows.OpenAssetWindow<
+			PrefabEditorWindow>(
+				entry.path,
+				state,
+				entry.path);
 	}
 
 	void PrefabAssetBehavior::OnDropped(
@@ -247,10 +251,104 @@ namespace buki
 	void PrefabAssetBehavior::CollectReferences(EditorAssetDatabase& database, const std::string& path, std::vector<std::string>& outReferences)
 	{
 	}
-	void SceneAssetBehavior::OnDoubleClick(EditorState& state, const BrowserEntry& entry)
+	void buki::SceneAssetBehavior::OnDoubleClick(EditorState& state,const BrowserEntry& entry)
 	{
-		// Keep your existing scene-loading code here,
-		// or move it into this behavior later.
+		auto* world = Engine::Get().GetWorldPtr();
+
+		if (!world)
+		{
+			return;
+		}
+
+		const std::string scenePath =ToAssetRelativePath(entry.path);
+
+		if (scenePath.empty())
+		{
+			return;
+		}
+
+		// Temporary safe policy until a Save / Discard / Cancel dialog exists.
+		if (state.IsSceneDirty())
+		{
+			Engine::Get().Log().LogWarning("Save the current scene before opening another scene.");
+			return;
+		}
+
+		// Save the outgoing scene's editor camera settings.
+		if (!state.scenePreviewSession.path.empty())
+		{
+			state.scenePreviewSession.cameraSettings.Serialize(
+				state.scenePreviewSession.path);
+		}
+
+		// LoadScene() can destroy the current world before returning false.
+		state.selectedEntity = nullptr;
+		state.activeEntity = nullptr;
+		state.selectedEntities.clear();
+
+		state.selectedComponent = nullptr;
+		state.activeComponent = nullptr;
+		state.selectedComponents.clear();
+
+		state.selectedPrefabEntity = nullptr;
+		state.selectedPrefabPath.clear();
+
+		state.selectedScenePath.clear();
+		state.scenePreviewSession.path.clear();
+		state.scenePreviewSession.prefabEntities.clear();
+
+		if (!world->LoadScene(scenePath))
+		{
+			state.ClearSceneDirty();
+
+			Engine::Get().Log().LogError(
+				"Failed to load scene: " + scenePath);
+
+			return;
+		}
+
+		state.selectedScenePath = scenePath;
+		state.scenePreviewSession.path = scenePath;
+
+		auto& settings =
+			state.scenePreviewSession.cameraSettings;
+
+		settings = CameraSettings{};
+
+		// Start with the camera loaded from the scene file.
+		if (Camera2D* camera =
+			Engine::Get().GetActiveCameraPtr())
+		{
+			settings.position =
+			{
+				camera->position.x,
+				camera->position.y
+			};
+
+			settings.zoom = camera->zoom;
+
+			// Saved editor settings override the scene-file defaults.
+			settings.Deserialize(scenePath);
+
+			camera->position =
+			{
+				settings.position.x,
+				settings.position.y
+			};
+
+			camera->zoom = settings.zoom;
+		}
+
+		state.viewportDisplayMode = settings.displayMode;
+
+		state.scenePreviewSession.open = true;
+		state.scenePreviewSession.focused = false;
+		state.scenePreviewSession.hovered = false;
+
+		state.showSceneView = true;
+		state.requestSceneWindowFocus = true;
+
+		state.ClearSceneDirty();
 	}
 	void SceneAssetBehavior::OnDropped(EditorState& state, const std::string& assetPath, const std::string& targetPath)
 	{

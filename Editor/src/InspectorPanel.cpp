@@ -185,12 +185,13 @@ void buki::InspectorPanel::Render(EditorState& state)
 
 	auto& world = Engine::Get().World();
 
-	if (state.animationAssetEditor->selected)
+	/*if (state.animationAssetEditor->selected)
 	{
 		state.animationAssetEditor->DrawInspector();
 		ImGui::End();
 		return;
-	}
+	}*/
+
 	if (state.selectedPrefabEntity != nullptr)
 	{
 		RenderPrefabInspector(state, world);
@@ -427,7 +428,6 @@ void buki::InspectorPanel::DrawPrefabPreviewWindows(EditorState& state)
 					state.prefabPreviewSessions[j].focused = (j == i);
 				}
 
-				state.activePrefabPreviewIndex = static_cast<int>(i);
 				state.selectedPrefabPath = session.path;
 				state.selectedPrefabEntity = session.prefabEntity;
 				state.selectedEntity = nullptr;
@@ -452,14 +452,7 @@ void buki::InspectorPanel::DrawPrefabPreviewWindows(EditorState& state)
 
 		if (!session.open)
 		{
-			//DestroyPrefabPreviewFramebuffer(session);
 			state.prefabPreviewSessions.erase(state.prefabPreviewSessions.begin() + i);
-
-			if (state.activePrefabPreviewIndex == static_cast<int>(i))
-				state.activePrefabPreviewIndex = -1;
-			else if (state.activePrefabPreviewIndex > static_cast<int>(i))
-				--state.activePrefabPreviewIndex;
-
 			continue;
 		}
 

@@ -1,0 +1,79 @@
+{
+    "components": {
+        "Button": {
+            "backgroundImagePath": "",
+            "fontPath": "./fonts/Kenney/Kenney Blocks.ttf",
+            "fontSize": 24,
+            "onClick": {
+                "functionName": "LoadAgMenu",
+                "scriptTypeName": "GameComponentRegistration"
+            },
+            "style": {
+                "backgroundColor": {
+                    "a": 1.0,
+                    "b": 0.20000000298023224,
+                    "g": 0.20000000298023224,
+                    "r": 1.0
+                },
+                "backgroundHoverColor": {
+                    "a": 1.0,
+                    "b": 0.30000001192092896,
+                    "g": 0.30000001192092896,
+                    "r": 0.30000001192092896
+                },
+                "centerTextX": true,
+                "centerTextY": true,
+                "drawOutline": false,
+                "drawOutlineOnHoverOnly": true,
+                "fitToText": true,
+                "outlineColor": {
+                    "a": 1.0,
+                    "b": 0.0,
+                    "g": 1.0,
+                    "r": 0.0
+                },
+                "outlineHoverColor": {
+                    "a": 1.0,
+                    "b": 0.0,
+                    "g": 1.0,
+                    "r": 1.0
+                },
+                "padding": {
+                    "x": 0.20000000298023224,
+                    "y": 0.20000000298023224
+                },
+                "showBackground": true,
+                "textColor": {
+                    "a": 1.0,
+                    "b": 1.0,
+                    "g": 1.0,
+                    "r": 1.0
+                },
+                "textHoverColor": {
+                    "a": 1.0,
+                    "b": 0.6000000238418579,
+                    "g": 1.0,
+                    "r": 1.0
+                },
+                "textOffset": {
+                    "x": 0.0,
+                    "y": 0.0
+                }
+            },
+            "text": "menu"
+        }
+    },
+    "enable": true,
+    "layer": "",
+    "physics": false,
+    "position": {
+        "x": 1.5,
+        "y": -9.800000190734863
+    },
+    "rotation": 0.0,
+    "size": {
+        "x": 1.959999918937683,
+        "y": 1.1200000047683716
+    },
+    "z": 10
+}

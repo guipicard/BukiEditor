@@ -19,7 +19,8 @@ void buki::Circle::Draw(float alpha)
 
 	if (def.shapeDraw)
 	{
-		Graphics().DrawCircleOutline(pos, def.radius, def.shapeColor, rotation);
+		const LineStyle lineStyle{ def.shapeThickness, LineThicknessSpace::ScreenPixels };
+		Graphics().DrawCircleOutline(pos, def.radius, def.shapeColor, rotation, lineStyle);
 	}
 }
 

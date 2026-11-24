@@ -199,19 +199,37 @@ bool buki::WorldService::LoadScene(const std::string& path)
 			Engine::Get().GetActiveCameraPtr()->Deserialize(doc["camera"]);
 		}
 
-		if (doc.contains("entities") && doc["entities"].is_object())
+		std::vector<Entity*> loadedEntities;
+
+		if (doc.contains("entities") &&
+			doc["entities"].is_object())
 		{
-			for (auto& [entityName, entityDoc] : doc["entities"].items())
+			loadedEntities.reserve(doc["entities"].size());
+
+			for (auto& [entityName, entityDoc] :
+				doc["entities"].items())
 			{
 				Entity* entity = CreateEntity(entityName);
-				if (entity != nullptr)
+
+				if (!entity)
 				{
-					entity->Deserialize(entityDoc);
+					continue;
 				}
+
+				entity->Deserialize(entityDoc);
+				loadedEntities.push_back(entity);
 			}
 		}
 
+		// Initialize only after all entities have been created
+		// and their serialized properties have been restored.
+		for (Entity* entity : loadedEntities)
+		{
+			entity->Set();
+		}
+
 		SortEntities();
+
 		m_SceneToLoad.clear();
 		return true;
 	}

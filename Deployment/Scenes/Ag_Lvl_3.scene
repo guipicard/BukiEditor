@@ -1,12 +1,12 @@
 {
     "camera": {
         "position": {
-            "x": 0.0,
-            "y": 0.0
+            "x": -0.3145207166671753,
+            "y": 0.4896688461303711
         },
         "viewportHeight": 1080.0,
         "viewportWidth": 1920.0,
-        "zoom": 1.0
+        "zoom": 0.6575168371200562
     },
     "entities": {
         "Background": {
@@ -2835,7 +2835,7 @@
                             "a": 1.0,
                             "b": 0.20000000298023224,
                             "g": 0.20000000298023224,
-                            "r": 0.20000000298023224
+                            "r": 1.0
                         },
                         "backgroundHoverColor": {
                             "a": 1.0,
@@ -2843,6 +2843,7 @@
                             "g": 0.30000001192092896,
                             "r": 0.30000001192092896
                         },
+                        "centerTextVisuallyY": true,
                         "centerTextX": true,
                         "centerTextY": true,
                         "drawOutline": false,
@@ -2861,8 +2862,8 @@
                             "r": 1.0
                         },
                         "padding": {
-                            "x": 0.25,
-                            "y": 0.15000000596046448
+                            "x": 0.20000000298023224,
+                            "y": 0.20000000298023224
                         },
                         "showBackground": true,
                         "textColor": {
@@ -2894,8 +2895,8 @@
             },
             "rotation": 0.0,
             "size": {
-                "x": 2.059999942779541,
-                "y": 1.0199999809265137
+                "x": 1.959999918937683,
+                "y": 1.1200000047683716
             },
             "z": 10
         },
@@ -2996,7 +2997,7 @@
             "components": {
                 "Button": {
                     "backgroundImagePath": "",
-                    "fontPath": "./fonts/Kenney/Kenney Blocks.ttf",
+                    "fontPath": "../deployment/fonts/kenney/kenney blocks.ttf",
                     "fontSize": 24,
                     "onClick": {
                         "functionName": "Reset",
@@ -3015,6 +3016,7 @@
                             "g": 0.30000001192092896,
                             "r": 0.30000001192092896
                         },
+                        "centerTextVisuallyY": true,
                         "centerTextX": true,
                         "centerTextY": true,
                         "drawOutline": false,
@@ -3033,8 +3035,8 @@
                             "r": 1.0
                         },
                         "padding": {
-                            "x": 0.25,
-                            "y": 0.15000000596046448
+                            "x": 0.20000000298023224,
+                            "y": 0.20000000298023224
                         },
                         "showBackground": true,
                         "textColor": {
@@ -3066,8 +3068,8 @@
             },
             "rotation": 0.0,
             "size": {
-                "x": 2.299999952316284,
-                "y": 1.0199999809265137
+                "x": 2.200000047683716,
+                "y": 1.1200000047683716
             },
             "z": 10
         },

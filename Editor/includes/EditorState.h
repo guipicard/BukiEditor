@@ -8,7 +8,6 @@
 #include "BukiContainers.h"
 #include "Engine.h"
 
-#include "AnimationAssetEditor.h"
 #include "AssetBehaviorRegistry.h"
 #include "AssetEditorWindowManager.h"
 #include "ClipAssetEditorWindow.h"
@@ -63,7 +62,7 @@ namespace buki
         // Editor windows
         // ------------------------------------------------------------------
 
-        std::unique_ptr<AnimationAssetEditor> animationAssetEditor = std::make_unique<AnimationAssetEditor>();
+        //std::unique_ptr<AnimationAssetEditor> animationAssetEditor = std::make_unique<AnimationAssetEditor>();
 
         bool showHierarchy = true;
         bool showInspector = true;
@@ -112,7 +111,6 @@ namespace buki
         // ------------------------------------------------------------------
 
         std::vector<PrefabPreviewSession> prefabPreviewSessions;
-        int activePrefabPreviewIndex = -1;
 
         ScenePreviewSession scenePreviewSession;
 

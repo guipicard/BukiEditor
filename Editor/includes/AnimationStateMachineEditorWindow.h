@@ -1,9 +1,9 @@
 #pragma once
 
-
 #include "AssetEditorWindow.h"
 #include "ImGui.h"
 #include "AnimationAsset.h"
+#include "EditorCanvasNavigation.h"
 
 #include <string>
 
@@ -15,7 +15,7 @@ namespace buki
 	class AnimationStateMachineEditorWindow : public AssetEditorWindow
 	{
 	public:
-		AnimationStateMachineEditorWindow(EditorState& editorState,const std::string& assetPath);
+		AnimationStateMachineEditorWindow(EditorState& editorState, const std::string& assetPath);
 		void Draw() override;
 		void Reload() override;
 
@@ -63,9 +63,21 @@ namespace buki
 		void BeginTransitionDrag(const std::string& fromStateName);
 		void FinishTransitionDrag(const std::string& toStateName);
 
+		void DrawAssetSettings();
+		void DrawParametersSection();
+
+		bool RenameState(const std::string& oldName, const std::string& newName);
+		void DeleteState(const std::string& name);
+
+		std::string m_StatePendingDeletion;
+
+		ImVec2 m_ContextMenuWorldPosition = ImVec2(0.0f, 0.0f);
+
 		ImVec2 m_CanvasOrigin = ImVec2(0.0f, 0.0f);
 		ImVec2 m_CanvasOffset = ImVec2(0.0f, 0.0f);
 		bool m_PanningCanvas = false;
 		float m_CanvasZoom = 1.0f;
+
+		EditorCanvasNavigation m_CanvasNavigation;
 	};
 }

@@ -7,30 +7,31 @@
                     "y": 2.25
                 }
             },
-            "density": 3.0,
-            "fillColor": {
-                "a": 0.30000001192092896,
-                "b": 1.0,
-                "g": 1.0,
-                "r": 0.0
-            },
-            "fillDraw": false,
-            "filter": 0,
-            "friction": 0.800000011920929,
-            "isSensor": false,
-            "positionOffset": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "restitution": 0.10000000149011612,
-            "shapeColor": {
-                "a": 1.0,
-                "b": 0.0,
-                "g": 0.0,
-                "r": 1.0
-            },
-            "shapeDraw": false,
-            "type": "Box"
+            "def": {
+                "density": 3.0,
+                "fillColor": {
+                    "a": 0.30000001192092896,
+                    "b": 1.0,
+                    "g": 1.0,
+                    "r": 0.0
+                },
+                "fillDraw": false,
+                "filter": 0,
+                "friction": 0.800000011920929,
+                "isSensor": false,
+                "positionOffset": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "restitution": 0.10000000149011612,
+                "shapeColor": {
+                    "a": 1.0,
+                    "b": 0.0,
+                    "g": 0.0,
+                    "r": 1.0
+                },
+                "shapeDraw": false
+            }
         },
         "BricksBehaviour": {
             "BreakSounds": [
@@ -44,24 +45,26 @@
                 "\\audio\\angrybird\\sfx - rock damage a3.mp3"
             ],
             "collisionSounds": [
-                "\\audio\\angrybird\\sfx - rock collision a1.mp3",
-                "\\audio\\angrybird\\sfx - rock collision a2.mp3",
-                "\\audio\\angrybird\\sfx - rock collision a3.mp3",
-                "\\audio\\angrybird\\sfx - rock collision a4.mp3",
-                "\\audio\\angrybird\\sfx - rock collision a5.mp3"
+                "../deployment/audio/angrybird/sfx - rock collision a1.mp3",
+                "../deployment/audio/angrybird/sfx - rock collision a2.mp3",
+                "../deployment/audio/angrybird/sfx - rock collision a3.mp3",
+                "../deployment/audio/angrybird/sfx - rock collision a4.mp3",
+                "../deployment/audio/angrybird/sfx - rock collision a5.mp3"
             ],
             "maxHealth": 300.0,
             "stageImages": [
-                "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone020.png",
-                "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone025.png",
-                "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone052.png"
+                "../deployment/assets/kenney/physics assets/png/stone elements/elementstone020.png",
+                "../deployment/assets/kenney/physics assets/png/stone elements/elementstone025.png",
+                "../deployment/assets/kenney/physics assets/png/stone elements/elementstone052.png"
             ]
         },
         "RigidBody": {
-            "motionLocks": {
-                "angularZ": false,
-                "linearX": false,
-                "linearY": false
+            "def": {
+                "motionLocks": {
+                    "angularZ": false,
+                    "linearX": false,
+                    "linearY": false
+                }
             },
             "type": 2
         },
@@ -72,11 +75,9 @@
                 "g": 1.0,
                 "r": 1.0
             },
-            "flip": {
-                "h": false,
-                "v": false
-            },
-            "path": "/assets/Kenney/Physics Assets/PNG/Stone elements/elementStone020.png",
+            "flipX": false,
+            "flipY": false,
+            "path": "../deployment/assets/kenney/physics assets/png/stone elements/elementstone020.png",
             "positionOffset": {
                 "x": 0.0,
                 "y": 0.0
@@ -85,7 +86,7 @@
                 "x": 0.75,
                 "y": 2.25
             },
-            "sourceRect": {
+            "sourceRectPixels": {
                 "h": 0.0,
                 "w": 0.0,
                 "x": 0.0,
@@ -103,8 +104,8 @@
     },
     "rotation": 0.0,
     "size": {
-        "x": 0.75,
-        "y": 2.25
+        "x": 1.0,
+        "y": 1.0
     },
     "z": 0
 }

@@ -35,7 +35,6 @@ namespace buki
     void Text::Set()
     {
         m_Font = nullptr;
-
         if (!m_FontPath.empty() && m_FontSize > 0)
         {
             m_Font = Fonts().Load(m_FontPath, m_FontSize);

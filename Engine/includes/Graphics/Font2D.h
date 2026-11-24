@@ -13,10 +13,14 @@ namespace buki
         RectF sourceRectPixels{};
         int width = 0;
         int height = 0;
-
         int bearingX = 0;
         int bearingY = 0;
         int advance = 0;
+
+        int minX = 0;
+        int minY = 0;
+        int maxX = 0;
+        int maxY = 0;
     };
 
     struct Font2D
@@ -26,6 +30,8 @@ namespace buki
         int atlasHeight = 0;
         int fontSize = 0;
         int lineHeight = 0;
+        int ascent = 0;
+        int lineSkip = 0;
         bool valid = false;
 
         std::unordered_map<char, Glyph2D> glyphs;

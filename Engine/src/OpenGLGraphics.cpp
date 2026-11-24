@@ -21,6 +21,8 @@
 #include <SDL3_ttf/SDL_ttf.h>
 #include <vector>
 
+//#define BUKI_DEBUG_TEXT_LAYOUT
+
 using TtfFontPtr = std::unique_ptr<TTF_Font, decltype(&TTF_CloseFont)>;
 using SurfacePtr = std::unique_ptr<SDL_Surface, decltype(&SDL_DestroySurface)>;
 
@@ -98,6 +100,25 @@ void main()
 		2, 3, 0
 	};
 
+	glm::mat4 GetCurrentViewportProjection()
+	{
+		GLint viewport[4] = {};
+		glGetIntegerv(GL_VIEWPORT, viewport);
+
+		const float width =
+			static_cast<float>(std::max(1, viewport[2]));
+
+		const float height =
+			static_cast<float>(std::max(1, viewport[3]));
+
+		return glm::ortho(
+			0.0f,
+			width,
+			height,
+			0.0f,
+			-1.0f,
+			1.0f);
+	}
 }
 
 bool buki::OpenGLGraphics::Initialize(IPlatform& platform)
@@ -297,8 +318,16 @@ void buki::OpenGLGraphics::DrawTexturedQuad(
 		camera
 	);
 
+	const glm::mat4 projection =
+		GetCurrentViewportProjection();
+
 	glUseProgram(m_ShaderProgram);
-	glUniformMatrix4fv(m_ProjectionLocation, 1, GL_FALSE, glm::value_ptr(m_Projection));
+
+	glUniformMatrix4fv(
+		m_ProjectionLocation,
+		1,
+		GL_FALSE,
+		glm::value_ptr(projection));
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureId);
@@ -316,44 +345,138 @@ void buki::OpenGLGraphics::DrawTexturedQuad(
 	glUseProgram(0);
 }
 
-void buki::OpenGLGraphics::DrawLine(const Vector2& a, const Vector2& b, const Color& color)
+void buki::OpenGLGraphics::DrawLine(
+	const Vector2& a,
+	const Vector2& b,
+	const Color& color,
+	const LineStyle& lineStyle)
 {
-	std::vector<glm::vec2> points = { {a.x, a.y}, {b.x, b.y} };
-	DrawPrimitiveInternal(points, color, GL_LINES);
+	const Camera2D& camera = Engine::Get().GetActiveCamera();
+	const float thicknessPixels = GetLineThicknessPixels(lineStyle, camera);
+
+	const std::vector<glm::vec2> points =
+	{
+		WorldToScreen(glm::vec2{ a.x, a.y }, camera),
+		WorldToScreen(glm::vec2{ b.x, b.y }, camera)
+	};
+
+	DrawStrokeInternal(points, false, color, thicknessPixels);
 }
 
-void buki::OpenGLGraphics::DrawRectOutline(const Vector2& center, const Vector2& size, float rotationRadians, const Color& color)
+void buki::OpenGLGraphics::DrawRectOutline(
+	const Vector2& center,
+	const Vector2& size,
+	float rotationRadians,
+	const Color& color,
+	const LineStyle& lineStyle)
 {
-	const glm::vec2 screenCenter = WorldToScreen(glm::vec2{ center.x, center.y }, buki::Engine::Get().GetActiveCamera());
-	const glm::vec2 screenSize = Units::ToPixels({ size.x, size.y });
-	const Vector2 half = { screenSize.x * 0.5f, screenSize.y * 0.5f };
+	if (size.x <= 0.0f || size.y <= 0.0f)
+	{
+		return;
+	}
 
-	auto rotate = [rotationRadians](const glm::vec2& p) -> glm::vec2
+	const Camera2D& camera = Engine::Get().GetActiveCamera();
+	const glm::vec2 screenCenter = WorldToScreen(glm::vec2{ center.x, center.y }, camera);
+	const float thicknessPixels = GetLineThicknessPixels(lineStyle, camera);
+
+	const glm::vec2 halfSize =
+	{
+		WorldToScreenSize(size.x, camera) * 0.5f,
+		WorldToScreenSize(size.y, camera) * 0.5f
+	};
+
+	const float cosine = std::cos(rotationRadians);
+	const float sine = std::sin(rotationRadians);
+
+	const auto rotate = [cosine, sine](const glm::vec2& point) -> glm::vec2
 		{
-			const float c = std::cos(rotationRadians);
-			const float s = std::sin(rotationRadians);
 			return
 			{
-				p.x * c - p.y * s,
-				p.x * s + p.y * c
+				point.x * cosine - point.y * sine,
+				point.x * sine + point.y * cosine
 			};
 		};
 
-	std::vector<glm::vec2> points;
-	points.reserve(4);
+	const std::vector<glm::vec2> points =
+	{
+		screenCenter + rotate({ -halfSize.x, -halfSize.y }),
+		screenCenter + rotate({ halfSize.x, -halfSize.y }),
+		screenCenter + rotate({ halfSize.x, halfSize.y }),
+		screenCenter + rotate({ -halfSize.x, halfSize.y })
+	};
 
-	points.push_back(screenCenter + rotate({ -half.x, -half.y }));
-	points.push_back(screenCenter + rotate({ half.x, -half.y }));
-	points.push_back(screenCenter + rotate({ half.x,  half.y }));
-	points.push_back(screenCenter + rotate({ -half.x,  half.y }));
+	DrawStrokeInternal(points, true, color, thicknessPixels);
+}
 
-	DrawPrimitiveInternal(points, color, GL_LINE_LOOP);
+void buki::OpenGLGraphics::DrawCircleOutline(
+	const Vector2& center,
+	float radius,
+	const Color& color,
+	float rotationRadians,
+	const LineStyle& lineStyle)
+{
+	if (radius <= 0.0f)
+	{
+		return;
+	}
+
+	const Camera2D& camera = Engine::Get().GetActiveCamera();
+	const glm::vec2 screenCenter = WorldToScreen(glm::vec2{ center.x, center.y }, camera);
+	const float screenRadius = std::abs(WorldToScreenSize(radius, camera));
+	const float thicknessPixels = GetLineThicknessPixels(lineStyle, camera);
+
+	const int segments = static_cast<int>(std::clamp(screenRadius, 16.0f, 128.0f));
+	const std::vector<glm::vec2> points = GetPolygonPoints(screenCenter, screenRadius, rotationRadians, segments, false);
+
+	DrawStrokeInternal(points, true, color, thicknessPixels);
+
+	// Preserve the existing rotation-indicator radius.
+	const std::vector<glm::vec2> radiusPoints =
+	{
+		screenCenter,
+		points.front()
+	};
+
+	DrawStrokeInternal(radiusPoints, false, color, thicknessPixels);
+}
+
+void buki::OpenGLGraphics::DrawPolygonOutline(
+	const Vector2& center,
+	float radius,
+	float rotationRadians,
+	const Color& color,
+	int segments,
+	const LineStyle& lineStyle)
+{
+	if (radius <= 0.0f)
+	{
+		return;
+	}
+
+	segments = std::max(segments, 3);
+
+	const Camera2D& camera = Engine::Get().GetActiveCamera();
+	const glm::vec2 screenCenter = WorldToScreen(glm::vec2{ center.x, center.y }, camera);
+	const float screenRadius = std::abs(WorldToScreenSize(radius, camera));
+	const float thicknessPixels = GetLineThicknessPixels(lineStyle, camera);
+
+	const std::vector<glm::vec2> points = GetPolygonPoints(screenCenter, screenRadius, rotationRadians, segments, false);
+
+	DrawStrokeInternal(points, true, color, thicknessPixels);
 }
 
 void buki::OpenGLGraphics::FillRect(const Vector2& center, const Vector2& size, float rotationRadians, const Color& color)
 {
-	const glm::vec2 screenCenter = WorldToScreen(glm::vec2{ center.x, center.y }, buki::Engine::Get().GetActiveCamera());
-	const glm::vec2 screenSize = Units::ToPixels({ size.x, size.y });
+	const Camera2D& camera =
+		Engine::Get().GetActiveCamera();
+
+	const glm::vec2 screenCenter = WorldToScreen(glm::vec2{ center.x, center.y }, camera);
+
+	const glm::vec2 screenSize =
+	{
+		WorldToScreenSize(size.x, camera),
+		WorldToScreenSize(size.y, camera)
+	};
 	const glm::vec2 half = { screenSize.x * 0.5f, screenSize.y * 0.5f };
 
 	auto rotate = [rotationRadians](const glm::vec2& p) -> glm::vec2
@@ -376,36 +499,11 @@ void buki::OpenGLGraphics::FillRect(const Vector2& center, const Vector2& size, 
 	DrawPrimitiveInternal(points, color, GL_TRIANGLE_FAN);
 }
 
-void buki::OpenGLGraphics::DrawCircleOutline(const Vector2& center, float radius, const Color& color, float rotationRadians)
-{
-	const glm::vec2 screenCenter = WorldToScreen(glm::vec2{ center.x, center.y }, buki::Engine::Get().GetActiveCamera());
-
-	const float screenRadius = Units::ToPixels(radius);
-	int segments = std::clamp(static_cast<int>(screenRadius), 16, 128);
-
-	std::vector<glm::vec2> points;
-	points.reserve(static_cast<size_t>(segments));
-
-	const float step = 6.28318530718f / static_cast<float>(segments);
-	const float angleOffset = 6.28318530718f / 4;
-	for (int i = 0; i < segments; ++i)
-	{
-		const float a = (static_cast<float>(i) * step) - angleOffset + rotationRadians;
-		points.push_back(
-			{
-				screenCenter.x + std::cos(a) * screenRadius,
-				screenCenter.y + std::sin(a) * screenRadius
-			});
-	}
-	DrawPrimitiveInternal({ points[0], screenCenter }, color, GL_LINES);
-	DrawPrimitiveInternal(points, color, GL_LINE_LOOP);
-}
-
 void buki::OpenGLGraphics::FillCircle(const Vector2& center, float radius, const Color& color)
 {
-	const glm::vec2 screenCenter = WorldToScreen(glm::vec2{ center.x, center.y }, buki::Engine::Get().GetActiveCamera());
-
-	const float screenRadius = Units::ToPixels(radius);
+	const Camera2D& camera = Engine::Get().GetActiveCamera();
+	const glm::vec2 screenCenter = WorldToScreen(glm::vec2{ center.x, center.y }, camera);
+	const float screenRadius = WorldToScreenSize(radius, camera);
 	int segments = std::clamp(static_cast<int>(screenRadius), 16, 128);
 
 	std::vector<glm::vec2> points;
@@ -428,56 +526,54 @@ void buki::OpenGLGraphics::FillCircle(const Vector2& center, float radius, const
 	DrawPrimitiveInternal(points, color, GL_TRIANGLE_FAN);
 }
 
-void buki::OpenGLGraphics::DrawPolygonOutline(const Vector2& center, float radius, float rotationRadians, const Color& color, int segments)
-{
-	if (segments < 3)
-	{
-		segments = 3;
-	}
-	const glm::vec2 screenCenter = WorldToScreen(glm::vec2{ center.x, center.y }, buki::Engine::Get().GetActiveCamera());
-	const float screenRadius = Units::ToPixels(radius);
-	auto points = GetPolygonPoints(screenCenter, screenRadius, rotationRadians, segments, true);
-	points.erase(points.begin());
-	DrawPrimitiveInternal(points, color, GL_LINE_LOOP);
-}
-
 void buki::OpenGLGraphics::FillPolygon(const Vector2& center, float radius, float rotationRadians, const Color& color, int segments)
 {
 	if (segments < 3)
 	{
 		segments = 3;
 	}
-	const glm::vec2 screenCenter = WorldToScreen(glm::vec2{ center.x, center.y }, buki::Engine::Get().GetActiveCamera());
-	const float screenRadius = Units::ToPixels(radius);
+	const Camera2D& camera = Engine::Get().GetActiveCamera();
+	const glm::vec2 screenCenter = WorldToScreen(glm::vec2{ center.x, center.y }, camera);
+	const float screenRadius = WorldToScreenSize(radius, camera);
 	const std::vector<glm::vec2>& points = GetPolygonPoints(screenCenter, screenRadius, rotationRadians, segments, true);
 	DrawPrimitiveInternal(points, color, GL_TRIANGLE_FAN);
 }
 
-std::vector<glm::vec2> buki::OpenGLGraphics::GetPolygonPoints(glm::vec2 center, float radius, float rotationRadians, int segments, bool renderFill)
+std::vector<glm::vec2> buki::OpenGLGraphics::GetPolygonPoints(
+	glm::vec2 center,
+	float radius,
+	float rotationRadians,
+	int segments,
+	bool renderFill)
 {
-	const int additionnalSegments = renderFill ? 2 : 0;
+	constexpr float fullTurn = 6.28318530718f;
+	constexpr float quarterTurn = fullTurn * 0.25f;
+
+	segments = std::max(segments, 3);
+
+	const int perimeterPointCount = renderFill ? segments + 1 : segments;
+
 	std::vector<glm::vec2> points;
-	points.reserve(static_cast<size_t>(segments + additionnalSegments));
+	points.reserve(static_cast<std::size_t>(perimeterPointCount + (renderFill ? 1 : 0)));
+
 	if (renderFill)
 	{
 		points.push_back(center);
 	}
-	const float step = 6.28318530718f / static_cast<float>(segments);
-	const float angleOffset = (6.28318530718f / 4);
-	int totalSegments = segments + additionnalSegments;
-	if (renderFill)
+
+	const float step = fullTurn / static_cast<float>(segments);
+
+	for (int i = 0; i < perimeterPointCount; ++i)
 	{
-		totalSegments -= 1;
-	}
-	for (int i = 0; i < totalSegments; ++i)
-	{
-		const float a = ((static_cast<float>(i) * step) - angleOffset) + rotationRadians;
+		const float angle = static_cast<float>(i) * step - quarterTurn + rotationRadians;
+
 		points.push_back(
 			{
-				center.x + std::cos(a) * radius,
-				center.y + std::sin(a) * radius
+				center.x + std::cos(angle) * radius,
+				center.y + std::sin(angle) * radius
 			});
 	}
+
 	return points;
 }
 
@@ -581,12 +677,12 @@ void buki::OpenGLGraphics::DrawSprite(
 }
 
 void buki::OpenGLGraphics::DrawSprite(
-	const Texture2D& texture, 
-	const RectF& worldRectMeters, 
-	const RectF& sourceRectPixels, 
-	float rotationRadians, 
+	const Texture2D& texture,
+	const RectF& worldRectMeters,
+	const RectF& sourceRectPixels,
+	float rotationRadians,
 	bool flipX,
-	bool flipY, 
+	bool flipY,
 	const Color& color)
 {
 	DrawSprite(
@@ -615,6 +711,8 @@ void buki::OpenGLGraphics::DestroyFont(Font2D& font)
 	font.atlasHeight = 0;
 	font.fontSize = 0;
 	font.lineHeight = 0;
+	font.ascent = 0;
+	font.lineSkip = 0;
 	font.valid = false;
 	font.glyphs.clear();
 }
@@ -623,160 +721,222 @@ buki::Font2D buki::OpenGLGraphics::CreateFontFromFile(const std::string& path, i
 {
 	Font2D font{};
 
-	if (!TTF_WasInit())
+	if (fontSize <= 0)
 	{
-		if (!TTF_Init())
-		{
-			Engine::Get().Log().LogWarning("TTF_Init failed");
-			return font;
-		}
+		Engine::Get().Log().LogWarning("Invalid font size: " + path);
+		return font;
+	}
+
+	if (!TTF_WasInit() && !TTF_Init())
+	{
+		Engine::Get().Log().LogWarning("TTF_OpenFont failed \n" + path);
+		return font;
 	}
 
 	using TtfFontPtr = std::unique_ptr<TTF_Font, decltype(&TTF_CloseFont)>;
 	using SurfacePtr = std::unique_ptr<SDL_Surface, decltype(&SDL_DestroySurface)>;
 
 	TtfFontPtr ttf(TTF_OpenFont(path.c_str(), static_cast<float>(fontSize)), TTF_CloseFont);
+
 	if (!ttf)
 	{
-		Engine::Get().Log().LogWarning("TTF_OpenFont failed");
+		Engine::Get().Log().LogWarning("TTF_OpenFont failed: " + path);
 		return font;
+	}
+
+	font.fontSize = fontSize;
+	font.lineHeight = TTF_GetFontHeight(ttf.get());
+	font.ascent = TTF_GetFontAscent(ttf.get());
+	font.lineSkip = TTF_GetFontLineSkip(ttf.get());
+
+	if (font.lineSkip <= 0)
+	{
+		font.lineSkip = font.lineHeight;
 	}
 
 	constexpr int firstChar = 32;
 	constexpr int lastChar = 126;
 	constexpr int glyphPadding = 1;
 
-	int atlasWidth = glyphPadding;
-	int atlasHeight = 0;
-
-	struct TempGlyphSurface
+	struct TempGlyph
 	{
-		char c = 0;
-		SurfacePtr surface{ nullptr, SDL_DestroySurface };
-		int minX = 0;
-		int maxX = 0;
-		int minY = 0;
-		int maxY = 0;
-		int advance = 0;
+		char character = 0;
+		Glyph2D glyph{};
+		std::vector<std::uint8_t> pixels;
 	};
 
-	std::vector<TempGlyphSurface> tempGlyphs;
+	std::vector<TempGlyph> tempGlyphs;
 	tempGlyphs.reserve(lastChar - firstChar + 1);
 
-	for (int i = firstChar; i <= lastChar; ++i)
-	{
-		const char c = static_cast<char>(i);
+	int atlasWidth = glyphPadding;
+	int atlasHeight = 1;
 
+	for (int character = firstChar; character <= lastChar; ++character)
+	{
 		int minX = 0;
 		int maxX = 0;
 		int minY = 0;
 		int maxY = 0;
 		int advance = 0;
 
-		if (!TTF_GetGlyphMetrics(ttf.get(), static_cast<std::uint32_t>(c), &minX, &maxX, &minY, &maxY, &advance))
+		if (!TTF_GetGlyphMetrics(
+			ttf.get(),
+			static_cast<std::uint32_t>(character),
+			&minX,
+			&maxX,
+			&minY,
+			&maxY,
+			&advance))
 		{
 			continue;
 		}
 
-		SDL_Color white{ 255, 255, 255, 255 };
-		SurfacePtr glyphSurface(
-			TTF_RenderGlyph_Blended(ttf.get(), static_cast<std::uint32_t>(c), white),
-			SDL_DestroySurface
-		);
+		TempGlyph temp{};
+		temp.character = static_cast<char>(character);
+		temp.glyph.advance = advance;
 
-		if (!glyphSurface)
+		const SDL_Color white{ 255, 255, 255, 255 };
+
+		SurfacePtr rendered(
+			TTF_RenderGlyph_Blended(ttf.get(), static_cast<std::uint32_t>(character), white),
+			SDL_DestroySurface);
+
+		if (!rendered)
 		{
+			// Preserve advance even when there is no drawable bitmap.
+			tempGlyphs.push_back(std::move(temp));
 			continue;
 		}
 
-		if (glyphSurface->format != SDL_PIXELFORMAT_RGBA32)
-		{
-			SurfacePtr converted(
-				SDL_ConvertSurface(glyphSurface.get(), SDL_PIXELFORMAT_RGBA32),
-				SDL_DestroySurface
-			);
+		SurfacePtr surface(
+			SDL_ConvertSurface(rendered.get(), SDL_PIXELFORMAT_RGBA32),
+			SDL_DestroySurface);
 
-			if (!converted)
+		if (!surface)
+		{
+			Engine::Get().Log().LogWarning("Font glyph conversion failed: " + path);
+			return Font2D{};
+		}
+
+		if (!SDL_LockSurface(surface.get()))
+		{
+			Engine::Get().Log().LogWarning("Font glyph surface lock failed: " + path);
+			return Font2D{};
+		}
+
+		int cropLeft = surface->w;
+		int cropTop = surface->h;
+		int cropRight = -1;
+		int cropBottom = -1;
+
+		for (int y = 0; y < surface->h; ++y)
+		{
+			const std::uint8_t* row = static_cast<const std::uint8_t*>(surface->pixels) + y * surface->pitch;
+
+			for (int x = 0; x < surface->w; ++x)
 			{
-				continue;
+				if (row[x * 4 + 3] == 0)
+				{
+					continue;
+				}
+
+				cropLeft = std::min(cropLeft, x);
+				cropTop = std::min(cropTop, y);
+				cropRight = std::max(cropRight, x);
+				cropBottom = std::max(cropBottom, y);
+			}
+		}
+
+		if (cropRight >= cropLeft && cropBottom >= cropTop)
+		{
+			Glyph2D& glyph = temp.glyph;
+
+			glyph.width = cropRight - cropLeft + 1;
+			glyph.height = cropBottom - cropTop + 1;
+
+			// The cropped bitmap's position relative to the baseline.
+			glyph.bearingX = minX + cropLeft;
+			glyph.bearingY = font.ascent - cropTop;
+
+			// Raster bounds for the bitmap actually stored in the atlas.
+			glyph.minX = glyph.bearingX;
+			glyph.maxX = glyph.bearingX + glyph.width;
+			glyph.maxY = glyph.bearingY;
+			glyph.minY = glyph.bearingY - glyph.height;
+
+			const std::size_t pixelCount = static_cast<std::size_t>(glyph.width) * static_cast<std::size_t>(glyph.height) * 4;
+			temp.pixels.resize(pixelCount);
+
+			for (int y = 0; y < glyph.height; ++y)
+			{
+				const std::uint8_t* source = static_cast<const std::uint8_t*>(surface->pixels) + (cropTop + y) * surface->pitch + cropLeft * 4;
+				std::uint8_t* destination = temp.pixels.data() + static_cast<std::size_t>(y) * glyph.width * 4;
+
+				std::memcpy(destination, source, static_cast<std::size_t>(glyph.width) * 4);
 			}
 
-			glyphSurface = std::move(converted);
+			atlasWidth += glyph.width + glyphPadding;
+			atlasHeight = std::max(atlasHeight, glyph.height);
 		}
 
-		atlasWidth += glyphSurface->w + glyphPadding;
-		atlasHeight = std::max(atlasHeight, glyphSurface->h);
+		SDL_UnlockSurface(surface.get());
 
-		tempGlyphs.push_back({
-			c,
-			std::move(glyphSurface),
-			minX,
-			maxX,
-			minY,
-			maxY,
-			advance
-			});
+		// Blank glyphs, including spaces, retain their advance.
+		tempGlyphs.push_back(std::move(temp));
+	}
+
+	if (tempGlyphs.empty() || atlasWidth == glyphPadding)
+	{
+		Engine::Get().Log().LogWarning("Font produced no visible glyphs: " + path);
+		return Font2D{};
 	}
 
 	atlasHeight += glyphPadding * 2;
 
-	if (atlasWidth <= 0 || atlasHeight <= 0 || tempGlyphs.empty())
+	const std::size_t atlasByteCount = static_cast<std::size_t>(atlasWidth) * static_cast<std::size_t>(atlasHeight) * 4;
+	std::vector<std::uint8_t> atlasPixels(atlasByteCount, 0);
+
+	int atlasX = glyphPadding;
+
+	for (TempGlyph& temp : tempGlyphs)
 	{
-		Engine::Get().Log().LogWarning("TTF_OpenFont produced no glyphs");
-		return font;
-	}
+		Glyph2D& glyph = temp.glyph;
 
-	std::vector<std::uint8_t> pixels(static_cast<std::size_t>(atlasWidth * atlasHeight * 4), 0);
-
-	int penX = glyphPadding;
-
-	for (const TempGlyphSurface& tg : tempGlyphs)
-	{
-		SDL_Surface* surface = tg.surface.get();
-		if (surface == nullptr)
+		if (glyph.width > 0 && glyph.height > 0)
 		{
-			continue;
+			glyph.sourceRectPixels = RectF
+			{
+				static_cast<float>(atlasX),
+				static_cast<float>(glyphPadding),
+				static_cast<float>(glyph.width),
+				static_cast<float>(glyph.height)
+			};
+
+			for (int y = 0; y < glyph.height; ++y)
+			{
+				const std::uint8_t* source = temp.pixels.data() + static_cast<std::size_t>(y) * glyph.width * 4;
+				const std::size_t destinationOffset = (static_cast<std::size_t>(y + glyphPadding) * atlasWidth + atlasX) * 4;
+				std::uint8_t* destination = atlasPixels.data() + destinationOffset;
+
+				std::memcpy(destination, source, static_cast<std::size_t>(glyph.width) * 4);
+			}
+
+			atlasX += glyph.width + glyphPadding;
 		}
 
-		for (int y = 0; y < surface->h; ++y)
-		{
-			const std::uint8_t* srcRow =
-				static_cast<const std::uint8_t*>(surface->pixels) + y * surface->pitch;
-			std::uint8_t* dstRow =
-				pixels.data() + ((y + glyphPadding) * atlasWidth + penX) * 4;
-
-			std::memcpy(dstRow, srcRow, static_cast<std::size_t>(surface->w) * 4);
-		}
-
-		Glyph2D glyph{};
-		glyph.sourceRectPixels = RectF{
-			static_cast<float>(penX),
-			static_cast<float>(glyphPadding),
-			static_cast<float>(surface->w),
-			static_cast<float>(surface->h)
-		};
-		glyph.width = surface->w;
-		glyph.height = surface->h;
-		glyph.bearingX = tg.minX;
-		glyph.bearingY = tg.maxY;
-		glyph.advance = tg.advance;
-
-		font.glyphs[tg.c] = glyph;
-		penX += surface->w + glyphPadding;
+		font.glyphs[temp.character] = glyph;
 	}
 
-	font.textureId = CreateTextureRGBA8(pixels.data(), atlasWidth, atlasHeight);
+	font.textureId = CreateTextureRGBA8(atlasPixels.data(), atlasWidth, atlasHeight);
+
 	if (font.textureId == 0)
 	{
-		Engine::Get().Log().LogWarning("CreateTextureRGBA8 failed for font atlas");
-		font.glyphs.clear();
-		return font;
+		Engine::Get().Log().LogWarning("CreateTextureRGBA8 failed for font atlas: " + path);
+		return Font2D{};
 	}
 
 	font.atlasWidth = atlasWidth;
 	font.atlasHeight = atlasHeight;
-	font.fontSize = fontSize;
-	font.lineHeight = TTF_GetFontHeight(ttf.get());
 	font.valid = true;
 
 	return font;
@@ -789,61 +949,174 @@ void buki::OpenGLGraphics::DrawTextToCamera(
 	const glm::vec2& worldPositionMeters,
 	const Color& color,
 	bool centerX,
-	bool centerY)
+	bool centerY,
+	bool centerVisuallyY)
 {
-	if (!font.IsValid() || text.empty())
+	if (!font.IsValid() || text.empty() || font.lineHeight <= 0)
 	{
 		return;
 	}
 
-	const glm::vec2 originPixels = WorldToScreen(worldPositionMeters, camera);
+	const float worldUnitsPerFontPixel = 1.0f / METRES_TO_PIXELS;
+	const float pixelScale = WorldToScreenSize(worldUnitsPerFontPixel, camera);
 
-	float startX = originPixels.x;
-	float startY = originPixels.y;
-
-	Vector2 textSize = MeasureText(font, text) * METRES_TO_PIXELS;
-	int lineCount = (int)textSize.y / font.lineHeight;
-	if (centerX)
+	if (pixelScale <= 0.0f)
 	{
-		startX -= textSize.x * 0.5f;
+		return;
 	}
 
-	if (centerY)
-	{
-		startY -= textSize.y * 0.5f;
-	}
-	float penX = startX;
-	const float baselineY = startY + ((static_cast<float>(font.lineHeight)*0.5f) * (lineCount));
+	const float lineSkip = static_cast<float>(font.lineSkip > 0 ? font.lineSkip : font.lineHeight);
+	const float ascent = static_cast<float>(font.ascent);
 
-	for (char c : text)
+	float currentLineWidth = 0.0f;
+	float maximumLineWidth = 0.0f;
+	float lineTop = 0.0f;
+	int lineCount = 1;
+
+	float visibleLeft = std::numeric_limits<float>::max();
+	float visibleTop = std::numeric_limits<float>::max();
+	float visibleRight = std::numeric_limits<float>::lowest();
+	float visibleBottom = std::numeric_limits<float>::lowest();
+
+	bool hasVisibleGlyph = false;
+
+	for (char character : text)
 	{
-		const Glyph2D* glyph = font.GetGlyph(c);
-		if (glyph == nullptr)
+		if (character == '\r')
 		{
 			continue;
 		}
 
-		const float glyphX = penX + static_cast<float>(glyph->bearingX);
-		const float glyphY = baselineY - static_cast<float>(glyph->bearingY);
+		if (character == '\n')
+		{
+			maximumLineWidth = std::max(maximumLineWidth, currentLineWidth);
+			currentLineWidth = 0.0f;
+			lineTop += lineSkip;
+			++lineCount;
+			continue;
+		}
 
-		const UVRect uvRect = BuildUVRect(
-			glyph->sourceRectPixels,
-			static_cast<float>(font.atlasWidth),
-			static_cast<float>(font.atlasHeight),
-			false,
-			false
-		);
+		const Glyph2D* glyph = font.GetGlyph(character);
 
-		DrawTexturedQuad(
-			font.textureId,
-			camera,
-			ScreenToWorld(glm::vec2{ glyphX + glyph->width * 0.5f, glyphY + glyph->height * 0.5f }, camera),
-			static_cast<float>(glyph->width) / METRES_TO_PIXELS,
-			static_cast<float>(glyph->height) / METRES_TO_PIXELS,
-			0.0f,
-			uvRect,
-			color
-		);
+		if (!glyph)
+		{
+			continue;
+		}
+
+		if (glyph->width > 0 && glyph->height > 0)
+		{
+			const float left = currentLineWidth + static_cast<float>(glyph->bearingX);
+			const float top = lineTop + ascent - static_cast<float>(glyph->bearingY);
+			const float right = left + static_cast<float>(glyph->width);
+			const float bottom = top + static_cast<float>(glyph->height);
+
+			visibleLeft = std::min(visibleLeft, left);
+			visibleTop = std::min(visibleTop, top);
+			visibleRight = std::max(visibleRight, right);
+			visibleBottom = std::max(visibleBottom, bottom);
+
+			hasVisibleGlyph = true;
+		}
+
+		currentLineWidth += static_cast<float>(glyph->advance);
+	}
+
+	maximumLineWidth = std::max(maximumLineWidth, currentLineWidth);
+
+	const float layoutHeight = static_cast<float>(font.lineHeight) + static_cast<float>(lineCount - 1) * lineSkip;
+	const float layoutOffsetX = centerX ? -maximumLineWidth * 0.5f : 0.0f;
+
+	float layoutOffsetY = centerY ? -layoutHeight * 0.5f : 0.0f;
+
+	if (centerVisuallyY && hasVisibleGlyph)
+	{
+		layoutOffsetY = -(visibleTop + visibleBottom) * 0.5f;
+	}
+
+	const glm::vec2 screenAnchor = WorldToScreen(worldPositionMeters, camera);
+
+#ifdef BUKI_DEBUG_TEXT_LAYOUT
+	const auto drawDebugBounds = [&](float left, float top, float right, float bottom, const Color& debugColor)
+		{
+			const float screenLeft = screenAnchor.x + (layoutOffsetX + left) * pixelScale;
+			const float screenTop = screenAnchor.y + (layoutOffsetY + top) * pixelScale;
+			const float screenRight = screenAnchor.x + (layoutOffsetX + right) * pixelScale;
+			const float screenBottom = screenAnchor.y + (layoutOffsetY + bottom) * pixelScale;
+
+			DrawPrimitiveInternal(
+				{
+					{ screenLeft, screenTop },
+					{ screenRight, screenTop },
+					{ screenRight, screenBottom },
+					{ screenLeft, screenBottom },
+					{ screenLeft, screenTop }
+				},
+				debugColor,
+				GL_LINE_STRIP);
+		};
+
+	drawDebugBounds(0.0f, 0.0f, maximumLineWidth, layoutHeight, Color{ 1.0f, 0.0f, 0.0f, 1.0f });
+
+	if (hasVisibleGlyph)
+	{
+		drawDebugBounds(visibleLeft, visibleTop, visibleRight, visibleBottom, Color{ 0.0f, 1.0f, 0.0f, 1.0f });
+	}
+#endif
+
+	float penX = 0.0f;
+	float penY = 0.0f;
+
+	for (char character : text)
+	{
+		if (character == '\r')
+		{
+			continue;
+		}
+
+		if (character == '\n')
+		{
+			penX = 0.0f;
+			penY += lineSkip;
+			continue;
+		}
+
+		const Glyph2D* glyph = font.GetGlyph(character);
+
+		if (!glyph)
+		{
+			continue;
+		}
+
+		if (glyph->width > 0 && glyph->height > 0)
+		{
+			const float glyphLeft = layoutOffsetX + penX + static_cast<float>(glyph->bearingX);
+			const float glyphTop = layoutOffsetY + penY + ascent - static_cast<float>(glyph->bearingY);
+
+			const glm::vec2 glyphCenterScreen =
+			{
+				screenAnchor.x + (glyphLeft + static_cast<float>(glyph->width) * 0.5f) * pixelScale,
+				screenAnchor.y + (glyphTop + static_cast<float>(glyph->height) * 0.5f) * pixelScale
+			};
+
+			const glm::vec2 glyphCenterWorld = ScreenToWorld(glyphCenterScreen, camera);
+
+			const UVRect uvRect = BuildUVRect(
+				glyph->sourceRectPixels,
+				static_cast<float>(font.atlasWidth),
+				static_cast<float>(font.atlasHeight),
+				false,
+				false);
+
+			DrawTexturedQuad(
+				font.textureId,
+				camera,
+				glyphCenterWorld,
+				static_cast<float>(glyph->width) * worldUnitsPerFontPixel,
+				static_cast<float>(glyph->height) * worldUnitsPerFontPixel,
+				0.0f,
+				uvRect,
+				color);
+		}
 
 		penX += static_cast<float>(glyph->advance);
 	}
@@ -856,52 +1129,74 @@ buki::Vector2 buki::OpenGLGraphics::MeasureText(const Font2D& font, const std::s
 		return Vector2{ 0.0f, 0.0f };
 	}
 
-	float lineWidth = 0.0f;
-	float maxWidth = 0.0f;
+	float currentLineWidth = 0.0f;
+	float maximumLineWidth = 0.0f;
 	int lineCount = 1;
 
-	for (char c : text)
+	for (char character : text)
 	{
-		if (c == '\n')
+		if (character == '\r')
 		{
-			maxWidth = std::max(maxWidth, lineWidth);
-			lineWidth = 0.0f;
+			continue;
+		}
+
+		if (character == '\n')
+		{
+			maximumLineWidth = std::max(maximumLineWidth, currentLineWidth);
+			currentLineWidth = 0.0f;
 			++lineCount;
 			continue;
 		}
 
-		const Glyph2D* glyph = font.GetGlyph(c);
-		if (glyph == nullptr)
-		{
-			continue;
-		}
+		const Glyph2D* glyph = font.GetGlyph(character);
 
-		lineWidth += static_cast<float>(glyph->advance);
+		if (glyph)
+		{
+			currentLineWidth += static_cast<float>(glyph->advance);
+		}
 	}
 
-	maxWidth = std::max(maxWidth, lineWidth);
+	maximumLineWidth = std::max(maximumLineWidth, currentLineWidth);
 
-	const float height = static_cast<float>(lineCount * font.lineHeight);
+	const float lineHeight = static_cast<float>(font.lineHeight);
+	const float lineSkip = static_cast<float>(font.lineSkip > 0 ? font.lineSkip : font.lineHeight);
+	const float layoutHeight = lineHeight + static_cast<float>(lineCount - 1) * lineSkip;
 
-	return Vector2{ maxWidth / METRES_TO_PIXELS, height / METRES_TO_PIXELS };
+	return Vector2
+	{
+		maximumLineWidth / METRES_TO_PIXELS,
+		layoutHeight / METRES_TO_PIXELS
+	};
 }
 
 float buki::OpenGLGraphics::MeasureTextWidthPixels(const Font2D& font, const std::string& text) const
 {
-	float width = 0.0f;
+	float currentLineWidth = 0.0f;
+	float maximumLineWidth = 0.0f;
 
-	for (char c : text)
+	for (char character : text)
 	{
-		const Glyph2D* glyph = font.GetGlyph(c);
-		if (glyph == nullptr)
+		if (character == '\r')
 		{
 			continue;
 		}
 
-		width += static_cast<float>(glyph->advance);
-	}
+		if (character == '\n')
+		{
+			maximumLineWidth = std::max(maximumLineWidth, currentLineWidth);
 
-	return width;
+			currentLineWidth = 0.0f;
+			continue;
+		}
+
+		const Glyph2D* glyph = font.GetGlyph(character);
+
+		if (glyph)
+		{
+			currentLineWidth += static_cast<float>(glyph->advance);
+		}
+	}
+	return std::max(maximumLineWidth, currentLineWidth);
 }
 
 bool buki::OpenGLGraphics::InitializeLoader(IPlatform& platform)
@@ -1284,7 +1579,14 @@ void buki::OpenGLGraphics::DrawPrimitiveInternal(const std::vector<glm::vec2>& p
 	glUseProgram(m_DebugLineProgram);
 	if (m_DebugLineProjLoc >= 0)
 	{
-		glUniformMatrix4fv(m_DebugLineProjLoc, 1, GL_FALSE, glm::value_ptr(m_Projection));
+		const glm::mat4 projection =
+			GetCurrentViewportProjection();
+
+		glUniformMatrix4fv(
+			m_DebugLineProjLoc,
+			1,
+			GL_FALSE,
+			glm::value_ptr(projection));
 	}
 	if (m_DebugLineColorLoc >= 0)
 	{
@@ -1298,4 +1600,175 @@ void buki::OpenGLGraphics::DrawPrimitiveInternal(const std::vector<glm::vec2>& p
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 	glUseProgram(0);
+}
+
+float buki::OpenGLGraphics::GetLineThicknessPixels(const LineStyle& lineStyle, const Camera2D& camera) const
+{
+	if (!std::isfinite(lineStyle.thickness) || lineStyle.thickness <= 0.0f)
+	{
+		return 0.0f;
+	}
+
+	if (lineStyle.space == LineThicknessSpace::WorldUnits)
+	{
+		return std::abs(WorldToScreenSize(lineStyle.thickness, camera));
+	}
+
+	return lineStyle.thickness;
+}
+
+void buki::OpenGLGraphics::DrawStrokeInternal(
+	const std::vector<glm::vec2>& points,
+	bool closed,
+	const Color& color,
+	float thicknessPixels)
+{
+	constexpr float epsilon = 0.00001f;
+
+	if (!std::isfinite(thicknessPixels) || thicknessPixels <= 0.0f)
+	{
+		return;
+	}
+
+	const float halfThickness = thicknessPixels * 0.5f;
+
+	if (!closed)
+	{
+		if (points.size() != 2)
+		{
+			return;
+		}
+
+		const glm::vec2 delta = points[1] - points[0];
+		const float length = glm::length(delta);
+
+		if (length <= epsilon)
+		{
+			return;
+		}
+
+		const glm::vec2 direction = delta / length;
+		const glm::vec2 normal{ -direction.y, direction.x };
+		const glm::vec2 offset = normal * halfThickness;
+
+		const glm::vec2 a = points[0] + offset;
+		const glm::vec2 b = points[1] + offset;
+		const glm::vec2 c = points[1] - offset;
+		const glm::vec2 d = points[0] - offset;
+
+		const std::vector<glm::vec2> triangles =
+		{
+			a, b, c,
+			a, c, d
+		};
+
+		DrawPrimitiveInternal(triangles, color, GL_TRIANGLES);
+		return;
+	}
+
+	const std::size_t count = points.size();
+
+	if (count < 3)
+	{
+		return;
+	}
+
+	float signedDoubleArea = 0.0f;
+	glm::vec2 center{ 0.0f, 0.0f };
+
+	for (std::size_t i = 0; i < count; ++i)
+	{
+		const glm::vec2& a = points[i];
+		const glm::vec2& b = points[(i + 1) % count];
+
+		signedDoubleArea += a.x * b.y - b.x * a.y;
+		center += a;
+	}
+
+	if (std::abs(signedDoubleArea) <= epsilon)
+	{
+		return;
+	}
+
+	center /= static_cast<float>(count);
+
+	const float orientation = signedDoubleArea > 0.0f ? 1.0f : -1.0f;
+
+	std::vector<glm::vec2> inwardNormals(count);
+	float minimumCenterDistance = std::numeric_limits<float>::max();
+
+	for (std::size_t i = 0; i < count; ++i)
+	{
+		const glm::vec2 delta = points[(i + 1) % count] - points[i];
+		const float length = glm::length(delta);
+
+		if (length <= epsilon)
+		{
+			return;
+		}
+
+		const glm::vec2 direction = delta / length;
+		const glm::vec2 inward = glm::vec2{ -direction.y, direction.x } *orientation;
+
+		inwardNormals[i] = inward;
+
+		const float centerDistance = glm::dot(center - points[i], inward);
+		minimumCenterDistance = std::min(minimumCenterDistance, centerDistance);
+	}
+
+	std::vector<glm::vec2> innerPoints(count);
+	std::vector<glm::vec2> outerPoints(count);
+
+	for (std::size_t i = 0; i < count; ++i)
+	{
+		const glm::vec2 previousNormal = inwardNormals[(i + count - 1) % count];
+		const glm::vec2 currentNormal = inwardNormals[i];
+		const glm::vec2 normalSum = previousNormal + currentNormal;
+
+		const float denominator = glm::dot(normalSum, currentNormal);
+
+		if (denominator <= epsilon)
+		{
+			return;
+		}
+
+		const glm::vec2 offset = normalSum * (halfThickness / denominator);
+
+		innerPoints[i] = points[i] + offset;
+		outerPoints[i] = points[i] - offset;
+	}
+
+	std::vector<glm::vec2> triangles;
+	triangles.reserve(count * 6);
+
+	// For rectangles and regular polygons, this is where
+	// the inward stroke consumes the remaining interior.
+	if (halfThickness >= minimumCenterDistance)
+	{
+		for (std::size_t i = 0; i < count; ++i)
+		{
+			const std::size_t next = (i + 1) % count;
+
+			triangles.push_back(center);
+			triangles.push_back(outerPoints[i]);
+			triangles.push_back(outerPoints[next]);
+		}
+	}
+	else
+	{
+		for (std::size_t i = 0; i < count; ++i)
+		{
+			const std::size_t next = (i + 1) % count;
+
+			triangles.push_back(outerPoints[i]);
+			triangles.push_back(outerPoints[next]);
+			triangles.push_back(innerPoints[next]);
+
+			triangles.push_back(outerPoints[i]);
+			triangles.push_back(innerPoints[next]);
+			triangles.push_back(innerPoints[i]);
+		}
+	}
+
+	DrawPrimitiveInternal(triangles, color, GL_TRIANGLES);
 }

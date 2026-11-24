@@ -180,7 +180,7 @@ namespace buki
 	{
 		(void)alpha;
 
-		if (m_Entity == nullptr )
+		if (m_Entity == nullptr)
 		{
 			return;
 		}
@@ -234,7 +234,8 @@ namespace buki
 				glm::vec2{ textPos.x, textPos.y },
 				textColor,
 				m_Style.centerTextX,
-				m_Style.centerTextY);
+				m_Style.centerTextY,
+				m_Style.centerTextVisuallyY);
 		}
 
 		const bool drawOutline =

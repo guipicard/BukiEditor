@@ -34,6 +34,7 @@ namespace buki
                 BUKI_PROP_NESTED_BOOL_GROUPED(BUKI_FIELD_NESTED(Polygon, "polygon", def, "shapeDraw", shapeDraw), "Rendering"),
                 BUKI_PROP_NESTED_COLOR_GROUPED(BUKI_FIELD_NESTED(Polygon, "polygon", def, "fillColor", fillColor), "Rendering"),
                 BUKI_PROP_NESTED_COLOR_GROUPED(BUKI_FIELD_NESTED(Polygon, "polygon", def, "shapeColor", shapeColor), "Rendering"),
+                BUKI_PROP_NESTED_FLOAT_RANGE_GROUPED(BUKI_FIELD_NESTED(Polygon, "polygon", def, "shapeThickness", shapeThickness), "Rendering", 1.0f,10.0f, 0.1f),
 
                 BUKI_PROP_NESTED_BOOL_GROUPED(BUKI_FIELD_NESTED(Polygon, "polygon", def, "isSensor", isSensor), "Physics"),
                 BUKI_PROP_NESTED_INT_GROUPED(BUKI_FIELD_NESTED(Polygon, "polygon", def, "filter", filter), "Physics"),

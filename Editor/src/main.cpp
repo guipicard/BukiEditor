@@ -1,5 +1,6 @@
 #define WIN32_LEAN_AND_MEAN
 #define VC_EXTRALEAN
+
 #include <Windows.h>
 #include <SDL3/SDL.h>
 #include "Editor.h"

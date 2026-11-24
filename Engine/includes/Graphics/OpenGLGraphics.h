@@ -42,12 +42,37 @@ namespace buki
 			const UVRect& uvRect,
 			const Color& color = {}) override;
 
-		virtual void DrawLine(const Vector2& a, const Vector2& b, const Color& color) override;
-		virtual void DrawRectOutline(const Vector2& center, const Vector2& size, float rotationRadians, const Color& color) override;
+		// Lined Shapes
+		void DrawLine(
+			const Vector2& a,
+			const Vector2& b,
+			const Color& color,
+			const LineStyle& lineStyle = {}) override;
+
+		void DrawRectOutline(
+			const Vector2& center,
+			const Vector2& size,
+			float rotationRadians,
+			const Color& color,
+			const LineStyle& lineStyle = {}) override;
+
+		void DrawCircleOutline(
+			const Vector2& center,
+			float radius,
+			const Color& color,
+			float rotationRadians = 0.0f,
+			const LineStyle& lineStyle = {}) override;
+
+		void DrawPolygonOutline(
+			const Vector2& center,
+			float radius,
+			float rotationRadians,
+			const Color& color,
+			int segments,
+			const LineStyle& lineStyle = {}) override;
+		// Filled Shapes
 		virtual void FillRect(const Vector2& center, const Vector2& size, float rotationRadians, const Color& color) override;
-		virtual void DrawCircleOutline(const Vector2& center, float radius, const Color& color, float rotationRadians = 0.0f) override;
 		virtual void FillCircle(const Vector2& center, float radius, const Color& color) override;
-		virtual void DrawPolygonOutline(const Vector2& center, float radius, float rotationRadians, const Color& color, int segments) override;
 		virtual void FillPolygon(const Vector2& center, float radius, float rotationRadians, const Color& color, int segments) override;
 
 		virtual std::vector<glm::vec2> GetPolygonPoints(glm::vec2 center, float radius, float rotationRadians, int segments, bool renderFill) override;
@@ -55,6 +80,7 @@ namespace buki
 		void SetCameraPosition(float x, float y) override;
 		void ResetCamera() override;
 
+		// SPRITES
 		void DrawSprite(
 			const Texture2D& texture,
 			const Camera2D& camera,
@@ -98,6 +124,7 @@ namespace buki
 			bool flipY = false,
 			const Color& color = {}) override;
 
+		// FONTS
 		Font2D CreateFontFromFile(const std::string& path, int fontSize) override;
 		void DestroyFont(Font2D& font) override;
 
@@ -108,7 +135,8 @@ namespace buki
 			const glm::vec2& worldPositionMeters,
 			const Color& color = {},
 			bool centerX = false,
-			bool centerY = false) override;
+			bool centerY = false,
+			bool centerVisuallyY = false) override;
 
 		virtual Vector2 MeasureText(const Font2D& font, const std::string& text) const override;
 
@@ -142,18 +170,21 @@ namespace buki
 		bool CompileShader(std::uint32_t shader, const char* source) const;
 		bool LinkProgram(std::uint32_t program) const;
 
-		private:
-			GLuint m_DebugLineVAO = 0;
-			GLuint m_DebugLineVBO = 0;
-			GLuint m_DebugLineProgram = 0;
-			GLint m_DebugLineProjLoc = -1;
-			GLint m_DebugLineColorLoc = -1;
+	private:
+		GLuint m_DebugLineVAO = 0;
+		GLuint m_DebugLineVBO = 0;
+		GLuint m_DebugLineProgram = 0;
+		GLint m_DebugLineProjLoc = -1;
+		GLint m_DebugLineColorLoc = -1;
 
-			bool CreateDebugLinePipeline();
-			void DestroyDebugLinePipeline();
-			void DrawPrimitiveInternal(const std::vector<glm::vec2>& points, const Color& color, GLenum mode);
+		bool CreateDebugLinePipeline();
+		void DestroyDebugLinePipeline();
+		void DrawPrimitiveInternal(const std::vector<glm::vec2>& points, const Color& color, GLenum mode);
 
-			float MeasureTextWidthPixels(const Font2D& font, const std::string& text) const;
+		float GetLineThicknessPixels(const LineStyle& lineStyle, const Camera2D& camera) const;
+		void DrawStrokeInternal(const std::vector<glm::vec2>& points, bool closed, const Color& color, float thicknessPixels);
+
+		float MeasureTextWidthPixels(const Font2D& font, const std::string& text) const;
 
 	private:
 		IPlatform* m_Platform = nullptr;

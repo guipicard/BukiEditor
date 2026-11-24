@@ -4,6 +4,8 @@
 
 #include <filesystem>
 
+namespace fs = std::filesystem;
+
 namespace buki
 {
     FontManager::FontManager(IGraphics& graphics)
@@ -18,12 +20,7 @@ namespace buki
 
     std::string FontManager::BuildAssetPath(const std::string& path) const
     {
-#if _DEBUG
-        const std::string root = std::filesystem::absolute("../Deployment").string();
-#else
-        const std::string root = std::filesystem::absolute(".").string();
-#endif
-        return root + path;
+        return fs::absolute(fs::path("../Deployment") / path).lexically_normal().string();
     }
 
     std::string FontManager::BuildKey(const std::string& path, int fontSize) const
