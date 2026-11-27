@@ -8,6 +8,7 @@
 #include "Camera2DUtils.h"
 #include "Units.h"
 #include "Engine.h"
+#include "PolygonGeometry.h"
 
 #include "Memory.h"
 
@@ -385,8 +386,9 @@ void buki::OpenGLGraphics::DrawRectOutline(
 		WorldToScreenSize(size.y, camera) * 0.5f
 	};
 
-	const float cosine = std::cos(rotationRadians);
-	const float sine = std::sin(rotationRadians);
+	const float screenRotation = WorldToScreenRotation(rotationRadians);
+	const float cosine = std::cos(screenRotation);
+	const float sine = std::sin(screenRotation);
 
 	const auto rotate = [cosine, sine](const glm::vec2& point) -> glm::vec2
 		{
@@ -465,36 +467,48 @@ void buki::OpenGLGraphics::DrawPolygonOutline(
 	DrawStrokeInternal(points, true, color, thicknessPixels);
 }
 
-void buki::OpenGLGraphics::FillRect(const Vector2& center, const Vector2& size, float rotationRadians, const Color& color)
+void buki::OpenGLGraphics::FillRect(
+	const Vector2& center,
+	const Vector2& size,
+	float rotationRadians,
+	const Color& color)
 {
-	const Camera2D& camera =
-		Engine::Get().GetActiveCamera();
+	if (size.x <= 0.0f || size.y <= 0.0f)
+	{
+		return;
+	}
 
+	const Camera2D& camera = Engine::Get().GetActiveCamera();
 	const glm::vec2 screenCenter = WorldToScreen(glm::vec2{ center.x, center.y }, camera);
 
-	const glm::vec2 screenSize =
+	const glm::vec2 halfSize =
 	{
-		WorldToScreenSize(size.x, camera),
-		WorldToScreenSize(size.y, camera)
+		WorldToScreenSize(size.x, camera) * 0.5f,
+		WorldToScreenSize(size.y, camera) * 0.5f
 	};
-	const glm::vec2 half = { screenSize.x * 0.5f, screenSize.y * 0.5f };
 
-	auto rotate = [rotationRadians](const glm::vec2& p) -> glm::vec2
+	const float screenRotation = WorldToScreenRotation(rotationRadians);
+	const float cosine = std::cos(screenRotation);
+	const float sine = std::sin(screenRotation);
+
+	const auto rotate = [cosine, sine](const glm::vec2& point) -> glm::vec2
 		{
-			const float c = std::cos(rotationRadians);
-			const float s = std::sin(rotationRadians);
-			return { p.x * c - p.y * s, p.x * s + p.y * c };
+			return
+			{
+				point.x * cosine - point.y * sine,
+				point.x * sine + point.y * cosine
+			};
 		};
 
-	std::vector<glm::vec2> points;
-	points.reserve(6);
-
-	points.push_back(screenCenter);
-	points.push_back(screenCenter + rotate({ -half.x, -half.y }));
-	points.push_back(screenCenter + rotate({ half.x, -half.y }));
-	points.push_back(screenCenter + rotate({ half.x,  half.y }));
-	points.push_back(screenCenter + rotate({ -half.x,  half.y }));
-	points.push_back(screenCenter + rotate({ -half.x, -half.y }));
+	const std::vector<glm::vec2> points =
+	{
+		screenCenter,
+		screenCenter + rotate({ -halfSize.x, -halfSize.y }),
+		screenCenter + rotate({ halfSize.x, -halfSize.y }),
+		screenCenter + rotate({ halfSize.x, halfSize.y }),
+		screenCenter + rotate({ -halfSize.x, halfSize.y }),
+		screenCenter + rotate({ -halfSize.x, -halfSize.y })
+	};
 
 	DrawPrimitiveInternal(points, color, GL_TRIANGLE_FAN);
 }
@@ -546,32 +560,30 @@ std::vector<glm::vec2> buki::OpenGLGraphics::GetPolygonPoints(
 	int segments,
 	bool renderFill)
 {
-	constexpr float fullTurn = 6.28318530718f;
-	constexpr float quarterTurn = fullTurn * 0.25f;
-
-	segments = std::max(segments, 3);
-
-	const int perimeterPointCount = renderFill ? segments + 1 : segments;
+	const std::vector<glm::vec2> localVertices = MakeRegularPolygonVertices(radius, segments, rotationRadians);
 
 	std::vector<glm::vec2> points;
-	points.reserve(static_cast<std::size_t>(perimeterPointCount + (renderFill ? 1 : 0)));
+	points.reserve(localVertices.size() + (renderFill ? 2 : 0));
 
 	if (renderFill)
 	{
 		points.push_back(center);
 	}
 
-	const float step = fullTurn / static_cast<float>(segments);
-
-	for (int i = 0; i < perimeterPointCount; ++i)
+	for (const glm::vec2& vertex : localVertices)
 	{
-		const float angle = static_cast<float>(i) * step - quarterTurn + rotationRadians;
-
+		// This existing graphics API receives a screen-space center
+		// and radius, so invert the local world Y offset here.
 		points.push_back(
 			{
-				center.x + std::cos(angle) * radius,
-				center.y + std::sin(angle) * radius
+				center.x + vertex.x,
+				center.y - vertex.y
 			});
+	}
+
+	if (renderFill && !localVertices.empty())
+	{
+		points.push_back(points[1]);
 	}
 
 	return points;
@@ -1382,25 +1394,23 @@ void buki::OpenGLGraphics::UploadQuadVertices(
 	const float halfWidth = widthPixels * 0.5f;
 	const float halfHeight = heightPixels * 0.5f;
 
-	const glm::vec2 localTopLeft = { -halfWidth, -halfHeight };
-	const glm::vec2 localTopRight = { halfWidth, -halfHeight };
-	const glm::vec2 localBottomRight = { halfWidth,  halfHeight };
-	const glm::vec2 localBottomLeft = { -halfWidth,  halfHeight };
+	const float screenRotation = WorldToScreenRotation(rotationRadians);
+	const float cosine = std::cos(screenRotation);
+	const float sine = std::sin(screenRotation);
 
-	auto rotate = [rotationRadians](const glm::vec2& p) -> glm::vec2
+	const auto rotate = [cosine, sine](const glm::vec2& point) -> glm::vec2
 		{
-			const float c = std::cos(rotationRadians);
-			const float s = std::sin(rotationRadians);
-			return {
-				p.x * c - p.y * s,
-				p.x * s + p.y * c
+			return
+			{
+				point.x * cosine - point.y * sine,
+				point.x * sine + point.y * cosine
 			};
 		};
 
-	const glm::vec2 p0 = rotate(localTopLeft) + positionPixels;
-	const glm::vec2 p1 = rotate(localTopRight) + positionPixels;
-	const glm::vec2 p2 = rotate(localBottomRight) + positionPixels;
-	const glm::vec2 p3 = rotate(localBottomLeft) + positionPixels;
+	const glm::vec2 p0 = positionPixels + rotate({ -halfWidth, -halfHeight });
+	const glm::vec2 p1 = positionPixels + rotate({ halfWidth, -halfHeight });
+	const glm::vec2 p2 = positionPixels + rotate({ halfWidth, halfHeight });
+	const glm::vec2 p3 = positionPixels + rotate({ -halfWidth, halfHeight });
 
 	const Vertex vertices[4] =
 	{

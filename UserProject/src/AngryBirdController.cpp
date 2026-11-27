@@ -15,11 +15,11 @@ void buki::AngryBirdController::Start()
 {
 	anchor = World().FindEntityByName("anchor");
 	anchorPos = anchor->Tm().GetPosition();
-	aimingSoundHandle = Audio().LoadSound("./Audio/AngryBird/Sfx - Slingshot Streched.mp3");
-	launchingSoundHandle = Audio().LoadSound("./Audio/AngryBird/Sfx - Globe Bird Launch 3.mp3");
-	AddCollisionSound("./Audio/AngryBird/Sfx - Globe Bird Hit 1.mp3");
-	AddCollisionSound("./Audio/AngryBird/Sfx - Globe Bird Hit 2.mp3");
-	AddCollisionSound("./Audio/AngryBird/Sfx - Globe Bird Hit 3.mp3");
+	aimingSoundHandle = Audio().LoadSound("/Audio/AngryBird/Sfx - Slingshot Streched.mp3");
+	launchingSoundHandle = Audio().LoadSound("/Audio/AngryBird/Sfx - Globe Bird Launch 3.mp3");
+	AddCollisionSound("/Audio/AngryBird/Sfx - Globe Bird Hit 1.mp3");
+	AddCollisionSound("/Audio/AngryBird/Sfx - Globe Bird Hit 2.mp3");
+	AddCollisionSound("/Audio/AngryBird/Sfx - Globe Bird Hit 3.mp3");
 
 	for (auto* e : World().GetEntitiesInWorld())
 	{
@@ -28,6 +28,8 @@ void buki::AngryBirdController::Start()
 			buttonsInScene.push_back(e->GetComponent<Button>());
 		}
 	}
+	m_Entity->GetComponent<Sprite>()->SetFlipX(true);
+	m_Entity->GetComponent<Sprite>()->SetFlipY(true);
 }
 
 void buki::AngryBirdController::Destroy()

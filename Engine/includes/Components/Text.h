@@ -46,7 +46,7 @@ namespace buki
         {
             static std::vector<PropertyInfo> properties = {
                 BUKI_PROP_STRING_N("text", Text, m_Text),
-                BUKI_PROP_STRING_N("fontPath", Text, m_FontPath),
+                BUKI_PROP_FONT_N("fontPath", Text, m_FontPath),
                 BUKI_PROP_INT_N("fontSize", Text, m_FontSize),
                 BUKI_PROP_VECTOR2_N("positionOffset", Text, m_PositionOffset),
                 BUKI_PROP_COLOR_N("color", Text, m_Color),

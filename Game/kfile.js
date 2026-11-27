@@ -8,6 +8,8 @@ project.kore = false;
 project.isStaticLib = false;
 project.isLibrary = false;
 
+project.addDefine("NOMINMAX");
+
 project.addIncludeDir("./Game/includes");
 
 project.addIncludeDir("./UserProject/includes");

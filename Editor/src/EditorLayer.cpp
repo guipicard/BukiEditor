@@ -14,6 +14,9 @@
 #include "EditorViewportHelpers.h"
 #include "glad/glad.h"
 
+#include <cstdio>
+#include <filesystem>
+
 buki::EditorLayer::EditorLayer()
 {
 	state.assetBehaviors.Register(AssetType::Clip, std::make_unique<ClipAssetBehavior>());
@@ -32,8 +35,223 @@ buki::EditorLayer::~EditorLayer()
 {
 }
 
+namespace
+{
+	namespace
+	{
+		std::filesystem::path GetDeploymentDirectory()
+		{
+			std::error_code errorCode;
+			const std::filesystem::path absolutePath = std::filesystem::absolute("../Deployment", errorCode);
+			return std::filesystem::weakly_canonical(absolutePath, errorCode);
+		}
+	}
+}
+
+void buki::EditorLayer::StartPlay()
+{
+	if (playState != PlayState::Idle || state.selectedScenePath.empty())
+	{
+		return;
+	}
+
+	const std::filesystem::path tempScene = state.selectedScenePath.parent_path() / ("__play" + state.selectedScenePath.extension().string());
+
+	auto* world = Engine::Get().GetWorldPtr();
+
+	if (world == nullptr || !world->SaveScene(tempScene.string()))
+	{
+		console.Add(ConsoleLevel::Error, "Editor", "Failed to write the play-mode scene snapshot.");
+		return;
+	}
+
+	playScenePath = tempScene.string();
+	showConsole = true;
+
+	if (!buildBeforePlay)
+	{
+		const std::filesystem::path deploymentExe = GetDeploymentDirectory() / "Game.exe";
+		const std::filesystem::path buildExe = GetDeploymentDirectory().parent_path() / "build" / "x64" / "Debug" / "Game.exe";
+
+		std::error_code deployError;
+		std::error_code buildError;
+
+		const auto deployTime = std::filesystem::last_write_time(deploymentExe, deployError);
+		const auto buildTime = std::filesystem::last_write_time(buildExe, buildError);
+
+		if (!deployError && !buildError && buildTime > deployTime)
+		{
+			console.Add(ConsoleLevel::Warning, "Editor", "Deployment/Game.exe is older than the last build output. Enable 'Rebuild code' to deploy the new one.");
+		}
+	}
+	if (!buildBeforePlay)
+	{
+		LaunchGame();
+		return;
+	}
+
+	const std::filesystem::path root = GetDeploymentDirectory().parent_path();
+	const std::filesystem::path script = root / "build-game.bat";
+
+	if (!std::filesystem::exists(script))
+	{
+		console.Add(ConsoleLevel::Error, "Editor", "build-game.bat not found at " + script.string());
+		CleanupPlayScene();
+		return;
+	}
+
+	console.Add(ConsoleLevel::Info, "Editor", "Building Game...");
+
+	const std::string command = "cmd.exe /d /c \"\"" + script.string() + "\" --no-pause\"";
+
+	const bool started = buildProcess.Launch(command, root.string(), [this](const std::string& line) { console.AddClassified("Build", line); }, true);
+
+	if (!started)
+	{
+		console.Add(ConsoleLevel::Error, "Editor", buildProcess.LastError());
+		CleanupPlayScene();
+		return;
+	}
+
+	playState = PlayState::Building;
+}
+
+void buki::EditorLayer::LaunchGame()
+{
+	const std::filesystem::path deploymentDirectory = GetDeploymentDirectory();
+	const std::filesystem::path executablePath = deploymentDirectory / "Game.exe";
+
+	if (!std::filesystem::exists(executablePath) || !std::filesystem::exists(deploymentDirectory / "SDL3.dll"))
+	{
+		console.Add(ConsoleLevel::Error, "Editor", "Game.exe or SDL3.dll missing in " + deploymentDirectory.string());
+		CleanupPlayScene();
+		playState = PlayState::Idle;
+		return;
+	}
+
+	const std::string command = "\"" + executablePath.string() + "\" --scene \"" + playScenePath + "\"";
+
+	console.Add(ConsoleLevel::Info, "Editor", "Launching: " + command);
+
+	if (!gameProcess.Launch(command, deploymentDirectory.string(), [this](const std::string& line) { console.AddClassified("Game", line); }))
+	{
+		console.Add(ConsoleLevel::Error, "Editor", gameProcess.LastError());
+		CleanupPlayScene();
+		playState = PlayState::Idle;
+		return;
+	}
+
+	playState = PlayState::Running;
+}
+
+void buki::EditorLayer::UpdatePlay()
+{
+	if (playState == PlayState::Building)
+	{
+		buildProcess.Poll();
+
+		if (!buildProcess.IsRunning())
+		{
+			if (buildProcess.ExitCode() == 0)
+			{
+				console.Add(ConsoleLevel::Info, "Editor", "Build succeeded.");
+				LaunchGame();
+			}
+			else
+			{
+				char message[96];
+				std::snprintf(message, sizeof(message), "Build failed (exit code %lu). Game not launched.", buildProcess.ExitCode());
+				console.Add(ConsoleLevel::Error, "Editor", message);
+				CleanupPlayScene();
+				playState = PlayState::Idle;
+			}
+		}
+	}
+	else if (playState == PlayState::Running)
+	{
+		gameProcess.Poll();
+
+		if (!gameProcess.IsRunning())
+		{
+			char message[96];
+			std::snprintf(message, sizeof(message), "Game exited with code 0x%08lX", gameProcess.ExitCode());
+			console.Add(gameProcess.ExitCode() == 0 ? ConsoleLevel::Info : ConsoleLevel::Error, "Editor", message);
+			CleanupPlayScene();
+			playState = PlayState::Idle;
+		}
+	}
+}
+
+void buki::EditorLayer::StopPlay()
+{
+	if (playState == PlayState::Building)
+	{
+		buildProcess.Stop();
+		console.Add(ConsoleLevel::Warning, "Editor", "Build cancelled.");
+	}
+	else if (playState == PlayState::Running)
+	{
+		gameProcess.Stop();
+		console.Add(ConsoleLevel::Info, "Editor", "Game stopped.");
+	}
+
+	CleanupPlayScene();
+	playState = PlayState::Idle;
+}
+
+void buki::EditorLayer::CleanupPlayScene()
+{
+	if (!playScenePath.empty())
+	{
+		std::error_code errorCode;
+		std::filesystem::remove(playScenePath, errorCode);
+		playScenePath.clear();
+	}
+}
+
+void buki::EditorLayer::DrawPlayControls()
+{
+	if (playState == PlayState::Idle)
+	{
+		ImGui::BeginDisabled(state.selectedScenePath.empty());
+
+		if (ImGui::Button("Play"))
+		{
+			StartPlay();
+		}
+
+		ImGui::EndDisabled();
+	}
+	else
+	{
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.55f, 0.15f, 0.15f, 1.0f));
+
+		if (ImGui::Button(playState == PlayState::Building ? "Cancel" : "Stop"))
+		{
+			StopPlay();
+		}
+
+		ImGui::PopStyleColor();
+	}
+
+	ImGui::SameLine();
+	ImGui::Checkbox("Rebuild code", &buildBeforePlay);
+
+	if (ImGui::IsItemHovered())
+	{
+		ImGui::SetTooltip("Run build-game.bat before launching.\nWhen off, the existing Game.exe in Deployment is launched as-is.");
+	}
+
+	ImGui::SameLine();
+	ImGui::TextUnformatted(playState == PlayState::Building ? "Building..." : playState == PlayState::Running ? "Running" : "Idle");
+	ImGui::SameLine();
+}
+
 void buki::EditorLayer::Render()
 {
+
+	UpdatePlay();
+
 	DrawDockspace();
 
 	if (state.showHierarchy)
@@ -56,6 +274,9 @@ void buki::EditorLayer::Render()
 
 	if (state.showContentBrowser)
 		contentBrowserPanel.Render(state);
+
+	if (showConsole) 
+		console.Draw(&showConsole);
 
 
 	if (state.showDemoWindow)
@@ -215,6 +436,7 @@ void buki::EditorLayer::BuildDefaultLayout(ImGuiID dockspaceId)
 	ImGui::DockBuilderDockWindow("Inspector", dock_right_id);
 	ImGui::DockBuilderDockWindow("Scene", dock_main_id);
 	ImGui::DockBuilderDockWindow("Content Browser", dock_bottom_id);
+	ImGui::DockBuilderDockWindow("Console", dock_bottom_id);
 
 	ImGui::DockBuilderFinish(dockspaceId);
 }
@@ -225,6 +447,9 @@ void buki::EditorLayer::DrawMenuBar()
 	{
 		return;
 	}
+
+	DrawPlayControls();
+	ImGui::Separator();
 
 	if (ImGui::BeginMenu("File"))
 	{
@@ -257,6 +482,7 @@ void buki::EditorLayer::DrawMenuBar()
 		ImGui::MenuItem("Scene", nullptr, &state.showSceneView);
 		ImGui::MenuItem("Content Browser", nullptr, &state.showContentBrowser);
 		ImGui::MenuItem("ImGui Demo", nullptr, &state.showDemoWindow);
+		ImGui::MenuItem("Console", nullptr, &showConsole);
 		ImGui::EndMenu();
 	}
 

@@ -7,6 +7,8 @@
 #include "RigidBody.h"
 #include "BukiContainers.h"
 #include "Units.h"
+#include "PolygonGeometry.h"
+#include <cmath>
 #include <glm/gtc/type_ptr.hpp>
 
 #include <algorithm>
@@ -39,8 +41,15 @@ void buki::Polygon::Destroy()
 
 void buki::Polygon::SetPhysics()
 {
-    RigidBody* rb = m_Entity->GetComponent<RigidBody>();
-    if (!rb)
+    if (m_Entity == nullptr)
+    {
+        Log().LogError("Cannot set physics on polygon because entity has no rigidbody.");
+        return;
+    }
+
+    RigidBody* rigidBody = m_Entity->GetComponent<RigidBody>();
+
+    if (rigidBody == nullptr)
     {
         return;
     }
@@ -48,33 +57,49 @@ void buki::Polygon::SetPhysics()
     if (def.segments < 3)
     {
         def.segments = 3;
-		Log().LogMessage("Polygon segments must be greater than or equal to 3. Defaulting to 3.");
+        Log().LogError("Polygon segments must be greater than or equal to 3. Defaulting to 3.");
     }
-    if (def.radius <= 0.0f)
-    {
-        def.radius = 1.0f;
-		Log().LogMessage("Polygon radius must be greater than 0. Defaulting to 1.0f.");
-	}
+
     if (def.segments > 8)
     {
         def.segments = 8;
-		Log().LogMessage("Polygon segments must be less than or equal to 8. Defaulting to 8.");
-	}
-
-    glm::vec2 center;
-    center.x = 0.0f;
-    center.y = 0.0f;
-    std::vector<glm::vec2> verts;
-	verts.reserve(def.segments);
-    verts = Graphics().GetPolygonPoints(center, def.radius, 0.0f, def.segments, false);
-    std::vector<b2Vec2> points;
-    points.reserve(verts.size());
-    for (const auto& v : verts)
-    {
-        points.push_back({ v.x, v.y });
+        Log().LogError("Polygon segments must be less than or equal to 8. Defaulting to 8.");
     }
-	b2Hull hull = b2ComputeHull(points.data(), static_cast<int>(points.size()));
-    b2Polygon polygon = b2MakePolygon(&hull, 0);
+
+    if (!std::isfinite(def.radius) || def.radius <= 0.0f)
+    {
+        def.radius = 1.0f;
+        Log().LogError("Polygon radius must be greater than 0. Defaulting to 1.0f.");
+    }
+
+    const BodyId bodyId = rigidBody->GetBodyId();
+    const b2BodyId physicsBodyId{ bodyId.index1, bodyId.world0, bodyId.generation };
+
+    if (!b2Body_IsValid(physicsBodyId))
+    {
+        Log().LogError("Cannot create polygon shape: invalid physics body.");
+        return;
+    }
+
+    const std::vector<glm::vec2> vertices = MakeRegularPolygonVertices(def.radius, def.segments);
+
+    std::vector<b2Vec2> points;
+    points.reserve(vertices.size());
+
+    for (const glm::vec2& vertex : vertices)
+    {
+        points.push_back({ vertex.x, vertex.y });
+    }
+
+    const b2Hull hull = b2ComputeHull(points.data(), static_cast<int>(points.size()));
+
+    if (hull.count < 3)
+    {
+        Log().LogError("Cannot create polygon shape: hull generation failed.");
+        return;
+    }
+
+    const b2Polygon polygon = b2MakePolygon(&hull, 0.0f);
 
     b2ShapeDef shapeDef = b2DefaultShapeDef();
     shapeDef.density = def.density;
@@ -83,14 +108,15 @@ void buki::Polygon::SetPhysics()
     shapeDef.enableContactEvents = true;
     shapeDef.userData = m_Entity;
     shapeDef.isSensor = def.isSensor;
-  
-    //shapeDef.filter.categoryBits = def.filter;
 
-    BodyId bId = rb->GetBodyId();
-    b2BodyId b2Id = b2BodyId{ bId.index1, bId.world0, bId.generation };
+    const b2ShapeId physicsShapeId = b2CreatePolygonShape(physicsBodyId, &shapeDef, &polygon);
+    const ShapeId sId = { physicsShapeId.index1, physicsShapeId.world0, physicsShapeId.generation };
 
-    b2ShapeId s2Id = b2CreatePolygonShape(b2Id, &shapeDef, &polygon);
-    ShapeId sId = { s2Id.index1, s2Id.world0, s2Id.generation };
+    if (!b2Shape_IsValid(physicsShapeId))
+    {
+        Log().LogError("Cannot create polygon shape: shape creation failed.");
+        return;
+    }
 
     SetShapeId(sId);
     Physics().Listen(m_Entity);

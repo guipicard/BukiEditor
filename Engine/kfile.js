@@ -10,6 +10,7 @@ project.kore = false;
 project.isStaticLib = true;
 
 project.addDefine("KINC_STATIC_COMPILE");
+project.addDefine("NOMINMAX");
 
 function applySdl3(proj, isRoot = false) {
 	if (!isRoot) {
@@ -31,6 +32,8 @@ project.addIncludeDir("./Engine/includes/MetaData");
 project.addIncludeDir("./Engine/includes/Platform");
 project.addIncludeDir("./Engine/includes/Types");
 project.addIncludeDir("./Engine/includes/Utils");
+project.addIncludeDir("./vendor/imgui-docking");
+project.addIncludeDir("./vendor/imgui-docking/backends");
 
 project.addIncludeDir("./vendor/box2d/include/box2d");
 project.addIncludeDir("./vendor/glm");

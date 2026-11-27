@@ -58,15 +58,22 @@ void buki::Entity::Update(float dt)
 void buki::Entity::Destroy()
 {
 	DeactivatePhysics();
-	for (std::map<const type_info*, Component*>::iterator it = m_ComponentByType.begin(); it != m_ComponentByType.end(); ++it)
+
+	for (auto& [typeInfo, component] : m_ComponentByType)
 	{
-		it->second->Destroy();
-		delete it->second;
-		it->second = nullptr;
+		if (component != nullptr)
+		{
+			component->Destroy();
+			delete component;
+			component = nullptr;
+		}
 	}
+
 	m_ComponentByType.clear();
 	m_Drawable.clear();
 	m_Updatable.clear();
+	m_FixedUpdatable.clear();
+
 	transform.reset();
 }
 
@@ -77,28 +84,47 @@ buki::Transform& buki::Entity::Tm() const
 
 void buki::Entity::ActivatePhysics()
 {
-	if (m_Physics)
+	if (m_PhysicsActivationBlocked || m_Physics)
 	{
 		return;
 	}
 
-	RigidBody* rb = GetComponent<RigidBody>();
-	if (rb == nullptr)
+	RigidBody* rigidBody = GetComponent<RigidBody>();
+
+	if (rigidBody == nullptr)
 	{
-		rb = AddComponent<RigidBody>();
+		rigidBody = AddComponent<RigidBody>();
+	}
+
+	if (rigidBody == nullptr)
+	{
+		Engine::Get().Log().LogError("Could not add a RigidBody to entity: " + m_Name);
+		return;
 	}
 
 	const BodyId bodyId = Engine::Get().Physics().CreatePhysicsBody(this);
-	rb->SetBodyId(bodyId);
 
-	std::vector<Shapes*> shapes = GetAllComponentsOfType<Shapes>();
+	if (!Engine::Get().Physics().IsBodyValid(bodyId))
+	{
+		Engine::Get().Log().LogError("Could not create a physics body for entity: " + m_Name);
+		return;
+	}
+
+	rigidBody->SetBodyId(bodyId);
+
+	// Track ownership immediately, even if the entity has no shapes.
+	m_Physics = true;
+
+	const std::vector<Shapes*> shapes = GetAllComponentsOfType<Shapes>();
+
 	if (shapes.empty())
 	{
-		Engine::Get().Log().LogMessage("Entity " + m_Name + " has no shapes to activate physics with.");
+		Engine::Get().Log().LogMessage("Entity " + m_Name + " has an active physics body without shapes.");
+		return;
 	}
-	else
+
+	try
 	{
-		m_Physics = true;
 		for (Shapes* shape : shapes)
 		{
 			if (shape != nullptr)
@@ -106,6 +132,11 @@ void buki::Entity::ActivatePhysics()
 				shape->SetPhysics();
 			}
 		}
+	}
+	catch (...)
+	{
+		DeactivatePhysics();
+		throw;
 	}
 }
 
@@ -116,16 +147,16 @@ void buki::Entity::DeactivatePhysics()
 		return;
 	}
 
-	RigidBody* rb = GetComponent<RigidBody>();
-	if (rb == nullptr)
+	RigidBody* rigidBody = GetComponent<RigidBody>();
+
+	if (rigidBody != nullptr)
 	{
-		m_Physics = false;
-		return;
+		Engine::Get().Physics().DestroyPhysicsBody(rigidBody->GetBodyId());
+		rigidBody->SetBodyId(BodyId{});
 	}
 
-	Engine::Get().Physics().DestroyPhysicsBody(rb->GetBodyId());
-
 	const std::vector<Shapes*> shapes = GetAllComponentsOfType<Shapes>();
+
 	for (Shapes* shape : shapes)
 	{
 		if (shape != nullptr)
@@ -136,6 +167,7 @@ void buki::Entity::DeactivatePhysics()
 
 	m_Physics = false;
 }
+
 json buki::Entity::Serialize() const
 {
 	json doc;
@@ -209,11 +241,36 @@ void buki::Entity::Deserialize(json _doc)
 	}
 }
 
-void buki::Entity::Set()
+void buki::Entity::Set(EntityInitializationMode mode)
 {
-	for (const auto& [typeInfo, component] : m_ComponentByType)
+	struct PhysicsActivationScope
 	{
-		if (this != nullptr && component != nullptr)
+		bool& blocked;
+		bool previousValue;
+
+		PhysicsActivationScope(bool& value, bool blockPhysics)
+			: blocked(value),
+			previousValue(value)
+		{
+			blocked = previousValue || blockPhysics;
+		}
+
+		~PhysicsActivationScope()
+		{
+			blocked = previousValue;
+		}
+	};
+
+	const bool previewMode = mode == EntityInitializationMode::Preview;
+	PhysicsActivationScope physicsScope(m_PhysicsActivationBlocked, previewMode);
+
+	// Use a snapshot so adding a component during initialization
+	// does not change the component traversal.
+	const std::vector<Component*> components = GetComponents();
+
+	for (Component* component : components)
+	{
+		if (component != nullptr)
 		{
 			component->Set();
 		}

@@ -1,12 +1,12 @@
 {
     "camera": {
         "position": {
-            "x": 0.0,
-            "y": 0.0
+            "x": -3.914628505706787,
+            "y": -2.9400830268859863
         },
         "viewportHeight": 1080.0,
         "viewportWidth": 1920.0,
-        "zoom": 1.0
+        "zoom": 0.6575165390968323
     },
     "entities": {
         "Background": {
@@ -133,7 +133,8 @@
                             "g": 0.0,
                             "r": 1.0
                         },
-                        "shapeDraw": true
+                        "shapeDraw": true,
+                        "shapeThickness": 1.0
                     }
                 },
                 "RigidBody": {
@@ -1091,7 +1092,7 @@
             "physics": true,
             "position": {
                 "x": 0.0,
-                "y": 9.300000190734863
+                "y": -9.300000190734863
             },
             "rotation": 0.0,
             "size": {
@@ -1107,7 +1108,7 @@
                 },
                 "Animator": {
                     "params": {
-                        "animationPath": "../Deployment/assets/PlayerBlue.anim",
+                        "animationPath": "../deployment/assets/playerblue.anim",
                         "playOnStart": true,
                         "speed": 1.0
                     }
@@ -1142,15 +1143,16 @@
                             "g": 0.0,
                             "r": 1.0
                         },
-                        "shapeDraw": true
+                        "shapeDraw": true,
+                        "shapeThickness": 1.0
                     }
                 },
                 "RigidBody": {
                     "def": {
                         "motionLocks": {
-                            "angularZ": true,
-                            "linearX": true,
-                            "linearY": true
+                            "angularZ": false,
+                            "linearX": false,
+                            "linearY": false
                         }
                     },
                     "type": 2
@@ -1204,7 +1206,8 @@
                             "g": 0.0,
                             "r": 0.0
                         },
-                        "shapeDraw": true
+                        "shapeDraw": true,
+                        "shapeThickness": 1.0
                     }
                 },
                 "RigidBody": {

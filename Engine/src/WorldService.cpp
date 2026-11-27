@@ -573,7 +573,7 @@ buki::Entity* buki::WorldService::GetOrLoadPrefabEntity(const std::string& path)
 
 	Entity* entity = new Entity(MakeUniqueEntityName(absolutePath.stem().string()));
 	entity->Deserialize(doc);
-	entity->Set();
+	entity->Set(EntityInitializationMode::Preview);
 
 	PrefabAssetInstance& slot = prefabAssets[key];
 	slot.path = path;

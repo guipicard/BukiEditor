@@ -1,9 +1,9 @@
 const exeNames = {Game: "Game", Editor: "Editor"};
 const startupProject = exeNames.Editor;
 const editorDependencies = {
-    Game: ["UserProject", "Engine", "Box2D"],
+    Game: ["UserProject", "Engine", "Box2D", "imgui-docking"],
     Editor: ["UserProject", "Engine", "Box2D", "imgui-docking"]
-}
+};
 
 
 process.on("exit", () => {
@@ -29,6 +29,12 @@ const editorproj = await project.addProject("./Editor");
 const engineproj = await project.addProject("./Engine");
 const boxproj = await project.addProject("./vendor/Box2D");
 const imguiproj = await project.addProject("./vendor/imgui-docking");
+
+const imguiIncludeDirectory = path.resolve("./vendor/imgui-docking");
+
+for (const target of [gameproj, engineproj, userProject]) {
+    target.addIncludeDir(imguiIncludeDirectory);
+}
 
 gameproj.parent = null;
 userProject.parent = null;
@@ -67,9 +73,9 @@ editorproj.addLib(path.resolve("./vendor/SDL3-3.4.4/lib/x64/SDL3"));
 editorproj.addLib(path.resolve("./vendor/SDL3_mixer-devel-3.2.0-VC/SDL3_mixer-3.2.0/lib/x64/SDL3_mixer"));
 editorproj.addLib(path.resolve("./vendor/SDL3_ttf-devel-3.1.0-VC/SDL3_ttf-3.1.0/lib/x64/SDL3_ttf"));
 editorproj.addLib(path.resolve("./build/x64/Debug/Box2D"));
-editorproj.addLib(path.resolve("./build/x64/Debug/imgui-docking"));
 editorproj.addLib(path.resolve("./build/x64/Debug/Engine"));
 editorproj.addLib(path.resolve("./build/x64/Debug/UserProject"));
+editorproj.addLib(path.resolve("./build/x64/Debug/imgui-docking"));
 editorproj.addLib("opengl32");
 
 gameproj.addLib(path.resolve("./vendor/SDL3-3.4.4/lib/x64/SDL3"));
@@ -78,6 +84,8 @@ gameproj.addLib(path.resolve("./vendor/SDL3_ttf-devel-3.1.0-VC/SDL3_ttf-3.1.0/li
 gameproj.addLib(path.resolve("./build/x64/Debug/Box2D"));
 gameproj.addLib(path.resolve("./build/x64/Debug/Engine"));
 gameproj.addLib(path.resolve("./build/x64/Debug/UserProject"));
+gameproj.addLib(path.resolve("./build/x64/Debug/imgui-docking"));
+gameproj.addLib("opengl32");
 
 resolve(project)
 

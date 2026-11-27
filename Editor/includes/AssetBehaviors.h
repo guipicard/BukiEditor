@@ -158,10 +158,7 @@ namespace buki
         bool Create(
             const std::string& directory,
             const std::string& baseName,
-            std::string& outPath) override
-        {
-            return false;
-        }
+            std::string& outPath) override;
 
         void OnDoubleClick(
             EditorState& state,

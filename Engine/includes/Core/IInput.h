@@ -25,5 +25,8 @@ namespace buki
         virtual void GetMousePositionScreen(int* x, int* y) const = 0;
         virtual void GetMousePositionWorld(float* x, float* y) const = 0;
         virtual int GetMouseWheelDelta() const = 0;
+
+        virtual void SetGameplayInputBlocked(bool blockMouse, bool blockKeyboard) = 0;
+        virtual bool IsRawKeyDown(EKey key) const = 0;
     };
 }

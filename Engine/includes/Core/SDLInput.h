@@ -26,6 +26,9 @@ namespace buki
         void GetMousePositionWorld(float* x, float* y) const override;
         int GetMouseWheelDelta() const override;
 
+        void SetGameplayInputBlocked(bool blockMouse, bool blockKeyboard) override;
+        bool IsRawKeyDown(EKey key) const override;
+
     private:
         static constexpr size_t KeyCount = 512;
         static constexpr size_t MouseButtonCount = 8;
@@ -44,5 +47,8 @@ namespace buki
         int m_MouseX = 0;
         int m_MouseY = 0;
         int m_MouseWheelDelta = 0;
+
+        bool m_BlockMouse = false;
+        bool m_BlockKeyboard = false;
     };
 }

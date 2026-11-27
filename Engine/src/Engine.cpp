@@ -47,6 +47,9 @@ bool Engine::Init(const std::string& title, int w, int h)
 	m_World = MakeScope<WorldService>();
 	m_Audio = MakeScope<SDL_Audio>();
 	m_Physics = MakeScope<PhysicsService>();
+#if BUKI_ENABLE_DEBUG_UI
+	m_DebugUI = MakeScope<DebugUI>();
+#endif
 	m_AssetManager = MakeScope<AssetManager>();
 	m_AssetManager->SetRoot("../Deployment");
 
@@ -56,79 +59,143 @@ bool Engine::Init(const std::string& title, int w, int h)
 	return true;
 }
 
+#if BUKI_ENABLE_DEBUG_UI
+void Engine::InitializeDebugUI()
+{
+    SDLPlatform* platform = dynamic_cast<SDLPlatform*>(m_Platform.get());
+
+    if (platform == nullptr || m_DebugUI == nullptr)
+    {
+        return;
+    }
+
+    if (!m_DebugUI->Initialize(platform->GetWindow(), platform->GetGLContext()))
+    {
+        m_Console->LogError("Debug UI initialization failed");
+        return;
+    }
+
+    DebugUI* debugUI = m_DebugUI.get();
+    platform->SetEventObserver([debugUI](const void* event) { debugUI->ProcessEvent(event); });
+}
+
+void Engine::ShutdownDebugUI()
+{
+    if (SDLPlatform* platform = dynamic_cast<SDLPlatform*>(m_Platform.get()))
+    {
+        platform->SetEventObserver(nullptr);
+    }
+
+    if (m_DebugUI != nullptr)
+    {
+        m_DebugUI->Shutdown();
+        m_DebugUI.reset();
+    }
+}
+#endif
+
 void Engine::Start()
 {
-	if (!m_IsInit)
-	{
-		if (!Init("Buki Engine", 1920, 1080))
-		{
-			return;
-		}
-	}
+    if (!m_IsInit)
+    {
+        if (!Init("Buki Engine", 1920, 1080))
+        {
+            return;
+        }
+    }
 
-	m_Console->LogSuccess("Buki initialized");
+#if BUKI_ENABLE_DEBUG_UI
+    InitializeDebugUI();
+#endif
 
-	Uint64 lastTime = SDL_GetTicks();
-	Uint64 accumulator = 0;
-	Uint64 fixedAccumulator = 0;
+    m_Console->LogSuccess("Buki initialized");
 
-	Uint32 frameCount = 0;
-	Uint32 physicsCount = 0;
-	Uint64 fpsLastTime = lastTime;
-	while (Platform().IsRunning())
-	{
-		const Uint64 currentTime = SDL_GetTicks();
-		const Uint64 elapsed = currentTime - lastTime;
-		lastTime = currentTime;
+    Uint64 lastTime = SDL_GetTicks();
+    Uint64 accumulator = 0;
+    Uint64 fixedAccumulator = 0;
 
-		accumulator += elapsed;
-		fixedAccumulator += elapsed;
+    Uint32 frameCount = 0;
+    Uint32 physicsCount = 0;
+    Uint64 fpsLastTime = lastTime;
 
-		ProcessInput();
-		bool consumedTransientInputs = false;
-		while (accumulator >= MS_PER_FRAME)
-		{
-			Update(static_cast<float>(MS_PER_FRAME) * 0.001f * m_TimeScale);
+    while (Platform().IsRunning())
+    {
+        const Uint64 currentTime = SDL_GetTicks();
+        const Uint64 elapsed = currentTime - lastTime;
+        lastTime = currentTime;
 
-			if (!consumedTransientInputs)
-			{
-				Input().ConsumeTransientInputs();
-				consumedTransientInputs = true;
-			}
+        accumulator += elapsed;
+        fixedAccumulator += elapsed;
 
-			accumulator -= MS_PER_FRAME;
-		}
+        ProcessInput();
 
-		while (fixedAccumulator >= FIXED_TIMESTEP)
-		{
-			FixedUpdate(static_cast<float>(FIXED_TIMESTEP) * 0.001f * m_TimeScale);
-			fixedAccumulator -= FIXED_TIMESTEP;
-			++physicsCount;
-		}
+#if BUKI_ENABLE_DEBUG_UI
+        if (m_DebugUI != nullptr)
+        {
+            m_DebugUI->BeginFrame();
+        }
+#endif
 
-		const float alpha = static_cast<float>(accumulator) / static_cast<float>(MS_PER_FRAME);
-		//Render(alpha < 0.0f ? 0.0f : alpha > 1.0f ? 1.0f : alpha);
-		Render(alpha);
+        bool consumedTransientInputs = false;
 
-		++frameCount;
+        while (accumulator >= MS_PER_FRAME)
+        {
+            Update(static_cast<float>(MS_PER_FRAME) * 0.001f * m_TimeScale);
 
-		if (currentTime - fpsLastTime >= 1000)
-		{
-			m_CurrentFPS = static_cast<int>(frameCount);
-			m_CurrentPPS = static_cast<int>(physicsCount);
-			frameCount = 0;
-			physicsCount = 0;
-			fpsLastTime = currentTime;
-		}
+            if (!consumedTransientInputs)
+            {
+                Input().ConsumeTransientInputs();
+                consumedTransientInputs = true;
+            }
 
-		const Uint64 frameTime = SDL_GetTicks() - currentTime;
-		if (frameTime < MS_PER_FRAME)
-		{
-			SDL_Delay(static_cast<Uint32>(MS_PER_FRAME - frameTime));
-		}
-	}
+            accumulator -= MS_PER_FRAME;
+        }
 
-	Shutdown();
+        while (fixedAccumulator >= FIXED_TIMESTEP)
+        {
+            FixedUpdate(static_cast<float>(FIXED_TIMESTEP) * 0.001f * m_TimeScale);
+            fixedAccumulator -= FIXED_TIMESTEP;
+            ++physicsCount;
+        }
+
+        const float alpha = static_cast<float>(accumulator) / static_cast<float>(MS_PER_FRAME);
+        Render(alpha);
+
+        ++frameCount;
+
+        if (currentTime - fpsLastTime >= 1000)
+        {
+            m_CurrentFPS = static_cast<int>(frameCount);
+            m_CurrentPPS = static_cast<int>(physicsCount);
+            frameCount = 0;
+            physicsCount = 0;
+            fpsLastTime = currentTime;
+        }
+
+        const Uint64 frameTime = SDL_GetTicks() - currentTime;
+
+        if (frameTime < MS_PER_FRAME)
+        {
+            SDL_Delay(static_cast<Uint32>(MS_PER_FRAME - frameTime));
+        }
+    }
+
+    Shutdown();
+}
+
+void Engine::Render(float alpha)
+{
+    m_Graphics->BeginFrame();
+    m_World->Render(alpha);
+
+#if BUKI_ENABLE_DEBUG_UI
+    if (m_DebugUI != nullptr)
+    {
+        m_DebugUI->Render();
+    }
+#endif
+
+    m_Graphics->EndFrame();
 }
 
 void Engine::SetTimeScale(float scale)
@@ -164,16 +231,14 @@ void Engine::Update(float dt)
 	}
 }
 
-void Engine::Render(float alpha)
-{
-	m_Graphics->BeginFrame();
-	m_World->Render(alpha);
-	m_Graphics->EndFrame();
-}
 
 
 void Engine::Shutdown()
 {
+#if BUKI_ENABLE_DEBUG_UI
+    ShutdownDebugUI();
+#endif
+
 	m_Audio->Destroy();
 	m_Audio.reset();
 
@@ -186,11 +251,12 @@ void Engine::Shutdown()
 	m_AssetManager->Clear();
 	m_AssetManager.reset();
 
+	m_World->Destroy();
+	m_World.reset();
+
 	m_Physics->Destroy();
 	m_Physics.reset();
 
-	m_World->Destroy();
-	m_World.reset();
 
 	m_Graphics->Shutdown();
 	m_Graphics.reset();

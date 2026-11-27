@@ -12,7 +12,8 @@
 #include "Iscene.h"
 #include <filesystem>
 #include <fstream>
-
+#include <nlohmann/json.hpp>
+#include <system_error>
 namespace buki
 {
 	void AssetBehaviorBase::OnReferenceChanged(EditorAssetDatabase& database, const std::string& ownerAssetPath, const std::string& oldReferencedPath, const std::string& newReferencedPath)
@@ -251,7 +252,104 @@ namespace buki
 	void PrefabAssetBehavior::CollectReferences(EditorAssetDatabase& database, const std::string& path, std::vector<std::string>& outReferences)
 	{
 	}
-	void buki::SceneAssetBehavior::OnDoubleClick(EditorState& state,const BrowserEntry& entry)
+	bool SceneAssetBehavior::Create(
+		const std::string& directory,
+		const std::string& baseName,
+		std::string& outPath)
+	{
+		namespace fs = std::filesystem;
+
+		outPath.clear();
+
+		if (directory.empty())
+		{
+			Engine::Get().Log().LogWarning("Cannot create a scene without a destination directory.");
+			return false;
+		}
+
+		constexpr const char* sceneExtension = ".scene";
+
+		const std::string name = baseName.empty() ? "New Scene" : baseName;
+		const fs::path directoryPath = fs::path(directory).lexically_normal();
+
+		std::error_code error;
+
+		if (!fs::is_directory(directoryPath, error) || error)
+		{
+			Engine::Get().Log().LogWarning("Scene destination is not a valid directory: " + directory);
+			return false;
+		}
+
+		fs::path scenePath = directoryPath / (name + sceneExtension);
+		int suffix = 1;
+
+		while (true)
+		{
+			error.clear();
+
+			const bool exists = fs::exists(scenePath, error);
+
+			if (error)
+			{
+				Engine::Get().Log().LogWarning("Could not check scene destination: " + scenePath.generic_string());
+				return false;
+			}
+
+			if (!exists)
+			{
+				break;
+			}
+
+			scenePath = directoryPath / (name + " " + std::to_string(suffix++) + sceneExtension);
+		}
+
+		const std::string assetRelativePath = ToAssetRelativePath(scenePath.generic_string());
+
+		if (assetRelativePath.empty())
+		{
+			Engine::Get().Log().LogWarning("Could not resolve the new scene's asset-relative path.");
+			return false;
+		}
+
+		nlohmann::json document;
+
+		document["sceneName"] = scenePath.stem().string();
+		document["scenePath"] = assetRelativePath;
+
+		Camera2D camera{};
+		camera.position = { 0.0f, 0.0f };
+		camera.zoom = 1.0f;
+		camera.viewportWidth = 1280.0f;
+		camera.viewportHeight = 720.0f;
+
+		document["camera"] = camera.Serialize();
+		document["entities"] = nlohmann::json::object();
+
+		std::ofstream file(scenePath, std::ios::out | std::ios::trunc);
+
+		if (!file.is_open())
+		{
+			Engine::Get().Log().LogError("Could not create scene: " + scenePath.generic_string());
+			return false;
+		}
+
+		file << document.dump(4) << '\n';
+		file.close();
+
+		if (!file)
+		{
+			Engine::Get().Log().LogError("Failed to write scene: " + scenePath.generic_string());
+
+			error.clear();
+			fs::remove(scenePath, error);
+
+			return false;
+		}
+
+		outPath = scenePath.generic_string();
+		return true;
+	}
+	void buki::SceneAssetBehavior::OnDoubleClick(EditorState& state, const BrowserEntry& entry)
 	{
 		auto* world = Engine::Get().GetWorldPtr();
 
@@ -260,7 +358,7 @@ namespace buki
 			return;
 		}
 
-		const std::string scenePath =ToAssetRelativePath(entry.path);
+		const std::string scenePath = ToAssetRelativePath(entry.path);
 
 		if (scenePath.empty())
 		{
@@ -301,8 +399,7 @@ namespace buki
 		{
 			state.ClearSceneDirty();
 
-			Engine::Get().Log().LogError(
-				"Failed to load scene: " + scenePath);
+			Engine::Get().Log().LogError("Failed to load scene: " + scenePath);
 
 			return;
 		}

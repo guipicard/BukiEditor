@@ -18,6 +18,11 @@ using json = nlohmann::json;
 
 namespace buki
 {
+	enum class EntityInitializationMode
+	{
+		Runtime,
+		Preview
+	};
 	class Entity final
 	{
 	public:
@@ -49,7 +54,7 @@ namespace buki
 
 		json Serialize() const;
 		void Deserialize(json _doc);
-		void Set();
+		void Set(EntityInitializationMode mode = EntityInitializationMode::Runtime);
 
 		
 
@@ -146,5 +151,7 @@ namespace buki
 
 		int zAxis = 0;
 		std::string layer;
+
+		bool m_PhysicsActivationBlocked = false;
 	};
 }

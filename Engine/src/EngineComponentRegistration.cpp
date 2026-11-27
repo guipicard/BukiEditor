@@ -4,7 +4,6 @@
 
 #include "Polygon.h"
 #include "Animator.h"
-#include "Spawner.h"
 #include "Box.h"
 #include "Circle.h"
 #include "Sprite.h"

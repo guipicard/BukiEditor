@@ -3,10 +3,11 @@
 #include "Platform/IPlatform.h"
 #include <SDL3/SDL.h>
 #include <cstdint>
-
+#include <functional>
 namespace buki
 {
 	class IInput;
+	using EventObserver = std::function<void(const void*)>;
 
 	class SDLPlatform final : public IPlatform
 	{
@@ -40,6 +41,8 @@ namespace buki
 		void* GetWindow() const;
 		void* GetGLContext() const;
 
+		void SetEventObserver(EventObserver observer);
+
 	private:
 		bool InitializeSDL();
 		bool CreateSDLWindow(const PlatformWindowDesc& desc);
@@ -59,5 +62,7 @@ namespace buki
 		int m_WindowHeight = 0;
 		int m_DrawableWidth = 0;
 		int m_DrawableHeight = 0;
+
+		EventObserver m_EventObserver;
 	};
 }

@@ -8,7 +8,7 @@
 
 #include "Entity.h"
 #include "MonoBehaviour.h"
-
+#include "Units.h"
 #include "EditorAssetEntries.h"
 #include "EditorViewportHelpers.h"
 #include "PropertyInfo.h"
@@ -18,6 +18,7 @@
 #include "TileLayer.h"
 #include "BukiContainers.h"
 #include "AnimationAsset.h"
+#include "PropertyWidgets.h"
 
 namespace
 {
@@ -2304,10 +2305,10 @@ bool buki::InspectorPropertyDrawer::DrawProperty(const PropertyInfo& propInfo, v
 
 	switch (propInfo.prop.type)
 	{
-	case PropertyType::Int:               ImGui::SameLine(); return DrawIntProperty(propInfo, fieldPtr);
-	case PropertyType::Float:             ImGui::SameLine(); return DrawFloatProperty(propInfo, fieldPtr);
-	case PropertyType::Bool:              ImGui::SameLine(); return DrawBoolProperty(propInfo, fieldPtr);
-	case PropertyType::String:            ImGui::SameLine(); return DrawStringProperty(propInfo, fieldPtr);
+	case PropertyType::Int:               ImGui::SameLine(); return PropertyWidgets::DrawPropertyValue(propInfo, fieldPtr, PropertyEditMode::Editable);
+	case PropertyType::Float:             ImGui::SameLine(); return PropertyWidgets::DrawPropertyValue(propInfo, fieldPtr, PropertyEditMode::Editable);
+	case PropertyType::Bool:              ImGui::SameLine(); return PropertyWidgets::DrawPropertyValue(propInfo, fieldPtr, PropertyEditMode::Editable);
+	case PropertyType::String:            ImGui::SameLine(); return PropertyWidgets::DrawPropertyValue(propInfo, fieldPtr, PropertyEditMode::Editable);
 	case PropertyType::StringList:        return DrawStringListProperty(propInfo, fieldPtr);
 	case PropertyType::ImageAsset:        ImGui::SameLine(); return DrawStringAssetPicker(propInfo, fieldPtr, "IMAGE");
 	case PropertyType::AudioAsset:        ImGui::SameLine(); return DrawStringAssetPicker(propInfo, fieldPtr, "AUDIO");
@@ -2319,10 +2320,10 @@ bool buki::InspectorPropertyDrawer::DrawProperty(const PropertyInfo& propInfo, v
 	case PropertyType::AnimationAsset:    return DrawStringAssetPicker(propInfo, fieldPtr, "ANIM");
 	case PropertyType::ClipAsset:		  return DrawStringAssetPicker(propInfo, fieldPtr, "CLIP");
 	case PropertyType::FontAssetList:     return DrawStringAssetListPicker(propInfo, fieldPtr, "FONT");
-	case PropertyType::Vector2:           ImGui::SameLine(); return DrawVector2Property(propInfo, fieldPtr);
-	case PropertyType::Color:             ImGui::SameLine(); return DrawColorProperty(propInfo, fieldPtr);
-	case PropertyType::RectF:             ImGui::SameLine(); return DrawRectFProperty(propInfo, fieldPtr);
-	case PropertyType::EnumInt:           return DrawEnumIntProperty(propInfo, fieldPtr);
+	case PropertyType::Vector2:           ImGui::SameLine(); return PropertyWidgets::DrawPropertyValue(propInfo, fieldPtr, PropertyEditMode::Editable);
+	case PropertyType::Color:             ImGui::SameLine(); return PropertyWidgets::DrawPropertyValue(propInfo, fieldPtr, PropertyEditMode::Editable);
+	case PropertyType::RectF:             ImGui::SameLine(); return PropertyWidgets::DrawPropertyValue(propInfo, fieldPtr, PropertyEditMode::Editable);
+	case PropertyType::EnumInt:           return PropertyWidgets::DrawPropertyValue(propInfo, fieldPtr, PropertyEditMode::Editable);;
 	case PropertyType::EnumScriptBinding: ImGui::SameLine(); return DrawEnumScriptBindingProperty(propInfo, fieldPtr);
 	case PropertyType::TileList:          return DrawTileListProperty(propInfo, fieldPtr);
 	default:                              return false;
@@ -2332,7 +2333,9 @@ bool buki::InspectorPropertyDrawer::DrawProperty(const PropertyInfo& propInfo, v
 bool buki::InspectorPropertyDrawer::DrawEntitySection(Entity* entity)
 {
 	if (entity == nullptr)
+	{
 		return false;
+	}
 
 	bool changed = false;
 
@@ -2343,13 +2346,17 @@ bool buki::InspectorPropertyDrawer::DrawEntitySection(Entity* entity)
 
 		if (ImGui::InputText("Name", nameBuffer, sizeof(nameBuffer)))
 		{
-			if (buki::Engine::Get().World().RenameEntity(entity, nameBuffer))
+			if (Engine::Get().World().RenameEntity(entity, nameBuffer))
+			{
 				changed = true;
+			}
 		}
 
 		bool enabled = entity->IsEnabled();
+
 		ImGui::TextUnformatted("Enabled");
 		ImGui::SameLine();
+
 		if (DrawMixedBoolField("##Enabled", false, enabled))
 		{
 			entity->SetEnable(enabled);
@@ -2358,9 +2365,10 @@ bool buki::InspectorPropertyDrawer::DrawEntitySection(Entity* entity)
 
 		if (ImGui::TreeNodeEx("Transform", ImGuiTreeNodeFlags_DefaultOpen))
 		{
-			auto& t = entity->Tm();
+			auto& transform = entity->Tm();
 
-			Vector2 position = t.GetPosition();
+			const Vector2 position = transform.GetPosition();
+
 			float posX = position.x;
 			float posY = position.y;
 			float deltaPosX = 0.0f;
@@ -2370,6 +2378,7 @@ bool buki::InspectorPropertyDrawer::DrawEntitySection(Entity* entity)
 
 			ImGui::TextUnformatted("Position");
 			ImGui::SameLine();
+
 			if (DrawMixedVector2DragDeltaFieldPerAxis(
 				"##Position",
 				false,
@@ -2382,14 +2391,24 @@ bool buki::InspectorPropertyDrawer::DrawEntitySection(Entity* entity)
 				changedPosY,
 				"%.1f"))
 			{
-				Vector2 value = t.GetPosition();
-				if (changedPosX) value.x = posX;
-				if (changedPosY) value.y = posY;
-				t.SetPosition(value);
+				Vector2 value = transform.GetPosition();
+
+				if (changedPosX)
+				{
+					value.x = posX;
+				}
+
+				if (changedPosY)
+				{
+					value.y = posY;
+				}
+
+				transform.SetPosition(value);
 				changed = true;
 			}
 
-			Vector2 size = t.GetSize();
+			const Vector2 size = transform.GetSize();
+
 			float sizeX = size.x;
 			float sizeY = size.y;
 			float deltaSizeX = 0.0f;
@@ -2399,6 +2418,7 @@ bool buki::InspectorPropertyDrawer::DrawEntitySection(Entity* entity)
 
 			ImGui::TextUnformatted("Size");
 			ImGui::SameLine();
+
 			if (DrawMixedVector2DragDeltaFieldPerAxis(
 				"##Size",
 				false,
@@ -2411,27 +2431,37 @@ bool buki::InspectorPropertyDrawer::DrawEntitySection(Entity* entity)
 				changedSizeY,
 				"%.1f"))
 			{
-				Vector2 value = t.GetSize();
-				if (changedSizeX) value.x = sizeX;
-				if (changedSizeY) value.y = sizeY;
-				t.SetSize(value);
+				Vector2 value = transform.GetSize();
+
+				if (changedSizeX)
+				{
+					value.x = sizeX;
+				}
+
+				if (changedSizeY)
+				{
+					value.y = sizeY;
+				}
+
+				transform.SetSize(value);
 				changed = true;
 			}
 
-			float rotation = t.GetRotation().GetRadians();
-			float deltaRotation = 0.0f;
+			float rotationDegrees = RadiansToClockwiseDegrees(transform.GetRotation().GetRadians());
+			float deltaDegrees = 0.0f;
 
-			ImGui::TextUnformatted("Rotation");
+			ImGui::TextUnformatted("Rotation (deg, CW)");
 			ImGui::SameLine();
+
 			if (DrawMixedFloatDragDeltaField(
 				"##Rotation",
 				false,
-				rotation,
-				deltaRotation,
-				0.1f,
+				rotationDegrees,
+				deltaDegrees,
+				1.0f,
 				"%.1f"))
 			{
-				t.SetRotation(rotation);
+				transform.SetRotation(ClockwiseDegreesToRadians(rotationDegrees));
 				changed = true;
 			}
 
@@ -2440,8 +2470,10 @@ bool buki::InspectorPropertyDrawer::DrawEntitySection(Entity* entity)
 
 		int z = entity->GetZ();
 		int deltaZ = 0;
+
 		ImGui::TextUnformatted("Z");
 		ImGui::SameLine();
+
 		if (DrawMixedIntDragDeltaField("##Z", false, z, deltaZ))
 		{
 			entity->SetZ(z);
@@ -2450,8 +2482,10 @@ bool buki::InspectorPropertyDrawer::DrawEntitySection(Entity* entity)
 		}
 
 		std::string layer = entity->GetLayer();
+
 		ImGui::TextUnformatted("Layer");
 		ImGui::SameLine();
+
 		if (DrawMixedStringEditor("##Layer", false, layer))
 		{
 			entity->SetLayer(layer);
@@ -2573,9 +2607,12 @@ bool buki::InspectorPropertyDrawer::DrawMultiEntitySection(const std::vector<Ent
 bool buki::InspectorPropertyDrawer::DrawMultiTransformSection(const std::vector<Entity*>& entities)
 {
 	if (entities.empty())
+	{
 		return false;
+	}
 
 	Entity* firstValid = nullptr;
+
 	for (Entity* entity : entities)
 	{
 		if (entity != nullptr)
@@ -2586,7 +2623,9 @@ bool buki::InspectorPropertyDrawer::DrawMultiTransformSection(const std::vector<
 	}
 
 	if (firstValid == nullptr)
+	{
 		return false;
+	}
 
 	bool changed = false;
 
@@ -2598,6 +2637,7 @@ bool buki::InspectorPropertyDrawer::DrawMultiTransformSection(const std::vector<
 
 		std::vector<Vector2> positions;
 		std::vector<Vector2> sizes;
+
 		positions.reserve(entities.size());
 		sizes.reserve(entities.size());
 
@@ -2606,17 +2646,17 @@ bool buki::InspectorPropertyDrawer::DrawMultiTransformSection(const std::vector<
 		for (Entity* entity : entities)
 		{
 			if (entity == nullptr)
+			{
 				continue;
+			}
 
-			const Vector2 position = entity->Tm().GetPosition();
-			const Vector2 size = entity->Tm().GetSize();
-			const float rotation = entity->Tm().GetRotation().GetRadians();
+			positions.push_back(entity->Tm().GetPosition());
+			sizes.push_back(entity->Tm().GetSize());
 
-			positions.push_back(position);
-			sizes.push_back(size);
-
-			if (rotation != firstRotation)
+			if (entity->Tm().GetRotation().GetRadians() != firstRotation)
+			{
 				mixedRotation = true;
+			}
 		}
 
 		const bool mixedPosX = !AreAllEqualVector2X(positions);
@@ -2631,6 +2671,7 @@ bool buki::InspectorPropertyDrawer::DrawMultiTransformSection(const std::vector<
 
 		ImGui::TextUnformatted("Position");
 		ImGui::SameLine();
+
 		if (DrawMixedVector2DragDeltaFieldPerAxis(
 			"##Position",
 			mixedPosX,
@@ -2646,24 +2687,24 @@ bool buki::InspectorPropertyDrawer::DrawMultiTransformSection(const std::vector<
 			for (Entity* entity : entities)
 			{
 				if (entity == nullptr)
+				{
 					continue;
+				}
 
-				auto& t = entity->Tm();
-				Vector2 value = t.GetPosition();
+				auto& transform = entity->Tm();
+				Vector2 value = transform.GetPosition();
 
 				if (changedPosX)
 				{
-					if (mixedPosX) value.x += deltaPosX;
-					else value.x = posX;
+					value.x = mixedPosX ? value.x + deltaPosX : posX;
 				}
 
 				if (changedPosY)
 				{
-					if (mixedPosY) value.y += deltaPosY;
-					else value.y = posY;
+					value.y = mixedPosY ? value.y + deltaPosY : posY;
 				}
 
-				t.SetPosition(value);
+				transform.SetPosition(value);
 			}
 
 			changed = true;
@@ -2681,6 +2722,7 @@ bool buki::InspectorPropertyDrawer::DrawMultiTransformSection(const std::vector<
 
 		ImGui::TextUnformatted("Size");
 		ImGui::SameLine();
+
 		if (DrawMixedVector2DragDeltaFieldPerAxis(
 			"##Size",
 			mixedSizeX,
@@ -2696,57 +2738,62 @@ bool buki::InspectorPropertyDrawer::DrawMultiTransformSection(const std::vector<
 			for (Entity* entity : entities)
 			{
 				if (entity == nullptr)
+				{
 					continue;
+				}
 
-				auto& t = entity->Tm();
-				Vector2 value = t.GetSize();
+				auto& transform = entity->Tm();
+				Vector2 value = transform.GetSize();
 
 				if (changedSizeX)
 				{
-					if (mixedSizeX) value.x += deltaSizeX;
-					else value.x = sizeX;
+					value.x = mixedSizeX ? value.x + deltaSizeX : sizeX;
 				}
 
 				if (changedSizeY)
 				{
-					if (mixedSizeY) value.y += deltaSizeY;
-					else value.y = sizeY;
+					value.y = mixedSizeY ? value.y + deltaSizeY : sizeY;
 				}
 
-				t.SetSize(value);
+				transform.SetSize(value);
 			}
 
 			changed = true;
 		}
 
-		float rotation = firstRotation;
-		float deltaRotation = 0.0f;
+		float rotationDegrees = RadiansToClockwiseDegrees(firstRotation);
+		float deltaDegrees = 0.0f;
 
-		ImGui::TextUnformatted("Rotation");
+		ImGui::TextUnformatted("Rotation (deg, CW)");
 		ImGui::SameLine();
+
 		if (DrawMixedFloatDragDeltaField(
 			"##Rotation",
 			mixedRotation,
-			rotation,
-			deltaRotation,
-			0.1f,
+			rotationDegrees,
+			deltaDegrees,
+			1.0f,
 			"%.1f"))
 		{
+			const float targetRadians = ClockwiseDegreesToRadians(rotationDegrees);
+			const float deltaRadians = ClockwiseDegreesToRadians(deltaDegrees);
+
 			for (Entity* entity : entities)
 			{
 				if (entity == nullptr)
+				{
 					continue;
+				}
 
-				auto& t = entity->Tm();
+				auto& transform = entity->Tm();
 
 				if (mixedRotation)
 				{
-					const float currentRotation = t.GetRotation().GetRadians();
-					t.SetRotation(currentRotation + deltaRotation);
+					transform.SetRotation(transform.GetRotation().GetRadians() + deltaRadians);
 				}
 				else
 				{
-					t.SetRotation(rotation);
+					transform.SetRotation(targetRadians);
 				}
 			}
 
@@ -2757,87 +2804,6 @@ bool buki::InspectorPropertyDrawer::DrawMultiTransformSection(const std::vector<
 	}
 
 	return changed;
-}
-
-bool buki::InspectorPropertyDrawer::DrawIntProperty(const PropertyInfo& propInfo, void* fieldPtr)
-{
-	std::vector<BukiField> fields = propInfo.prop.fields;
-	BukiField lastField = fields[fields.size() - 1];
-	int* value = reinterpret_cast<int*>(fieldPtr);
-	if (value == nullptr)
-		return false;
-
-	bool changed = false;
-
-	if (propInfo.hasMin && propInfo.hasMax)
-		changed = ImGui::SliderInt(("##" + lastField.key).c_str(), value, static_cast<int>(propInfo.minValue), static_cast<int>(propInfo.maxValue));
-	else
-		changed = ImGui::DragInt(("##" + lastField.key).c_str(), value, propInfo.dragSpeed);
-
-	if (!changed)
-		return false;
-
-	if (propInfo.hasMin && *value < static_cast<int>(propInfo.minValue))
-		*value = static_cast<int>(propInfo.minValue);
-	if (propInfo.hasMax && *value > static_cast<int>(propInfo.maxValue))
-		*value = static_cast<int>(propInfo.maxValue);
-
-	return true;
-}
-
-bool buki::InspectorPropertyDrawer::DrawFloatProperty(const PropertyInfo& propInfo, void* fieldPtr)
-{
-	std::vector<BukiField> fields = propInfo.prop.fields;
-	BukiField lastField = fields[fields.size() - 1];
-	float* value = reinterpret_cast<float*>(fieldPtr);
-	if (value == nullptr)
-		return false;
-
-	bool changed = false;
-
-	if (propInfo.hasMin && propInfo.hasMax)
-		changed = ImGui::SliderFloat(("##" + lastField.key).c_str(), value, propInfo.minValue, propInfo.maxValue);
-	else
-		changed = ImGui::DragFloat(("##" + lastField.key).c_str(), value, propInfo.dragSpeed);
-
-	if (!changed)
-		return false;
-
-	if (propInfo.hasMin && *value < propInfo.minValue)
-		*value = propInfo.minValue;
-	if (propInfo.hasMax && *value > propInfo.maxValue)
-		*value = propInfo.maxValue;
-
-	return true;
-}
-
-bool buki::InspectorPropertyDrawer::DrawBoolProperty(const PropertyInfo& propInfo, void* fieldPtr)
-{
-	std::vector<BukiField> fields = propInfo.prop.fields;
-	BukiField lastField = fields[fields.size() - 1];
-	bool* value = reinterpret_cast<bool*>(fieldPtr);
-	if (value == nullptr)
-		return false;
-	const bool result = ImGui::Checkbox(("##" + lastField.key).c_str(), value);
-	return result;
-}
-
-bool buki::InspectorPropertyDrawer::DrawStringProperty(const PropertyInfo& propInfo, void* fieldPtr)
-{
-	std::vector<BukiField> fields = propInfo.prop.fields;
-	BukiField lastField = fields[fields.size() - 1];
-	std::string* value = reinterpret_cast<std::string*>(fieldPtr);
-	if (value == nullptr)
-		return false;
-
-	char buffer[256] = {};
-	strncpy_s(buffer, value->c_str(), sizeof(buffer) - 1);
-
-	if (!ImGui::InputText(("##" + lastField.key).c_str(), buffer, sizeof(buffer)))
-		return false;
-
-	*value = buffer;
-	return true;
 }
 
 bool buki::InspectorPropertyDrawer::DrawStringListProperty(const PropertyInfo& propInfo, void* fieldPtr)
@@ -3028,231 +2994,6 @@ bool buki::InspectorPropertyDrawer::DrawEntityPicker(const PropertyInfo& propInf
 bool buki::InspectorPropertyDrawer::DrawPrefabPicker(const PropertyInfo& propInfo, void* fieldPtr)
 {
 	return DrawStringAssetPicker(propInfo, fieldPtr, "PREFAB");
-}
-
-bool buki::InspectorPropertyDrawer::DrawVector2Property(const PropertyInfo& propInfo, void* fieldPtr)
-{
-	Vector2* value = reinterpret_cast<Vector2*>(fieldPtr);
-	if (value == nullptr)
-		return false;
-
-	std::vector<BukiField> fields = propInfo.prop.fields;
-	if (fields.empty())
-		return false;
-
-	const BukiField& lastField = fields.back();
-
-	float x = value->x;
-	float y = value->y;
-	const float speed = propInfo.dragSpeed > 0.0f ? propInfo.dragSpeed : 0.1f;
-
-	ImGui::PushID(lastField.name.c_str());
-
-	const float totalWidth = ImGui::GetContentRegionAvail().x;
-	const float labelWidth = 14.0f;
-	const float spacing = ImGui::GetStyle().ItemSpacing.x;
-	const float fieldWidth = std::max(20.0f, (totalWidth - (labelWidth * 2.0f) - (spacing * 3.0f)) * 0.5f);
-
-	bool changed = false;
-
-	ImGui::TextUnformatted("X");
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(fieldWidth);
-	changed |= ImGui::DragFloat(("##" + lastField.name + "_X").c_str(), &x, speed, 0.0f, 0.0f, "%.1f");
-
-	ImGui::SameLine();
-	ImGui::TextUnformatted("Y");
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(fieldWidth);
-	changed |= ImGui::DragFloat(("##" + lastField.name + "_Y").c_str(), &y, speed, 0.0f, 0.0f, "%.1f");
-
-	ImGui::PopID();
-
-	if (!changed)
-		return false;
-
-	value->x = x;
-	value->y = y;
-	return true;
-}
-
-bool buki::InspectorPropertyDrawer::DrawColorProperty(const PropertyInfo& propInfo, void* fieldPtr)
-{
-	Color* value = reinterpret_cast<Color*>(fieldPtr);
-	if (value == nullptr)
-		return false;
-
-	std::vector<BukiField> fields = propInfo.prop.fields;
-	if (fields.empty())
-		return false;
-
-	const BukiField& lastField = fields.back();
-
-	float v[4] = { value->r, value->g, value->b, value->a };
-
-	ImGui::PushID(lastField.name.c_str());
-	ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
-
-	const bool changed = ImGui::ColorEdit4(("##" + lastField.name).c_str(), v);
-	ImGui::PopID();
-
-	if (!changed)
-		return false;
-
-	value->r = v[0];
-	value->g = v[1];
-	value->b = v[2];
-	value->a = v[3];
-	return true;
-}
-
-bool buki::InspectorPropertyDrawer::DrawRectFProperty(const PropertyInfo& propInfo, void* fieldPtr)
-{
-	RectF* value = reinterpret_cast<RectF*>(fieldPtr);
-	if (value == nullptr)
-		return false;
-
-	std::vector<BukiField> fields = propInfo.prop.fields;
-	if (fields.empty())
-		return false;
-
-	const BukiField& lastField = fields.back();
-
-	float x = value->x;
-	float y = value->y;
-	float w = value->w;
-	float h = value->h;
-
-	const float speed = propInfo.dragSpeed > 0.0f ? propInfo.dragSpeed : 0.1f;
-
-	ImGui::PushID(lastField.name.c_str());
-
-	bool changed = false;
-
-	const float avail = ImGui::GetContentRegionAvail().x;
-	const float textWidth = 14.0f;
-	const float spacing = ImGui::GetStyle().ItemSpacing.x;
-	const bool compact = avail < 260.0f;
-
-	if (compact)
-	{
-		const float rowFieldWidth = std::max(20.0f, (avail - (textWidth * 2.0f) - (spacing * 3.0f)) * 0.5f);
-
-		ImGui::TextUnformatted("X");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(rowFieldWidth);
-		changed |= ImGui::DragFloat(("##" + lastField.name + "_X").c_str(), &x, speed, 0.0f, 0.0f, "%.1f");
-
-		ImGui::SameLine();
-		ImGui::TextUnformatted("Y");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(rowFieldWidth);
-		changed |= ImGui::DragFloat(("##" + lastField.name + "_Y").c_str(), &y, speed, 0.0f, 0.0f, "%.1f");
-
-		ImGui::TextUnformatted("W");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(rowFieldWidth);
-		changed |= ImGui::DragFloat(("##" + lastField.name + "_W").c_str(), &w, speed, 0.0f, 0.0f, "%.1f");
-
-		ImGui::SameLine();
-		ImGui::TextUnformatted("H");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(rowFieldWidth);
-		changed |= ImGui::DragFloat(("##" + lastField.name + "_H").c_str(), &h, speed, 0.0f, 0.0f, "%.1f");
-	}
-	else
-	{
-		ImGui::SameLine();
-
-		const float fieldWidth = std::max(
-			18.0f,
-			(avail - (textWidth * 4.0f) - (spacing * 7.0f)) * 0.25f);
-
-		ImGui::TextUnformatted("X");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(fieldWidth);
-		changed |= ImGui::DragFloat(("##" + lastField.name + "_X").c_str(), &x, speed, 0.0f, 0.0f, "%.1f");
-
-		ImGui::SameLine();
-		ImGui::TextUnformatted("Y");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(fieldWidth);
-		changed |= ImGui::DragFloat(("##" + lastField.name + "_Y").c_str(), &y, speed, 0.0f, 0.0f, "%.1f");
-
-		ImGui::SameLine();
-		ImGui::TextUnformatted("W");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(fieldWidth);
-		changed |= ImGui::DragFloat(("##" + lastField.name + "_W").c_str(), &w, speed, 0.0f, 0.0f, "%.1f");
-
-		ImGui::SameLine();
-		ImGui::TextUnformatted("H");
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(fieldWidth);
-		changed |= ImGui::DragFloat(("##" + lastField.name + "_H").c_str(), &h, speed, 0.0f, 0.0f, "%.1f");
-	}
-
-	ImGui::PopID();
-
-	if (!changed)
-		return false;
-
-	value->x = x;
-	value->y = y;
-	value->w = w;
-	value->h = h;
-	return true;
-}
-
-bool buki::InspectorPropertyDrawer::DrawEnumIntProperty(const PropertyInfo& propInfo, void* fieldPtr)
-{
-	int* value = reinterpret_cast<int*>(fieldPtr);
-	if (value == nullptr)
-		return false;
-
-	std::vector<BukiField> fields = propInfo.prop.fields;
-	if (fields.empty())
-		return false;
-
-	const BukiField& lastField = fields.back();
-
-	ImGui::PushID(lastField.name.c_str());
-	ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
-
-	if (propInfo.enumLabels.empty())
-	{
-		const bool changed = ImGui::InputInt(("##" + lastField.name).c_str(), value);
-		ImGui::PopID();
-		return changed;
-	}
-
-	if (*value < 0)
-		*value = 0;
-	if (*value >= static_cast<int>(propInfo.enumLabels.size()))
-		*value = static_cast<int>(propInfo.enumLabels.size()) - 1;
-
-	const char* preview = propInfo.enumLabels[*value].c_str();
-	bool changed = false;
-
-	if (ImGui::BeginCombo(("##" + lastField.name).c_str(), preview))
-	{
-		for (int i = 0; i < static_cast<int>(propInfo.enumLabels.size()); ++i)
-		{
-			const bool selected = (*value == i);
-			if (ImGui::Selectable(propInfo.enumLabels[i].c_str(), selected))
-			{
-				*value = i;
-				changed = true;
-			}
-
-			if (selected)
-				ImGui::SetItemDefaultFocus();
-		}
-		ImGui::EndCombo();
-	}
-
-	ImGui::PopID();
-	return changed;
 }
 
 bool buki::InspectorPropertyDrawer::DrawEnumScriptBindingProperty(const PropertyInfo& propInfo, void* fieldPtr)

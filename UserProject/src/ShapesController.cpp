@@ -11,7 +11,7 @@
 buki::ShapesController::ShapesController(Entity* entity)
 	: MonoBehaviour(entity)
 {
-	
+
 }
 
 void buki::ShapesController::Start()
@@ -65,18 +65,27 @@ void buki::ShapesController::Update(const float dt)
 			Vector2 randomSize = Vector2(sizeX, sizeY) / 5;
 
 			Entity* e = World().InstantiatePrefab(boxRef.path);
-			auto& t = e->Tm();
-			
+
 			Box* s = e->GetComponent<Box>();
-			s->def.fillDraw = boxFillDraw;
-			s->def.shapeDraw = boxShapeDraw;
-			s->def.size = randomSize;
 
-			Rot rotation = Rot();
-			rotation.SetRadians(rot);
-			t.UpdateState(pos, rotation, randomSize);
+			if (s != nullptr)
+			{
+				s->def.fillDraw = boxFillDraw;
+				s->def.shapeDraw = boxShapeDraw;
+				s->def.size = randomSize;
 
-			e->Set();
+				auto& transform = e->Tm();
+				transform.SetPosition(pos);
+				transform.SetRotation(rot);
+
+				e->Set();
+			}
+			else
+			{
+				// This instance has already been added to the world.
+				// Queue removal rather than leaving it uninitialized.
+				World().Remove(e);
+			}
 		}
 		if (Input().IsMouseButtonUp(1))
 		{
@@ -91,15 +100,26 @@ void buki::ShapesController::Update(const float dt)
 			auto& t = e->Tm();
 
 			Polygon* s = e->GetComponent<Polygon>();
-			s->def.fillDraw = boxFillDraw;
-			s->def.shapeDraw = boxShapeDraw;
-			s->def.radius = r;
-			s->def.segments = polygonSides;
 
-			Rot rotation = Rot();
-			rotation.SetRadians(rot);
-			t.UpdateState(pos, rotation, randomSize);
-			e->Set();
+			if (s != nullptr)
+			{
+				s->def.fillDraw = boxFillDraw;
+				s->def.shapeDraw = boxShapeDraw;
+				s->def.radius = r;
+				s->def.segments = polygonSides;
+
+				auto& transform = e->Tm();
+				transform.SetPosition(pos);
+				transform.SetRotation(rot);
+
+				e->Set();
+			}
+			else
+			{
+				// This instance has already been added to the world.
+				// Queue removal rather than leaving it uninitialized.
+				World().Remove(e);
+			}
 		}
 		if (Input().IsMouseButtonUp(2))
 		{
@@ -113,33 +133,44 @@ void buki::ShapesController::Update(const float dt)
 			auto& t = e->Tm();
 
 			Circle* s = e->GetComponent<Circle>();
-			s->def.fillDraw = circleFillDraw;
-			s->def.shapeDraw = circleShapeDraw;
-			s->def.radius = r;
 
-			Rot rotation = Rot();
-			rotation.SetRadians(rot);
-			t.UpdateState(pos, rotation, randomSize);
-			e->Set();
+			if (s != nullptr)
+			{
+				s->def.fillDraw = circleFillDraw;
+				s->def.shapeDraw = circleShapeDraw;
+				s->def.radius = r;
+
+				auto& transform = e->Tm();
+				transform.SetPosition(pos);
+				transform.SetRotation(rot);
+
+				e->Set();
+			}
+			else
+			{
+				// This instance has already been added to the world.
+				// Queue removal rather than leaving it uninitialized.
+				World().Remove(e);
+			}
 		}
 	}
 
 	for (auto e : World().GetEntitiesInWorld())
 	{
 		if (e == nullptr) return;
-		if (e->Tm().GetPosition().y > 30.0f)
+		if (e->Tm().GetPosition().y < -30.0f)
 		{
 			World().Remove(e);
 		}
 	}
 }
 
-void buki::ShapesController::OnCollisionEnter(Entity* other){}
-void buki::ShapesController::OnCollisionExit(Entity* other){}
-void buki::ShapesController::OnCollisionHit(Entity* other){}
-void buki::ShapesController::OnSensorEnter(Entity* other){}
-void buki::ShapesController::OnSensorExit(Entity* other){}
-void buki::ShapesController::OnSet(){}
+void buki::ShapesController::OnCollisionEnter(Entity* other) {}
+void buki::ShapesController::OnCollisionExit(Entity* other) {}
+void buki::ShapesController::OnCollisionHit(Entity* other) {}
+void buki::ShapesController::OnSensorEnter(Entity* other) {}
+void buki::ShapesController::OnSensorExit(Entity* other) {}
+void buki::ShapesController::OnSet() {}
 
 void buki::ShapesController::DrawBoxFill()
 {
@@ -150,7 +181,8 @@ void buki::ShapesController::DrawBoxFill()
 	for (auto e : buki::Engine::Get().World().GetEntitiesInWorld())
 	{
 		buki::Box* box = e->GetComponent<buki::Box>();
-		if (box && box->GetEntity()->GetLayer() == "Box")
+		//if (box && box->GetEntity()->GetLayer() == "Box")
+		if (box && box->GetEntity()->GetLayer() != "Static")
 		{
 			box->def.fillDraw = true;
 			box->def.shapeDraw = false;
@@ -167,7 +199,8 @@ void buki::ShapesController::DrawBoxShape()
 	for (auto e : buki::Engine::Get().World().GetEntitiesInWorld())
 	{
 		buki::Box* box = e->GetComponent<buki::Box>();
-		if (box && box->GetEntity()->GetLayer() == "Box")
+		//if (box && box->GetEntity()->GetLayer() == "Box")
+		if (box && box->GetEntity()->GetLayer() != "Static")
 		{
 			box->def.fillDraw = false;
 			box->def.shapeDraw = true;
@@ -184,7 +217,8 @@ void buki::ShapesController::DrawBoxBoth()
 	for (auto e : buki::Engine::Get().World().GetEntitiesInWorld())
 	{
 		buki::Box* box = e->GetComponent<buki::Box>();
-		if (box && box->GetEntity()->GetLayer() == "Box")
+		//if (box && box->GetEntity()->GetLayer() == "Box")
+		if (box && box->GetEntity()->GetLayer() != "Static")
 		{
 			box->def.fillDraw = true;
 			box->def.shapeDraw = true;
@@ -201,11 +235,13 @@ void buki::ShapesController::DrawCircleFill()
 	for (auto e : buki::Engine::Get().World().GetEntitiesInWorld())
 	{
 		buki::Circle* circle = e->GetComponent<buki::Circle>();
-		if (circle && circle->GetEntity()->GetLayer() == "Circle")
+		//if (circle && circle->GetEntity()->GetLayer() == "Circle")
+		if (circle)
 		{
 			circle->def.fillDraw = true;
 			circle->def.shapeDraw = false;
 		}
+
 	}
 }
 
@@ -218,7 +254,8 @@ void buki::ShapesController::DrawCircleShape()
 	for (auto e : buki::Engine::Get().World().GetEntitiesInWorld())
 	{
 		buki::Circle* circle = e->GetComponent<buki::Circle>();
-		if (circle && circle->GetEntity()->GetLayer() == "Circle")
+		//if (circle && circle->GetEntity()->GetLayer() == "Circle")
+		if (circle)
 		{
 			circle->def.fillDraw = false;
 			circle->def.shapeDraw = true;
@@ -235,7 +272,8 @@ void buki::ShapesController::DrawCircleBoth()
 	for (auto e : buki::Engine::Get().World().GetEntitiesInWorld())
 	{
 		buki::Circle* circle = e->GetComponent<buki::Circle>();
-		if (circle && circle->GetEntity()->GetLayer() == "Circle")
+		//if (circle && circle->GetEntity()->GetLayer() == "Circle")
+		if (circle)
 		{
 			circle->def.fillDraw = true;
 			circle->def.shapeDraw = true;
@@ -252,7 +290,8 @@ void buki::ShapesController::DrawPolygonFill()
 	for (auto e : buki::Engine::Get().World().GetEntitiesInWorld())
 	{
 		buki::Polygon* polygon = e->GetComponent<buki::Polygon>();
-		if (polygon && polygon->GetEntity()->GetLayer() == "Polygon")
+		//if (polygon && polygon->GetEntity()->GetLayer() == "Polygon")
+		if (polygon)
 		{
 			polygon->def.fillDraw = true;
 			polygon->def.shapeDraw = false;
@@ -269,7 +308,8 @@ void buki::ShapesController::DrawPolygonShape()
 	for (auto e : buki::Engine::Get().World().GetEntitiesInWorld())
 	{
 		buki::Polygon* polygon = e->GetComponent<buki::Polygon>();
-		if (polygon && polygon->GetEntity()->GetLayer() == "Polygon")
+		//if (polygon && polygon->GetEntity()->GetLayer() == "Polygon")
+		if (polygon)
 		{
 			polygon->def.fillDraw = false;
 			polygon->def.shapeDraw = true;
@@ -286,7 +326,8 @@ void buki::ShapesController::DrawPolygonBoth()
 	for (auto e : buki::Engine::Get().World().GetEntitiesInWorld())
 	{
 		buki::Polygon* polygon = e->GetComponent<buki::Polygon>();
-		if (polygon && polygon->GetEntity()->GetLayer() == "Polygon")
+		//if (polygon && polygon->GetEntity()->GetLayer() == "Polygon")
+		if (polygon)
 		{
 			polygon->def.fillDraw = true;
 			polygon->def.shapeDraw = true;

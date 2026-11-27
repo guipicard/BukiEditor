@@ -7,6 +7,25 @@ namespace buki
 	{
 		constexpr int kGLMajorVersion = 3;
 		constexpr int kGLMinorVersion = 3;
+
+		bool IsMouseEventForWindow(const SDL_Event& event, SDL_WindowID windowId)
+		{
+			switch (event.type)
+			{
+			case SDL_EVENT_MOUSE_MOTION:
+				return event.motion.windowID == windowId;
+
+			case SDL_EVENT_MOUSE_BUTTON_DOWN:
+			case SDL_EVENT_MOUSE_BUTTON_UP:
+				return event.button.windowID == windowId;
+
+			case SDL_EVENT_MOUSE_WHEEL:
+				return event.wheel.windowID == windowId;
+
+			default:
+				return true;
+			}
+		}
 	}
 
 	SDLPlatform::~SDLPlatform()
@@ -49,11 +68,28 @@ namespace buki
 		return true;
 	}
 
+	void SDLPlatform::SetEventObserver(EventObserver observer)
+	{
+		m_EventObserver = std::move(observer);
+	}
+
 	void SDLPlatform::PumpEvents()
 	{
 		SDL_Event event;
+		const SDL_WindowID mainWindowId = m_Window != nullptr ? SDL_GetWindowID(m_Window) : 0;
+
+		if (m_Input != nullptr && IsMouseEventForWindow(event, mainWindowId))
+		{
+			m_Input->ProcessEvent(&event);
+		}
+
 		while (SDL_PollEvent(&event))
 		{
+			if (m_EventObserver)
+			{
+				m_EventObserver(&event);
+			}
+
 			if (m_Input != nullptr)
 			{
 				m_Input->ProcessEvent(&event);
@@ -83,7 +119,7 @@ namespace buki
 		}
 
 #if _DEBUG
-		if (m_Input != nullptr && m_Input->IsKeyDown(EKey::EKEY_ESCAPE))
+		if (m_Input != nullptr && m_Input->IsRawKeyDown(EKey::EKEY_ESCAPE))
 		{
 			m_IsRunning = false;
 		}
@@ -108,6 +144,7 @@ namespace buki
 		SDL_Quit();
 		ResetState();
 		m_Input = nullptr;
+		m_EventObserver = nullptr;
 	}
 
 	bool SDLPlatform::IsRunning() const

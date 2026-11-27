@@ -109,35 +109,44 @@ buki::BodyId buki::PhysicsService::CreatePhysicsBody(Entity* entity)
 	{
 		return {};
 	}
-	auto& t = entity->Tm();
 
-	RigidBody* rb = entity->GetComponent<RigidBody>();
-	if (rb == nullptr)
+	const b2WorldId physicsWorldId{ worldId.index, worldId.generation };
+
+	if (!b2World_IsValid(physicsWorldId))
 	{
 		return {};
 	}
 
-	const RigidBodyDef& def = rb->def;
+	RigidBody* rigidBody = entity->GetComponent<RigidBody>();
 
-	b2BodyDef bodyDef = b2DefaultBodyDef();
-	bodyDef.type = static_cast<b2BodyType>(def.type);
-	bodyDef.motionLocks =
+	if (rigidBody == nullptr)
 	{
-		def.motionLocks.linearX,
-		def.motionLocks.linearY,
-		def.motionLocks.angularZ
+		return {};
+	}
+
+	const RigidBodyDef& definition = rigidBody->def;
+	const auto& transform = entity->Tm();
+
+	b2BodyDef bodyDefinition = b2DefaultBodyDef();
+	bodyDefinition.type = static_cast<b2BodyType>(definition.type);
+
+	bodyDefinition.motionLocks =
+	{
+		definition.motionLocks.linearX,
+		definition.motionLocks.linearY,
+		definition.motionLocks.angularZ
 	};
 
-	const Vector2 pos = t.GetPosition();
-	bodyDef.position = { pos.x, pos.y };
+	const Vector2 position = transform.GetPosition();
+	const Rot rotation = transform.GetRotation();
 
-	const Rot rot = t.GetRotation();
-	bodyDef.rotation = { rot.c, rot.s };
+	bodyDefinition.position = { position.x, position.y };
+	bodyDefinition.rotation = { rotation.c, rotation.s };
+	bodyDefinition.userData = entity;
 
-	const b2WorldId b2World = { worldId.index, worldId.generation };
-	const b2BodyId b2Body = b2CreateBody(b2World, &bodyDef);
+	const b2BodyId physicsBodyId = b2CreateBody(physicsWorldId, &bodyDefinition);
 
-	return { b2Body.index1, b2Body.world0, b2Body.generation };
+	return { physicsBodyId.index1, physicsBodyId.world0, physicsBodyId.generation };
 }
 
 void buki::PhysicsService::DestroyPhysicsBody(BodyId id)
@@ -162,16 +171,35 @@ buki::WorldId buki::PhysicsService::CreateNewWorld()
 	{
 		Destroy();
 	}
-	b2WorldDef worldDef = b2DefaultWorldDef();
 
-	worldDef.gravity = { 0.0f, 9.8f };
-	//worldDef.contactHertz = 60.0;
-	//worldDef.userData = this; // Set user data to nullptr, can be used for custom data
-	b2WorldId wId = b2CreateWorld(&worldDef);
-	worldId = { wId.index1, wId.generation };
-	if (contactEvents == nullptr) contactEvents = new ContactEvents();
-	if (sensorEvents == nullptr) sensorEvents = new SensorEvents();
+	b2WorldDef worldDef = b2DefaultWorldDef();
+	worldDef.gravity = { 0.0f, -9.8f };
+
+	const b2WorldId createdWorld = b2CreateWorld(&worldDef);
+	worldId = { createdWorld.index1, createdWorld.generation };
+
+	if (contactEvents == nullptr)
+	{
+		contactEvents = new ContactEvents();
+	}
+
+	if (sensorEvents == nullptr)
+	{
+		sensorEvents = new SensorEvents();
+	}
+
 	return worldId;
+}
+
+bool buki::PhysicsService::IsBodyValid(BodyId id) const
+{
+	if (id.index1 <= 0)
+	{
+		return false;
+	}
+
+	const b2BodyId physicsBodyId{ id.index1, id.world0, id.generation };
+	return b2Body_IsValid(physicsBodyId);
 }
 
 void buki::PhysicsService::SetForce(Entity* _entity, Vector2 _force, bool _wake)
@@ -434,6 +462,23 @@ void buki::PhysicsService::Destroy()
 	worldId = { 0,0 };
 }
 
+bool buki::PhysicsService::GetDebugCounts(PhysicsDebugCounts& out) const
+{
+	const b2WorldId physicsWorldId{ worldId.index, worldId.generation };
+
+	if (!b2World_IsValid(physicsWorldId))
+	{
+		return false;
+	}
+
+	const b2Counters counters = b2World_GetCounters(physicsWorldId);
+
+	out.bodyCount = counters.bodyCount;
+	out.shapeCount = counters.shapeCount;
+	out.contactCount = counters.contactCount;
+	return true;
+}
+
 template<typename T>
 void buki::ContactEvents::FillCollisionCallbacks(T* instance, int count, std::vector<std::function<void()>>& funcList)
 {
@@ -551,19 +596,25 @@ void buki::SensorEvents::HandleSensorEvent(TriggerEvent event, MonoBehaviour* mb
 
 void buki::SensorEvents::SensorStep()
 {
-	for (std::function<void()> cb : OnSensorEnter)
-		cb();
-	for (std::function<void()> cb : OnSensorExit)
-		cb();
+	std::vector<std::function<void()>> enterCallbacks;
+	std::vector<std::function<void()>> exitCallbacks;
 
-	for (auto func : OnSensorEnter)
+	enterCallbacks.swap(OnSensorEnter);
+	exitCallbacks.swap(OnSensorExit);
+
+	for (const auto& callback : enterCallbacks)
 	{
-		delete& func;
+		if (callback)
+		{
+			callback();
+		}
 	}
-	for (auto func : OnSensorExit)
+
+	for (const auto& callback : exitCallbacks)
 	{
-		delete& func;
+		if (callback)
+		{
+			callback();
+		}
 	}
-	OnSensorEnter.clear();
-	OnSensorExit.clear();
 }

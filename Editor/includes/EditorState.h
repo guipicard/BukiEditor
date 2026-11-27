@@ -87,9 +87,9 @@ namespace buki
         int sceneFramebufferHeight = 0;
 
         ViewportDisplayMode viewportDisplayMode =
-            ViewportDisplayMode::OneToOne;
+            ViewportDisplayMode::Stretch;
 
-        bool lockViewportRenderSize = true;
+        bool lockViewportRenderSize = false;
         bool canSeeViewportRenderSize = true;
         bool canSeeViewportRenderInfo = false;
 

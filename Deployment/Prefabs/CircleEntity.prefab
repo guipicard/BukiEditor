@@ -27,15 +27,16 @@
                     "g": 1.0,
                     "r": 0.0
                 },
-                "shapeDraw": true
+                "shapeDraw": true,
+                "shapeThickness": 1.0
             }
         },
         "RigidBody": {
             "def": {
                 "motionLocks": {
                     "angularZ": false,
-                    "linearX": true,
-                    "linearY": true
+                    "linearX": false,
+                    "linearY": false
                 }
             },
             "type": 2

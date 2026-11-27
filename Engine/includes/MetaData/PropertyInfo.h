@@ -285,9 +285,12 @@ buki::PropertyInfo{ { { #FIELD, offsetof(TYPE, FIELD), NAME } }, buki::PropertyT
 	(offsetof(TYPE, FIELD) + offsetof(std::remove_reference_t<decltype(((TYPE*)0)->FIELD)>, SUBFIELD))
 
 #define BUKI_OFFSET_NESTED2(TYPE, FIELD, SUBSTRUCT, SUBFIELD) \
-	(offsetof(TYPE, FIELD) + \
-	 BUKI_OFFSET_NESTED(TYPE, FIELD, SUBSTRUCT) + \
-	 offsetof(std::remove_reference_t<decltype(((std::remove_reference_t<decltype(((TYPE*)0)->FIELD)>*)0)->SUBSTRUCT)>, SUBFIELD))
+( \
+    BUKI_OFFSET_NESTED(TYPE, FIELD, SUBSTRUCT) + \
+    offsetof( \
+        std::remove_reference_t<decltype(((TYPE*)0)->FIELD.SUBSTRUCT)>, \
+        SUBFIELD) \
+)
 
 /* ---------- field ---------- */
 // Fixed typo in "FIELD" macro definition name

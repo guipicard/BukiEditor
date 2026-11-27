@@ -9,7 +9,14 @@ namespace buki
     {
         const glm::vec2 relativeWorld = worldPositionMeters - camera.position;
         const glm::vec2 relativePixels = Units::ToPixels(relativeWorld);
-        return relativePixels * camera.zoom + camera.GetViewportCenter();
+
+        const glm::vec2 screenOffset =
+        {
+            relativePixels.x * camera.zoom,
+            -relativePixels.y * camera.zoom
+        };
+
+        return camera.GetViewportCenter() + screenOffset;
     }
 
     inline float WorldToScreenSize(float sizeMeters, const Camera2D& camera)
@@ -20,7 +27,18 @@ namespace buki
     inline glm::vec2 ScreenToWorld(const glm::vec2& screenPositionPixels, const Camera2D& camera)
     {
         const glm::vec2 relativePixels = (screenPositionPixels - camera.GetViewportCenter()) / camera.zoom;
-        const glm::vec2 relativeWorld = Units::ToMeters(relativePixels);
-        return relativeWorld + camera.position;
+
+        const glm::vec2 worldPixels =
+        {
+            relativePixels.x,
+            -relativePixels.y
+        };
+
+        return camera.position + Units::ToMeters(worldPixels);
+    }
+
+    inline float WorldToScreenRotation(float rotationRadians)
+    {
+        return -rotationRadians;
     }
 }

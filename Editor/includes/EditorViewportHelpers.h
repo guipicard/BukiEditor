@@ -1,10 +1,11 @@
+#pragma once
 #include "imgui.h"
 #include "imgui_internal.h"
 #include "EditorState.h"
 #include "EditorAssetEntries.h"
-#include <algorithm>
 #include <glad/glad.h>
 #include <cmath>
+#include <algorithm>
 
 namespace buki
 {

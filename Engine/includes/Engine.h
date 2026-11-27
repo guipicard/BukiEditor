@@ -16,6 +16,11 @@
 #include "ScriptFunctionRegistry.h"
 #include "AssetManager.h"
 
+#include "DebugFeatures.h"
+#if BUKI_ENABLE_DEBUG_UI
+#include "DebugUI.h"
+#endif
+
 namespace buki {
     using Uint32 = std::uint32_t;
 
@@ -66,6 +71,11 @@ namespace buki {
         bool HasPlatform() const { return m_Platform != nullptr; }
         bool HasLogger() const { return m_Console != nullptr; }
 
+#if BUKI_ENABLE_DEBUG_UI
+        DebugUI& Debug() { return *m_DebugUI; }
+        bool HasDebugUI() const { return m_DebugUI != nullptr; }
+#endif
+
         void Shutdown();
     private:
 
@@ -96,5 +106,11 @@ namespace buki {
         Scope<TextureManager> m_TextureManager;
         Scope<FontManager> m_FontManager;
         Scope<AssetManager> m_AssetManager;
+
+#if BUKI_ENABLE_DEBUG_UI
+        void InitializeDebugUI();
+        void ShutdownDebugUI();
+        Scope<DebugUI> m_DebugUI;
+#endif
     };
 }

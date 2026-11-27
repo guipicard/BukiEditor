@@ -82,33 +82,48 @@ void buki::ContentBrowserPanel::Render(EditorState& state)
 
 	if (ImGui::BeginPopup("browserRightClick"))
 	{
-		std::string createdAssetPath;
 		if (ImGui::BeginMenu("Create"))
 		{
+			const auto createAsset = [&](AssetType type, const char* baseName)
+				{
+					IAssetBehavior* behavior = state.assetBehaviors.Find(type);
+
+					if (behavior == nullptr)
+					{
+						Engine::Get().Log().LogWarning("No asset behavior is registered for the requested asset type.");
+						return;
+					}
+
+					std::string createdAssetPath;
+
+					if (!behavior->Create(state.currentContentPath.string(), baseName, createdAssetPath))
+					{
+						Engine::Get().Log().LogWarning("Failed to create asset: " + std::string(baseName));
+						return;
+					}
+
+					state.assetDatabase.ScanDirectory("../Deployment");
+					InspectorPropertyDrawer::RefreshAssetPickers();
+				};
+
+			if (ImGui::MenuItem("Scene"))
+			{
+				createAsset(AssetType::Scene, "New Scene");
+			}
+
 			if (ImGui::MenuItem("Animation"))
 			{
-				IAssetBehavior* behavior = state.assetBehaviors.Find(AssetType::Anim);
-				if (behavior)
-				{
-					behavior->Create(state.currentContentPath.string(), "New Animator", createdAssetPath);
-				}
-				InspectorPropertyDrawer::RefreshAssetPickers();
-				state.assetDatabase.ScanDirectory("../Deployment");
+				createAsset(AssetType::Anim, "New Animator");
 			}
 
 			if (ImGui::MenuItem("Animation Clip"))
 			{
-				IAssetBehavior* behavior = state.assetBehaviors.Find(AssetType::Clip);
-				if (behavior)
-				{
-					behavior->Create(state.currentContentPath.string(), "New Clip", createdAssetPath);
-				}
-				InspectorPropertyDrawer::RefreshAssetPickers();
-				state.assetDatabase.ScanDirectory("../Deployment");
+				createAsset(AssetType::Clip, "New Clip");
 			}
 
 			ImGui::EndMenu();
 		}
+
 		ImGui::EndPopup();
 	}
 

@@ -1,12 +1,12 @@
 {
     "camera": {
         "position": {
-            "x": 0.0,
-            "y": 0.0
+            "x": -0.30684739351272583,
+            "y": 1.0305757522583008
         },
         "viewportHeight": 1080.0,
         "viewportWidth": 1920.0,
-        "zoom": 1.0
+        "zoom": 0.7350363731384277
     },
     "entities": {
         "BoxBoth": {
@@ -32,6 +32,7 @@
                             "g": 0.30000001192092896,
                             "r": 0.30000001192092896
                         },
+                        "centerTextVisuallyY": true,
                         "centerTextX": true,
                         "centerTextY": true,
                         "drawOutline": false,
@@ -78,8 +79,8 @@
             "layer": "",
             "physics": false,
             "position": {
-                "x": -17.19999885559082,
-                "y": -9.800000190734863
+                "x": -17.200000762939453,
+                "y": 9.800000190734863
             },
             "rotation": 0.0,
             "size": {
@@ -111,6 +112,7 @@
                             "g": 0.30000001192092896,
                             "r": 0.30000001192092896
                         },
+                        "centerTextVisuallyY": true,
                         "centerTextX": true,
                         "centerTextY": true,
                         "drawOutline": false,
@@ -158,7 +160,7 @@
             "physics": false,
             "position": {
                 "x": -14.19999885559082,
-                "y": -9.800000190734863
+                "y": 9.800000190734863
             },
             "rotation": 0.0,
             "size": {
@@ -190,6 +192,7 @@
                             "g": 0.30000001192092896,
                             "r": 0.30000001192092896
                         },
+                        "centerTextVisuallyY": true,
                         "centerTextX": true,
                         "centerTextY": true,
                         "drawOutline": false,
@@ -237,7 +240,7 @@
             "physics": false,
             "position": {
                 "x": -11.19999885559082,
-                "y": -9.800000190734863
+                "y": 9.800000190734863
             },
             "rotation": 0.0,
             "size": {
@@ -269,6 +272,7 @@
                             "g": 0.30000001192092896,
                             "r": 0.30000001192092896
                         },
+                        "centerTextVisuallyY": true,
                         "centerTextX": true,
                         "centerTextY": true,
                         "drawOutline": false,
@@ -316,7 +320,7 @@
             "physics": false,
             "position": {
                 "x": -17.19999885559082,
-                "y": -6.800000190734863
+                "y": 6.800000190734863
             },
             "rotation": 0.0,
             "size": {
@@ -348,6 +352,7 @@
                             "g": 0.30000001192092896,
                             "r": 0.30000001192092896
                         },
+                        "centerTextVisuallyY": true,
                         "centerTextX": true,
                         "centerTextY": true,
                         "drawOutline": false,
@@ -395,7 +400,7 @@
             "physics": false,
             "position": {
                 "x": -14.19999885559082,
-                "y": -6.800000190734863
+                "y": 6.800000190734863
             },
             "rotation": 0.0,
             "size": {
@@ -427,6 +432,7 @@
                             "g": 0.30000001192092896,
                             "r": 0.30000001192092896
                         },
+                        "centerTextVisuallyY": true,
                         "centerTextX": true,
                         "centerTextY": true,
                         "drawOutline": false,
@@ -474,7 +480,7 @@
             "physics": false,
             "position": {
                 "x": -11.19999885559082,
-                "y": -6.800000190734863
+                "y": 6.800000190734863
             },
             "rotation": 0.0,
             "size": {
@@ -515,7 +521,8 @@
                             "g": 0.0,
                             "r": 1.0
                         },
-                        "shapeDraw": true
+                        "shapeDraw": true,
+                        "shapeThickness": 1.0
                     }
                 },
                 "RigidBody": {
@@ -534,7 +541,7 @@
             "physics": true,
             "position": {
                 "x": 0.0,
-                "y": 10.300000190734863
+                "y": -10.300000190734863
             },
             "rotation": 0.0,
             "size": {
@@ -566,6 +573,7 @@
                             "g": 0.30000001192092896,
                             "r": 0.30000001192092896
                         },
+                        "centerTextVisuallyY": true,
                         "centerTextX": true,
                         "centerTextY": true,
                         "drawOutline": false,
@@ -613,7 +621,7 @@
             "physics": false,
             "position": {
                 "x": -17.19999885559082,
-                "y": -3.1999998092651367
+                "y": 3.200000047683716
             },
             "rotation": 0.0,
             "size": {
@@ -645,6 +653,7 @@
                             "g": 0.30000001192092896,
                             "r": 0.30000001192092896
                         },
+                        "centerTextVisuallyY": true,
                         "centerTextX": true,
                         "centerTextY": true,
                         "drawOutline": false,
@@ -692,7 +701,7 @@
             "physics": false,
             "position": {
                 "x": -14.199999809265137,
-                "y": -3.1999998092651367
+                "y": 3.200000047683716
             },
             "rotation": 0.0,
             "size": {
@@ -724,6 +733,7 @@
                             "g": 0.30000001192092896,
                             "r": 0.30000001192092896
                         },
+                        "centerTextVisuallyY": true,
                         "centerTextX": true,
                         "centerTextY": true,
                         "drawOutline": false,
@@ -771,7 +781,7 @@
             "physics": false,
             "position": {
                 "x": -11.199999809265137,
-                "y": -3.1999998092651367
+                "y": 3.200000047683716
             },
             "rotation": 0.0,
             "size": {
@@ -811,5 +821,5 @@
         }
     },
     "sceneName": "Shapes",
-    "scenePath": "Scenes/Shapes.scene"
+    "scenePath": "../Deployment/Scenes/Shapes.scene"
 }

@@ -15,13 +15,13 @@
         "displayMode": 1,
         "path": "../Deployment/Prefabs/CircleEntity.prefab",
         "position": {
-            "x": 4.319805145263672,
-            "y": -0.07213764637708664
+            "x": 3.658602714538574,
+            "y": 2.153456211090088
         },
         "type": ".prefab",
         "viewportHeight": 754.0,
         "viewportWidth": 1060.0,
-        "zoom": 7.657588005065918
+        "zoom": 1.8928394317626953
     },
     "../Deployment/Prefabs/GlassSlim1.prefab": {
         "displayMode": 1,
@@ -119,29 +119,41 @@
         "viewportWidth": 1060.0,
         "zoom": 1.7490061521530151
     },
+    "../Deployment/Prefabs/resetButton.prefab": {
+        "displayMode": 1,
+        "path": "../Deployment/Prefabs/resetButton.prefab",
+        "position": {
+            "x": -1.5,
+            "y": -9.800000190734863
+        },
+        "type": ".prefab",
+        "viewportHeight": 754.0,
+        "viewportWidth": 1060.0,
+        "zoom": 1.0
+    },
     "../Deployment/Scenes/Ag_Lvl_1.scene": {
-        "displayMode": 2,
+        "displayMode": 0,
         "path": "../Deployment/Scenes/Ag_Lvl_1.scene",
         "position": {
-            "x": 0.365457147359848,
-            "y": 0.055925533175468445
+            "x": 0.9257642030715942,
+            "y": 2.003166913986206
         },
         "type": ".scene",
-        "viewportHeight": 658.0,
+        "viewportHeight": 704.0,
         "viewportWidth": 1060.0,
-        "zoom": 0.8183331489562988
+        "zoom": 0.40685635805130005
     },
     "../Deployment/Scenes/Ag_Lvl_2.scene": {
         "displayMode": 2,
         "path": "../Deployment/Scenes/Ag_Lvl_2.scene",
         "position": {
-            "x": 0.19993102550506592,
-            "y": 0.06912931799888611
+            "x": 1.5368976593017578,
+            "y": 0.45927608013153076
         },
         "type": ".scene",
-        "viewportHeight": 658.0,
+        "viewportHeight": 704.0,
         "viewportWidth": 1060.0,
-        "zoom": 1.0000001192092896
+        "zoom": 0.2842625379562378
     },
     "../Deployment/Scenes/Ag_Lvl_3.scene": {
         "displayMode": 2,
@@ -159,37 +171,37 @@
         "displayMode": 2,
         "path": "../Deployment/Scenes/AngryBird.scene",
         "position": {
-            "x": -0.4112536907196045,
-            "y": -2.5292553901672363
+            "x": 0.5924439430236816,
+            "y": 1.6202657222747803
         },
         "type": ".scene",
-        "viewportHeight": 658.0,
+        "viewportHeight": 704.0,
         "viewportWidth": 1060.0,
-        "zoom": 0.8452916741371155
+        "zoom": 0.31777653098106384
     },
     "../Deployment/Scenes/Menu.scene": {
         "displayMode": 2,
         "path": "../Deployment/Scenes/Menu.scene",
         "position": {
-            "x": 1.0856742858886719,
-            "y": 1.2969739437103271
+            "x": 0.4797884225845337,
+            "y": -2.6546387672424316
         },
         "type": ".scene",
-        "viewportHeight": 658.0,
+        "viewportHeight": 704.0,
         "viewportWidth": 1060.0,
-        "zoom": 0.8695658445358276
+        "zoom": 0.5717536807060242
     },
     "../Deployment/Scenes/Platformer.scene": {
         "displayMode": 2,
         "path": "../Deployment/Scenes/Platformer.scene",
         "position": {
-            "x": -3.914628505706787,
-            "y": -2.9400830268859863
+            "x": -0.13472683727741241,
+            "y": 0.26134806871414185
         },
         "type": ".scene",
-        "viewportHeight": 658.0,
+        "viewportHeight": 704.0,
         "viewportWidth": 1060.0,
-        "zoom": 0.6575165390968323
+        "zoom": 0.49717703461647034
     },
     "../Deployment/Scenes/SceneTest.scene": {
         "displayMode": 0,
@@ -204,16 +216,40 @@
         "zoom": 0.087450310587883
     },
     "../Deployment/Scenes/Shapes.scene": {
-        "displayMode": 2,
+        "displayMode": 0,
         "path": "../Deployment/Scenes/Shapes.scene",
         "position": {
-            "x": -0.7443503737449646,
-            "y": -1.6604318618774414
+            "x": 2.553351640701294,
+            "y": 2.9160571098327637
         },
         "type": ".scene",
-        "viewportHeight": 658.0,
+        "viewportHeight": 704.0,
         "viewportWidth": 1060.0,
-        "zoom": 0.7350362539291382
+        "zoom": 0.2763274908065796
+    },
+    "../Deployment/Scenes/Test.scene": {
+        "displayMode": 1,
+        "path": "../Deployment/Scenes/Test.scene",
+        "position": {
+            "x": -5.0338053703308105,
+            "y": 2.1625115871429443
+        },
+        "type": ".scene",
+        "viewportHeight": 704.0,
+        "viewportWidth": 1060.0,
+        "zoom": 0.9410763382911682
+    },
+    "../Deployment/Scenes/__play.scene": {
+        "displayMode": 1,
+        "path": "../Deployment/Scenes/__play.scene",
+        "position": {
+            "x": 0.9257642030715942,
+            "y": 2.003166913986206
+        },
+        "type": ".scene",
+        "viewportHeight": 704.0,
+        "viewportWidth": 1060.0,
+        "zoom": 0.40685635805130005
     },
     "Prefabs/BoxBoth.prefab": {
         "displayMode": 1,

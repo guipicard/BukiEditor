@@ -1,12 +1,12 @@
 {
     "camera": {
         "position": {
-            "x": 8.333463668823242,
-            "y": 5.726574897766113
+            "x": -0.8724533915519714,
+            "y": 0.7687535285949707
         },
         "viewportHeight": 1080.0,
         "viewportWidth": 1920.0,
-        "zoom": 1.2445799112319946
+        "zoom": 0.8183333873748779
     },
     "entities": {
         "Background": {
@@ -133,7 +133,8 @@
                             "g": 0.0,
                             "r": 1.0
                         },
-                        "shapeDraw": false
+                        "shapeDraw": false,
+                        "shapeThickness": 1.0
                     }
                 },
                 "BricksBehaviour": {
@@ -159,7 +160,7 @@
                     ],
                     "maxHealth": 100.0,
                     "stageImages": [
-                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass026.png",
+                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass021.png",
                         "../deployment/assets/kenney/physics assets/png/glass elements/elementglass026.png",
                         "../deployment/assets/kenney/physics assets/png/glass elements/elementglass053.png"
                     ]
@@ -206,7 +207,7 @@
             "physics": true,
             "position": {
                 "x": 13.19999885559082,
-                "y": 8.675000190734863
+                "y": -8.699999809265137
             },
             "rotation": 0.0,
             "size": {
@@ -247,7 +248,8 @@
                             "g": 0.0,
                             "r": 1.0
                         },
-                        "shapeDraw": false
+                        "shapeDraw": false,
+                        "shapeThickness": 1.0
                     }
                 },
                 "BricksBehaviour": {
@@ -273,7 +275,7 @@
                     ],
                     "maxHealth": 100.0,
                     "stageImages": [
-                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass026.png",
+                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass021.png",
                         "../deployment/assets/kenney/physics assets/png/glass elements/elementglass026.png",
                         "../deployment/assets/kenney/physics assets/png/glass elements/elementglass053.png"
                     ]
@@ -320,7 +322,7 @@
             "physics": true,
             "position": {
                 "x": 15.399999618530273,
-                "y": 8.675000190734863
+                "y": -8.699999809265137
             },
             "rotation": 0.0,
             "size": {
@@ -361,7 +363,8 @@
                             "g": 0.0,
                             "r": 1.0
                         },
-                        "shapeDraw": false
+                        "shapeDraw": false,
+                        "shapeThickness": 1.0
                     }
                 },
                 "BricksBehaviour": {
@@ -387,7 +390,7 @@
                     ],
                     "maxHealth": 100.0,
                     "stageImages": [
-                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass026.png",
+                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass021.png",
                         "../deployment/assets/kenney/physics assets/png/glass elements/elementglass026.png",
                         "../deployment/assets/kenney/physics assets/png/glass elements/elementglass053.png"
                     ]
@@ -434,7 +437,7 @@
             "physics": true,
             "position": {
                 "x": 17.69999885559082,
-                "y": 8.675000190734863
+                "y": -8.699999809265137
             },
             "rotation": 0.0,
             "size": {
@@ -475,7 +478,8 @@
                             "g": 0.0,
                             "r": 1.0
                         },
-                        "shapeDraw": false
+                        "shapeDraw": false,
+                        "shapeThickness": 1.0
                     }
                 },
                 "BricksBehaviour": {
@@ -501,7 +505,7 @@
                     ],
                     "maxHealth": 100.0,
                     "stageImages": [
-                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass026.png",
+                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass021.png",
                         "../deployment/assets/kenney/physics assets/png/glass elements/elementglass026.png",
                         "../deployment/assets/kenney/physics assets/png/glass elements/elementglass053.png"
                     ]
@@ -548,7 +552,7 @@
             "physics": true,
             "position": {
                 "x": 16.57499885559082,
-                "y": 7.175000190734863
+                "y": -7.199999809265137
             },
             "rotation": 1.5707963705062866,
             "size": {
@@ -589,7 +593,8 @@
                             "g": 0.0,
                             "r": 1.0
                         },
-                        "shapeDraw": false
+                        "shapeDraw": false,
+                        "shapeThickness": 1.0
                     }
                 },
                 "BricksBehaviour": {
@@ -615,7 +620,7 @@
                     ],
                     "maxHealth": 100.0,
                     "stageImages": [
-                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass026.png",
+                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass021.png",
                         "../deployment/assets/kenney/physics assets/png/glass elements/elementglass026.png",
                         "../deployment/assets/kenney/physics assets/png/glass elements/elementglass053.png"
                     ]
@@ -662,7 +667,7 @@
             "physics": true,
             "position": {
                 "x": 14.32499885559082,
-                "y": 7.175000190734863
+                "y": -7.199999809265137
             },
             "rotation": 1.5707963705062866,
             "size": {
@@ -703,7 +708,8 @@
                             "g": 0.0,
                             "r": 1.0
                         },
-                        "shapeDraw": false
+                        "shapeDraw": false,
+                        "shapeThickness": 1.0
                     }
                 },
                 "BricksBehaviour": {
@@ -729,7 +735,7 @@
                     ],
                     "maxHealth": 100.0,
                     "stageImages": [
-                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass026.png",
+                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass021.png",
                         "../deployment/assets/kenney/physics assets/png/glass elements/elementglass026.png",
                         "../deployment/assets/kenney/physics assets/png/glass elements/elementglass053.png"
                     ]
@@ -776,7 +782,7 @@
             "physics": true,
             "position": {
                 "x": 16.57499885559082,
-                "y": 5.675000190734863
+                "y": -5.699999809265137
             },
             "rotation": 0.0,
             "size": {
@@ -817,7 +823,8 @@
                             "g": 0.0,
                             "r": 1.0
                         },
-                        "shapeDraw": false
+                        "shapeDraw": false,
+                        "shapeThickness": 1.0
                     }
                 },
                 "BricksBehaviour": {
@@ -843,7 +850,7 @@
                     ],
                     "maxHealth": 100.0,
                     "stageImages": [
-                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass026.png",
+                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass021.png",
                         "../deployment/assets/kenney/physics assets/png/glass elements/elementglass026.png",
                         "../deployment/assets/kenney/physics assets/png/glass elements/elementglass053.png"
                     ]
@@ -890,7 +897,7 @@
             "physics": true,
             "position": {
                 "x": 14.300000190734863,
-                "y": 5.675000190734863
+                "y": -5.699999809265137
             },
             "rotation": 0.0,
             "size": {
@@ -931,7 +938,8 @@
                             "g": 0.0,
                             "r": 1.0
                         },
-                        "shapeDraw": false
+                        "shapeDraw": false,
+                        "shapeThickness": 1.0
                     }
                 },
                 "BricksBehaviour": {
@@ -957,7 +965,7 @@
                     ],
                     "maxHealth": 100.0,
                     "stageImages": [
-                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass026.png",
+                        "../deployment/assets/kenney/physics assets/png/glass elements/elementglass021.png",
                         "../deployment/assets/kenney/physics assets/png/glass elements/elementglass026.png",
                         "../deployment/assets/kenney/physics assets/png/glass elements/elementglass053.png"
                     ]
@@ -1004,7 +1012,7 @@
             "physics": true,
             "position": {
                 "x": 15.399999618530273,
-                "y": 4.199999809265137
+                "y": -4.199999809265137
             },
             "rotation": 1.5707963705062866,
             "size": {
@@ -1045,7 +1053,8 @@
                             "g": 0.0,
                             "r": 1.0
                         },
-                        "shapeDraw": false
+                        "shapeDraw": false,
+                        "shapeThickness": 1.0
                     }
                 },
                 "RigidBody": {
@@ -2915,7 +2924,7 @@
             "physics": true,
             "position": {
                 "x": 0.0,
-                "y": 10.300000190734863
+                "y": -10.300000190734863
             },
             "rotation": 0.0,
             "size": {
@@ -2947,6 +2956,7 @@
                             "g": 0.30000001192092896,
                             "r": 0.30000001192092896
                         },
+                        "centerTextVisuallyY": true,
                         "centerTextX": true,
                         "centerTextY": true,
                         "drawOutline": false,
@@ -2994,7 +3004,7 @@
             "physics": false,
             "position": {
                 "x": 1.5,
-                "y": -9.800000190734863
+                "y": 9.800000190734863
             },
             "rotation": 0.0,
             "size": {
@@ -3009,7 +3019,7 @@
             "physics": false,
             "position": {
                 "x": -11.819999694824219,
-                "y": 6.300000190734863
+                "y": -6.300000190734863
             },
             "rotation": 0.0,
             "size": {
@@ -3052,7 +3062,8 @@
                             "g": 1.0,
                             "r": 0.0
                         },
-                        "shapeDraw": false
+                        "shapeDraw": false,
+                        "shapeThickness": 1.0
                     }
                 },
                 "Sprite": {
@@ -3087,7 +3098,7 @@
             "physics": false,
             "position": {
                 "x": -11.819999694824219,
-                "y": 6.300000190734863
+                "y": -6.300000190734863
             },
             "rotation": 0.0,
             "size": {
@@ -3100,7 +3111,7 @@
             "components": {
                 "Button": {
                     "backgroundImagePath": "",
-                    "fontPath": "/fonts/Kenney/Kenney Blocks.ttf",
+                    "fontPath": "../deployment/fonts/kenney/kenney blocks.ttf",
                     "fontSize": 24,
                     "onClick": {
                         "functionName": "Reset",
@@ -3119,6 +3130,7 @@
                             "g": 0.30000001192092896,
                             "r": 0.30000001192092896
                         },
+                        "centerTextVisuallyY": true,
                         "centerTextX": true,
                         "centerTextY": true,
                         "drawOutline": false,
@@ -3166,7 +3178,7 @@
             "physics": false,
             "position": {
                 "x": -1.5,
-                "y": -9.800000190734863
+                "y": 9.800000190734863
             },
             "rotation": 0.0,
             "size": {
@@ -3209,7 +3221,7 @@
             "physics": false,
             "position": {
                 "x": -12.0,
-                "y": 7.800000190734863
+                "y": -7.800000190734863
             },
             "rotation": 0.0,
             "size": {
@@ -3252,7 +3264,7 @@
             "physics": false,
             "position": {
                 "x": -12.0,
-                "y": 7.800000190734863
+                "y": -7.800000190734863
             },
             "rotation": 0.0,
             "size": {

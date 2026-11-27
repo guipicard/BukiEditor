@@ -9,6 +9,7 @@ namespace buki
         static constexpr float PixelsPerMeter = 50.0f;
         static constexpr float MetersPerPixel = 1.0f / PixelsPerMeter;
 
+
         static constexpr float ToPixels(float meters)
         {
             return meters * PixelsPerMeter;
@@ -29,4 +30,20 @@ namespace buki
             return { pixels.x * MetersPerPixel, pixels.y * MetersPerPixel };
         }
     };
+}
+
+namespace buki
+{
+    inline constexpr float DegreesToRadiansFactor = 0.01745329251994329577f;
+    inline constexpr float RadiansToDegreesFactor = 57.295779513082320876f;
+
+    inline float RadiansToClockwiseDegrees(float radians)
+    {
+        return -radians * RadiansToDegreesFactor;
+    }
+
+    inline float ClockwiseDegreesToRadians(float degrees)
+    {
+        return -degrees * DegreesToRadiansFactor;
+    }
 }

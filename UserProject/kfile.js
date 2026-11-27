@@ -7,6 +7,7 @@ project.setCppStd("c++20");
 project.kore = false;
 project.isStaticLib = true;
 project.addDefine("KINC_STATIC_COMPILE");
+project.addDefine("NOMINMAX");
 
 project.addIncludeDir("./UserProject/includes");
 

@@ -8,10 +8,18 @@
 #include "ImGui.h"
 #include "Camera2D.h"
 #include "IWorld.h"
+#include "EditorConsole.h"
+#include "GameProcess.h"
 #include <vector>
 
 namespace buki
 {
+	enum class PlayState
+	{
+		Idle,
+		Building,
+		Running
+	};
 	class EditorLayer
 	{
 	public:
@@ -21,12 +29,28 @@ namespace buki
 		void RenderSceneViewport();
 		EditorState& State() { return state; }
 
+		void StartPlay();
+		void StopPlay();
+
 	private:
 		void DrawDockspace();
 		void BuildDefaultLayout(ImGuiID dockspaceId);
 		void DrawMenuBar();
 
-	private:
+		void LaunchGame();
+		void UpdatePlay();
+		void CleanupPlayScene();
+		void DrawPlayControls();
+
+		EditorConsole console;
+		GameProcess buildProcess;
+		GameProcess gameProcess;
+		PlayState playState = PlayState::Idle;
+		bool buildBeforePlay = true;
+		bool showConsole = true;
+		std::string playScenePath;
+
+
 		EditorState state;
 		HierarchyPanel hierarchyPanel;
 		InspectorPanel inspectorPanel;

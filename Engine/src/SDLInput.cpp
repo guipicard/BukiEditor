@@ -122,45 +122,6 @@ namespace buki
         m_MouseWheelDelta = 0;
     }
 
-    bool SDLInput::IsKeyPressed(EKey key) const
-    {
-        const size_t index = static_cast<size_t>(key);
-        return index < KeyCount ? m_CurrentKeys[index] : false;
-    }
-
-    bool SDLInput::IsKeyDown(EKey key) const
-    {
-        const size_t index = static_cast<size_t>(key);
-        return index < KeyCount ? m_KeyDown[index] : false;
-    }
-
-    bool SDLInput::IsKeyUp(EKey key) const
-    {
-        const size_t index = static_cast<size_t>(key);
-        return index < KeyCount ? m_KeyUp[index] : false;
-    }
-
-    bool SDLInput::IsMouseButtonPressed(int button) const
-    {
-        return button >= 0 && button < static_cast<int>(MouseButtonCount)
-            ? m_CurrentMouseButtons[button]
-            : false;
-    }
-
-    bool SDLInput::IsMouseButtonDown(int button) const
-    {
-        return button >= 0 && button < static_cast<int>(MouseButtonCount)
-            ? m_MouseButtonDown[button]
-            : false;
-    }
-
-    bool SDLInput::IsMouseButtonUp(int button) const
-    {
-        return button >= 0 && button < static_cast<int>(MouseButtonCount)
-            ? m_MouseButtonUp[button]
-            : false;
-    }
-
     void SDLInput::GetMousePositionScreen(int* x, int* y) const
     {
         if (x) *x = m_MouseX;
@@ -173,9 +134,53 @@ namespace buki
         if (x) *x = worldPos.x;
 		if (y) *y = worldPos.y;
     }
+    void SDLInput::SetGameplayInputBlocked(bool blockMouse, bool blockKeyboard)
+    {
+        m_BlockMouse = blockMouse;
+        m_BlockKeyboard = blockKeyboard;
+    }
+
+    bool SDLInput::IsRawKeyDown(EKey key) const
+    {
+        const size_t index = static_cast<size_t>(key);
+        return index < KeyCount ? m_KeyDown[index] : false;
+    }
+
+    bool SDLInput::IsKeyPressed(EKey key) const
+    {
+        const size_t index = static_cast<size_t>(key);
+        return !m_BlockKeyboard && index < KeyCount ? m_CurrentKeys[index] : false;
+    }
+
+    bool SDLInput::IsKeyDown(EKey key) const
+    {
+        const size_t index = static_cast<size_t>(key);
+        return !m_BlockKeyboard && index < KeyCount ? m_KeyDown[index] : false;
+    }
+
+    bool SDLInput::IsKeyUp(EKey key) const
+    {
+        const size_t index = static_cast<size_t>(key);
+        return !m_BlockKeyboard && index < KeyCount ? m_KeyUp[index] : false;
+    }
+
+    bool SDLInput::IsMouseButtonPressed(int button) const
+    {
+        return !m_BlockMouse && button >= 0 && button < static_cast<int>(MouseButtonCount) ? m_CurrentMouseButtons[button] : false;
+    }
+
+    bool SDLInput::IsMouseButtonDown(int button) const
+    {
+        return !m_BlockMouse && button >= 0 && button < static_cast<int>(MouseButtonCount) ? m_MouseButtonDown[button] : false;
+    }
+
+    bool SDLInput::IsMouseButtonUp(int button) const
+    {
+        return !m_BlockMouse && button >= 0 && button < static_cast<int>(MouseButtonCount) ? m_MouseButtonUp[button] : false;
+    }
 
     int SDLInput::GetMouseWheelDelta() const
     {
-        return m_MouseWheelDelta;
+        return m_BlockMouse ? 0 : m_MouseWheelDelta;
     }
 }

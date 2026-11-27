@@ -36,6 +36,13 @@ namespace buki
 		Entity* shapeB;
 	};
 
+	struct PhysicsDebugCounts
+	{
+		int bodyCount = 0;
+		int shapeCount = 0;
+		int contactCount = 0;
+	};
+
 	using CollisionEvent = std::variant<b2ContactBeginTouchEvent, b2ContactEndTouchEvent, b2ContactHitEvent>;
 	using TriggerEvent = std::variant<b2SensorBeginTouchEvent, b2SensorEndTouchEvent>;
 	template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
@@ -97,6 +104,7 @@ namespace buki
 		BodyId CreatePhysicsBody(Entity* _entity);
 		void DestroyPhysicsBody(BodyId _id);
 		WorldId CreateNewWorld();
+		bool IsBodyValid(BodyId id) const;
 		void SetForce(Entity* _entity, Vector2 _force, bool _wake);
 		float GetMass(BodyId _id);
 		Vector2 GetVelocity(Entity* _entity);
@@ -111,6 +119,7 @@ namespace buki
 		void SetFilter(ShapeId _id, const int filter);
 		int GetType(BodyId _id) const;
 		AABB GetPhysicsSize(ShapeId _id) const;
+		bool GetDebugCounts(PhysicsDebugCounts& out) const;
 		void Destroy();
 	private:
 		WorldId worldId = {0,0};
